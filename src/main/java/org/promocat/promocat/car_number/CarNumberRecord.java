@@ -5,7 +5,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.car.CarRecord;
 
-import javax.persistence.*;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -14,7 +23,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Entity
 @NoArgsConstructor(force = true)
-public class NumberRecord {
+@Table(name = "car_number")
+public class CarNumberRecord {
 
     @Id
     @Column(unique = true)

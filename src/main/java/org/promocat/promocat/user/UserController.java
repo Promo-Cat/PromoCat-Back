@@ -32,7 +32,7 @@ public class UserController {
     public UserRecord checkUser(@Valid @RequestBody UserRecord user) {
         UserRecord res = userRepository.save(user);
 
-        for (CarRecord car : user.getCar()) {
+        for (CarRecord car : user.getCars()) {
             car.setUser(user);
             numberRepository.save(car.getNumber());
             carRepository.save(car);

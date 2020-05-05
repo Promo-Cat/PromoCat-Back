@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -25,6 +26,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor(force = true)
 @Entity
+@Table(name = "user")
 public class UserRecord {
 
     @Id
@@ -50,7 +52,7 @@ public class UserRecord {
     private Long balance;
 
     @OneToMany(mappedBy = "user")
-    private List<CarRecord> car = new ArrayList<>();
+    private List<CarRecord> cars = new ArrayList<>();
 
     @OneToOne(mappedBy = "user")
     private PromoCodeRecord promo_code;
