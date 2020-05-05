@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+/**
+ * @author maksimgrankin
+ */
 @Data
 @NoArgsConstructor(force = true)
 @Entity
@@ -13,7 +16,7 @@ public class Company {
 
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long company_id;
 
     @NotBlank

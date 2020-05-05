@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/**
+ * @author maksimgrankin
+ */
 @Data
 @NoArgsConstructor(force = true)
 @Entity
@@ -18,7 +21,7 @@ public class User {
 
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long user_id;
 
     @NotBlank

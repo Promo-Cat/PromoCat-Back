@@ -10,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 
+/**
+ * @author maksimgrankin
+ */
 @Data
 @Entity
 @NoArgsConstructor(force = true)
@@ -17,7 +20,7 @@ public class Number {
 
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long number_id;
 
     @NotBlank
