@@ -1,6 +1,8 @@
 package org.promocat.promocat.user.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.car.CarRecord;
 import org.promocat.promocat.promo_code.dto.PromoCodeDTO;
@@ -11,6 +13,8 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class UserDTO {
     private Long userId;
     private String firstName;
@@ -19,18 +23,6 @@ public class UserDTO {
     private Long balance;
     private List<CarDTO> cars = new ArrayList<>();
     private PromoCodeDTO promoCodeDTO;
-
-    public UserDTO() {}
-
-    public UserDTO(Long userId, String firstName, String lastName, String telephone, Long balance, List<CarDTO> cars, PromoCodeDTO promoCodeDTO) {
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.telephone = telephone;
-        this.balance = balance;
-        this.cars = cars;
-        this.promoCodeDTO = promoCodeDTO;
-    }
 
     public UserDTO(UserRecord userRecord) {
         userId = userRecord.getUser_id();

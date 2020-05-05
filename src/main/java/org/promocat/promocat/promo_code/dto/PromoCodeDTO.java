@@ -1,6 +1,8 @@
 package org.promocat.promocat.promo_code.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.promo_code.PromoCodeRecord;
 import org.promocat.promocat.user.dto.UserDTO;
@@ -11,18 +13,12 @@ import org.promocat.promocat.user.dto.UserDTO;
 
 @Getter
 @Setter
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class PromoCodeDTO {
     private Long id;
     private String promoCode;
     private UserDTO userDTO;
-
-    public PromoCodeDTO() {}
-
-    public PromoCodeDTO(Long id, String promoCode, UserDTO userDTO) {
-        this.id = id;
-        this.promoCode = promoCode;
-        this.userDTO = userDTO;
-    }
 
     public PromoCodeDTO(PromoCodeRecord promoCodeRecord) {
         id = promoCodeRecord.getId();

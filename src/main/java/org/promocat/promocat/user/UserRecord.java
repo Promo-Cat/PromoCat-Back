@@ -1,5 +1,6 @@
 package org.promocat.promocat.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.car.CarRecord;
@@ -25,6 +26,7 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor(force = true)
+@AllArgsConstructor
 @Entity
 @Table(name = "user")
 public class UserRecord {

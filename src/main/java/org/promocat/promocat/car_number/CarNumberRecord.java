@@ -1,8 +1,10 @@
 package org.promocat.promocat.car_number;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.promocat.promocat.car.CarRecord;
 
 
@@ -23,6 +25,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Entity
 @NoArgsConstructor(force = true)
+@AllArgsConstructor
 @Table(name = "car_number")
 public class CarNumberRecord {
 
@@ -44,11 +47,4 @@ public class CarNumberRecord {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "car_id")
     private CarRecord car;
-
-    public CarNumberRecord(Long number_id, String number, String region, CarRecord car) {
-        this.number_id = number_id;
-        this.number = number;
-        this.region = region;
-        this.car = car;
-    }
 }

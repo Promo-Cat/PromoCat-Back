@@ -1,6 +1,7 @@
 package org.promocat.promocat.car;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.car_number.CarNumberRecord;
@@ -23,6 +24,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Entity
 @NoArgsConstructor(force = true)
+@AllArgsConstructor
 @Table(name = "car")
 public class CarRecord {
 
