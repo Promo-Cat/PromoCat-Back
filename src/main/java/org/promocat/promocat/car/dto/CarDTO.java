@@ -1,10 +1,10 @@
-package org.promocat.promocat.carDTO;
+package org.promocat.promocat.car.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.promocat.promocat.Car.CarRecord;
-import org.promocat.promocat.numberDTO.NumberDTO;
-import org.promocat.promocat.userDTO.UserDTO;
+import org.promocat.promocat.user.dto.UserDTO;
+import org.promocat.promocat.car_number.dto.NumberDTO;
 
 @Getter
 @Setter
