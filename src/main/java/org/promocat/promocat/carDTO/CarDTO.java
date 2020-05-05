@@ -1,4 +1,4 @@
-package org.promocat.promocat.car_dto;
+package org.promocat.promocat.carDTO;
 
 import lombok.Getter;
 import lombok.Setter;
