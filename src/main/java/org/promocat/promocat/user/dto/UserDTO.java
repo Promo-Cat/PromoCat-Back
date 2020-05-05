@@ -35,7 +35,7 @@ public class UserDTO {
         lastName = userRecord.getLast_name();
         telephone = userRecord.getTelephone();
         balance = userRecord.getBalance();
-        for (CarRecord carRecord : userRecord.getCar()) {
+        for (CarRecord carRecord : userRecord.getCars()) {
             car.add(new CarDTO(carRecord));
         }
     }

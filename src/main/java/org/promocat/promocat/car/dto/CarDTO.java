@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.promocat.promocat.car.CarRecord;
 import org.promocat.promocat.user.dto.UserDTO;
-import org.promocat.promocat.car_number.dto.NumberDTO;
+import org.promocat.promocat.car_number.dto.CarNumberDTO;
 
 @Getter
 @Setter
@@ -13,11 +13,11 @@ public class CarDTO {
     private String carMake;
     private String color;
     private UserDTO user;
-    private NumberDTO number;
+    private CarNumberDTO number;
 
     public CarDTO() {}
 
-    public CarDTO(Long carId, String carMake, String color, UserDTO user, NumberDTO number) {
+    public CarDTO(Long carId, String carMake, String color, UserDTO user, CarNumberDTO number) {
         this.carId = carId;
         this.carMake = carMake;
         this.color = color;
@@ -30,6 +30,6 @@ public class CarDTO {
         carMake = carRecord.getCar_make();
         color = carRecord.getColor();
         user = new UserDTO(carRecord.getUser());
-        number = new NumberDTO(carRecord.getNumber());
+        number = new CarNumberDTO(carRecord.getNumber());
     }
 }

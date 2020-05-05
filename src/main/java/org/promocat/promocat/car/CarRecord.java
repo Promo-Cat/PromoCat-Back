@@ -3,7 +3,7 @@ package org.promocat.promocat.car;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.promocat.promocat.car_number.NumberRecord;
+import org.promocat.promocat.car_number.CarNumberRecord;
 import org.promocat.promocat.user.UserRecord;
 
 import javax.persistence.Column;
@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -22,6 +23,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Entity
 @NoArgsConstructor(force = true)
+@Table(name = "car")
 public class CarRecord {
 
     @Id
@@ -44,5 +46,5 @@ public class CarRecord {
     private UserRecord user;
 
     @OneToOne(mappedBy = "car")
-    private NumberRecord number;
+    private CarNumberRecord number;
 }

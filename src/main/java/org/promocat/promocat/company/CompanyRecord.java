@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @NoArgsConstructor(force = true)
 @Entity
+@Table(name = "company")
 public class CompanyRecord {
 
     @Id
