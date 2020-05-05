@@ -6,16 +6,13 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
-/**
- * @author maksimgrankin
- */
 @Data
 @NoArgsConstructor(force = true)
 @Entity
 public class Company {
 
     @Id
-    @Column
+    @Column(unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long company_id;
 
