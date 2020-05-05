@@ -1,8 +1,8 @@
-package org.promocat.promocat.User;
+package org.promocat.promocat.user;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.promocat.promocat.Car.CarRecord;
+import org.promocat.promocat.car.CarRecord;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

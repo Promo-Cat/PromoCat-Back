@@ -1,9 +1,9 @@
-package org.promocat.promocat.CarNumber;
+package org.promocat.promocat.car_number;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.promocat.promocat.Car.CarRecord;
+import org.promocat.promocat.car.CarRecord;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

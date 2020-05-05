@@ -1,4 +1,4 @@
-package org.promocat.promocat.User;
+package org.promocat.promocat.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,8 +1,8 @@
-package org.promocat.promocat.User;
+package org.promocat.promocat.user;
 
-import org.promocat.promocat.Car.CarRecord;
-import org.promocat.promocat.Car.CarRepository;
-import org.promocat.promocat.CarNumber.NumberRepository;
+import org.promocat.promocat.car.CarRecord;
+import org.promocat.promocat.car.CarRepository;
+import org.promocat.promocat.car_number.NumberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

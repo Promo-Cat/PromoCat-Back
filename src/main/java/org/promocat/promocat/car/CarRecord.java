@@ -1,10 +1,10 @@
-package org.promocat.promocat.Car;
+package org.promocat.promocat.car;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.promocat.promocat.CarNumber.NumberRecord;
-import org.promocat.promocat.User.UserRecord;
+import org.promocat.promocat.car_number.NumberRecord;
+import org.promocat.promocat.user.UserRecord;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

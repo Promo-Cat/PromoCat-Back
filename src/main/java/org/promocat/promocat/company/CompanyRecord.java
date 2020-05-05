@@ -1,4 +1,4 @@
-package org.promocat.promocat.Company;
+package org.promocat.promocat.company;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

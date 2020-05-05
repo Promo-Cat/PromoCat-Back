@@ -2,8 +2,8 @@ package org.promocat.promocat.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.promocat.promocat.Car.CarRecord;
-import org.promocat.promocat.User.UserRecord;
+import org.promocat.promocat.car.CarRecord;
+import org.promocat.promocat.user.UserRecord;
 import org.promocat.promocat.car.dto.CarDTO;
 import java.util.ArrayList;
 import java.util.List;

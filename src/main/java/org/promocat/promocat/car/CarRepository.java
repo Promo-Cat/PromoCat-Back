@@ -1,4 +1,4 @@
-package org.promocat.promocat.Car;
+package org.promocat.promocat.car;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

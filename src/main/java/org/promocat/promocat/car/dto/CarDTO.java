@@ -2,7 +2,7 @@ package org.promocat.promocat.car.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.promocat.promocat.Car.CarRecord;
+import org.promocat.promocat.car.CarRecord;
 import org.promocat.promocat.user.dto.UserDTO;
 import org.promocat.promocat.car_number.dto.NumberDTO;
 
