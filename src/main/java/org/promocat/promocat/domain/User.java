@@ -22,7 +22,7 @@ public class User {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long user_id;
+    private Long user_id;
 
     @NotBlank
     @Column
@@ -39,5 +39,5 @@ public class User {
 
     @NotNull
     @Column
-    private long balance;
+    private Long balance;
 }

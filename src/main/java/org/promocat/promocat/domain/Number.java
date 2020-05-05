@@ -21,7 +21,7 @@ public class Number {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long number_id;
+    private Long number_id;
 
     @NotBlank
     @Column

@@ -18,7 +18,7 @@ public class Car {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private long car_id;
+    private Long car_id;
 
     @NotBlank
     @Column
