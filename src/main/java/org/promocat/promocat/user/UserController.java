@@ -1,15 +1,21 @@
 package org.promocat.promocat.user;
 
+import org.promocat.promocat.car.CarController;
 import org.promocat.promocat.car.CarRecord;
 import org.promocat.promocat.car.CarRepository;
+import org.promocat.promocat.car.dto.CarDTO;
 import org.promocat.promocat.car_number.NumberRepository;
+import org.promocat.promocat.promo_code.PromoCodeController;
 import org.promocat.promocat.promo_code.PromoCodeRepository;
+import org.promocat.promocat.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -40,5 +46,21 @@ public class UserController {
         }
 
         return res;
+    }
+
+    public static UserRecord userDTOToRecord(final UserDTO userDTO) {
+        UserRecord userRecord = new UserRecord();
+        userRecord.setUser_id(userDTO.getUserId());
+        userRecord.setFirst_name(userDTO.getFirstName());
+        userRecord.setLast_name(userDTO.getLastName());
+        userRecord.setTelephone(userDTO.getTelephone());
+        userRecord.setBalance(userDTO.getBalance());
+        List<CarRecord> cars = new ArrayList<>();
+        for (CarDTO carDTO : userDTO.getCars()) {
+            cars.add(CarController.carDTOToRecord(userRecord, carDTO));
+        }
+        userRecord.setCars(cars);
+        userRecord.setPromo_code(PromoCodeController.PromoCodeDTOToRecord(userDTO.getPromoCodeDTO(), userRecord));
+        return userRecord;
     }
 }

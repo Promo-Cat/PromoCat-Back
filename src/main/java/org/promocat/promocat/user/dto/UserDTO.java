@@ -3,6 +3,7 @@ package org.promocat.promocat.user.dto;
 import lombok.Getter;
 import lombok.Setter;
 import org.promocat.promocat.car.CarRecord;
+import org.promocat.promocat.promo_code.dto.PromoCodeDTO;
 import org.promocat.promocat.user.UserRecord;
 import org.promocat.promocat.car.dto.CarDTO;
 import java.util.ArrayList;
@@ -16,17 +17,19 @@ public class UserDTO {
     private String lastName;
     private String telephone;
     private Long balance;
-    private List<CarDTO> car = new ArrayList<>();
+    private List<CarDTO> cars = new ArrayList<>();
+    private PromoCodeDTO promoCodeDTO;
 
     public UserDTO() {}
 
-    public UserDTO(Long userId, String firstName, String lastName, String telephone, Long balance, List<CarDTO> car) {
+    public UserDTO(Long userId, String firstName, String lastName, String telephone, Long balance, List<CarDTO> cars, PromoCodeDTO promoCodeDTO) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.telephone = telephone;
         this.balance = balance;
-        this.car = car;
+        this.cars = cars;
+        this.promoCodeDTO = promoCodeDTO;
     }
 
     public UserDTO(UserRecord userRecord) {
@@ -36,7 +39,8 @@ public class UserDTO {
         telephone = userRecord.getTelephone();
         balance = userRecord.getBalance();
         for (CarRecord carRecord : userRecord.getCars()) {
-            car.add(new CarDTO(carRecord));
+            cars.add(new CarDTO(carRecord));
         }
+        promoCodeDTO = new PromoCodeDTO(userRecord.getPromo_code());
     }
 }

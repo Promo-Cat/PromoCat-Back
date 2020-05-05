@@ -32,4 +32,10 @@ public class PromoCodeRecord {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private UserRecord user;
+
+    public PromoCodeRecord(Long id, String promo_code, UserRecord user) {
+        this.id = id;
+        this.promo_code = promo_code;
+        this.user = user;
+    }
 }
