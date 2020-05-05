@@ -1,4 +1,4 @@
-package org.promocat.promocat.domain;
+package org.promocat.promocat.Company;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @NoArgsConstructor(force = true)
 @Entity
-public class Company {
+public class CompanyRecord {
 
     @Id
     @Column(unique = true)

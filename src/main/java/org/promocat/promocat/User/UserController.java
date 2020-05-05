@@ -1,7 +1,8 @@
-package org.promocat.promocat;
+package org.promocat.promocat.User;
 
-import org.promocat.promocat.domain.Car;
-import org.promocat.promocat.domain.User;
+import org.promocat.promocat.Car.CarRecord;
+import org.promocat.promocat.Car.CarRepository;
+import org.promocat.promocat.CarNumber.NumberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,10 +26,10 @@ public class UserController {
     }
 
     @PostMapping(path = "/my", consumes = "application/json")
-    public User checkUser(@Valid @RequestBody User user) {
-        User res = userRepository.save(user);
+    public UserRecord checkUser(@Valid @RequestBody UserRecord user) {
+        UserRecord res = userRepository.save(user);
 
-        for (Car car : user.getCar()) {
+        for (CarRecord car : user.getCar()) {
             car.setUser(user);
             numberRepository.save(car.getNumber());
             carRepository.save(car);

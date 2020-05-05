@@ -1,7 +1,8 @@
-package org.promocat.promocat.domain;
+package org.promocat.promocat.User;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.Car.CarRecord;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +21,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor(force = true)
 @Entity
-public class User {
+public class UserRecord {
 
     @Id
     @Column(unique = true)
@@ -44,5 +45,5 @@ public class User {
     private Long balance;
 
     @OneToMany(mappedBy = "user")
-    private List<Car> car = new ArrayList<>();
+    private List<CarRecord> car = new ArrayList<>();
 }

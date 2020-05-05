@@ -1,8 +1,10 @@
-package org.promocat.promocat.domain;
+package org.promocat.promocat.Car;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.CarNumber.NumberRecord;
+import org.promocat.promocat.User.UserRecord;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +22,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Entity
 @NoArgsConstructor(force = true)
-public class Car {
+public class CarRecord {
 
     @Id
     @Column(unique = true)
@@ -39,8 +41,8 @@ public class Car {
     // TODO JsonManager/JsonBack
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserRecord user;
 
     @OneToOne(mappedBy = "car")
-    private Number number;
+    private NumberRecord number;
 }
