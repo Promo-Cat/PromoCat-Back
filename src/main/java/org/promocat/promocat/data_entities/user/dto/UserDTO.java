@@ -1,9 +1,6 @@
 package org.promocat.promocat.data_entities.user.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.promo_code.dto.PromoCodeDTO;
 import org.promocat.promocat.data_entities.user.UserRecord;

@@ -11,11 +11,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CarNumberController {
 
+    private static CarNumberRecord fillIdNumRegion(CarNumberDTO carNumberDTO) {
+        CarNumberRecord carNumberRecord = new CarNumberRecord();
+        carNumberRecord.setId(carNumberDTO.getId());
+        carNumberRecord.setNumber(carNumberDTO.getNumber());
+        carNumberRecord.setRegion(carNumberDTO.getRegion());
+        return carNumberRecord;
+    }
+
+
     public static CarNumberRecord carNumberDTOToRecord(CarNumberDTO carNumberDTO, CarRecord carRecord) {
-        return new CarNumberRecord(carNumberDTO.getId(), carNumberDTO.getNumber(), carNumberDTO.getRegion(), carRecord);
+        CarNumberRecord carNumberRecord = fillIdNumRegion(carNumberDTO);
+        carNumberRecord.setCar(carRecord);
+        return carNumberRecord;
     }
 
     public static CarNumberRecord carNumberDTOToRecord(CarNumberDTO carNumberDTO) {
-        return new CarNumberRecord(carNumberDTO.getId(), carNumberDTO.getNumber(), carNumberDTO.getRegion(), CarController.carDTOToRecord(carNumberDTO.getCar()));
+        CarNumberRecord carNumberRecord = fillIdNumRegion(carNumberDTO);
+        carNumberRecord.setCar(CarController.carDTOToRecord(carNumberDTO.getCar()));
+        return carNumberRecord;
     }
 }

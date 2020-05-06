@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.car;
 
 import org.promocat.promocat.data_entities.car.dto.CarDTO;
 import org.promocat.promocat.data_entities.car_number.CarNumberController;
+import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
 import org.promocat.promocat.data_entities.user.UserController;
 import org.promocat.promocat.data_entities.user.UserRecord;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,11 +18,12 @@ public class CarController {
         carRecord.setId(carDTO.getId());
         carRecord.setCar_make(carDTO.getCarMake());
         carRecord.setColor(carDTO.getColor());
-        carRecord.setNumber(CarNumberController.carNumberDTOToRecord(carDTO.getNumber(), carRecord));
+        CarNumberRecord carNumberRecord = CarNumberController.carNumberDTOToRecord(carDTO.getNumber(), carRecord);
+        carRecord.setNumber(carNumberRecord);
         return carRecord;
     }
 
-    public static CarRecord carDTOToRecord(UserRecord userRecord, CarDTO carDTO) {
+    public static CarRecord carDTOToRecord(CarDTO carDTO, UserRecord userRecord) {
         CarRecord carRecord = fillIdMakeColorNum(carDTO);
         carRecord.setUser(userRecord);
         return carRecord;

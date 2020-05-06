@@ -75,7 +75,7 @@ public class UserController {
         userRecord.setBalance(userDTO.getBalance());
         List<CarRecord> cars = new ArrayList<>();
         for (CarDTO carDTO : userDTO.getCars()) {
-            cars.add(CarController.carDTOToRecord(userRecord, carDTO));
+            cars.add(CarController.carDTOToRecord(carDTO, userRecord));
         }
         userRecord.setCars(cars);
         userRecord.setPromo_code(PromoCodeController.PromoCodeDTOToRecord(userDTO.getPromoCodeDTO(), userRecord));
