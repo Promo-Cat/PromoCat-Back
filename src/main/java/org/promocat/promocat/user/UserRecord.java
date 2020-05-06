@@ -33,9 +33,8 @@ import java.util.List;
 public class UserRecord {
 
     @Id
-    @Column(unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    private Long id;
 
     @NotBlank
     @Column

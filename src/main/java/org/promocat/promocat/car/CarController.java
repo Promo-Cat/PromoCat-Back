@@ -14,7 +14,7 @@ public class CarController {
 
     private static CarRecord fillIdMakeColorNum(CarDTO carDTO) {
         CarRecord carRecord = new CarRecord();
-        carRecord.setCar_id(carDTO.getCarId());
+        carRecord.setId(carDTO.getId());
         carRecord.setCar_make(carDTO.getCarMake());
         carRecord.setColor(carDTO.getColor());
         carRecord.setNumber(CarNumberController.carNumberDTOToRecord(carDTO.getNumber(), carRecord));

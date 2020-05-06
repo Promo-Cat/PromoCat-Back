@@ -17,6 +17,6 @@ public class StockRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long stock_id;
+    private Long id;
 
 }

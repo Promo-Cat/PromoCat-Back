@@ -30,9 +30,8 @@ import javax.validation.constraints.NotBlank;
 public class CarRecord {
 
     @Id
-    @Column(unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long car_id;
+    private Long id;
 
     @NotBlank
     @Column

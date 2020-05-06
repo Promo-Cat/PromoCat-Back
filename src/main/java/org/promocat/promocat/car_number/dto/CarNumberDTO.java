@@ -12,13 +12,13 @@ import org.promocat.promocat.car_number.CarNumberRecord;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class CarNumberDTO {
-    private Long numberId;
+    private Long id;
     private String number;
     private String region;
     private CarDTO car;
 
     public CarNumberDTO(CarNumberRecord carNumberRecord) {
-        numberId = carNumberRecord.getNumber_id();
+        id = carNumberRecord.getId();
         number = carNumberRecord.getNumber();
         region = carNumberRecord.getRegion();
         car = new CarDTO(carNumberRecord.getCar());

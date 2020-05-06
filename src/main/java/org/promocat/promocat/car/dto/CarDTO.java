@@ -13,14 +13,14 @@ import org.promocat.promocat.car_number.dto.CarNumberDTO;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class CarDTO {
-    private Long carId;
+    private Long id;
     private String carMake;
     private String color;
     private UserDTO user;
     private CarNumberDTO number;
 
     public CarDTO(CarRecord carRecord) {
-        carId = carRecord.getCar_id();
+        id = carRecord.getId();
         carMake = carRecord.getCar_make();
         color = carRecord.getColor();
         user = new UserDTO(carRecord.getUser());

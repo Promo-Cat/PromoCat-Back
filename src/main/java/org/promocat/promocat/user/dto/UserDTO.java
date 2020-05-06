@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class UserDTO {
-    private Long userId;
+    private Long id;
     private String firstName;
     private String lastName;
     private String telephone;
@@ -25,7 +25,7 @@ public class UserDTO {
     private PromoCodeDTO promoCodeDTO;
 
     public UserDTO(UserRecord userRecord) {
-        userId = userRecord.getUser_id();
+        id = userRecord.getId();
         firstName = userRecord.getFirst_name();
         lastName = userRecord.getLast_name();
         telephone = userRecord.getTelephone();

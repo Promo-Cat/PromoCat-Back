@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class CarNumberController {
 
     public static CarNumberRecord carNumberDTOToRecord(CarNumberDTO carNumberDTO, CarRecord carRecord) {
-        return new CarNumberRecord(carNumberDTO.getNumberId(), carNumberDTO.getNumber(), carNumberDTO.getRegion(), carRecord);
+        return new CarNumberRecord(carNumberDTO.getId(), carNumberDTO.getNumber(), carNumberDTO.getRegion(), carRecord);
     }
 
     public static CarNumberRecord carNumberDTOToRecord(CarNumberDTO carNumberDTO) {
-        return new CarNumberRecord(carNumberDTO.getNumberId(), carNumberDTO.getNumber(), carNumberDTO.getRegion(), CarController.carDTOToRecord(carNumberDTO.getCar()));
+        return new CarNumberRecord(carNumberDTO.getId(), carNumberDTO.getNumber(), carNumberDTO.getRegion(), CarController.carDTOToRecord(carNumberDTO.getCar()));
     }
 }
