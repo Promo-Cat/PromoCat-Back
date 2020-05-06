@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.promocat.promocat.car_number.CarNumberRecord;
 import org.promocat.promocat.user.UserRecord;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

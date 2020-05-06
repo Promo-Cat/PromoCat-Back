@@ -7,6 +7,7 @@ import org.promocat.promocat.car.CarRecord;
 
 import org.promocat.promocat.promo_code.PromoCodeRecord;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -53,7 +54,7 @@ public class UserRecord {
     @Column
     private Long balance;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CarRecord> cars = new ArrayList<>();
 
     @OneToOne(mappedBy = "user")

@@ -1,5 +1,6 @@
 package org.promocat.promocat.promo_code;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.user.UserRecord;
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Table(name = "promo_code")
 public class PromoCodeRecord {
@@ -32,10 +34,4 @@ public class PromoCodeRecord {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private UserRecord user;
-
-    public PromoCodeRecord(Long id, String promo_code, UserRecord user) {
-        this.id = id;
-        this.promo_code = promo_code;
-        this.user = user;
-    }
 }

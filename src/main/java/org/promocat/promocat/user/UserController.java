@@ -4,7 +4,7 @@ import org.promocat.promocat.car.CarController;
 import org.promocat.promocat.car.CarRecord;
 import org.promocat.promocat.car.CarRepository;
 import org.promocat.promocat.car.dto.CarDTO;
-import org.promocat.promocat.car_number.NumberRepository;
+import org.promocat.promocat.car_number.CarNumberRepository;
 import org.promocat.promocat.promo_code.PromoCodeController;
 import org.promocat.promocat.promo_code.PromoCodeRepository;
 import org.promocat.promocat.user.dto.UserDTO;
@@ -22,15 +22,15 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final CarRepository carRepository;
-    private final NumberRepository numberRepository;
+    private final CarNumberRepository carNumberRepository;
     private final PromoCodeRepository promoCodeRepository;
 
     @Autowired
     public UserController(final UserRepository userRepository, final CarRepository carRepository,
-                          final NumberRepository numberRepository, final PromoCodeRepository promoCodeRepository) {
+                          final CarNumberRepository carNumberRepository, final PromoCodeRepository promoCodeRepository) {
         this.userRepository = userRepository;
         this.carRepository = carRepository;
-        this.numberRepository = numberRepository;
+        this.carNumberRepository = carNumberRepository;
         this.promoCodeRepository = promoCodeRepository;
     }
 
@@ -40,7 +40,7 @@ public class UserController {
 
         for (CarRecord car : user.getCars()) {
             car.setUser(user);
-            numberRepository.save(car.getNumber());
+            carNumberRepository.save(car.getNumber());
             carRepository.save(car);
             car.getNumber().setCar(car);
         }
