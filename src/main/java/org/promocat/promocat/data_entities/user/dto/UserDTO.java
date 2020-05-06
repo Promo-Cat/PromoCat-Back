@@ -33,6 +33,6 @@ public class UserDTO {
         for (CarRecord carRecord : userRecord.getCars()) {
             cars.add(new CarDTO(carRecord, this));
         }
-        promoCodeDTO = new PromoCodeDTO(userRecord.getPromo_code());
+        promoCodeDTO = new PromoCodeDTO(userRecord.getPromo_code(), this);
     }
 }
