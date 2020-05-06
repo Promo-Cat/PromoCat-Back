@@ -1,7 +1,7 @@
 package org.promocat.promocat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.user.UserRecord;
@@ -34,9 +34,8 @@ class PromoCatApplicationTests {
 		userRecord.setLast_name("yo");
 		userRecord.setTelephone("+7(962)401-15-60");
 		userRecord.setBalance(1L);
-		Gson gson = new Gson();
-		String json = gson.toJson(userRecord);
-		this.mvc.perform(post("/my").contentType(MediaType.APPLICATION_JSON).content(json))
+		this.mvc.perform(post("/my").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(userRecord)))
 				.andDo(print())
 				.andExpect(status().isOk());
 	}
@@ -50,9 +49,8 @@ class PromoCatApplicationTests {
 		userRecord.setTelephone("+7(962)401--15-60");
 		userRecord.setBalance(1L);
 
-		Gson gson = new Gson();
-		String json = gson.toJson(userRecord);
-		this.mvc.perform(post("/my").contentType(MediaType.APPLICATION_JSON).content(json))
+		this.mvc.perform(post("/my").contentType(MediaType.APPLICATION_JSON)
+				.content(new ObjectMapper().writeValueAsString(userRecord)))
 				.andDo(print())
 				.andExpect(status().is4xxClientError());
 	}
