@@ -80,7 +80,9 @@ public class UserControllerTest {
         Assert.assertEquals(testUser.getLast_name(), userRecord.getLast_name());
         Assert.assertEquals(testUser.getTelephone(), userRecord.getTelephone());
         Assert.assertEquals(testUser.getBalance(), userRecord.getBalance());
-        Assert.assertEquals(testUser.getPromo_code(), userRecord.getPromo_code());
+        Assert.assertEquals(testUser.getPromo_code().getId(), userRecord.getPromo_code().getId());
+        Assert.assertEquals(testUser.getPromo_code().getPromo_code(), userRecord.getPromo_code().getPromo_code());
+        Assert.assertEquals(testUser.getPromo_code().getUser().getId(), userRecord.getPromo_code().getUser().getId());
         Assert.assertEquals(testUser.getToken(), userRecord.getToken());
         Assert.assertEquals(testUser.getCars().size(), userRecord.getCars().size());
         for (int i = 0; i < testUser.getCars().size(); i++) {
