@@ -3,10 +3,12 @@ package org.promocat.promocat.car_number;
 import org.promocat.promocat.car.CarController;
 import org.promocat.promocat.car.CarRecord;
 import org.promocat.promocat.car_number.dto.CarNumberDTO;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by Danil Lyskin at 20:59 05.05.2020
  */
+@RestController
 public class CarNumberController {
 
     public static CarNumberRecord carNumberDTOToRecord(CarNumberDTO carNumberDTO, CarRecord carRecord) {
