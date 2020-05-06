@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.promocat.promocat.car.CarRecord;
-import org.promocat.promocat.car.CarService;
-import org.promocat.promocat.user.UserRecord;
-import org.promocat.promocat.user.UserService;
+import org.promocat.promocat.data_entities.car.CarRecord;
+import org.promocat.promocat.data_entities.car.CarService;
+import org.promocat.promocat.data_entities.user.UserRecord;
+import org.promocat.promocat.data_entities.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
