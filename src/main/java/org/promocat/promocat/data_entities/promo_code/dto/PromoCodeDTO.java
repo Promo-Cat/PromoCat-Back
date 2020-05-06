@@ -20,9 +20,16 @@ public class PromoCodeDTO {
     private String promoCode;
     private UserDTO userDTO;
 
+    public PromoCodeDTO(PromoCodeRecord promoCodeRecord, UserDTO userDTO) {
+        id = promoCodeRecord.getId();
+        promoCode = promoCodeRecord.getPromo_code();
+        this.userDTO = userDTO;
+    }
+
     public PromoCodeDTO(PromoCodeRecord promoCodeRecord) {
         id = promoCodeRecord.getId();
         promoCode = promoCodeRecord.getPromo_code();
         userDTO = new UserDTO(promoCodeRecord.getUser());
     }
+
 }
