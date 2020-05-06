@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.car.CarRecord;
 
@@ -48,6 +49,9 @@ public class UserRecord {
     @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}")
     @Column(unique = true)
     private String telephone;
+
+    @Column(unique = true)
+    private String token;
 
     @NotNull
     @Column
