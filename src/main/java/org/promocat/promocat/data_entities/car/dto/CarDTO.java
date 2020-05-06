@@ -27,7 +27,7 @@ public class CarDTO {
 
     public CarDTO(CarRecord carRecord, UserDTO user) {
         fillIdMakeColor(carRecord);
-        number = new CarNumberDTO(carRecord.getNumber());
+        number = new CarNumberDTO(carRecord.getNumber(), this);
         this.user = user;
     }
 
