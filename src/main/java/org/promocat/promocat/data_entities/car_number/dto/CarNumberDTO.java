@@ -17,10 +17,19 @@ public class CarNumberDTO {
     private String region;
     private CarDTO car;
 
-    public CarNumberDTO(CarNumberRecord carNumberRecord) {
+    public void fillIdNumberRegion(CarNumberRecord carNumberRecord) {
         id = carNumberRecord.getId();
         number = carNumberRecord.getNumber();
         region = carNumberRecord.getRegion();
+    }
+
+    public CarNumberDTO(CarNumberRecord carNumberRecord, CarDTO car) {
+        fillIdNumberRegion(carNumberRecord);
+        this.car = car;
+    }
+
+    public CarNumberDTO(CarNumberRecord carNumberRecord) {
+        fillIdNumberRegion(carNumberRecord);
         car = new CarDTO(carNumberRecord.getCar());
     }
 }

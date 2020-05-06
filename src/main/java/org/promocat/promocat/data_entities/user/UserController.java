@@ -42,12 +42,11 @@ public class UserController {
     @PostMapping(path = "/my", consumes = "application/json")
     public UserRecord checkUser(@Valid @RequestBody UserRecord user) {
         UserRecord res = userRepository.save(user);
-
-        for (CarRecord car : user.getCars()) {
-            car.setUser(user);
+        for (CarRecord car : res.getCars()) {
+            car.setUser(res);
             carNumberRepository.save(car.getNumber());
-            carRepository.save(car);
             car.getNumber().setCar(car);
+            carRepository.save(car);
         }
 
         return res;

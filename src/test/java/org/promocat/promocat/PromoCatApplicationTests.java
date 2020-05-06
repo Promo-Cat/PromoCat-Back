@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car.CarService;
+import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
+import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
 import org.promocat.promocat.data_entities.user.UserRecord;
 import org.promocat.promocat.data_entities.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,17 @@ class PromoCatApplicationTests {
 		car.setCar_make("Jigul");
 		cars.add(car);
 
+		CarNumberRecord number = new CarNumberRecord();
 		userRecord.setCars(cars);
+		number.setId(1L);
+		number.setNumber("12");
+		number.setRegion("12");
+		car.setNumber(number);
+
+		PromoCodeRecord promoCodeRecord = new PromoCodeRecord();
+		promoCodeRecord.setId(1L);
+		promoCodeRecord.setPromo_code("12");
+		userRecord.setPromo_code(promoCodeRecord);
 		userService.save(userRecord);
 
 		this.mvc.perform(post("/my").contentType(MediaType.APPLICATION_JSON)

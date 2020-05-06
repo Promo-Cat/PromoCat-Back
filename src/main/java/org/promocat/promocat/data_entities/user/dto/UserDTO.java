@@ -31,8 +31,8 @@ public class UserDTO {
         telephone = userRecord.getTelephone();
         balance = userRecord.getBalance();
         for (CarRecord carRecord : userRecord.getCars()) {
-            cars.add(new CarDTO(carRecord));
+            cars.add(new CarDTO(carRecord, this));
         }
-        promoCodeDTO = new PromoCodeDTO(userRecord.getPromo_code());
+        promoCodeDTO = new PromoCodeDTO(userRecord.getPromo_code(), this);
     }
 }
