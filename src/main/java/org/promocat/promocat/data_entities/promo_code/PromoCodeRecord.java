@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.promo_code;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.user.UserRecord;
 
@@ -20,6 +21,7 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
+@EqualsAndHashCode(exclude = {"user"})
 @Table(name = "promo_code")
 public class PromoCodeRecord {
 

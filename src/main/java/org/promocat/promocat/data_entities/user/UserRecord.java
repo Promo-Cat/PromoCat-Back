@@ -31,7 +31,7 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Entity
-@EqualsAndHashCode(exclude = {"cars"})
+@EqualsAndHashCode(exclude = {"cars", "promo_code"})
 @Table(name = "user")
 public class UserRecord {
 
