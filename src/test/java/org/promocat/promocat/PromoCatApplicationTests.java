@@ -60,6 +60,7 @@ class PromoCatApplicationTests {
 		number.setId(1L);
 		number.setNumber("12");
 		number.setRegion("12");
+		car.setNumber(number);
 		userService.save(userRecord);
 
 		this.mvc.perform(post("/my").contentType(MediaType.APPLICATION_JSON)
