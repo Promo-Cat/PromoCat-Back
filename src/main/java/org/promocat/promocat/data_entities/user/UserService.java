@@ -27,8 +27,11 @@ public class UserService {
 
         for (CarRecord car : res.getCars()) {
             car.setUser(res);
+            carNumberRepository.save(car.getNumber());
+            car.getNumber().setCar(car);
             carRepository.save(car);
         }
+
         return new UserDTO(res);
     }
 }
