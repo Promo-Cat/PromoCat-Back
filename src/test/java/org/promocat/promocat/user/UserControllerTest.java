@@ -59,6 +59,7 @@ public class UserControllerTest {
         car.setId(1L);
         car.setColor("blue");
         car.setCar_make("Jigul");
+        car.setUser(userRecord);
         cars.add(car);
 
         CarNumberRecord number = new CarNumberRecord();
@@ -66,11 +67,13 @@ public class UserControllerTest {
         number.setId(1L);
         number.setNumber("12");
         number.setRegion("12");
+        number.setCar(car);
         car.setNumber(number);
 
         PromoCodeRecord promoCodeRecord = new PromoCodeRecord();
         promoCodeRecord.setId(1L);
         promoCodeRecord.setPromo_code("12");
+        promoCodeRecord.setUser(userRecord);
         userRecord.setPromo_code(promoCodeRecord);
         userService.save(userRecord);
     }
