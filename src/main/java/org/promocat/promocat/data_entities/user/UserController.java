@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -37,12 +38,12 @@ public class UserController {
     @PostMapping(path = "/my", consumes = "application/json")
     public UserRecord checkUser(@Valid @RequestBody UserRecord user) {
         UserRecord res = userRepository.save(user);
-
-        for (CarRecord car : user.getCars()) {
-            car.setUser(user);
+        System.out.println("eblo");
+        for (CarRecord car : res.getCars()) {
+            car.setUser(res);
             carNumberRepository.save(car.getNumber());
-            carRepository.save(car);
             car.getNumber().setCar(car);
+            carRepository.save(car);
         }
 
         return res;

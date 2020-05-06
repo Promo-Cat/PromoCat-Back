@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.car.CarRecord;
 
@@ -10,6 +11,7 @@ import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,6 +31,7 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Entity
+@EqualsAndHashCode(exclude = {"cars"})
 @Table(name = "user")
 public class UserRecord {
 
@@ -53,9 +56,9 @@ public class UserRecord {
     @Column
     private Long balance;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CarRecord> cars = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private PromoCodeRecord promo_code;
 }
