@@ -11,6 +11,7 @@ import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
 import org.promocat.promocat.data_entities.user.UserController;
 import org.promocat.promocat.data_entities.user.UserRecord;
+import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -42,6 +43,9 @@ public class UserControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private UserService userService;
+
     @Before
     public void init() {
         userRecord.setId(1L);
@@ -68,6 +72,7 @@ public class UserControllerTest {
         promoCodeRecord.setId(1L);
         promoCodeRecord.setPromo_code("12");
         userRecord.setPromo_code(promoCodeRecord);
+        userService.save(userRecord);
     }
 
     @Test
