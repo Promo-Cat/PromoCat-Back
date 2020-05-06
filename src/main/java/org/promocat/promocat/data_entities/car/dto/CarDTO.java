@@ -19,11 +19,21 @@ public class CarDTO {
     private UserDTO user;
     private CarNumberDTO number;
 
-    public CarDTO(CarRecord carRecord) {
+    private void fillIdMakeColor(CarRecord carRecord) {
         id = carRecord.getId();
         carMake = carRecord.getCar_make();
         color = carRecord.getColor();
-        user = new UserDTO(carRecord.getUser());
+    }
+
+    public CarDTO(CarRecord carRecord, UserDTO user) {
+        fillIdMakeColor(carRecord);
         number = new CarNumberDTO(carRecord.getNumber());
+        this.user = user;
+    }
+
+    public CarDTO(CarRecord carRecord) {
+        fillIdMakeColor(carRecord);
+        user = new UserDTO(carRecord.getUser());
+        number = new CarNumberDTO(carRecord.getNumber(), this);
     }
 }
