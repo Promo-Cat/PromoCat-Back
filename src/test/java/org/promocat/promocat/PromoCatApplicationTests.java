@@ -36,7 +36,6 @@ class PromoCatApplicationTests {
 
 		Gson gson = new Gson();
 		String json = gson.toJson(userRecord);
-		System.out.println(json);
 		this.mvc.perform(post("/my").contentType(MediaType.APPLICATION_JSON).content(json))
 				.andDo(print())
 				.andExpect(status().isOk());
@@ -53,7 +52,6 @@ class PromoCatApplicationTests {
 
 		Gson gson = new Gson();
 		String json = gson.toJson(userRecord);
-		System.out.println(json);
 		this.mvc.perform(post("/my").contentType(MediaType.APPLICATION_JSON).content(json))
 				.andDo(print())
 				.andExpect(status().is4xxClientError());
