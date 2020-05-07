@@ -1,5 +1,6 @@
 package org.promocat.promocat.promo_code;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class PromoCodeControllerTest {
     }
 
     @Test
-    public void testDTOToRecord() {
+    public void testDTOToRecord() throws JsonProcessingException {
         PromoCodeDTO promoCodeDTO = new PromoCodeDTO(promoCodeRecord);
         PromoCodeRecord testPromoCode = PromoCodeController.promoCodeDTOToRecord(promoCodeDTO);
         Assert.assertNotNull(testPromoCode);

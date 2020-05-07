@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.car_number.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class CarNumberDTO {
         this.car = car;
     }
 
-    public CarNumberDTO(CarNumberRecord carNumberRecord) {
+    public CarNumberDTO(CarNumberRecord carNumberRecord) throws JsonProcessingException {
         fillIdNumberRegion(carNumberRecord);
         car = new CarDTO(carNumberRecord.getCar());
     }

@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.promo_code.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,12 +22,18 @@ public class PromoCodeDTO {
     private UserDTO userDTO;
 
     public PromoCodeDTO(PromoCodeRecord promoCodeRecord, UserDTO userDTO) {
+        if (promoCodeRecord == null) {
+            return;
+        }
         id = promoCodeRecord.getId();
         promoCode = promoCodeRecord.getPromo_code();
         this.userDTO = userDTO;
     }
 
-    public PromoCodeDTO(PromoCodeRecord promoCodeRecord) {
+    public PromoCodeDTO(PromoCodeRecord promoCodeRecord) throws JsonProcessingException {
+        if (promoCodeRecord == null) {
+            return;
+        }
         id = promoCodeRecord.getId();
         promoCode = promoCodeRecord.getPromo_code();
         userDTO = new UserDTO(promoCodeRecord.getUser());

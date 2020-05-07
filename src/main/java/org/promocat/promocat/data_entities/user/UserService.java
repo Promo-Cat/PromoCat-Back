@@ -1,6 +1,7 @@
 package org.promocat.promocat.data_entities.user;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car.CarRepository;
 import org.promocat.promocat.data_entities.car_number.CarNumberRepository;
@@ -28,7 +29,7 @@ public class UserService {
         this.carRepository = carRepository;
     }
 
-    public UserDTO save(UserRecord user) {
+    public UserDTO save(UserRecord user) throws JsonProcessingException {
         UserRecord res = userRepository.save(user);
 
         for (CarRecord car : res.getCars()) {
@@ -37,7 +38,6 @@ public class UserService {
             car.getNumber().setCar(car);
             carRepository.save(car);
         }
-
         return new UserDTO(res);
     }
 

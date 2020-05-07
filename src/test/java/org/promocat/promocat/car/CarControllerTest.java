@@ -1,5 +1,6 @@
 package org.promocat.promocat.car;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +11,6 @@ import org.promocat.promocat.data_entities.car.dto.CarDTO;
 import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
 import org.promocat.promocat.data_entities.user.UserRecord;
-import org.promocat.promocat.user.UserControllerTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -42,7 +42,7 @@ public class CarControllerTest {
     }
 
     @Test
-    public void testDTOToRecord() {
+    public void testDTOToRecord() throws JsonProcessingException {
         CarDTO carDTO = new CarDTO(carRecord);
         CarRecord testCar = CarController.carDTOToRecord(carDTO);
         Assert.assertNotNull(testCar);

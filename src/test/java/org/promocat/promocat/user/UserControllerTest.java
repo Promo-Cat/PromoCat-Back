@@ -1,5 +1,6 @@
 package org.promocat.promocat.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class UserControllerTest {
     private UserService userService;
 
     @Before
-    public void init() {
+    public void init() throws JsonProcessingException {
         userRecord.setId(1L);
         userRecord.setFirst_name("my");
         userRecord.setLast_name("yo");
@@ -72,7 +73,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDTOToRecord() {
+    public void testDTOToRecord() throws JsonProcessingException {
         UserDTO userDTO = new UserDTO(userRecord);
         UserRecord testUser = UserController.userDTOToRecord(userDTO);
         Assert.assertNotNull(testUser);

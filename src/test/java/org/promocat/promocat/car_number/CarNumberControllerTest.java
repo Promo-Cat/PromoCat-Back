@@ -1,6 +1,6 @@
 package org.promocat.promocat.car_number;
 
-import ch.qos.logback.core.net.AbstractSSLSocketAppender;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class CarNumberControllerTest {
     }
 
     @Test
-    public void testDTOToRecord() {
+    public void testDTOToRecord() throws JsonProcessingException {
         CarNumberDTO carNumberDTO = new CarNumberDTO(carNumberRecord);
         CarNumberRecord testCarNumber = CarNumberController.carNumberDTOToRecord(carNumberDTO);
         Assert.assertNotNull(testCarNumber);
