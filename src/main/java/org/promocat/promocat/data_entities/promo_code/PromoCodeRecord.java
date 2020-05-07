@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.user.UserRecord;
 
@@ -23,10 +24,8 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
+@EqualsAndHashCode
 @Table(name = "promo_code")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 public class PromoCodeRecord {
 
     /**
@@ -49,4 +48,17 @@ public class PromoCodeRecord {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private UserRecord user;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof PromoCodeRecord)) {
+            return false;
+        }
+        PromoCodeRecord promoCodeRecord = (PromoCodeRecord) o;
+        return promoCodeRecord.getId().equals(id) && promoCodeRecord.getPromo_code().equals(promo_code)
+                && promoCodeRecord.getUser().getId().equals(user.getId());
+    }
 }

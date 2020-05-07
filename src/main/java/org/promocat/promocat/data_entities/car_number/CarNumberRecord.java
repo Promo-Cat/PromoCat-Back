@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.car.CarRecord;
 
@@ -27,10 +28,8 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@EqualsAndHashCode
 @Table(name = "car_number")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 public class CarNumberRecord {
 
     /**
@@ -62,4 +61,17 @@ public class CarNumberRecord {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "car_id")
     private CarRecord car;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof CarNumberRecord)) {
+            return false;
+        }
+        CarNumberRecord carNumberRecord = (CarNumberRecord) o;
+        return carNumberRecord.getId().equals(id) && carNumberRecord.getRegion().equals(region)
+                && carNumberRecord.getNumber().equals(number) && carNumberRecord.getCar().getId().equals(car.getId());
+    }
 }

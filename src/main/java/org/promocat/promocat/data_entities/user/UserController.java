@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.data_entities.car.CarController;
