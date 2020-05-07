@@ -1,6 +1,8 @@
 package org.promocat.promocat.data_entities.car;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +30,9 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Table(name = "car")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class CarRecord {
 
     /**
@@ -65,17 +70,4 @@ public class CarRecord {
      */
     @OneToOne(mappedBy = "car", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private CarNumberRecord number;
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        }
-        if (!(o instanceof CarRecord)) {
-            return false;
-        }
-        CarRecord carRecord = (CarRecord) o;
-        return carRecord.getId().equals(id) && carRecord.getCar_make().equals(car_make) && carRecord.getColor().equals(color)
-               && carRecord.getUser().getId().equals(user.getId()) && carRecord.getNumber().equals(number);
-    }
 }

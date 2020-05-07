@@ -1,5 +1,7 @@
 package org.promocat.promocat.data_entities.user;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +32,9 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class UserRecord {
 
     /**
@@ -85,19 +90,4 @@ public class UserRecord {
      */
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private PromoCodeRecord promo_code;
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        }
-        if (!(o instanceof UserRecord)) {
-            return false;
-        }
-        UserRecord userRecord = (UserRecord) o;
-        return userRecord.getId().equals(id) && userRecord.getFirst_name().equals(first_name)
-                && userRecord.getLast_name().equals(last_name) && userRecord.getTelephone().equals(telephone)
-                && userRecord.getBalance().equals(balance) && userRecord.getPromo_code().equals(promo_code) && userRecord.getCars().equals(cars);
-
-    }
 }
