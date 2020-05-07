@@ -83,27 +83,6 @@ public class UserControllerTest {
         UserDTO userDTO = new UserDTO(userRecord);
         UserRecord testUser = UserController.userDTOToRecord(userDTO);
         Assert.assertNotNull(testUser);
-        Assert.assertEquals(testUser.getId(), userRecord.getId());
-        Assert.assertEquals(testUser.getFirst_name(), userRecord.getFirst_name());
-        Assert.assertEquals(testUser.getLast_name(), userRecord.getLast_name());
-        Assert.assertEquals(testUser.getTelephone(), userRecord.getTelephone());
-        Assert.assertEquals(testUser.getBalance(), userRecord.getBalance());
-        Assert.assertEquals(testUser.getPromo_code().getId(), userRecord.getPromo_code().getId());
-        Assert.assertEquals(testUser.getPromo_code().getPromo_code(), userRecord.getPromo_code().getPromo_code());
-        Assert.assertEquals(testUser.getPromo_code().getUser().getId(), userRecord.getPromo_code().getUser().getId());
-        Assert.assertEquals(testUser.getToken(), userRecord.getToken());
-        Assert.assertEquals(testUser.getCars().size(), userRecord.getCars().size());
-        for (int i = 0; i < testUser.getCars().size(); i++) {
-            CarRecord car1 = testUser.getCars().get(i);
-            CarRecord car2 = userRecord.getCars().get(i);
-            Assert.assertEquals(car1.getId(), car2.getId());
-            Assert.assertEquals(car1.getColor(), car2.getColor());
-            Assert.assertEquals(car1.getCar_make(), car2.getCar_make());
-            Assert.assertEquals(car1.getUser().getId(), car2.getUser().getId());
-            Assert.assertEquals(car1.getNumber().getId(), car2.getNumber().getId());
-            Assert.assertEquals(car1.getNumber().getNumber(), car2.getNumber().getNumber());
-            Assert.assertEquals(car1.getNumber().getRegion(), car2.getNumber().getRegion());
-            Assert.assertEquals(car1.getNumber().getCar().getId(), car2.getNumber().getCar().getId());
-        }
+        Assert.assertEquals(testUser, userRecord);
     }
 }

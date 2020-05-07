@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.car.CarRecord;
 
+import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
 
 import javax.persistence.CascadeType;
@@ -31,7 +32,6 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Entity
-@EqualsAndHashCode(exclude = {"cars", "promo_code"})
 @Table(name = "user")
 public class UserRecord {
 
@@ -64,4 +64,19 @@ public class UserRecord {
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private PromoCodeRecord promo_code;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof UserRecord)) {
+            return false;
+        }
+        UserRecord userRecord = (UserRecord) o;
+        return userRecord.getId().equals(id) && userRecord.getFirst_name().equals(first_name)
+               && userRecord.getLast_name().equals(last_name) && userRecord.getTelephone().equals(telephone)
+               && userRecord.getBalance().equals(balance) && userRecord.getPromo_code().equals(promo_code) && userRecord.getCars().equals(cars);
+
+    }
 }

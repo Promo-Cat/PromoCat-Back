@@ -17,6 +17,7 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String telephone;
+    private String token;
     private Long balance;
     private List<CarDTO> cars = new ArrayList<>();
     private PromoCodeDTO promoCodeDTO;
@@ -26,6 +27,7 @@ public class UserDTO {
         firstName = userRecord.getFirst_name();
         lastName = userRecord.getLast_name();
         telephone = userRecord.getTelephone();
+        token = userRecord.getToken();
         balance = userRecord.getBalance();
         for (CarRecord carRecord : userRecord.getCars()) {
             cars.add(new CarDTO(carRecord, this));
