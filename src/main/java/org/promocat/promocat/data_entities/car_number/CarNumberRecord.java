@@ -1,14 +1,10 @@
 package org.promocat.promocat.data_entities.car_number;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.car.CarRecord;
-
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

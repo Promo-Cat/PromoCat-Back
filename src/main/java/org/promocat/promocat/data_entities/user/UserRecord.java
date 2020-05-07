@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.car.CarRecord;
-
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
 
 import javax.persistence.CascadeType;
