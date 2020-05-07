@@ -18,8 +18,11 @@ import java.util.Optional;
 @Component
 public class SecurityProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
+
+    public SecurityProvider(final UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {

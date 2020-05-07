@@ -1,6 +1,5 @@
 package org.promocat.promocat.data_entities.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.data_entities.car.CarController;
@@ -48,7 +47,7 @@ public class UserController {
                     message = "Bad Request",
                     response = ApiValidationException.class)})
     @PostMapping(path = "/addUser", consumes = "application/json")
-    public UserDTO checkUser(@Valid @RequestBody UserRecord user) throws JsonProcessingException {
+    public UserDTO checkUser(@Valid @RequestBody UserRecord user) {
         return userService.save(user);
     }
 
