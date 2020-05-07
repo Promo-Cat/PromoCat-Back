@@ -43,7 +43,7 @@ public class CarNumberControllerTest {
     }
 
     @Test
-    public void testDTOToRecord() throws JsonProcessingException {
+    public void testDTOToRecord() {
         CarNumberDTO carNumberDTO = new CarNumberDTO(carNumberRecord);
         CarNumberRecord testCarNumber = CarNumberController.carNumberDTOToRecord(carNumberDTO);
         Assert.assertNotNull(testCarNumber);

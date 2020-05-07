@@ -41,7 +41,7 @@ public class UserControllerTest {
     private UserService userService;
 
     @Before
-    public void init() throws JsonProcessingException {
+    public void init() {
         userRecord.setId(1L);
         userRecord.setFirst_name("my");
         userRecord.setLast_name("yo");
