@@ -31,13 +31,13 @@ public class CarDTO {
         color = carRecord.getColor();
     }
 
-    public CarDTO(CarRecord carRecord, UserDTO user) throws JsonProcessingException {
+    public CarDTO(CarRecord carRecord, UserDTO user) {
         fillIdMakeColor(carRecord);
         number = new CarNumberDTO(carRecord.getNumber(), this);
         this.user = user;
     }
 
-    public CarDTO(CarRecord carRecord) throws JsonProcessingException {
+    public CarDTO(CarRecord carRecord) {
         fillIdMakeColor(carRecord);
         user = new UserDTO(carRecord.getUser());
         number = new CarNumberDTO(carRecord.getNumber(), this);

@@ -28,7 +28,7 @@ public class UserDTO {
     private List<CarDTO> cars = new ArrayList<>();
     private PromoCodeDTO promoCodeDTO;
 
-    public UserDTO(UserRecord userRecord) throws JsonProcessingException {
+    public UserDTO(UserRecord userRecord) {
         id = userRecord.getId();
         firstName = userRecord.getFirst_name();
         lastName = userRecord.getLast_name();

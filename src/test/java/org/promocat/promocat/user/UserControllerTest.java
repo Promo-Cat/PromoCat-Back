@@ -73,7 +73,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDTOToRecord() throws JsonProcessingException {
+    public void testDTOToRecord() {
         UserDTO userDTO = new UserDTO(userRecord);
         UserRecord testUser = UserController.userDTOToRecord(userDTO);
         Assert.assertNotNull(testUser);
