@@ -4,11 +4,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.data_entities.car.CarController;
 import org.promocat.promocat.data_entities.car.CarRecord;
-import org.promocat.promocat.data_entities.car.CarRepository;
 import org.promocat.promocat.data_entities.car.dto.CarDTO;
-import org.promocat.promocat.data_entities.car_number.CarNumberRepository;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeController;
-import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,19 +23,11 @@ import java.util.List;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final CarRepository carRepository;
-    private final CarNumberRepository carNumberRepository;
-    private final PromoCodeRepository promoCodeRepository;
     private final UserService userService;
 
     @Autowired
-    public UserController(final UserRepository userRepository, final CarRepository carRepository,
-                          final CarNumberRepository carNumberRepository, final PromoCodeRepository promoCodeRepository,
-                          final UserService userService) {
+    public UserController(final UserRepository userRepository, final UserService userService) {
         this.userRepository = userRepository;
-        this.carRepository = carRepository;
-        this.carNumberRepository = carNumberRepository;
-        this.promoCodeRepository = promoCodeRepository;
         this.userService = userService;
     }
 
@@ -47,7 +36,7 @@ public class UserController {
                     message = "Bad Request",
                     response = ApiValidationException.class)})
     @PostMapping(path = "/addUser", consumes = "application/json")
-    public UserDTO checkUser(@Valid @RequestBody UserRecord user) {
+    public UserDTO addUser(@Valid @RequestBody UserRecord user) {
         return userService.save(user);
     }
 
