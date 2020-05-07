@@ -1,5 +1,8 @@
 package org.promocat.promocat.data_entities.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.*;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.promo_code.dto.PromoCodeDTO;
@@ -12,6 +15,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class UserDTO {
     private Long id;
     private String firstName;
@@ -22,7 +28,7 @@ public class UserDTO {
     private List<CarDTO> cars = new ArrayList<>();
     private PromoCodeDTO promoCodeDTO;
 
-    public UserDTO(UserRecord userRecord) {
+    public UserDTO(UserRecord userRecord) throws JsonProcessingException {
         id = userRecord.getId();
         firstName = userRecord.getFirst_name();
         lastName = userRecord.getLast_name();

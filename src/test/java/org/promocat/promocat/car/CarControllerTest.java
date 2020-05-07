@@ -1,5 +1,6 @@
 package org.promocat.promocat.car;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class CarControllerTest {
     }
 
     @Test
-    public void testDTOToRecord() {
+    public void testDTOToRecord() throws JsonProcessingException {
         CarDTO carDTO = new CarDTO(carRecord);
         CarRecord testCar = CarController.carDTOToRecord(carDTO);
         Assert.assertNotNull(testCar);
