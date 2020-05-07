@@ -26,7 +26,7 @@ public class PromoCodeDTO {
     private String promoCode;
     private UserDTO userDTO;
 
-    public PromoCodeDTO(PromoCodeRecord promoCodeRecord, UserDTO userDTO) throws JsonProcessingException {
+    public PromoCodeDTO(PromoCodeRecord promoCodeRecord, UserDTO userDTO) {
         if (promoCodeRecord == null) {
             return;
         }
@@ -35,7 +35,7 @@ public class PromoCodeDTO {
         this.userDTO = userDTO;
     }
 
-    public PromoCodeDTO(PromoCodeRecord promoCodeRecord) throws JsonProcessingException {
+    public PromoCodeDTO(PromoCodeRecord promoCodeRecord) {
         if (promoCodeRecord == null) {
             return;
         }

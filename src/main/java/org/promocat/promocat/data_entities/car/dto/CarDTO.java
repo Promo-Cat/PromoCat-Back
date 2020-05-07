@@ -2,14 +2,13 @@ package org.promocat.promocat.data_entities.car.dto;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.car.CarRecord;
-import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.promocat.promocat.data_entities.car_number.dto.CarNumberDTO;
+import org.promocat.promocat.data_entities.user.dto.UserDTO;
 
 @Getter
 @Setter
@@ -31,13 +30,13 @@ public class CarDTO {
         color = carRecord.getColor();
     }
 
-    public CarDTO(CarRecord carRecord, UserDTO user) throws JsonProcessingException {
+    public CarDTO(CarRecord carRecord, UserDTO user) {
         fillIdMakeColor(carRecord);
         number = new CarNumberDTO(carRecord.getNumber(), this);
         this.user = user;
     }
 
-    public CarDTO(CarRecord carRecord) throws JsonProcessingException {
+    public CarDTO(CarRecord carRecord) {
         fillIdMakeColor(carRecord);
         user = new UserDTO(carRecord.getUser());
         number = new CarNumberDTO(carRecord.getNumber(), this);
