@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(final WebSecurity webSecurity) {
-        webSecurity.ignoring().antMatchers("/token/**", "/swagger-ui.html#/**");
+        webSecurity.ignoring().antMatchers("/token/**", "/swagger-ui.html#/**", "/h2-console/**");
     }
 
     @Override
