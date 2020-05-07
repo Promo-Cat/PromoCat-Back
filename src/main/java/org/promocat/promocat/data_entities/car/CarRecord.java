@@ -34,24 +34,39 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "car")
 public class CarRecord {
 
+    /**
+     * id автомобиля.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Марка автомобиля.
+     */
     @NotBlank
     @Column
     private String car_make;
 
+    /**
+     * Цвет автомобиля.
+     */
     @NotBlank
     @Column
     private String color;
 
+    /**
+     * Пользователь, у которого данный автомобиль.
+     */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO JsonManager/JsonBack
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "user_id")
     private UserRecord user;
 
+    /**
+     * Номерной знак автомобиля.
+     */
     @OneToOne(mappedBy = "car", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private CarNumberRecord number;
 

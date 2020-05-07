@@ -16,14 +16,23 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "promo_code")
 public class PromoCodeRecord {
 
+    /**
+     * id промокода.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Промокод.
+     */
     @NotBlank
     @Column
     private String promo_code;
 
+    /**
+     * Пользователь, у которого активен данный промокод.
+     */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private UserRecord user;

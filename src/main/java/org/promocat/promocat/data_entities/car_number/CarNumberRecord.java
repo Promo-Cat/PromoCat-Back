@@ -32,18 +32,30 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "car_number")
 public class CarNumberRecord {
 
+    /**
+     * id номера автомобиля.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Номер автомобиля.
+     */
     @NotBlank
     @Column
     private String number;
 
+    /**
+     * Регион номера.
+     */
     @NotBlank
     @Column
     private String region;
 
+    /**
+     * Автомобиль, у которого данный номер.
+     */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO JsonManager/JsonBack
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
