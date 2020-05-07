@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.data_entities.car.CarController;
@@ -65,18 +66,12 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 400,
                     message = "Bad Request",
-<<<<<<< HEAD
-                    response = ApiValidationException.class)})
-    @PostMapping(path = "/addUser", consumes = "application/json")
-    public UserDTO checkUser(@Valid @RequestBody UserRecord user) {
-=======
                     response = ApiValidationException.class),
             @ApiResponse(code = 415,
                     message = "Not acceptable media type",
                     response = ApiException.class)})
     @PostMapping(path = "/addUser", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO addUser(@Valid @RequestBody UserRecord user) {
->>>>>>> 2388a974b9bc3226fcccf24a4a784eb69bf1ed3f
+    public UserDTO addUser(@Valid @RequestBody UserRecord user) throws JsonProcessingException {
         return userService.save(user);
     }
 
