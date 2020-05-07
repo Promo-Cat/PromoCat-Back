@@ -46,17 +46,9 @@ public class UserController {
             @ApiResponse(code = 400,
                     message = "Bad Request",
                     response = ApiValidationException.class)})
-    @PostMapping(path = "/my", consumes = "application/json")
-    public UserRecord checkUser(@Valid @RequestBody UserRecord user) {
-        UserRecord res = userRepository.save(user);
-        for (CarRecord car : res.getCars()) {
-            car.setUser(res);
-            carNumberRepository.save(car.getNumber());
-            car.getNumber().setCar(car);
-            carRepository.save(car);
-        }
-
-        return res;
+    @PostMapping(path = "/addUser", consumes = "application/json")
+    public UserDTO checkUser(@Valid @RequestBody UserRecord user) {
+        return userService.save(user);
     }
 
     @GetMapping(path = "/api/user/getById", consumes = "application/json")
