@@ -17,7 +17,7 @@ public class PromoCodeService {
         this.promoCodeRepository = promoCodeRepository;
     }
 
-    public PromoCodeDTO save(final PromoCodeRecord promoCodeRecord) throws JsonProcessingException {
+    public PromoCodeDTO save(final PromoCodeRecord promoCodeRecord) {
         return new PromoCodeDTO(promoCodeRepository.save(promoCodeRecord));
     }
 }

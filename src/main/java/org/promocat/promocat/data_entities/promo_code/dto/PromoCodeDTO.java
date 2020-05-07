@@ -30,7 +30,7 @@ public class PromoCodeDTO {
         this.userDTO = userDTO;
     }
 
-    public PromoCodeDTO(PromoCodeRecord promoCodeRecord) throws JsonProcessingException {
+    public PromoCodeDTO(PromoCodeRecord promoCodeRecord) {
         if (promoCodeRecord == null) {
             return;
         }
