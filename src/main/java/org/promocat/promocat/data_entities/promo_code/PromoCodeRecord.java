@@ -1,7 +1,5 @@
 package org.promocat.promocat.data_entities.promo_code;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,7 +22,6 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode
 @Table(name = "promo_code")
 public class PromoCodeRecord {
 

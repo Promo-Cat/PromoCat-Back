@@ -1,6 +1,5 @@
 package org.promocat.promocat.promo_code;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,8 +1,6 @@
 package org.promocat.promocat.data_entities.car;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +27,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Entity
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode
 @AllArgsConstructor
 @Table(name = "car")
 public class CarRecord {

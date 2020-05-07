@@ -1,7 +1,6 @@
 package org.promocat.promocat.security;
 
 import org.promocat.promocat.data_entities.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;

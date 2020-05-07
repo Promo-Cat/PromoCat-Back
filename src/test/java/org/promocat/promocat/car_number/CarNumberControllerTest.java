@@ -1,6 +1,5 @@
 package org.promocat.promocat.car_number;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
