@@ -1,5 +1,7 @@
 package org.promocat.promocat.data_entities.user;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.data_entities.car.CarController;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car.CarRepository;
@@ -8,6 +10,7 @@ import org.promocat.promocat.data_entities.car_number.CarNumberRepository;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeController;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
+import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +42,27 @@ public class UserController {
         this.userService = userService;
     }
 
+    public static UserRecord userDTOToRecord(final UserDTO userDTO) {
+        UserRecord userRecord = new UserRecord();
+        userRecord.setId(userDTO.getId());
+        userRecord.setFirst_name(userDTO.getFirstName());
+        userRecord.setLast_name(userDTO.getLastName());
+        userRecord.setTelephone(userDTO.getTelephone());
+        userRecord.setToken(userDTO.getToken());
+        userRecord.setBalance(userDTO.getBalance());
+        List<CarRecord> cars = new ArrayList<>();
+        for (CarDTO carDTO : userDTO.getCars()) {
+            cars.add(CarController.carDTOToRecord(carDTO, userRecord));
+        }
+        userRecord.setCars(cars);
+        userRecord.setPromo_code(PromoCodeController.PromoCodeDTOToRecord(userDTO.getPromoCodeDTO(), userRecord));
+        return userRecord;
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(code = 400,
+                    message = "Bad Request",
+                    response = ApiValidationException.class)})
     @PostMapping(path = "/my", consumes = "application/json")
     public UserRecord checkUser(@Valid @RequestBody UserRecord user) {
         UserRecord res = userRepository.save(user);
@@ -64,22 +88,5 @@ public class UserController {
         } catch (UsernameNotFoundException e) {
             return null; // TODO: Ошибка
         }
-    }
-
-    public static UserRecord userDTOToRecord(final UserDTO userDTO) {
-        UserRecord userRecord = new UserRecord();
-        userRecord.setId(userDTO.getId());
-        userRecord.setFirst_name(userDTO.getFirstName());
-        userRecord.setLast_name(userDTO.getLastName());
-        userRecord.setTelephone(userDTO.getTelephone());
-        userRecord.setToken(userDTO.getToken());
-        userRecord.setBalance(userDTO.getBalance());
-        List<CarRecord> cars = new ArrayList<>();
-        for (CarDTO carDTO : userDTO.getCars()) {
-            cars.add(CarController.carDTOToRecord(carDTO, userRecord));
-        }
-        userRecord.setCars(cars);
-        userRecord.setPromo_code(PromoCodeController.PromoCodeDTOToRecord(userDTO.getPromoCodeDTO(), userRecord));
-        return userRecord;
     }
 }
