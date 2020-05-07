@@ -10,9 +10,12 @@ import org.promocat.promocat.data_entities.car_number.CarNumberRepository;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeController;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
+import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,29 +45,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @ApiResponses(value = {
-            @ApiResponse(code = 400,
-                    message = "Bad Request",
-                    response = ApiValidationException.class)})
-    @PostMapping(path = "/addUser", consumes = "application/json")
-    public UserDTO checkUser(@Valid @RequestBody UserRecord user) {
-        return userService.save(user);
-    }
-
-    @GetMapping(path = "/api/user/getById", consumes = "application/json")
-    public UserRecord getUserById(@RequestBody Long id) {
-        return userRepository.getOne(id);
-    }
-
-    @GetMapping(path = "/token/get")
-    public String getToken(@RequestBody UserRecord user) {
-        try {
-            return userService.getToken(user.getTelephone());
-        } catch (UsernameNotFoundException e) {
-            return null; // TODO: Ошибка
-        }
-    }
-
     public static UserRecord userDTOToRecord(final UserDTO userDTO) {
         UserRecord userRecord = new UserRecord();
         userRecord.setId(userDTO.getId());
@@ -80,5 +60,37 @@ public class UserController {
         userRecord.setCars(cars);
         userRecord.setPromo_code(PromoCodeController.promoCodeDTOToRecord(userDTO.getPromoCodeDTO(), userRecord));
         return userRecord;
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(code = 400,
+                    message = "Bad Request",
+<<<<<<< HEAD
+                    response = ApiValidationException.class)})
+    @PostMapping(path = "/addUser", consumes = "application/json")
+    public UserDTO checkUser(@Valid @RequestBody UserRecord user) {
+=======
+                    response = ApiValidationException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
+                    response = ApiException.class)})
+    @PostMapping(path = "/addUser", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public UserDTO addUser(@Valid @RequestBody UserRecord user) {
+>>>>>>> 2388a974b9bc3226fcccf24a4a784eb69bf1ed3f
+        return userService.save(user);
+    }
+
+    @GetMapping(path = "/api/user/getById", consumes = "application/json")
+    public UserRecord getUserById(@RequestBody Long id) {
+        return userRepository.getOne(id);
+    }
+
+    @GetMapping(path = "/token/get")
+    public String getToken(@RequestBody UserRecord user) {
+        try {
+            return userService.getToken(user.getTelephone());
+        } catch (UsernameNotFoundException e) {
+            return null; // TODO: Ошибка
+        }
     }
 }
