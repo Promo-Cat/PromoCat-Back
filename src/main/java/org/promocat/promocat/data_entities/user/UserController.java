@@ -79,7 +79,7 @@ public class UserController {
             cars.add(CarController.carDTOToRecord(carDTO, userRecord));
         }
         userRecord.setCars(cars);
-        userRecord.setPromo_code(PromoCodeController.PromoCodeDTOToRecord(userDTO.getPromoCodeDTO(), userRecord));
+        userRecord.setPromo_code(PromoCodeController.promoCodeDTOToRecord(userDTO.getPromoCodeDTO(), userRecord));
         return userRecord;
     }
 }

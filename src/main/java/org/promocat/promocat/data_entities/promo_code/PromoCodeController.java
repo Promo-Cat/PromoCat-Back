@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PromoCodeController {
 
-    public static PromoCodeRecord PromoCodeDTOToRecord(PromoCodeDTO promoCodeDTO, UserRecord userRecord) {
+    public static PromoCodeRecord promoCodeDTOToRecord(PromoCodeDTO promoCodeDTO, UserRecord userRecord) {
         return new PromoCodeRecord(promoCodeDTO.getId(), promoCodeDTO.getPromoCode(), userRecord);
     }
 
-    public static PromoCodeRecord PromoCodeDTOToRecord(PromoCodeDTO promoCodeDTO) {
+    public static PromoCodeRecord promoCodeDTOToRecord(PromoCodeDTO promoCodeDTO) {
         return new PromoCodeRecord(promoCodeDTO.getId(), promoCodeDTO.getPromoCode(), UserController.userDTOToRecord(promoCodeDTO.getUserDTO()));
     }
 }
