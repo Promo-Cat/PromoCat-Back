@@ -42,23 +42,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    public static UserRecord userDTOToRecord(final UserDTO userDTO) {
-        UserRecord userRecord = new UserRecord();
-        userRecord.setId(userDTO.getId());
-        userRecord.setFirst_name(userDTO.getFirstName());
-        userRecord.setLast_name(userDTO.getLastName());
-        userRecord.setTelephone(userDTO.getTelephone());
-        userRecord.setToken(userDTO.getToken());
-        userRecord.setBalance(userDTO.getBalance());
-        List<CarRecord> cars = new ArrayList<>();
-        for (CarDTO carDTO : userDTO.getCars()) {
-            cars.add(CarController.carDTOToRecord(carDTO, userRecord));
-        }
-        userRecord.setCars(cars);
-        userRecord.setPromo_code(PromoCodeController.PromoCodeDTOToRecord(userDTO.getPromoCodeDTO(), userRecord));
-        return userRecord;
-    }
-
     @ApiResponses(value = {
             @ApiResponse(code = 400,
                     message = "Bad Request",
@@ -88,5 +71,22 @@ public class UserController {
         } catch (UsernameNotFoundException e) {
             return null; // TODO: Ошибка
         }
+    }
+
+    public static UserRecord userDTOToRecord(final UserDTO userDTO) {
+        UserRecord userRecord = new UserRecord();
+        userRecord.setId(userDTO.getId());
+        userRecord.setFirst_name(userDTO.getFirstName());
+        userRecord.setLast_name(userDTO.getLastName());
+        userRecord.setTelephone(userDTO.getTelephone());
+        userRecord.setToken(userDTO.getToken());
+        userRecord.setBalance(userDTO.getBalance());
+        List<CarRecord> cars = new ArrayList<>();
+        for (CarDTO carDTO : userDTO.getCars()) {
+            cars.add(CarController.carDTOToRecord(carDTO, userRecord));
+        }
+        userRecord.setCars(cars);
+        userRecord.setPromo_code(PromoCodeController.promoCodeDTOToRecord(userDTO.getPromoCodeDTO(), userRecord));
+        return userRecord;
     }
 }
