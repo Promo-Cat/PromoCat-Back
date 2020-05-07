@@ -7,11 +7,14 @@ import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car.CarRepository;
 import org.promocat.promocat.data_entities.car.dto.CarDTO;
 import org.promocat.promocat.data_entities.car_number.CarNumberRepository;
+import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeController;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -57,11 +61,17 @@ public class UserController {
     }
 
     @GetMapping(path = "/token/get")
-    public String getToken(@RequestBody UserRecord user) {
-        try {
-            return userService.getToken(user.getTelephone());
-        } catch (UsernameNotFoundException e) {
-            return null; // TODO: Ошибка
+    public ResponseEntity<String> getToken(@RequestBody LoginAttemptDTO loginAttempt) {
+        Optional<UserRecord> userRecord = userService.checkLoginAttemptCode(loginAttempt);
+        if (userRecord.isPresent()) {
+            UserRecord user = userRecord.get();
+            try {
+                return new ResponseEntity<>(userService.getToken(user.getTelephone()), HttpStatus.OK);
+            } catch (UsernameNotFoundException e) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
