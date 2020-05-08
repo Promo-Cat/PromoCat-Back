@@ -7,6 +7,7 @@ import org.promocat.promocat.data_entities.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +45,7 @@ public class LoginAttemptController {
             LoginAttemptRecord loginAttemptRecord = loginAttemptService.create(userRecord.get());
             return new ResponseEntity<>(loginAttemptRecord.getAuthorizationKey(), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            throw new UsernameNotFoundException("User with phone number " + phoneNumber + " does`t exists");
         }
     }
 
