@@ -1,8 +1,9 @@
 package org.promocat.promocat.data_entities.user;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
 
@@ -25,7 +26,8 @@ import java.util.List;
 /**
  * @author maksimgrankin
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Entity
@@ -52,6 +54,7 @@ public class UserRecord {
     @NotBlank
     @Column
     private String city;
+
     /**
      * Фамилия пользователя.
      */
@@ -92,6 +95,7 @@ public class UserRecord {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private PromoCodeRecord promo_code;
 
+
     @Override
     public boolean equals(Object o) {
         if (o == null) {
@@ -103,7 +107,9 @@ public class UserRecord {
         if (!(o instanceof UserRecord)) {
             return false;
         }
+
         UserRecord userRecord = (UserRecord) o;
+
         return userRecord.getId().equals(id) && userRecord.getFirst_name().equals(first_name)
                 && userRecord.getLast_name().equals(last_name) && userRecord.getTelephone().equals(telephone)
                 && userRecord.getBalance().equals(balance) && userRecord.getCity().equals(city) && ((userRecord.getPromo_code() == null
