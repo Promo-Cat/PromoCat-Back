@@ -46,6 +46,7 @@ public class UserControllerTest {
         userRecord.setLast_name("yo");
         userRecord.setTelephone("+7(962)401-15-60");
         userRecord.setBalance(1L);
+        userRecord.setCity("Saint-Petersburg");
 
         List<CarRecord> cars = new ArrayList<>();
         CarRecord car = new CarRecord();

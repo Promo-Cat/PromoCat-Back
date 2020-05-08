@@ -48,6 +48,12 @@ public class UserRecord {
     private String first_name;
 
     /**
+     * Город пользователя.
+     */
+    @NotBlank
+    @Column
+    private String city;
+    /**
      * Фамилия пользователя.
      */
     @NotBlank

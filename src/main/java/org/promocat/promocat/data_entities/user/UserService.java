@@ -4,6 +4,7 @@ package org.promocat.promocat.data_entities.user;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car.CarRepository;
 import org.promocat.promocat.data_entities.car_number.CarNumberRepository;
+import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,12 +22,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final CarNumberRepository carNumberRepository;
     private final CarRepository carRepository;
+    private final PromoCodeRepository promoCodeRepository;
 
     @Autowired
-    public UserService(final UserRepository userRepository, final CarNumberRepository carNumberRepository, final CarRepository carRepository) {
+    public UserService(final UserRepository userRepository, final CarNumberRepository carNumberRepository,
+                       final CarRepository carRepository, final PromoCodeRepository promoCodeRepository) {
         this.userRepository = userRepository;
         this.carNumberRepository = carNumberRepository;
         this.carRepository = carRepository;
+        this.promoCodeRepository = promoCodeRepository;
     }
 
     public UserDTO save(UserRecord user) {
@@ -37,6 +42,12 @@ public class UserService {
             car.getNumber().setCar(car);
             carRepository.save(car);
         }
+
+        if (!Objects.isNull(user.getPromo_code())) {
+            promoCodeRepository.save(user.getPromo_code());
+            user.getPromo_code().setUser(user);
+        }
+
         return new UserDTO(res);
     }
 
