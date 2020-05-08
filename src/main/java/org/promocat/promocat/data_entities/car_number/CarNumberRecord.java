@@ -3,7 +3,6 @@ package org.promocat.promocat.data_entities.car_number;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.car.CarRecord;
 
@@ -26,7 +25,6 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-@EqualsAndHashCode
 @Table(name = "car_number")
 public class CarNumberRecord {
 
