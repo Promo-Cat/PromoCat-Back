@@ -17,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -66,7 +63,7 @@ public class UserController {
             @ApiResponse(code = 415,
                     message = "Not acceptable media type",
                     response = ApiException.class)})
-    @PostMapping(path = "/addUser", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "/auth/register", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public UserDTO addUser(@Valid @RequestBody UserRecord user) {
         return userService.save(user);
     }
@@ -76,7 +73,7 @@ public class UserController {
         return userRepository.getOne(id);
     }
 
-    @GetMapping(path = "/token/get")
+    @RequestMapping(value = "/auth/token", method = RequestMethod.GET)
     public ResponseEntity<String> getToken(@RequestBody LoginAttemptDTO loginAttempt) {
         Optional<UserRecord> userRecord = userService.checkLoginAttemptCode(loginAttempt);
         if (userRecord.isPresent()) {
