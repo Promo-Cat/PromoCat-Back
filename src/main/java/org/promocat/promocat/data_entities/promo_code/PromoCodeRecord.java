@@ -34,7 +34,7 @@ public class PromoCodeRecord {
     /**
      * Промокод.
      */
-    @NotBlank
+    @NotBlank(message = "Промокод не может быть пустым")
     @Column
     private String promo_code;
 
