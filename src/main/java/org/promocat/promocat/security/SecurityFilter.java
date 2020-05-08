@@ -28,7 +28,6 @@ public class SecurityFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         String token = request.getHeader(TOKEN_HEADER);
-        System.out.println(token);
         Authentication requestAuth = new UsernamePasswordAuthenticationToken(token, token);
         return getAuthenticationManager().authenticate(requestAuth);
     }

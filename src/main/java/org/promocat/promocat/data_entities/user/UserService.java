@@ -4,6 +4,9 @@ package org.promocat.promocat.data_entities.user;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car.CarRepository;
 import org.promocat.promocat.data_entities.car_number.CarNumberRepository;
+import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRecord;
+import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRepository;
+import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +25,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final CarNumberRepository carNumberRepository;
     private final CarRepository carRepository;
+    private final LoginAttemptRepository loginAttemptRepository;
     private final PromoCodeRepository promoCodeRepository;
-
+  
     @Autowired
     public UserService(final UserRepository userRepository, final CarNumberRepository carNumberRepository,
-                       final CarRepository carRepository, final PromoCodeRepository promoCodeRepository) {
+                       final CarRepository carRepository, final LoginAttemptRepository loginAttemptRepository,
+                       final PromoCodeRepository promoCodeRepository) {
         this.userRepository = userRepository;
         this.carNumberRepository = carNumberRepository;
         this.carRepository = carRepository;
+        this.loginAttemptRepository = loginAttemptRepository;
         this.promoCodeRepository = promoCodeRepository;
+
     }
 
     public UserDTO save(UserRecord user) {
@@ -71,6 +78,20 @@ public class UserService {
         } else {
             throw new UsernameNotFoundException("User with number " + telephone + " don`t presented in database");
         }
+    }
+
+
+    /**
+     * Проверяет код пришедший на телефон.
+     * @param attempt DTO хранящий код, который получил юзер и специальный ключ
+     * @return true - если всё совпадает и можно выдавать токен
+     */
+    public Optional<UserRecord> checkLoginAttemptCode(LoginAttemptDTO attempt) {
+        LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuth_key());
+        if (loginAttemptRecord.getPhoneCode().equals(attempt.getCode())) {
+            return userRepository.getByTelephone(loginAttemptRecord.getUserTelephoneNumber());
+        }
+        return Optional.empty();
     }
 
     /**
