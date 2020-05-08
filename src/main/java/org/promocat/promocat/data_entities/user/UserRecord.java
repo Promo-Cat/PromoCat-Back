@@ -106,8 +106,8 @@ public class UserRecord {
         UserRecord userRecord = (UserRecord) o;
         return userRecord.getId().equals(id) && userRecord.getFirst_name().equals(first_name)
                 && userRecord.getLast_name().equals(last_name) && userRecord.getTelephone().equals(telephone)
-                && userRecord.getBalance().equals(balance) && userRecord.getCity().equals(city) && ((userRecord.getPromo_code() == null
-                && promo_code == null) || (userRecord.getPromo_code() != null && userRecord.getPromo_code().equals(promo_code)))
+                && userRecord.getBalance().equals(balance) && ((userRecord.getPromo_code() == null && promo_code == null)
+                || (userRecord.getPromo_code() != null && userRecord.getPromo_code().equals(promo_code)))
                 && ((userRecord.getCars() == null && cars == null) || (userRecord.getCars() != null && userRecord.getCars().equals(cars)));
 
     }
