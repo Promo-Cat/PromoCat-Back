@@ -6,6 +6,7 @@ import org.promocat.promocat.data_entities.car.CarController;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car.dto.CarDTO;
 import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
+import org.promocat.promocat.data_entities.login_attempt.dto.TokenDTO;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeController;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
@@ -74,12 +75,12 @@ public class UserController {
     }
 
     @RequestMapping(value = "/auth/token", method = RequestMethod.GET)
-    public ResponseEntity<String> getToken(@RequestBody LoginAttemptDTO loginAttempt) {
+    public ResponseEntity<TokenDTO> getToken(@RequestBody LoginAttemptDTO loginAttempt) {
         Optional<UserRecord> userRecord = userService.checkLoginAttemptCode(loginAttempt);
         if (userRecord.isPresent()) {
             UserRecord user = userRecord.get();
             try {
-                return new ResponseEntity<>(userService.getToken(user.getTelephone()), HttpStatus.OK);
+                return new ResponseEntity<>(new TokenDTO(userService.getToken(user.getTelephone())), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
