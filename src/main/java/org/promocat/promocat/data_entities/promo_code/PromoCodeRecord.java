@@ -1,8 +1,6 @@
 package org.promocat.promocat.data_entities.promo_code;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.promocat.promocat.data_entities.user.UserRecord;
 
 import javax.persistence.CascadeType;
@@ -17,7 +15,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(force = true)

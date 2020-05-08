@@ -115,6 +115,5 @@ public class UserRecord {
                 && userRecord.getBalance().equals(balance) && userRecord.getCity().equals(city) && ((userRecord.getPromo_code() == null
                 && promo_code == null) || (userRecord.getPromo_code() != null && userRecord.getPromo_code().equals(promo_code)))
                 && ((userRecord.getCars() == null && cars == null) || (userRecord.getCars() != null && userRecord.getCars().equals(cars)));
-
     }
 }

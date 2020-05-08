@@ -47,6 +47,7 @@ public class UserController {
         userRecord.setFirst_name(userDTO.getFirstName());
         userRecord.setLast_name(userDTO.getLastName());
         userRecord.setTelephone(userDTO.getTelephone());
+        userRecord.setCity(userDTO.getCity());
         userRecord.setToken(userDTO.getToken());
         userRecord.setBalance(userDTO.getBalance());
         List<CarRecord> cars = new ArrayList<>();
