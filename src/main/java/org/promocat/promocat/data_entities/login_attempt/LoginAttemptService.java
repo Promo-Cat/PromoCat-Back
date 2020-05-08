@@ -4,6 +4,7 @@ import net.bytebuddy.utility.RandomString;
 import org.promocat.promocat.data_entities.login_attempt.dto.SMSCResponseDTO;
 import org.promocat.promocat.data_entities.user.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,6 +20,12 @@ import java.util.UUID;
 
 @Service
 public class LoginAttemptService {
+
+    @Value("${auth.doCall}")
+    private boolean doCall;
+
+    @Value("${auth.testCode}")
+    private String testCode;
 
     public static final int AUTHORIZATION_KEY_LENGTH = 16;
     private static final String SMSC_URL = "https://smsc.ru/sys/send.php?login=promocatcompany&psw=promocattest123&mes=code&call=1&fmt=3&phones=";
@@ -41,14 +48,17 @@ public class LoginAttemptService {
     public LoginAttemptRecord create(UserRecord user) {
         LoginAttemptRecord res = new LoginAttemptRecord();
         res.setUserTelephoneNumber(user.getTelephone());
-        Optional<String> code = doCallAndGetCode(user.getTelephone());
-        if (code.isEmpty()) {
-            // TODO: ошибка, если что-то пошло не так при работе с smsc
-            System.out.println("Нет кода, ухади");
-            return null;
+        if (doCall) {
+            Optional<String> code = doCallAndGetCode(user.getTelephone());
+            if (code.isEmpty()) {
+                // TODO: ошибка, если что-то пошло не так при работе с smsc
+                System.out.println("Нет кода, ухади");
+                return null;
+            }
+            res.setPhoneCode(code.get().substring(2));
+        } else {
+            res.setPhoneCode(testCode); // тестовый код
         }
-        res.setPhoneCode(code.get().substring(2));
-//        res.setPhoneCode("1337"); // тестовый код
         res.setAuthorizationKey(RandomString.make(AUTHORIZATION_KEY_LENGTH));
         return loginAttemptRepository.save(res);
     }
