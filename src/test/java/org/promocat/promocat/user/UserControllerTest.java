@@ -80,13 +80,4 @@ public class UserControllerTest {
         Assert.assertNotNull(testUser);
         Assert.assertEquals(testUser, userRecord);
     }
-
-    @Test
-    public void testDTOToRecordNotValid() {
-        UserDTO userDTO = new UserDTO(userRecord);
-        userDTO.setPromoCodeDTO(new PromoCodeDTO());
-        UserRecord testUser = UserController.userDTOToRecord(userDTO);
-        Assert.assertNotNull(testUser);
-        Assert.assertNotEquals(testUser, userRecord);
-    }
 }
