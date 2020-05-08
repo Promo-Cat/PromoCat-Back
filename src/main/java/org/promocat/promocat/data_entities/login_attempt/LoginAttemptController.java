@@ -1,5 +1,7 @@
 package org.promocat.promocat.data_entities.login_attempt;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.promocat.promocat.data_entities.user.UserRecord;
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,7 @@ import java.util.Optional;
  */
 
 @RestController
-@RequestMapping(value = "/login")
+@RequestMapping(value = "/auth")
 public class LoginAttemptController {
 
     private final UserRepository userRepository;
@@ -35,7 +37,7 @@ public class LoginAttemptController {
 
 
     // TODO: DTO для ответов и тд
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "login", method = RequestMethod.GET)
     public ResponseEntity<String> login(@RequestBody String phoneNumber) {
         Optional<UserRecord> userRecord = userRepository.getByTelephone(phoneNumber);
         if (userRecord.isPresent()) {
