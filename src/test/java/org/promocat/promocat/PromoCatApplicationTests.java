@@ -29,8 +29,7 @@ class PromoCatApplicationTests {
 	void userWithNonValidTelephone() throws Exception {
 		UserRecord userRecord = new UserRecord();
 		userRecord.setId(1L);
-		userRecord.setFirst_name("my");
-		userRecord.setLast_name("yo");
+		userRecord.setName("my");
 		userRecord.setTelephone("+7(962)401--15-60");
 		userRecord.setBalance(1L);
 

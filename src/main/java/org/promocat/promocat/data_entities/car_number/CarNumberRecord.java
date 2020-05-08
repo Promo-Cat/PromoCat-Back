@@ -9,6 +9,7 @@ import org.promocat.promocat.data_entities.car.CarRecord;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 /**
  * @author maksimgrankin
@@ -51,27 +52,28 @@ public class CarNumberRecord {
     @JoinColumn(name = "car_id")
     private CarRecord car;
 
-    private boolean check(Object o) {
-        if (o == null) {
-            return false;
-        }
-        if (o == this) {
-            return true;
-        }
-        return o instanceof CarNumberRecord;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number, region);
     }
 
     @Override
-    public boolean equals(Object o) {
-        CarNumberRecord carNumberRecord = (CarNumberRecord) o;
-
-        return check(o) && carNumberRecord.getId().equals(id);
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CarNumberRecord)) {
+            return false;
+        }
+        CarNumberRecord that = (CarNumberRecord) o;
+        return Objects.equals(id, that.id);
     }
 
     public boolean equalsFields(Object o) {
-        CarNumberRecord carNumberRecord = (CarNumberRecord) o;
+        CarNumberRecord that = (CarNumberRecord) o;
 
-        return check(o) && carNumberRecord.getId().equals(id) && carNumberRecord.getNumber().equals(number)
-                && carNumberRecord.getCar().equals(car) && carNumberRecord.getRegion().equals(region);
+        return equals(o) && Objects.equals(number, that.number) &&
+                Objects.equals(region, that.region) &&
+                Objects.equals(car, that.car);
     }
 }

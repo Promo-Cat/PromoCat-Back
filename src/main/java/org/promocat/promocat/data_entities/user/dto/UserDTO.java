@@ -34,8 +34,7 @@ public class UserDTO {
 
     public UserDTO(UserRecord userRecord) {
         id = userRecord.getId();
-        firstName = userRecord.getFirst_name();
-        lastName = userRecord.getLast_name();
+        firstName = userRecord.getName();
         telephone = userRecord.getTelephone();
         city = userRecord.getCity();
         token = userRecord.getToken();

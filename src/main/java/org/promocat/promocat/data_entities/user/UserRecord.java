@@ -7,11 +7,21 @@ import lombok.Setter;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -37,14 +47,7 @@ public class UserRecord {
      */
     @NotBlank(message = "Имя не может быть пустым")
     @Column
-    private String first_name;
-
-    /**
-     * Фамилия пользователя.
-     */
-    @NotBlank(message = "Фамилия не может быть пустой")
-    @Column
-    private String last_name;
+    private String name;
 
     /**
      * Город пользователя.
@@ -52,7 +55,6 @@ public class UserRecord {
     @NotBlank(message = "Город не может быть пустой")
     @Column
     private String city;
-
 
     /**
      * Телефон пользователя.
@@ -88,31 +90,31 @@ public class UserRecord {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private PromoCodeRecord promo_code;
 
-    private boolean check(Object o) {
-        if (o == null) {
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserRecord)) {
             return false;
         }
-        if (o == this) {
-            return true;
-        }
-
-        return o instanceof UserRecord;
+        UserRecord that = (UserRecord) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
-    public boolean equals(Object o) {
-        UserRecord userRecord = (UserRecord) o;
-
-        return check(o) && userRecord.getId().equals(id);
+    public int hashCode() {
+        return Objects.hash(id, name, city, telephone, token, balance);
     }
 
     public boolean equalsFields(Object o) {
-        UserRecord userRecord = (UserRecord) o;
+        UserRecord that = (UserRecord) o;
 
-        return check(o) && userRecord.getId().equals(id) && userRecord.getFirst_name().equals(first_name)
-                && userRecord.getLast_name().equals(last_name) && userRecord.getCity().equals(city)
-                && userRecord.getTelephone().equals(telephone) && userRecord.getBalance().equals(balance)
-                && userRecord.getToken().equals(token) && userRecord.getPromo_code().equals(promo_code)
-                && userRecord.getCars().equals(cars);
+        return equals(o) && Objects.equals(that.getName(), name)
+                && Objects.equals(that.getCity(), city)
+                && Objects.equals(that.getCity(), city)
+                && Objects.equals(that.getTelephone(), telephone)
+                && Objects.equals(that.getBalance(), balance)
+                && Objects.equals(that.getToken(), token)
+                && Objects.equals(that.getPromo_code(), promo_code)
+                && Objects.equals(that.getCars(), cars);
     }
 }

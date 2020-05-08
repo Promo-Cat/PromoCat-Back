@@ -8,6 +8,7 @@ import org.promocat.promocat.data_entities.user.UserRecord;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -38,27 +39,28 @@ public class PromoCodeRecord {
     @JoinColumn(name = "user_id")
     private UserRecord user;
 
-    private boolean check(Object o) {
-        if (o == null) {
-            return false;
-        }
-        if (o == this) {
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
         }
-        return  o instanceof PromoCodeRecord;
+        if (!(o instanceof PromoCodeRecord)) {
+            return false;
+        }
+        PromoCodeRecord that = (PromoCodeRecord) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
-    public boolean equals(Object o) {
-        PromoCodeRecord promoCodeRecord = (PromoCodeRecord) o;
-
-        return check(o) && promoCodeRecord.getId().equals(id);
+    public int hashCode() {
+        return Objects.hash(id, promo_code);
     }
 
     public boolean equalsFields(Object o) {
-        PromoCodeRecord promoCodeRecord = (PromoCodeRecord) o;
+        PromoCodeRecord that = (PromoCodeRecord) o;
 
-        return check(o) && promoCodeRecord.getId().equals(id) && promoCodeRecord.getUser().equals(user)
-                && promoCodeRecord.getPromo_code().equals(promo_code);
+        return equals(o) && Objects.equals(id, that.id) &&
+                Objects.equals(promo_code, that.promo_code) &&
+                Objects.equals(user, that.user);
     }
 }

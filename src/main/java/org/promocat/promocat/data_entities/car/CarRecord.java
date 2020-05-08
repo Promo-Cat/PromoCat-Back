@@ -8,8 +8,19 @@ import lombok.Setter;
 import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
 import org.promocat.promocat.data_entities.user.UserRecord;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 /**
  * @author maksimgrankin
@@ -58,33 +69,27 @@ public class CarRecord {
     @OneToOne(mappedBy = "car", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private CarNumberRecord number;
 
-    private boolean check(Object o) {
-        if (o == null) {
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CarRecord)) {
             return false;
         }
-        if (o == this) {
-            return true;
-        }
-        return o instanceof CarRecord;
-    }
-
-    @Override
-    public boolean equals(Object o) {
         CarRecord carRecord = (CarRecord) o;
-
-        return check(o) && carRecord.getId().equals(id);
+        return Objects.equals(id, carRecord.id);
     }
 
     public boolean equalsFields(Object o) {
-        CarRecord carRecord = (CarRecord) o;
+        CarRecord that = (CarRecord) o;
 
-        return check(o) && carRecord.getId().equals(id) && carRecord.getNumber().equals(number)
-                && carRecord.getUser().equals(user) && carRecord.getCar_make().equals(car_make)
-                && carRecord.getColor().equals(color);
+        return equals(o) && Objects.equals(car_make, that.car_make) &&
+                Objects.equals(color, that.color) &&
+                Objects.equals(user, that.user) &&
+                Objects.equals(number, that.number);
     }
 
     @Override
     public int hashCode() {
-        return Integer.parseInt(id.toString());
+        return Objects.hash(id, car_make, color);
     }
 }
