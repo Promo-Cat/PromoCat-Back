@@ -46,29 +46,31 @@ public class UserRecord {
     /**
      * Имя пользователя.
      */
-    @NotBlank
+    @NotBlank(message = "Имя не может быть пустым")
     @Column
     private String first_name;
 
     /**
+     * Фамилия пользователя.
+     */
+    @NotBlank(message = "Фамилия не может быть пустой")
+    @Column
+    private String last_name;
+
+    /**
      * Город пользователя.
      */
-    @NotBlank
+    @NotBlank(message = "Город не может быть пустой")
     @Column
     private String city;
 
-    /**
-     * Фамилия пользователя.
-     */
-    @NotBlank
-    @Column
-    private String last_name;
 
     /**
      * Телефон пользователя.
      */
     @NotBlank
-    @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}")
+    @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}",
+            message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
     @Column(unique = true)
     private String telephone;
 
@@ -81,7 +83,7 @@ public class UserRecord {
     /**
      * Баланс пользователя.
      */
-    @NotNull
+    @NotNull(message = "Баланс не может быть не задан")
     @Column
     private Long balance;
 

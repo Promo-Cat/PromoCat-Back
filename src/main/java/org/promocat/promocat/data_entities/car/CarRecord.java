@@ -40,14 +40,14 @@ public class CarRecord {
     /**
      * Марка автомобиля.
      */
-    @NotBlank
+    @NotBlank(message = "Марка машины не может быть пустой")
     @Column
     private String car_make;
 
     /**
      * Цвет автомобиля.
      */
-    @NotBlank
+    @NotBlank(message = "Цвет не может быть пустым")
     @Column
     private String color;
 

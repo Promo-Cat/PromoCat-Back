@@ -38,14 +38,14 @@ public class CarNumberRecord {
     /**
      * Номер автомобиля.
      */
-    @NotBlank
+    @NotBlank(message = "Номер автомобиля не может быть пустым")
     @Column
     private String number;
 
     /**
      * Регион номера.
      */
-    @NotBlank
+    @NotBlank(message = "Номер региона не может быть пустым")
     @Column
     private String region;
 
