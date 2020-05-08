@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -56,7 +57,7 @@ public class PromoCodeRecord {
             return false;
         }
         PromoCodeRecord promoCodeRecord = (PromoCodeRecord) o;
-        return promoCodeRecord.getId().equals(id) && promoCodeRecord.getPromo_code().equals(promo_code)
-                && promoCodeRecord.getUser().getId().equals(user.getId());
+        return promoCodeRecord.getId().equals(id) && Objects.equals(promoCodeRecord.getPromo_code(), promo_code)
+                && Objects.equals(promoCodeRecord.getUser().getId(), user.getId()) && promoCodeRecord.getUser().getId().equals(user.getId());
     }
 }
