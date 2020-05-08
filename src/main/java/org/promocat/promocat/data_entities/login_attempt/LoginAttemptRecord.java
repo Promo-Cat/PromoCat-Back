@@ -38,9 +38,9 @@ public class LoginAttemptRecord {
     @Column(name = "user", nullable = false)
     private String userTelephoneNumber;
 
-    public LoginAttemptRecord(final String _authorizationKey, final String _phoneCode, final String _userNumber) {
-        this.authorizationKey = _authorizationKey;
-        this.phoneCode = _phoneCode;
-        this.userTelephoneNumber = _userNumber;
+    public LoginAttemptRecord(final String authorizationKey, final String phoneCode, final String userNumber) {
+        this.authorizationKey = authorizationKey;
+        this.phoneCode = phoneCode;
+        this.userTelephoneNumber = userNumber;
     }
 }

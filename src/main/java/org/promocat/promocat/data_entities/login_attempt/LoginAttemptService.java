@@ -67,6 +67,8 @@ public class LoginAttemptService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<SMSCResponseDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + phoneNumber, SMSCResponseDTO.class);
         SMSCResponseDTO responseDTO = smscResponse.getBody();
+
+        // ЭТО ЧО?
         System.out.println(responseDTO.toString());
         if (responseDTO.getCode() != null) {
             return Optional.of(smscResponse.getBody().getCode());
