@@ -1,6 +1,5 @@
 package org.promocat.promocat.car_number;
 
-import ch.qos.logback.core.net.AbstractSSLSocketAppender;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

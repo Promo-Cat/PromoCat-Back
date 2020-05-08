@@ -1,9 +1,6 @@
 package org.promocat.promocat.data_entities.car;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,29 +31,47 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "car")
 public class CarRecord {
 
+    /**
+     * id автомобиля.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Марка автомобиля.
+     */
     @NotBlank
     @Column
     private String car_make;
 
+    /**
+     * Цвет автомобиля.
+     */
     @NotBlank
     @Column
     private String color;
 
+    /**
+     * Пользователь, у которого данный автомобиль.
+     */
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO JsonManager/JsonBack
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "user_id")
     private UserRecord user;
 
+    /**
+     * Номерной знак автомобиля.
+     */
     @OneToOne(mappedBy = "car", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private CarNumberRecord number;
 
     @Override
     public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
         if (o == this) {
             return true;
         }
@@ -65,6 +80,6 @@ public class CarRecord {
         }
         CarRecord carRecord = (CarRecord) o;
         return carRecord.getId().equals(id) && carRecord.getCar_make().equals(car_make) && carRecord.getColor().equals(color)
-               && carRecord.getUser().getId().equals(user.getId()) && carRecord.getNumber().equals(number);
+                && carRecord.getUser().getId().equals(user.getId()) && carRecord.getNumber().equals(number);
     }
 }

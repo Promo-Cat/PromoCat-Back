@@ -1,14 +1,10 @@
 package org.promocat.promocat.data_entities.car_number;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.car.CarRecord;
-
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,18 +28,30 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "car_number")
 public class CarNumberRecord {
 
+    /**
+     * id номера автомобиля.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Номер автомобиля.
+     */
     @NotBlank
     @Column
     private String number;
 
+    /**
+     * Регион номера.
+     */
     @NotBlank
     @Column
     private String region;
 
+    /**
+     * Автомобиль, у которого данный номер.
+     */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO JsonManager/JsonBack
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -52,6 +60,9 @@ public class CarNumberRecord {
 
     @Override
     public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
         if (o == this) {
             return true;
         }
@@ -60,6 +71,6 @@ public class CarNumberRecord {
         }
         CarNumberRecord carNumberRecord = (CarNumberRecord) o;
         return carNumberRecord.getId().equals(id) && carNumberRecord.getRegion().equals(region)
-               && carNumberRecord.getNumber().equals(number) && carNumberRecord.getCar().getId().equals(car.getId());
+                && carNumberRecord.getNumber().equals(number) && carNumberRecord.getCar().getId().equals(car.getId());
     }
 }

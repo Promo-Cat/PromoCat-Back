@@ -1,7 +1,5 @@
 package org.promocat.promocat.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,17 +14,12 @@ import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Created by Danil Lyskin at 21:15 06.06.2020
@@ -53,6 +46,7 @@ public class UserControllerTest {
         userRecord.setLast_name("yo");
         userRecord.setTelephone("+7(962)401-15-60");
         userRecord.setBalance(1L);
+        userRecord.setCity("Saint-Petersburg");
 
         List<CarRecord> cars = new ArrayList<>();
         CarRecord car = new CarRecord();

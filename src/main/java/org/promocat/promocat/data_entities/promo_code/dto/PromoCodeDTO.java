@@ -1,5 +1,7 @@
 package org.promocat.promocat.data_entities.promo_code.dto;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,18 +17,27 @@ import org.promocat.promocat.data_entities.user.dto.UserDTO;
 @Setter
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class PromoCodeDTO {
     private Long id;
     private String promoCode;
     private UserDTO userDTO;
 
     public PromoCodeDTO(PromoCodeRecord promoCodeRecord, UserDTO userDTO) {
+        if (promoCodeRecord == null) {
+            return;
+        }
         id = promoCodeRecord.getId();
         promoCode = promoCodeRecord.getPromo_code();
         this.userDTO = userDTO;
     }
 
     public PromoCodeDTO(PromoCodeRecord promoCodeRecord) {
+        if (promoCodeRecord == null) {
+            return;
+        }
         id = promoCodeRecord.getId();
         promoCode = promoCodeRecord.getPromo_code();
         userDTO = new UserDTO(promoCodeRecord.getUser());
