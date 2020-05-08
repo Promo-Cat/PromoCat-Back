@@ -21,9 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class UserController {
@@ -48,7 +46,7 @@ public class UserController {
         userRecord.setCity(userDTO.getCity());
         userRecord.setToken(userDTO.getToken());
         userRecord.setBalance(userDTO.getBalance());
-        List<CarRecord> cars = new ArrayList<>();
+        Set<CarRecord> cars = new HashSet<>();
         for (CarDTO carDTO : userDTO.getCars()) {
             cars.add(CarController.carDTOToRecord(carDTO, userRecord));
         }

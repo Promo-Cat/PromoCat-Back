@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
-import org.promocat.promocat.data_entities.promo_code.dto.PromoCodeDTO;
 import org.promocat.promocat.data_entities.user.UserController;
 import org.promocat.promocat.data_entities.user.UserRecord;
 import org.promocat.promocat.data_entities.user.UserService;
@@ -19,8 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Danil Lyskin at 21:15 06.06.2020
@@ -49,7 +48,7 @@ public class UserControllerTest {
         userRecord.setBalance(1L);
         userRecord.setCity("Saint-Petersburg");
 
-        List<CarRecord> cars = new ArrayList<>();
+        Set<CarRecord> cars = new HashSet<>();
         CarRecord car = new CarRecord();
         car.setId(1L);
         car.setColor("blue");

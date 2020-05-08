@@ -2,14 +2,17 @@ package org.promocat.promocat.data_entities.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.promocat.promocat.data_entities.car.CarRecord;
+import org.promocat.promocat.data_entities.car.dto.CarDTO;
 import org.promocat.promocat.data_entities.promo_code.dto.PromoCodeDTO;
 import org.promocat.promocat.data_entities.user.UserRecord;
-import org.promocat.promocat.data_entities.car.dto.CarDTO;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,7 +29,7 @@ public class UserDTO {
     private String token;
     private String city;
     private Long balance;
-    private List<CarDTO> cars = new ArrayList<>();
+    private Set<CarDTO> cars = new HashSet<>();
     private PromoCodeDTO promoCodeDTO;
 
     public UserDTO(UserRecord userRecord) {
@@ -69,5 +72,10 @@ public class UserDTO {
                 && userDTO.getTelephone().equals(telephone) && userDTO.getBalance().equals(balance)
                 && userDTO.getToken().equals(token) && userDTO.getPromoCodeDTO().equals(promoCodeDTO)
                 && userDTO.getCars().equals(cars);
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.parseInt(id.toString());
     }
 }
