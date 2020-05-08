@@ -45,19 +45,27 @@ public class PromoCodeRecord {
     @JoinColumn(name = "user_id")
     private UserRecord user;
 
-    @Override
-    public boolean equals(Object o) {
+    private boolean check(Object o) {
         if (o == null) {
             return false;
         }
         if (o == this) {
             return true;
         }
-        if (!(o instanceof PromoCodeRecord)) {
-            return false;
-        }
+        return  o instanceof PromoCodeRecord;
+    }
+
+    @Override
+    public boolean equals(Object o) {
         PromoCodeRecord promoCodeRecord = (PromoCodeRecord) o;
-        return promoCodeRecord.getId().equals(id) && Objects.equals(promoCodeRecord.getPromo_code(), promo_code)
-                && Objects.equals(promoCodeRecord.getUser().getId(), user.getId()) && promoCodeRecord.getUser().getId().equals(user.getId());
+
+        return check(o) && promoCodeRecord.getId().equals(id);
+    }
+
+    public boolean equalsFields(Object o) {
+        PromoCodeRecord promoCodeRecord = (PromoCodeRecord) o;
+
+        return check(o) && promoCodeRecord.getId().equals(id) && promoCodeRecord.getUser().equals(user)
+                && promoCodeRecord.getPromo_code().equals(promo_code);
     }
 }

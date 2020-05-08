@@ -42,4 +42,32 @@ public class UserDTO {
         }
         promoCodeDTO = new PromoCodeDTO(userRecord.getPromo_code(), this);
     }
+
+    private boolean check(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+
+        return o instanceof UserDTO;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        UserDTO userDTO = (UserDTO) o;
+
+        return check(o) && userDTO.getId().equals(id);
+    }
+
+    public boolean equalsFields(Object o) {
+        UserDTO userDTO = (UserDTO) o;
+
+        return check(o) && userDTO.getId().equals(id) && userDTO.getFirstName().equals(firstName)
+                && userDTO.getLastName().equals(lastName) && userDTO.getCity().equals(city)
+                && userDTO.getTelephone().equals(telephone) && userDTO.getBalance().equals(balance)
+                && userDTO.getToken().equals(token) && userDTO.getPromoCodeDTO().equals(promoCodeDTO)
+                && userDTO.getCars().equals(cars);
+    }
 }

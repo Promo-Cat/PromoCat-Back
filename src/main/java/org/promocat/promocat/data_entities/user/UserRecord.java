@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
+import org.springframework.security.core.userdetails.User;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author maksimgrankin
@@ -95,25 +97,31 @@ public class UserRecord {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private PromoCodeRecord promo_code;
 
-
-    @Override
-    public boolean equals(Object o) {
+    private boolean check(Object o) {
         if (o == null) {
             return false;
         }
         if (o == this) {
             return true;
         }
-        if (!(o instanceof UserRecord)) {
-            return false;
-        }
 
+        return o instanceof UserRecord;
+    }
+
+    @Override
+    public boolean equals(Object o) {
         UserRecord userRecord = (UserRecord) o;
 
-        return userRecord.getId().equals(id) && userRecord.getFirst_name().equals(first_name)
-                && userRecord.getLast_name().equals(last_name) && userRecord.getTelephone().equals(telephone)
-                && userRecord.getBalance().equals(balance) && userRecord.getCity().equals(city) && ((userRecord.getPromo_code() == null
-                && promo_code == null) || (userRecord.getPromo_code() != null && userRecord.getPromo_code().equals(promo_code)))
-                && ((userRecord.getCars() == null && cars == null) || (userRecord.getCars() != null && userRecord.getCars().equals(cars)));
+        return check(o) && userRecord.getId().equals(id);
+    }
+
+    public boolean equalsFields(Object o) {
+        UserRecord userRecord = (UserRecord) o;
+
+        return check(o) && userRecord.getId().equals(id) && userRecord.getFirst_name().equals(first_name)
+                && userRecord.getLast_name().equals(last_name) && userRecord.getCity().equals(city)
+                && userRecord.getTelephone().equals(telephone) && userRecord.getBalance().equals(balance)
+                && userRecord.getToken().equals(token) && userRecord.getPromo_code().equals(promo_code)
+                && userRecord.getCars().equals(cars);
     }
 }

@@ -32,4 +32,28 @@ public class CarNumberDTO {
         fillIdNumberRegion(carNumberRecord);
         car = new CarDTO(carNumberRecord.getCar());
     }
+
+    private boolean check(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+        return o instanceof CarNumberDTO;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        CarNumberDTO carNumberDTO = (CarNumberDTO) o;
+
+        return check(o) && carNumberDTO.getId().equals(id);
+    }
+
+    public boolean equalsFields(Object o) {
+        CarNumberDTO carNumberDTO = (CarNumberDTO) o;
+
+        return check(o) && carNumberDTO.getId().equals(id) && carNumberDTO.getNumber().equals(number)
+                && carNumberDTO.getCar().equals(car) && carNumberDTO.getRegion().equals(region);
+    }
 }

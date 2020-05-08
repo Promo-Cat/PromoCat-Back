@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
+import org.promocat.promocat.data_entities.promo_code.dto.PromoCodeDTO;
 import org.promocat.promocat.data_entities.user.UserController;
 import org.promocat.promocat.data_entities.user.UserRecord;
 import org.promocat.promocat.data_entities.user.UserService;
@@ -78,5 +79,14 @@ public class UserControllerTest {
         UserRecord testUser = UserController.userDTOToRecord(userDTO);
         Assert.assertNotNull(testUser);
         Assert.assertEquals(testUser, userRecord);
+    }
+
+    @Test
+    public void testDTOToRecordNotValid() {
+        UserDTO userDTO = new UserDTO(userRecord);
+        userDTO.setPromoCodeDTO(new PromoCodeDTO());
+        UserRecord testUser = UserController.userDTOToRecord(userDTO);
+        Assert.assertNotNull(testUser);
+        Assert.assertNotEquals(testUser, userRecord);
     }
 }

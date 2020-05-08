@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 /**
  * @author maksimgrankin
@@ -65,19 +66,28 @@ public class CarRecord {
     @OneToOne(mappedBy = "car", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private CarNumberRecord number;
 
-    @Override
-    public boolean equals(Object o) {
+    private boolean check(Object o) {
         if (o == null) {
             return false;
         }
         if (o == this) {
             return true;
         }
-        if (!(o instanceof CarRecord)) {
-            return false;
-        }
+        return o instanceof CarRecord;
+    }
+
+    @Override
+    public boolean equals(Object o) {
         CarRecord carRecord = (CarRecord) o;
-        return carRecord.getId().equals(id) && carRecord.getCar_make().equals(car_make) && carRecord.getColor().equals(color)
-                && carRecord.getUser().getId().equals(user.getId()) && carRecord.getNumber().equals(number);
+
+        return check(o) && carRecord.getId().equals(id);
+    }
+
+    public boolean equalsFields(Object o) {
+        CarRecord carRecord = (CarRecord) o;
+
+        return check(o) && carRecord.getId().equals(id) && carRecord.getNumber().equals(number)
+                && carRecord.getUser().equals(user) && carRecord.getCar_make().equals(car_make)
+                && carRecord.getColor().equals(color);
     }
 }

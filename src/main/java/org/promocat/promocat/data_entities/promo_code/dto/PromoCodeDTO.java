@@ -43,4 +43,27 @@ public class PromoCodeDTO {
         userDTO = new UserDTO(promoCodeRecord.getUser());
     }
 
+    private boolean check(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+        return  o instanceof PromoCodeDTO;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        PromoCodeDTO promoCodeDTO = (PromoCodeDTO) o;
+
+        return check(o) && promoCodeDTO.getId().equals(id);
+    }
+
+    public boolean equalsFields(Object o) {
+        PromoCodeDTO promoCodeDTO = (PromoCodeDTO) o;
+
+        return check(o) && promoCodeDTO.getId().equals(id) && promoCodeDTO.getUserDTO().equals(userDTO)
+                && promoCodeDTO.getPromoCode().equals(promoCode);
+    }
 }

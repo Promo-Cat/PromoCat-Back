@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 /**
  * @author maksimgrankin
@@ -57,19 +58,27 @@ public class CarNumberRecord {
     @JoinColumn(name = "car_id")
     private CarRecord car;
 
-    @Override
-    public boolean equals(Object o) {
+    private boolean check(Object o) {
         if (o == null) {
             return false;
         }
         if (o == this) {
             return true;
         }
-        if (!(o instanceof CarNumberRecord)) {
-            return false;
-        }
+        return o instanceof CarNumberRecord;
+    }
+
+    @Override
+    public boolean equals(Object o) {
         CarNumberRecord carNumberRecord = (CarNumberRecord) o;
-        return carNumberRecord.getId().equals(id) && carNumberRecord.getRegion().equals(region)
-                && carNumberRecord.getNumber().equals(number) && carNumberRecord.getCar().getId().equals(car.getId());
+
+        return check(o) && carNumberRecord.getId().equals(id);
+    }
+
+    public boolean equalsFields(Object o) {
+        CarNumberRecord carNumberRecord = (CarNumberRecord) o;
+
+        return check(o) && carNumberRecord.getId().equals(id) && carNumberRecord.getNumber().equals(number)
+                && carNumberRecord.getCar().equals(car) && carNumberRecord.getRegion().equals(region);
     }
 }

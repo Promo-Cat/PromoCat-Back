@@ -41,4 +41,29 @@ public class CarDTO {
         user = new UserDTO(carRecord.getUser());
         number = new CarNumberDTO(carRecord.getNumber(), this);
     }
+
+    private boolean check(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+        return o instanceof CarDTO;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        CarDTO carDTO = (CarDTO) o;
+
+        return check(o) && carDTO.getId().equals(id);
+    }
+
+    public boolean equalsFields(Object o) {
+        CarDTO carDTO = (CarDTO) o;
+
+        return check(o) && carDTO.getId().equals(id) && carDTO.getNumber().equals(number)
+                && carDTO.getUser().equals(user) && carDTO.getCarMake().equals(carMake)
+                && carDTO.getColor().equals(color);
+    }
 }
