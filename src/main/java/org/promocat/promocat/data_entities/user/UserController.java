@@ -10,6 +10,8 @@ import org.promocat.promocat.data_entities.promo_code.PromoCodeController;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import java.util.Optional;
 @RestController
 public class UserController {
 
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserRepository userRepository;
     private final UserService userService;
 
@@ -41,6 +44,7 @@ public class UserController {
         userRecord.setFirst_name(userDTO.getFirstName());
         userRecord.setLast_name(userDTO.getLastName());
         userRecord.setTelephone(userDTO.getTelephone());
+        userRecord.setCity(userDTO.getCity());
         userRecord.setToken(userDTO.getToken());
         userRecord.setBalance(userDTO.getBalance());
         List<CarRecord> cars = new ArrayList<>();

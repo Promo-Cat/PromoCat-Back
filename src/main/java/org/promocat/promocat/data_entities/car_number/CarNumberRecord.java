@@ -1,9 +1,7 @@
 package org.promocat.promocat.data_entities.car_number;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.promocat.promocat.data_entities.car.CarRecord;
 
 import javax.persistence.CascadeType;
@@ -21,7 +19,8 @@ import javax.validation.constraints.NotBlank;
 /**
  * @author maksimgrankin
  */
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
