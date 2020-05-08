@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.data_entities.car.CarController;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car.dto.CarDTO;
-import org.promocat.promocat.data_entities.car_number.CarNumberRepository;
 import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeController;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
