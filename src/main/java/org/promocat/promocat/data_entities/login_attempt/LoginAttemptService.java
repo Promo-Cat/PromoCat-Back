@@ -44,12 +44,6 @@ public class LoginAttemptService {
         this.loginAttemptRepository = loginAttemptRepository;
     }
 
-    @ApiResponses(value = {
-            @ApiResponse(
-                    message = "SMSC error",
-                    code = 500,
-                    response = ApiException.class
-            )})
     public LoginAttemptRecord create(UserRecord user) {
         LoginAttemptRecord res = new LoginAttemptRecord();
         res.setTelephone(user.getTelephone());
@@ -66,9 +60,10 @@ public class LoginAttemptService {
         return loginAttemptRepository.save(res);
     }
 
-    private Optional<String> doCallAndGetCode(String phoneNumber) {
+    private Optional<String> doCallAndGetCode(String telephone) {
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SMSCResponseDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + phoneNumber, SMSCResponseDTO.class);
+        ResponseEntity<SMSCResponseDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + telephone,
+                SMSCResponseDTO.class);
         SMSCResponseDTO responseDTO = smscResponse.getBody();
         if (Objects.requireNonNull(responseDTO).getCode() != null) {
             return Optional.of(smscResponse.getBody().getCode());

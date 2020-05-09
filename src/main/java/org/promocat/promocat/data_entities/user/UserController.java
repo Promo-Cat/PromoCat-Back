@@ -10,6 +10,7 @@ import org.promocat.promocat.data_entities.login_attempt.dto.TokenDTO;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeController;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class UserController {
 
     @ApiResponses(value = {
             @ApiResponse(code = 400,
-                    message = "Bad Request",
+                    message = "Validation error",
                     response = ApiValidationException.class),
             @ApiResponse(code = 415,
                     message = "Not acceptable media type",
@@ -77,6 +78,14 @@ public class UserController {
         return userRepository.getOne(id);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 405,
+                    message = "Wrong code from user",
+                    response = ApiException.class)
+    })
     @RequestMapping(value = "/auth/token", method = RequestMethod.GET)
     public ResponseEntity<TokenDTO> getToken(@RequestBody LoginAttemptDTO loginAttempt) {
         Optional<UserRecord> userRecord = userService.checkLoginAttemptCode(loginAttempt);
@@ -85,10 +94,10 @@ public class UserController {
             try {
                 return new ResponseEntity<>(new TokenDTO(userService.getToken(user.getTelephone())), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                throw new UsernameNotFoundException(e.getMessage());
             }
         } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            throw new ApiWrongCodeException("Wrong code from user");
         }
     }
 }

@@ -7,6 +7,7 @@ import org.promocat.promocat.data_entities.login_attempt.dto.TelephoneDTO;
 import org.promocat.promocat.data_entities.user.UserRecord;
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,21 +38,27 @@ public class LoginAttemptController {
         this.loginAttemptService = loginAttemptService;
     }
 
-
-    // TODO: DTO для ответов и тд
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "User not found",
-                    response = ApiException.class)})
+                    response = ApiException.class),
+            @ApiResponse(code = 400,
+                    message = "Validation error",
+                    response = ApiValidationException.class),
+            @ApiResponse(
+                    message = "SMSC error",
+                    code = 500,
+                    response = ApiException.class
+            )})
     @RequestMapping(value = "login", method = RequestMethod.GET)
-    public ResponseEntity<AuthorizationKeyDTO> login(@Valid @RequestBody TelephoneDTO phoneNumber) {
-        Optional<UserRecord> userRecord = userRepository.getByTelephone(phoneNumber.getTelephone());
+    public ResponseEntity<AuthorizationKeyDTO> login(@Valid @RequestBody TelephoneDTO telephone) {
+        Optional<UserRecord> userRecord = userRepository.getByTelephone(telephone.getTelephone());
         if (userRecord.isPresent()) {
             LoginAttemptRecord loginAttemptRecord = loginAttemptService.create(userRecord.get());
             return new ResponseEntity<>(new AuthorizationKeyDTO(loginAttemptRecord.getAuthorizationKey()), HttpStatus.OK);
         } else {
             throw new UsernameNotFoundException(
-                    "User with phone number " + phoneNumber.getTelephone() + " does not exists"
+                    "User with phone number " + telephone.getTelephone() + " does not exists"
             );
         }
     }

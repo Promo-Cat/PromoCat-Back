@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
  * @author Grankin Maxim (maximgran@gmail.com) at 19:25 08.05.2020
  */
 @ControllerAdvice
-public class ApiUserExistenceHandler {
+public class ApiUserNotFoundHandler {
     @ExceptionHandler(value = {UsernameNotFoundException.class})
     public ResponseEntity<Object> handleNonexistentUser(UsernameNotFoundException e) {
         final HttpStatus notFound = HttpStatus.NOT_FOUND;
