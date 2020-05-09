@@ -16,6 +16,7 @@ public class PromoCodeController {
     }
 
     public static PromoCodeRecord promoCodeDTOToRecord(PromoCodeDTO promoCodeDTO) {
-        return new PromoCodeRecord(promoCodeDTO.getId(), promoCodeDTO.getPromoCode(), UserController.userDTOToRecord(promoCodeDTO.getUserDTO()));
+        return new PromoCodeRecord(promoCodeDTO.getId(), promoCodeDTO.getPromoCode(),
+                UserController.userDTOToRecord(promoCodeDTO.getUserDTO()));
     }
 }

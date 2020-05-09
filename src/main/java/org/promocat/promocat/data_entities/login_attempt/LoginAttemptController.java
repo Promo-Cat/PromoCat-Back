@@ -3,7 +3,7 @@ package org.promocat.promocat.data_entities.login_attempt;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.data_entities.login_attempt.dto.AuthorizationKeyDTO;
-import org.promocat.promocat.data_entities.login_attempt.dto.PhoneNumberDTO;
+import org.promocat.promocat.data_entities.login_attempt.dto.TelephoneDTO;
 import org.promocat.promocat.data_entities.user.UserRecord;
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.exception.ApiException;
@@ -44,14 +44,14 @@ public class LoginAttemptController {
                     message = "User not found",
                     response = ApiException.class)})
     @RequestMapping(value = "login", method = RequestMethod.GET)
-    public ResponseEntity<AuthorizationKeyDTO> login(@Valid @RequestBody PhoneNumberDTO phoneNumber) {
-        Optional<UserRecord> userRecord = userRepository.getByTelephone(phoneNumber.getPhoneNumber());
+    public ResponseEntity<AuthorizationKeyDTO> login(@Valid @RequestBody TelephoneDTO phoneNumber) {
+        Optional<UserRecord> userRecord = userRepository.getByTelephone(phoneNumber.getTelephone());
         if (userRecord.isPresent()) {
             LoginAttemptRecord loginAttemptRecord = loginAttemptService.create(userRecord.get());
             return new ResponseEntity<>(new AuthorizationKeyDTO(loginAttemptRecord.getAuthorizationKey()), HttpStatus.OK);
         } else {
             throw new UsernameNotFoundException(
-                    "User with phone number " + phoneNumber.getPhoneNumber() + " does not exists"
+                    "User with phone number " + phoneNumber.getTelephone() + " does not exists"
             );
         }
     }

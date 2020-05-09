@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.car.dto.CarDTO;
 import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
-import org.promocat.promocat.data_entities.promo_code.dto.PromoCodeDTO;
 
 import java.util.Objects;
 

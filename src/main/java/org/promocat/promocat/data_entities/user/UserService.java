@@ -89,7 +89,7 @@ public class UserService {
     public Optional<UserRecord> checkLoginAttemptCode(LoginAttemptDTO attempt) {
         LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuth_key());
         if (loginAttemptRecord.getPhoneCode().equals(attempt.getCode())) {
-            return userRepository.getByTelephone(loginAttemptRecord.getUserTelephoneNumber());
+            return userRepository.getByTelephone(loginAttemptRecord.getTelephone());
         }
         return Optional.empty();
     }

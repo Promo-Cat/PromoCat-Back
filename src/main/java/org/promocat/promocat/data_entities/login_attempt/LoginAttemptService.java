@@ -9,10 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * @author Roman Devyatilov (Fr1m3n)
@@ -47,7 +44,7 @@ public class LoginAttemptService {
 
     public LoginAttemptRecord create(UserRecord user) {
         LoginAttemptRecord res = new LoginAttemptRecord();
-        res.setUserTelephoneNumber(user.getTelephone());
+        res.setTelephone(user.getTelephone());
         if (doCall) {
             Optional<String> code = doCallAndGetCode(user.getTelephone());
             if (code.isEmpty()) {

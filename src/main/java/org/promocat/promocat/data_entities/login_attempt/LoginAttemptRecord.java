@@ -3,9 +3,13 @@ package org.promocat.promocat.data_entities.login_attempt;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.promocat.promocat.data_entities.user.UserRecord;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * @author Roman Devyatilov (Fr1m3n)
@@ -14,7 +18,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Table(name = "login_attempt")
 public class LoginAttemptRecord {
 
@@ -30,17 +34,20 @@ public class LoginAttemptRecord {
     private String authorizationKey;
 
     /**
-     * Телефонный номер, который ожидается от юзера.
+     * Телефонный код, который ожидается от юзера.
      */
     @Column(name = "phone_code", nullable = false)
     private String phoneCode;
 
-    @Column(name = "user", nullable = false)
-    private String userTelephoneNumber;
+    /**
+     * Телефонный номер юзера.
+     */
+    @Column(name = "telephone", nullable = false)
+    private String telephone;
 
-    public LoginAttemptRecord(final String authorizationKey, final String phoneCode, final String userNumber) {
+    public LoginAttemptRecord(final String authorizationKey, final String phoneCode, final String telephone) {
         this.authorizationKey = authorizationKey;
         this.phoneCode = phoneCode;
-        this.userTelephoneNumber = userNumber;
+        this.telephone = telephone;
     }
 }
