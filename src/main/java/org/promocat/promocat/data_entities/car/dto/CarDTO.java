@@ -10,6 +10,8 @@ import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car_number.dto.CarNumberDTO;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @NoArgsConstructor(force = true)
@@ -42,28 +44,33 @@ public class CarDTO {
         number = new CarNumberDTO(carRecord.getNumber(), this);
     }
 
-    private boolean check(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (o == null) {
             return false;
         }
         if (o == this) {
             return true;
         }
-        return o instanceof CarDTO;
-    }
+        if (!(o instanceof CarDTO)) {
+            return false;
+        }
+        CarDTO that = (CarDTO) o;
 
-    @Override
-    public boolean equals(Object o) {
-        CarDTO carDTO = (CarDTO) o;
-
-        return check(o) && carDTO.getId().equals(id);
+        return Objects.equals(that.getId(), id);
     }
 
     public boolean equalsFields(Object o) {
-        CarDTO carDTO = (CarDTO) o;
+        CarDTO that = (CarDTO) o;
 
-        return check(o) && carDTO.getId().equals(id) && carDTO.getNumber().equals(number)
-                && carDTO.getUser().equals(user) && carDTO.getCarMake().equals(carMake)
-                && carDTO.getColor().equals(color);
+        return equals(o) && Objects.equals(that.getCarMake(), carMake)
+                && Objects.equals(that.getColor(), color)
+                && Objects.equals(that.getNumber(), number)
+                && Objects.equals(that.getUser(), user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, carMake, color);
     }
 }

@@ -12,6 +12,7 @@ import org.promocat.promocat.data_entities.promo_code.dto.PromoCodeDTO;
 import org.promocat.promocat.data_entities.user.UserRecord;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -23,8 +24,7 @@ import java.util.Set;
         property = "id")
 public class UserDTO {
     private Long id;
-    private String firstName;
-    private String lastName;
+    private String name;
     private String telephone;
     private String token;
     private String city;
@@ -34,7 +34,7 @@ public class UserDTO {
 
     public UserDTO(UserRecord userRecord) {
         id = userRecord.getId();
-        firstName = userRecord.getName();
+        name = userRecord.getName();
         telephone = userRecord.getTelephone();
         city = userRecord.getCity();
         token = userRecord.getToken();
@@ -45,36 +45,36 @@ public class UserDTO {
         promoCodeDTO = new PromoCodeDTO(userRecord.getPromo_code(), this);
     }
 
-    private boolean check(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (o == null) {
             return false;
         }
         if (o == this) {
             return true;
         }
+        if (!(o instanceof UserDTO)) {
+            return false;
+        }
+        UserDTO that = (UserDTO) o;
 
-        return o instanceof UserDTO;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        UserDTO userDTO = (UserDTO) o;
-
-        return check(o) && userDTO.getId().equals(id);
+        return Objects.equals(that.getId(), id);
     }
 
     public boolean equalsFields(Object o) {
-        UserDTO userDTO = (UserDTO) o;
+        UserDTO that = (UserDTO) o;
 
-        return check(o) && userDTO.getId().equals(id) && userDTO.getFirstName().equals(firstName)
-                && userDTO.getLastName().equals(lastName) && userDTO.getCity().equals(city)
-                && userDTO.getTelephone().equals(telephone) && userDTO.getBalance().equals(balance)
-                && userDTO.getToken().equals(token) && userDTO.getPromoCodeDTO().equals(promoCodeDTO)
-                && userDTO.getCars().equals(cars);
+        return equals(o) && Objects.equals(that.getName(), name)
+                && Objects.equals(that.getCity(), city)
+                && Objects.equals(that.getTelephone(), telephone)
+                && Objects.equals(that.getBalance(), balance)
+                && Objects.equals(that.getToken(), token)
+                && Objects.equals(that.getPromoCodeDTO(), promoCodeDTO)
+                && Objects.equals(that.getCars(), cars);
     }
 
     @Override
     public int hashCode() {
-        return Integer.parseInt(id.toString());
+        return Objects.hash(id, name, city, telephone, token, balance);
     }
 }

@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.car.dto.CarDTO;
 import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
+import org.promocat.promocat.data_entities.promo_code.dto.PromoCodeDTO;
+
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -33,27 +36,32 @@ public class CarNumberDTO {
         car = new CarDTO(carNumberRecord.getCar());
     }
 
-    private boolean check(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (o == null) {
             return false;
         }
         if (o == this) {
             return true;
         }
-        return o instanceof CarNumberDTO;
-    }
+        if (!(o instanceof CarNumberDTO)) {
+            return false;
+        }
+        CarNumberDTO that = (CarNumberDTO) o;
 
-    @Override
-    public boolean equals(Object o) {
-        CarNumberDTO carNumberDTO = (CarNumberDTO) o;
-
-        return check(o) && carNumberDTO.getId().equals(id);
+        return Objects.equals(that.getId(), id);
     }
 
     public boolean equalsFields(Object o) {
-        CarNumberDTO carNumberDTO = (CarNumberDTO) o;
+        CarNumberDTO that = (CarNumberDTO) o;
 
-        return check(o) && carNumberDTO.getId().equals(id) && carNumberDTO.getNumber().equals(number)
-                && carNumberDTO.getCar().equals(car) && carNumberDTO.getRegion().equals(region);
+        return equals(o) && Objects.equals(that.getCar(), car)
+                && Objects.equals(that.getNumber(), number)
+                && Objects.equals(that.getRegion(), region);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number, region);
     }
 }

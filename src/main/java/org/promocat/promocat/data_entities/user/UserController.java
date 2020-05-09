@@ -40,7 +40,7 @@ public class UserController {
     public static UserRecord userDTOToRecord(final UserDTO userDTO) {
         UserRecord userRecord = new UserRecord();
         userRecord.setId(userDTO.getId());
-        userRecord.setName(userDTO.getFirstName());
+        userRecord.setName(userDTO.getName());
         userRecord.setTelephone(userDTO.getTelephone());
         userRecord.setCity(userDTO.getCity());
         userRecord.setToken(userDTO.getToken());

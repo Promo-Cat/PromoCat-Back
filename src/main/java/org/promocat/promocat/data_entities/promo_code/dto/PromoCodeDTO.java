@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 
+import java.util.Objects;
+
 /**
  * Created by Danil Lyskin at 20:44 05.05.2020
  */
@@ -43,27 +45,31 @@ public class PromoCodeDTO {
         userDTO = new UserDTO(promoCodeRecord.getUser());
     }
 
-    private boolean check(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (o == null) {
             return false;
         }
         if (o == this) {
             return true;
         }
-        return  o instanceof PromoCodeDTO;
-    }
+        if (!(o instanceof PromoCodeDTO)) {
+            return false;
+        }
+        PromoCodeDTO that = (PromoCodeDTO) o;
 
-    @Override
-    public boolean equals(Object o) {
-        PromoCodeDTO promoCodeDTO = (PromoCodeDTO) o;
-
-        return check(o) && promoCodeDTO.getId().equals(id);
+        return Objects.equals(that.getId(), id);
     }
 
     public boolean equalsFields(Object o) {
-        PromoCodeDTO promoCodeDTO = (PromoCodeDTO) o;
+        PromoCodeDTO that = (PromoCodeDTO) o;
 
-        return check(o) && promoCodeDTO.getId().equals(id) && promoCodeDTO.getUserDTO().equals(userDTO)
-                && promoCodeDTO.getPromoCode().equals(promoCode);
+        return equals(o) && Objects.equals(that.getPromoCode(), promoCode)
+                && Objects.equals(that.getUserDTO(), userDTO);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, promoCode);
     }
 }
