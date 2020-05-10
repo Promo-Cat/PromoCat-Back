@@ -87,7 +87,7 @@ public class UserControllerTest {
         UserRecord expected = new UserRecord();
         expected.setId(2L);
         expected.setName("My");
-        expected.setTelephone("+7(962)401-15-60");
+        expected.setTelephone("+7(962)401-15-61");
         expected.setBalance(1L);
         expected.setCity("Saint-Petersburg");
 
