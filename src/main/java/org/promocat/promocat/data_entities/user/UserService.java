@@ -27,7 +27,7 @@ public class UserService {
     private final CarRepository carRepository;
     private final LoginAttemptRepository loginAttemptRepository;
     private final PromoCodeRepository promoCodeRepository;
-  
+
     @Autowired
     public UserService(final UserRepository userRepository, final CarNumberRepository carNumberRepository,
                        final CarRepository carRepository, final LoginAttemptRepository loginAttemptRepository,
@@ -61,6 +61,7 @@ public class UserService {
 
     /**
      * Возвращает токен для авторизации. Вызывать после проверки подтверждения авторизации.
+     *
      * @param telephone телефон юзера, которому выдаётся токен
      * @return токен, присвоенный записи юзера
      * @throws UsernameNotFoundException если пользователь с заданным номером не найден в БД
@@ -83,6 +84,7 @@ public class UserService {
 
     /**
      * Проверяет код пришедший на телефон.
+     *
      * @param attempt DTO хранящий код, который получил юзер и специальный ключ
      * @return true - если всё совпадает и можно выдавать токен
      */
@@ -96,6 +98,7 @@ public class UserService {
 
     /**
      * Находит пользователя в БД по токену.
+     *
      * @param token токен
      * @return объект класса User, соответствующий пользователю
      * @throws UsernameNotFoundException если токен не найден в БД
@@ -112,4 +115,13 @@ public class UserService {
         }
     }
 
+    // TODO Javadoc
+    public UserDTO findById(Long id) {
+        Optional<UserRecord> userRecord = userRepository.findById(id);
+        if (userRecord.isPresent()) {
+            return new UserDTO(userRecord.get());
+        } else {
+            throw new UsernameNotFoundException("No user with such id in db.");
+        }
+    }
 }

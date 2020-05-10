@@ -74,8 +74,8 @@ public class UserController {
 
     // TODO API RESPONSES
     @RequestMapping(path = "/api/user/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserRecord getUserById(@RequestBody Long id) {
-        return userRepository.getOne(id);
+    public UserDTO getUserById(@RequestBody Long id) {
+        return userService.findById(id);
     }
 
     @ApiResponses(value = {
