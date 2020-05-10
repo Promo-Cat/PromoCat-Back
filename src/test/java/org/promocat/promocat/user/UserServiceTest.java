@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.TransactionalException;
 import javax.validation.ConstraintViolationException;
 
 /**
@@ -63,7 +64,7 @@ public class UserServiceTest {
         userRecord.setId(1L);
         userRecord.setName("My");
         userRecord.setBalance(1L);
-        userRecord.setTelephone("+7(962)4011560");
+        userRecord.setTelephone("+7(962)-401-15-60");
         userRecord.setCity("Saint-Petersburg");
 
         userService.save(userRecord);
@@ -75,7 +76,6 @@ public class UserServiceTest {
         userRecord.setName("My");
         userRecord.setTelephone("+7(962)4011560");
         userRecord.setCity("Saint-Petersburg");
-
         userService.save(userRecord);
     }
 
