@@ -93,6 +93,6 @@ public class UserControllerTest {
 
         userController.addUser(expected);
         UserRecord actual = userController.getUserById(2L);
-        Assert.assertTrue(expected.equalsFields(actual));
+        Assert.assertEquals(expected, actual);
     }
 }
