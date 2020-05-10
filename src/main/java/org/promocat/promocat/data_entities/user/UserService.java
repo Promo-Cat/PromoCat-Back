@@ -87,7 +87,7 @@ public class UserService {
      * @return true - если всё совпадает и можно выдавать токен
      */
     public Optional<UserRecord> checkLoginAttemptCode(LoginAttemptDTO attempt) {
-        LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuth_key());
+        LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorization_key());
         if (loginAttemptRecord.getPhoneCode().equals(attempt.getCode())) {
             return userRepository.getByTelephone(loginAttemptRecord.getTelephone());
         }
@@ -104,7 +104,8 @@ public class UserService {
         Optional<UserRecord> userRecord = userRepository.getByToken(token);
         if (userRecord.isPresent()) {
             UserRecord user1 = userRecord.get();
-            User user = new User(user1.getTelephone(), "", true, true, true, true, AuthorityUtils.createAuthorityList("user"));
+            User user = new User(user1.getTelephone(), "", true, true,
+                    true, true, AuthorityUtils.createAuthorityList("user"));
             return Optional.of(user);
         } else {
             throw new UsernameNotFoundException("Token is not found in db.");
