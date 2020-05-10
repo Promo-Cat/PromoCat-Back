@@ -39,10 +39,14 @@ public class UserDTO {
         city = userRecord.getCity();
         token = userRecord.getToken();
         balance = userRecord.getBalance();
-        for (CarRecord carRecord : userRecord.getCars()) {
-            cars.add(new CarDTO(carRecord, this));
+        if (Objects.nonNull(userRecord.getCars())) {
+            for (CarRecord carRecord : userRecord.getCars()) {
+                cars.add(new CarDTO(carRecord, this));
+            }
         }
-        promoCodeDTO = new PromoCodeDTO(userRecord.getPromo_code(), this);
+        if (Objects.nonNull(userRecord.getPromo_code())) {
+            promoCodeDTO = new PromoCodeDTO(userRecord.getPromo_code(), this);
+        }
     }
 
     @Override

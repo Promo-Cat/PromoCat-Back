@@ -28,16 +28,13 @@ public class PromoCodeDTO {
     private UserDTO userDTO;
 
     public PromoCodeDTO(PromoCodeRecord promoCodeRecord, UserDTO userDTO) {
-        if (promoCodeRecord == null) {
-            return;
-        }
         id = promoCodeRecord.getId();
         promoCode = promoCodeRecord.getPromo_code();
         this.userDTO = userDTO;
     }
 
     public PromoCodeDTO(PromoCodeRecord promoCodeRecord) {
-        if (promoCodeRecord == null) {
+        if (Objects.isNull(promoCodeRecord)) {
             return;
         }
         id = promoCodeRecord.getId();

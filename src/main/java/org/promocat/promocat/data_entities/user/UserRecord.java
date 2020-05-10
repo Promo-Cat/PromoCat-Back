@@ -20,7 +20,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -82,7 +81,7 @@ public class UserRecord {
      * Автомобили пользователя.
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<CarRecord> cars = new HashSet<>();
+    private Set<CarRecord> cars;
 
     /**
      * Действующий промокод.
