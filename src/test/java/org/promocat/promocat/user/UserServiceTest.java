@@ -13,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
-import javax.transaction.TransactionalException;
 import javax.validation.ConstraintViolationException;
 
 /**
