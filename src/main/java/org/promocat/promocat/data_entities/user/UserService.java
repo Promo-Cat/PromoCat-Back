@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,16 +44,18 @@ public class UserService {
     public UserDTO save(UserRecord user) {
         UserRecord res = userRepository.save(user);
 
-        for (CarRecord car : res.getCars()) {
-            car.setUser(res);
-            carNumberRepository.save(car.getNumber());
-            car.getNumber().setCar(car);
-            carRepository.save(car);
+        if (Objects.nonNull(res.getCars())) {
+            for (CarRecord car : res.getCars()) {
+                car.setUser(res);
+                carNumberRepository.save(car.getNumber());
+                car.getNumber().setCar(car);
+                carRepository.save(car);
+            }
         }
 
-        if (!Objects.isNull(user.getPromo_code())) {
-            promoCodeRepository.save(user.getPromo_code());
-            user.getPromo_code().setUser(user);
+        if (Objects.nonNull(res.getPromo_code())) {
+            promoCodeRepository.save(res.getPromo_code());
+            res.getPromo_code().setUser(res);
         }
 
         return new UserDTO(res);
@@ -66,6 +69,7 @@ public class UserService {
      * @return токен, присвоенный записи юзера
      * @throws UsernameNotFoundException если пользователь с заданным номером не найден в БД
      */
+    @Transactional
     public String getToken(String telephone) throws UsernameNotFoundException {
         Optional<UserRecord> userFromDB = userRepository.getByTelephone(telephone);
         // TODO: Тесты
@@ -88,6 +92,7 @@ public class UserService {
      * @param attempt DTO хранящий код, который получил юзер и специальный ключ
      * @return true - если всё совпадает и можно выдавать токен
      */
+    @Transactional
     public Optional<UserRecord> checkLoginAttemptCode(LoginAttemptDTO attempt) {
         LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorization_key());
         if (loginAttemptRecord.getPhoneCode().equals(attempt.getCode())) {
@@ -103,6 +108,7 @@ public class UserService {
      * @return объект класса User, соответствующий пользователю
      * @throws UsernameNotFoundException если токен не найден в БД
      */
+    @Transactional
     public Optional<User> findByToken(String token) throws UsernameNotFoundException {
         Optional<UserRecord> userRecord = userRepository.getByToken(token);
         if (userRecord.isPresent()) {
@@ -116,6 +122,7 @@ public class UserService {
     }
 
     // TODO Javadoc
+    @Transactional
     public UserDTO findById(Long id) {
         Optional<UserRecord> userRecord = userRepository.findById(id);
         if (userRecord.isPresent()) {
