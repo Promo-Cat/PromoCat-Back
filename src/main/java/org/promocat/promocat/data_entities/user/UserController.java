@@ -33,13 +33,10 @@ public class UserController {
 
     // TODO Logger
 //    private static Logger logger = LoggerFactory.getLogger(UserController.class);
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @Autowired
-    public UserController(final UserRepository userRepository,
-                          final UserService userService) {
-        this.userRepository = userRepository;
+    public UserController(final UserService userService) {
         this.userService = userService;
     }
 
