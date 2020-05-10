@@ -100,4 +100,19 @@ public class UserController {
             throw new ApiWrongCodeException("Wrong code from user");
         }
     }
+
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Token is valid"),
+            @ApiResponse(code = 404,
+                    message = "Token isn`t valid")
+    })
+    @RequestMapping(value = "/auth/valid", method = RequestMethod.GET)
+    public ResponseEntity<String> isTokenValid(@RequestBody TokenDTO token) {
+        if (userService.findByToken(token.getToken()).isPresent()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -87,7 +87,7 @@ public class UserService {
      * @return true - если всё совпадает и можно выдавать токен
      */
     public Optional<UserRecord> checkLoginAttemptCode(LoginAttemptDTO attempt) {
-        LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuth_key());
+        LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorization_key());
         if (loginAttemptRecord.getPhoneCode().equals(attempt.getCode())) {
             return userRepository.getByTelephone(loginAttemptRecord.getTelephone());
         }
