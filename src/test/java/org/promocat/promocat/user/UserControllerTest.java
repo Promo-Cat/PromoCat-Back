@@ -37,12 +37,15 @@ public class UserControllerTest {
     private MockMvc mvc;
 
     @Autowired
+    private UserController userController;
+
+    @Autowired
     private UserService userService;
 
     @Before
     public void init() {
         userRecord.setId(1L);
-        userRecord.setName("my");
+        userRecord.setName("My");
         userRecord.setTelephone("+7(962)401-15-60");
         userRecord.setBalance(1L);
         userRecord.setCity("Saint-Petersburg");
@@ -77,5 +80,19 @@ public class UserControllerTest {
         UserRecord testUser = UserController.userDTOToRecord(userDTO);
         Assert.assertNotNull(testUser);
         Assert.assertEquals(testUser, userRecord);
+    }
+
+    @Test
+    public void testSaveAndGetById() {
+        UserRecord expected = new UserRecord();
+        expected.setId(2L);
+        expected.setName("My");
+        expected.setTelephone("+7(962)401-15-60");
+        expected.setBalance(1L);
+        expected.setCity("Saint-Petersburg");
+
+        userController.addUser(expected);
+        UserRecord actual = userController.getUserById(2L);
+        Assert.assertTrue(expected.equalsFields(actual));
     }
 }
