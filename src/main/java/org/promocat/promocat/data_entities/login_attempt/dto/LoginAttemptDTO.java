@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class LoginAttemptDTO {
 
-    private String auth_key;
+    private String authorization_key;
     private String code;
 
 }
