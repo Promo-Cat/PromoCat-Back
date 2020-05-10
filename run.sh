@@ -1,1 +1,1 @@
-./mvnw spring-boot:run -Dspring-boot.run.profiles=production
+/root/PromoCat-Back/mvnw spring-boot:run -Dspring-boot.run.profiles=production
