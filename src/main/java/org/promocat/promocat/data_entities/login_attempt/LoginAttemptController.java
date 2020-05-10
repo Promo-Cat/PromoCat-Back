@@ -10,6 +10,7 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,9 +49,12 @@ public class LoginAttemptController {
             @ApiResponse(
                     message = "SMSC error",
                     code = 500,
-                    response = ApiException.class
-            )})
-    @RequestMapping(value = "login", method = RequestMethod.GET)
+                    response = ApiException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/login", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthorizationKeyDTO> login(@Valid @RequestBody TelephoneDTO telephone) {
         Optional<UserRecord> userRecord = userRepository.getByTelephone(telephone.getTelephone());
         if (userRecord.isPresent()) {

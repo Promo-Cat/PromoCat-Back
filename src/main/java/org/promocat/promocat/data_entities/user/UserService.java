@@ -104,7 +104,8 @@ public class UserService {
         Optional<UserRecord> userRecord = userRepository.getByToken(token);
         if (userRecord.isPresent()) {
             UserRecord user1 = userRecord.get();
-            User user = new User(user1.getTelephone(), "", true, true, true, true, AuthorityUtils.createAuthorityList("user"));
+            User user = new User(user1.getTelephone(), "", true, true,
+                    true, true, AuthorityUtils.createAuthorityList("user"));
             return Optional.of(user);
         } else {
             throw new UsernameNotFoundException("Token is not found in db.");
