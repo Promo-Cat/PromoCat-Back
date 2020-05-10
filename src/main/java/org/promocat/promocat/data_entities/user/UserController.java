@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -101,6 +102,21 @@ public class UserController {
             }
         } else {
             throw new ApiWrongCodeException("Wrong code from user");
+        }
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,
+                    message = "Token is valid"),
+            @ApiResponse(code = 404,
+                    message = "Token isn`t valid")
+    })
+    @RequestMapping(value = "/auth/valid", method = RequestMethod.GET)
+    public ResponseEntity<String> isTokenValid(@RequestBody TokenDTO token) {
+        if (userService.findByToken(token.getToken()).isPresent()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
