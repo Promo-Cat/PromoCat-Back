@@ -33,13 +33,10 @@ public class UserController {
 
     // TODO Logger
 //    private static Logger logger = LoggerFactory.getLogger(UserController.class);
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @Autowired
-    public UserController(final UserRepository userRepository,
-                          final UserService userService) {
-        this.userRepository = userRepository;
+    public UserController(final UserService userService) {
         this.userService = userService;
     }
 
@@ -75,8 +72,8 @@ public class UserController {
 
     // TODO API RESPONSES
     @RequestMapping(path = "/api/user/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserRecord getUserById(@RequestBody Long id) {
-        return userRepository.getOne(id);
+    public UserDTO getUserById(@RequestBody Long id) {
+        return userService.findById(id);
     }
 
     @ApiResponses(value = {
