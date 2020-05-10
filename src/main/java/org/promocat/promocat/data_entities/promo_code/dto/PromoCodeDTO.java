@@ -28,6 +28,9 @@ public class PromoCodeDTO {
     private UserDTO userDTO;
 
     public PromoCodeDTO(PromoCodeRecord promoCodeRecord, UserDTO userDTO) {
+        if (Objects.isNull(promoCodeRecord)) {
+            return;
+        }
         id = promoCodeRecord.getId();
         promoCode = promoCodeRecord.getPromo_code();
         this.userDTO = userDTO;

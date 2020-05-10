@@ -26,11 +26,17 @@ public class CarNumberDTO {
     }
 
     public CarNumberDTO(CarNumberRecord carNumberRecord, CarDTO car) {
+        if (Objects.isNull(carNumberRecord)) {
+            return;
+        }
         fillIdNumberRegion(carNumberRecord);
         this.car = car;
     }
 
     public CarNumberDTO(CarNumberRecord carNumberRecord) {
+        if (Objects.isNull(carNumberRecord)) {
+            return;
+        }
         fillIdNumberRegion(carNumberRecord);
         car = new CarDTO(carNumberRecord.getCar());
     }
