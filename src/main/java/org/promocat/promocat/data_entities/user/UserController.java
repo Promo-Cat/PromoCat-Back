@@ -12,14 +12,11 @@ import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +30,8 @@ import java.util.Set;
 @RestController
 public class UserController {
 
-    private static Logger logger = LoggerFactory.getLogger(UserController.class);
+    // TODO Logger
+//    private static Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserRepository userRepository;
     private final UserService userService;
 
@@ -67,13 +65,15 @@ public class UserController {
                     response = ApiValidationException.class),
             @ApiResponse(code = 415,
                     message = "Not acceptable media type",
-                    response = ApiException.class)})
-    @RequestMapping(path = "/auth/register", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+                    response = ApiException.class)
+    })
+    @RequestMapping(path = "/auth/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO addUser(@Valid @RequestBody UserRecord user) {
         return userService.save(user);
     }
 
-    @GetMapping(path = "/api/user/getById", consumes = "application/json")
+    // TODO API RESPONSES
+    @RequestMapping(path = "/api/user/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserRecord getUserById(@RequestBody Long id) {
         return userRepository.getOne(id);
     }
@@ -84,9 +84,12 @@ public class UserController {
                     response = ApiException.class),
             @ApiResponse(code = 405,
                     message = "Wrong code from user",
+                    response = ApiException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/auth/token", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/token", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TokenDTO> getToken(@RequestBody LoginAttemptDTO loginAttempt) {
         Optional<UserRecord> userRecord = userService.checkLoginAttemptCode(loginAttempt);
         if (userRecord.isPresent()) {
