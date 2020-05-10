@@ -33,12 +33,18 @@ public class CarDTO {
     }
 
     public CarDTO(CarRecord carRecord, UserDTO user) {
+        if (Objects.isNull(carRecord)) {
+            return;
+        }
         fillIdMakeColor(carRecord);
         number = new CarNumberDTO(carRecord.getNumber(), this);
         this.user = user;
     }
 
     public CarDTO(CarRecord carRecord) {
+        if (Objects.isNull(carRecord)) {
+            return;
+        }
         fillIdMakeColor(carRecord);
         user = new UserDTO(carRecord.getUser());
         number = new CarNumberDTO(carRecord.getNumber(), this);

@@ -41,6 +41,7 @@ public class UserService {
 
     }
 
+    @Transactional
     public UserDTO save(UserRecord user) {
         UserRecord res = userRepository.save(user);
 

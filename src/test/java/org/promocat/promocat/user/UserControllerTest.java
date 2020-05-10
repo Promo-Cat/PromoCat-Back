@@ -19,7 +19,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 /**

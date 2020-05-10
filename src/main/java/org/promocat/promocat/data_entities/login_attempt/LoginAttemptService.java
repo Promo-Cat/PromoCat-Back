@@ -1,11 +1,8 @@
 package org.promocat.promocat.data_entities.login_attempt;
 
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import net.bytebuddy.utility.RandomString;
 import org.promocat.promocat.data_entities.login_attempt.dto.SMSCResponseDTO;
 import org.promocat.promocat.data_entities.user.UserRecord;
-import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.smsc.SMSCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
