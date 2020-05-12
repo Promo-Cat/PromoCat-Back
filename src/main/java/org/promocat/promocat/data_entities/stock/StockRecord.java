@@ -13,18 +13,30 @@ import java.time.LocalDateTime;
 @Table(name = "stock")
 public class StockRecord {
 
+    /**
+     * Id акции.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Время начала акции.
+     */
     @NotBlank(message = "Время начала акции не может быть пустым.")
     @Column
     private LocalDateTime start_time;
 
+    /**
+     * Время продолжительности акции.
+     */
     @NotBlank(message = "Время продолжительности акции не может быть пустым.")
     @Column
     private LocalDateTime duration;
 
+    /**
+     * Id организации, которой принадлежит акция.
+     */
     @NotBlank(message = "Id организации не может быть пустым")
     @Column
     private Long company_id;
