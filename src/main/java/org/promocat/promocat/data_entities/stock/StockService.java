@@ -3,9 +3,11 @@ package org.promocat.promocat.data_entities.stock;
 
 import org.promocat.promocat.data_entities.stock.dto.StockDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 public class StockService {
@@ -16,6 +18,16 @@ public class StockService {
     public StockDTO save(StockRecord stock) {
         StockRecord res = stockRepository.save(stock);
         return new StockDTO(res);
+    }
+
+    @Transactional
+    public StockDTO findById(Long id) {
+        Optional<StockRecord> stockRecord = stockRepository.findById(id);
+        if (stockRecord.isPresent()) {
+            return new StockDTO(stockRecord.get());
+        } else {
+            throw new UsernameNotFoundException("No stock with such id in db.");
+        }
     }
 
     @Autowired
