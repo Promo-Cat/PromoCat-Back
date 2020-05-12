@@ -45,7 +45,7 @@ public class CompanyController {
         return companyService.save(company);
     }
 
-    @RequestMapping(path = "/api/user/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "/api/company/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public CompanyDTO getCompanyById(@RequestBody Long id) {
         logger.info("Trying to find user with id: " + id);
         return companyService.findById(id);
