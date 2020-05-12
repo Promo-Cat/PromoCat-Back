@@ -32,6 +32,7 @@ public class CompanyService {
         CompanyRecord res = companyRepository.save(company);
         if (Objects.nonNull(res.getStocks())) {
             for (StockRecord stock : res.getStocks()) {
+                stock.setCompany(res);
                 stockRepository.save(stock);
             }
         }
