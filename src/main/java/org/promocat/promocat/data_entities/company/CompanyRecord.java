@@ -24,7 +24,7 @@ public class CompanyRecord {
     private Long company_id;
 
     /**
-     * Имя компании.
+     * Имя организации.
      */
     @NotBlank(message = "Имя организации не может быть пустым.")
     @Column
@@ -35,20 +35,20 @@ public class CompanyRecord {
      */
     @NotBlank(message = "Имя руководителя не может быть пустым.")
     @Column
-    private String user_first_name;
+    private String supervisor_first_name;
 
     /**
      * Фамилия руководителя.
      */
     @NotBlank(message = "Фамилия руководителя не может быть пустой.")
     @Column
-    private String user_second_name;
+    private String supervisor_second_name;
 
     /**
      * Отчество руководителя.
      */
     @Column
-    private String user_patronymic;
+    private String supervisor_patronymic;
 
     /**
      * ОГРН компании.
