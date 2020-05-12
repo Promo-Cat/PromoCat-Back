@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 /**
  * Created by Danil Lyskin at 20:42 12.05.2020
  */
@@ -39,8 +41,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/auth/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public CompanyDTO addCompany(@RequestBody CompanyRecord company) {
+    @RequestMapping(path = "/auth/company/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CompanyDTO addCompany(@Valid @RequestBody CompanyRecord company) {
         logger.info("Trying to save company with telephone: " + company.getTelephone());
         return companyService.save(company);
     }
