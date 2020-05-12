@@ -38,7 +38,7 @@ public class CompanyController {
                 stockRecords.add(StockController.stockDTOToRecord(stock));
             }
         }
-        return new CompanyRecord(companyDTO.getCompanyId(), companyDTO.getOrganizationName(), companyDTO.getSupervisorFirstName(),
+        return new CompanyRecord(companyDTO.getId(), companyDTO.getOrganizationName(), companyDTO.getSupervisorFirstName(),
                 companyDTO.getSupervisorSecondName(), companyDTO.getSupervisorPatronymic(), companyDTO.getOgrn(), companyDTO.getInn(),
                 companyDTO.getTelephone(), companyDTO.getMail(), companyDTO.getCity(), stockRecords);
     }

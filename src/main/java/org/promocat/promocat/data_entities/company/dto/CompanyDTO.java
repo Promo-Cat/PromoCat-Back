@@ -2,11 +2,9 @@ package org.promocat.promocat.data_entities.company.dto;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.company.CompanyRecord;
-import org.promocat.promocat.data_entities.stock.StockController;
 import org.promocat.promocat.data_entities.stock.StockRecord;
 import org.promocat.promocat.data_entities.stock.dto.StockDTO;
 
@@ -24,7 +22,7 @@ import java.util.Set;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
 public class CompanyDTO {
-    private Long companyId;
+    private Long id;
     private String organizationName;
     private String supervisorFirstName;
     private String supervisorSecondName;
@@ -37,7 +35,7 @@ public class CompanyDTO {
     private Set<StockDTO> stocks;
 
     public CompanyDTO(CompanyRecord companyRecord) {
-        this.companyId = companyRecord.getCompany_id();
+        this.id = companyRecord.getCompany_id();
         this.organizationName = companyRecord.getOrganization_name();
         this.supervisorFirstName = companyRecord.getSupervisor_first_name();
         this.supervisorSecondName = companyRecord.getSupervisor_second_name();
@@ -69,7 +67,7 @@ public class CompanyDTO {
         }
 
         CompanyDTO that = (CompanyDTO) o;
-        return Objects.equals(companyId, that.companyId);
+        return Objects.equals(id, that.id);
     }
 
     public boolean equalsFields(Object o) {
@@ -89,6 +87,6 @@ public class CompanyDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(companyId, organizationName, supervisorFirstName, supervisorSecondName, supervisorPatronymic, ogrn, inn, telephone, mail, city);
+        return Objects.hash(id, organizationName, supervisorFirstName, supervisorSecondName, supervisorPatronymic, ogrn, inn, telephone, mail, city);
     }
 }
