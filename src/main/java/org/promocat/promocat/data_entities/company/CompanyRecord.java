@@ -3,10 +3,13 @@ package org.promocat.promocat.data_entities.company;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.data_entities.stock.StockRecord;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.lang.reflect.Array;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor(force = true)
@@ -86,4 +89,7 @@ public class CompanyRecord {
     @NotBlank(message = "Город не может быть пустым.")
     @Column
     private String city;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<StockRecord> stocks;
 }
