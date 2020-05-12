@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.company;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.Pattern;
 
 @Data
 @NoArgsConstructor(force = true)
+@AllArgsConstructor
 @Entity
 @Table(name = "company")
 public class CompanyRecord {
