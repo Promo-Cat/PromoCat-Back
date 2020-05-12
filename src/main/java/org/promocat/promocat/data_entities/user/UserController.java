@@ -63,6 +63,9 @@ public class UserController {
                     response = ApiValidationException.class),
             @ApiResponse(code = 415,
                     message = "Not acceptable media type",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
                     response = ApiException.class)
     })
     @RequestMapping(path = "/auth/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
