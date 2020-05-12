@@ -12,6 +12,8 @@ import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,8 +32,7 @@ import java.util.Set;
 @RestController
 public class UserController {
 
-    // TODO Logger
-//    private static Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     @Autowired
@@ -66,12 +67,14 @@ public class UserController {
     })
     @RequestMapping(path = "/auth/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO addUser(@Valid @RequestBody UserRecord user) {
+        logger.info("Trying to save user with telephone: " + user.getTelephone());
         return userService.save(user);
     }
 
     // TODO API RESPONSES
     @RequestMapping(path = "/api/user/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO getUserById(@RequestBody Long id) {
+        logger.info("Trying to find user with id: " + id);
         return userService.findById(id);
     }
 
@@ -92,6 +95,8 @@ public class UserController {
         if (userRecord.isPresent()) {
             UserRecord user = userRecord.get();
             try {
+                logger.info(String.format("User with telephone %s and auth key %s got token",
+                        user.getTelephone(), loginAttempt.getAuthorization_key()));
                 return new ResponseEntity<>(new TokenDTO(userService.getToken(user.getTelephone())), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
                 throw new UsernameNotFoundException(e.getMessage());
@@ -108,9 +113,10 @@ public class UserController {
                     message = "Token isn`t valid",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/auth/valid", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/valid", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> isTokenValid(@RequestBody TokenDTO token) {
         if (userService.findByToken(token.getToken()).isPresent()) {
+            logger.info("Valid token for: " + token);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
