@@ -17,14 +17,14 @@ public class PromoCodeController {
         if (Objects.isNull(promoCodeDTO)) {
             return null;
         }
-        return new PromoCodeRecord(promoCodeDTO.getId(), promoCodeDTO.getPromoCode(), userRecord);
+        return new PromoCodeRecord(promoCodeDTO.getId(), promoCodeDTO.getPromoCode(), promoCodeDTO.getStockId(), userRecord);
     }
 
     public static PromoCodeRecord promoCodeDTOToRecord(PromoCodeDTO promoCodeDTO) {
         if (Objects.isNull(promoCodeDTO)) {
             return null;
         }
-        return new PromoCodeRecord(promoCodeDTO.getId(), promoCodeDTO.getPromoCode(),
+        return new PromoCodeRecord(promoCodeDTO.getId(), promoCodeDTO.getPromoCode(), promoCodeDTO.getStockId(),
                 UserController.userDTOToRecord(promoCodeDTO.getUserDTO()));
     }
 }

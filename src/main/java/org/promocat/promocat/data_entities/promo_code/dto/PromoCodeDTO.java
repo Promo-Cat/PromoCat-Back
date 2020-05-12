@@ -25,6 +25,7 @@ import java.util.Objects;
 public class PromoCodeDTO {
     private Long id;
     private String promoCode;
+    private Long stockId;
     private UserDTO userDTO;
 
     public PromoCodeDTO(PromoCodeRecord promoCodeRecord, UserDTO userDTO) {
