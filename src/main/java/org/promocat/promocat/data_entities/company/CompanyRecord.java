@@ -3,6 +3,7 @@ package org.promocat.promocat.data_entities.company;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.data_entities.stock.StockRecord;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.lang.reflect.Array;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor(force = true)
@@ -29,7 +32,7 @@ public class CompanyRecord {
     private Long company_id;
 
     /**
-     * Имя компании.
+     * Имя организации.
      */
     @NotBlank(message = "Имя организации не может быть пустым.")
     @Column
@@ -40,20 +43,20 @@ public class CompanyRecord {
      */
     @NotBlank(message = "Имя руководителя не может быть пустым.")
     @Column
-    private String user_first_name;
+    private String supervisor_first_name;
 
     /**
      * Фамилия руководителя.
      */
     @NotBlank(message = "Фамилия руководителя не может быть пустой.")
     @Column
-    private String user_second_name;
+    private String supervisor_second_name;
 
     /**
      * Отчество руководителя.
      */
     @Column
-    private String user_patronymic;
+    private String supervisor_patronymic;
 
     /**
      * ОГРН компании.
@@ -91,4 +94,7 @@ public class CompanyRecord {
     @NotBlank(message = "Город не может быть пустым.")
     @Column
     private String city;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<StockRecord> stocks;
 }

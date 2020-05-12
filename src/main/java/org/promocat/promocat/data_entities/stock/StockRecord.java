@@ -3,11 +3,9 @@ package org.promocat.promocat.data_entities.stock;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -15,8 +13,31 @@ import javax.persistence.Table;
 @Table(name = "stock")
 public class StockRecord {
 
+    /**
+     * Id акции.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Время начала акции.
+     */
+    @NotBlank(message = "Время начала акции не может быть пустым.")
+    @Column
+    private LocalDateTime start_time;
+
+    /**
+     * Время продолжительности акции.
+     */
+    @NotBlank(message = "Время продолжительности акции не может быть пустым.")
+    @Column
+    private LocalDateTime duration;
+
+    /**
+     * Id организации, которой принадлежит акция.
+     */
+    @NotBlank(message = "Id организации не может быть пустым")
+    @Column
+    private Long company_id;
 }
