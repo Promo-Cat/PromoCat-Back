@@ -1,6 +1,5 @@
 package org.promocat.promocat.exception.media_type;
 
-import org.promocat.promocat.data_entities.user.UserController;
 import org.promocat.promocat.exception.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,6 @@
 package org.promocat.promocat.exception.user.codes;
 
 import org.promocat.promocat.exception.ApiException;
-import org.promocat.promocat.exception.user.ApiUserNotFoundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
