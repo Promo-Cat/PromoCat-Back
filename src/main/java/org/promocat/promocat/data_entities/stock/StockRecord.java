@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -23,21 +24,21 @@ public class StockRecord {
     /**
      * Время начала акции.
      */
-    @NotBlank(message = "Время начала акции не может быть пустым.")
+    @NotNull(message = "Время начала акции не может быть пустым.")
     @Column
     private LocalDateTime start_time;
 
     /**
      * Время продолжительности акции.
      */
-    @NotBlank(message = "Время продолжительности акции не может быть пустым.")
+    @NotNull(message = "Время продолжительности акции не может быть пустым.")
     @Column
     private LocalDateTime duration;
 
     /**
      * Id организации, которой принадлежит акция.
      */
-    @NotBlank(message = "Id организации не может быть пустым")
+    @NotNull(message = "Id организации не может быть пустым")
     @Column
     private Long company_id;
 }
