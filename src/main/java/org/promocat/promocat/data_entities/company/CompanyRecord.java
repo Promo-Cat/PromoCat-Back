@@ -79,6 +79,7 @@ public class CompanyRecord {
     /**
      * Почта руководителя.
      */
+    //TODO regexp mail
     @NotBlank(message = "Имя почты не может быть пустым.")
     @Column
     private String mail;
