@@ -110,7 +110,8 @@ public class UserController {
             @ApiResponse(code = 200,
                     message = "Token is valid"),
             @ApiResponse(code = 404,
-                    message = "Token isn`t valid")
+                    message = "Token isn`t valid",
+                    response = ApiException.class)
     })
     @RequestMapping(value = "/auth/valid", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> isTokenValid(@RequestBody TokenDTO token) {
