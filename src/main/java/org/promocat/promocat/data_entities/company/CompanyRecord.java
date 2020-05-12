@@ -8,7 +8,6 @@ import org.promocat.promocat.data_entities.stock.StockRecord;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.lang.reflect.Array;
 import java.util.Set;
 
 @Data
@@ -91,6 +90,6 @@ public class CompanyRecord {
     @Column
     private String city;
 
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<StockRecord> stocks;
 }

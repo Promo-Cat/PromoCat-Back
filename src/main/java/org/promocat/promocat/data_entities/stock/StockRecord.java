@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.company.CompanyRecord;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -42,6 +41,5 @@ public class StockRecord {
      * Id организации, которой принадлежит акция.
      */
     @ManyToOne
-    @JoinColumn(name = "company_id")
     private CompanyRecord company;
 }
