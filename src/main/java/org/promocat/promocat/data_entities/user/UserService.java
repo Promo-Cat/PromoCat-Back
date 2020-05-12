@@ -129,7 +129,7 @@ public class UserService {
         if (userRecord.isPresent()) {
             return new UserDTO(userRecord.get());
         } else {
-            throw new UsernameNotFoundException("No user with such id in db.");
+            throw new UsernameNotFoundException(String.format("No user with such id: %d in db.", id));
         }
     }
 }
