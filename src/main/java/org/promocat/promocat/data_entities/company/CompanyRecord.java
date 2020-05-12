@@ -1,16 +1,17 @@
 package org.promocat.promocat.data_entities.company;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.promocat.promocat.data_entities.company.dto.CompanyDTO;
 import org.promocat.promocat.data_entities.stock.StockRecord;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Entity
@@ -92,4 +93,41 @@ public class CompanyRecord {
 
     @OneToMany(mappedBy = "company", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<StockRecord> stocks;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof CompanyRecord)) {
+            return false;
+        }
+
+        CompanyRecord that = (CompanyRecord) o;
+        return Objects.equals(company_id, that.getCompany_id());
+    }
+
+    public boolean equalsFields(Object o) {
+        CompanyRecord that = (CompanyRecord) o;
+
+        return equals(o) && Objects.equals(that.getCity(), city)
+                && Objects.equals(that.getOrganization_name(), organization_name)
+                && Objects.equals(that.getSupervisor_first_name(), supervisor_first_name)
+                && Objects.equals(that.getSupervisor_second_name(), supervisor_second_name)
+                && Objects.equals(that.getSupervisor_patronymic(), supervisor_patronymic)
+                && Objects.equals(that.getOgrn(), ogrn)
+                && Objects.equals(that.getInn(), inn)
+                && Objects.equals(that.getMail(), mail)
+                && Objects.equals(that.getTelephone(), telephone)
+                && Objects.equals(that.getStocks(), stocks);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(company_id, organization_name, supervisor_first_name, supervisor_second_name, supervisor_patronymic,
+                ogrn, inn, telephone, mail, city);
+    }
 }
