@@ -69,6 +69,7 @@ public class UserControllerTest {
         PromoCodeRecord promoCodeRecord = new PromoCodeRecord();
         promoCodeRecord.setId(1L);
         promoCodeRecord.setPromo_code("12");
+        promoCodeRecord.setStock_id(1L);
         promoCodeRecord.setUser(userRecord);
         userRecord.setPromo_code(promoCodeRecord);
         userService.save(userRecord);

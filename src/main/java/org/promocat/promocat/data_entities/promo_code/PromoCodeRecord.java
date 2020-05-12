@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Getter
@@ -44,7 +45,7 @@ public class PromoCodeRecord {
     /**
      * Id акции.
      */
-    @NotBlank(message = "Id акции не может быть пустым")
+    @NotNull(message = "Id акции не может быть пустым")
     @Column
     private Long stock_id;
 
