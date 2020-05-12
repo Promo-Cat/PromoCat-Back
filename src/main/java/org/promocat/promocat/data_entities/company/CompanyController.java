@@ -41,13 +41,13 @@ public class CompanyController {
     })
     @RequestMapping(path = "/auth/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public CompanyDTO addCompany(@RequestBody CompanyRecord company) {
-        logger.info("Trying to save user with telephone: " + company.getTelephone());
+        logger.info("Trying to save company with telephone: " + company.getTelephone());
         return companyService.save(company);
     }
 
     @RequestMapping(path = "/api/company/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public CompanyDTO getCompanyById(@RequestBody Long id) {
-        logger.info("Trying to find user with id: " + id);
+        logger.info("Trying to find company with id: " + id);
         return companyService.findById(id);
     }
 }
