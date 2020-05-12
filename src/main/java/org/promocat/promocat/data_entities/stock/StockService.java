@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 @Service
 public class StockService {
 
-    final StockRepository stockRepository;
+    private final StockRepository stockRepository;
 
     @Transactional
     public StockDTO save(StockRecord stock) {
