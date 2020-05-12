@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.stock;
 
+import org.promocat.promocat.data_entities.company.CompanyController;
 import org.promocat.promocat.data_entities.stock.dto.StockDTO;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,6 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class StockController {
 
     public static StockRecord stockDTOToRecord(StockDTO stockDTO) {
-        return new StockRecord(stockDTO.getId(), stockDTO.getStart_time(), stockDTO.getDuration(), stockDTO.getCompany());
+        return new StockRecord(stockDTO.getId(), stockDTO.getStart_time(), stockDTO.getDuration(), CompanyController.companyDTOToRecord(stockDTO.getCompanyDTO()));
     }
 }
