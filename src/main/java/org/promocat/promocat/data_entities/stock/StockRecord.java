@@ -3,6 +3,7 @@ package org.promocat.promocat.data_entities.stock;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.data_entities.company.CompanyRecord;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -40,7 +41,7 @@ public class StockRecord {
     /**
      * Id организации, которой принадлежит акция.
      */
-    @NotNull(message = "Id организации не может быть пустым")
-    @Column
-    private Long company_id;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyRecord company;
 }

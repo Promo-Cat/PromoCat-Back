@@ -44,7 +44,9 @@ public class CompanyController {
     @RequestMapping(path = "/auth/company/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public CompanyDTO addCompany(@Valid @RequestBody CompanyRecord company) {
         logger.info("Trying to save company with telephone: " + company.getTelephone());
-        return companyService.save(company);
+        CompanyDTO res = companyService.save(company);
+        System.out.println(res.getStocks());
+        return res;
     }
 
     @RequestMapping(path = "/api/company/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)

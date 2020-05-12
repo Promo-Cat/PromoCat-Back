@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class StockController {
 
     public static StockRecord stockDTOToRecord(StockDTO stockDTO) {
-        return new StockRecord(stockDTO.getId(), stockDTO.getStart_time(), stockDTO.getDuration(), stockDTO.getCompanyId());
+        return new StockRecord(stockDTO.getId(), stockDTO.getStart_time(), stockDTO.getDuration(), stockDTO.getCompany());
     }
 }

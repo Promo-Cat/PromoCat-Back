@@ -91,6 +91,6 @@ public class CompanyRecord {
     @Column
     private String city;
 
-    @OneToMany(mappedBy = "company_id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<StockRecord> stocks;
 }
