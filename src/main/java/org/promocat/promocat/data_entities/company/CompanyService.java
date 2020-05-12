@@ -46,7 +46,7 @@ public class CompanyService {
         if (companyRecord.isPresent()) {
             return new CompanyDTO(companyRecord.get());
         } else {
-            throw new UsernameNotFoundException("No company with such id in db.");
+            throw new UsernameNotFoundException(String.format("No company with such id %d in db.", id));
         }
     }
 }

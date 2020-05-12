@@ -30,7 +30,7 @@ public class CompanyRecord {
      * Имя организации.
      */
     @NotBlank(message = "Имя организации не может быть пустым.")
-    @Column
+    @Column(unique = true)
     private String organization_name;
 
     /**
@@ -73,7 +73,7 @@ public class CompanyRecord {
     @NotBlank(message = "Телефон не может быть пустым.")
     @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}",
             message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
-    @Column
+    @Column(unique = true)
     private String telephone;
 
     /**
