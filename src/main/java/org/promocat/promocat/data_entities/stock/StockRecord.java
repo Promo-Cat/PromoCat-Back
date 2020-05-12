@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.stock;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @NoArgsConstructor(force = true)
+@AllArgsConstructor
 @Table(name = "stock")
 public class StockRecord {
 
