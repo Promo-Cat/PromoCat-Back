@@ -42,6 +42,13 @@ public class PromoCodeRecord {
     private String promo_code;
 
     /**
+     * Id акции.
+     */
+    @NotBlank(message = "Id акции не может быть пустым")
+    @Column
+    private Long stock_id;
+
+    /**
      * Пользователь, у которого активен данный промокод.
      */
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
