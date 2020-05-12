@@ -30,7 +30,7 @@ public class CarNumberControllerTest {
         UserRecord userRecord = new UserRecord();
         CarRecord carRecord = new CarRecord();
         userRecord.setId(2L);
-        userRecord.setPromo_code(new PromoCodeRecord(4L, "xxx", userRecord));
+        userRecord.setPromo_code(new PromoCodeRecord(4L, "xxx", 1L, userRecord));
 
         carRecord.setId(1L);
         carRecord.setCar_make("xxx");
