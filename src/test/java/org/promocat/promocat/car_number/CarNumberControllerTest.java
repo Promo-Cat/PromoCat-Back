@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
+
 /**
  * Created by Danil Lyskin at 13:05 07.05.2020
  */
@@ -24,7 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CarNumberControllerTest {
 
     CarNumberRecord carNumberRecord;
-
+    @Transactional
     @Before
     public void init() {
         UserRecord userRecord = new UserRecord();
@@ -40,7 +42,7 @@ public class CarNumberControllerTest {
         carNumberRecord = new CarNumberRecord(3L, "xxx", "222", carRecord);
         carRecord.setNumber(carNumberRecord);
     }
-
+    @Transactional
     @Test
     public void testDTOToRecord() {
         CarNumberDTO carNumberDTO = new CarNumberDTO(carNumberRecord);

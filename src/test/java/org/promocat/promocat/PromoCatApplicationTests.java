@@ -24,18 +24,4 @@ class PromoCatApplicationTests {
 
 	@Autowired
 	private MockMvc mvc;
-
-	@Test
-	void userWithNonValidTelephone() throws Exception {
-		UserRecord userRecord = new UserRecord();
-		userRecord.setId(1L);
-		userRecord.setName("my");
-		userRecord.setTelephone("+7(962)401--15-60");
-		userRecord.setBalance(1L);
-
-		this.mvc.perform(post("/addUser").contentType(MediaType.APPLICATION_JSON)
-				.content(new ObjectMapper().writeValueAsString(userRecord)))
-				.andDo(print())
-				.andExpect(status().is4xxClientError());
-	}
 }

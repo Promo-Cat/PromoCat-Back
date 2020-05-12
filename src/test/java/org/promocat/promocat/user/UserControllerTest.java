@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,6 +43,7 @@ public class UserControllerTest {
     @Autowired
     private UserService userService;
 
+    @Transactional
     @Before
     public void init() {
         userRecord.setId(1L);
@@ -75,6 +77,7 @@ public class UserControllerTest {
         userService.save(userRecord);
     }
 
+    @Transactional
     @Test
     public void testDTOToRecord() {
         UserDTO userDTO = new UserDTO(userRecord);
@@ -83,6 +86,7 @@ public class UserControllerTest {
         Assert.assertEquals(testUser, userRecord);
     }
 
+    @Transactional
     // TODO test with mvc
     @Test
     public void testSaveAndGetById() {

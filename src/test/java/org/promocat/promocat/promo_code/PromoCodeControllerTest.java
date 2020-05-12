@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
+
 /**
  * Created by Danil Lyskin at 13:14 07.05.2020
  */
@@ -22,7 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class PromoCodeControllerTest {
 
     PromoCodeRecord promoCodeRecord = new PromoCodeRecord();
-
+    @Transactional
     @Before
     public void init() {
         UserRecord userRecord = new UserRecord();
@@ -32,7 +34,7 @@ public class PromoCodeControllerTest {
         promoCodeRecord.setPromo_code("xxx");
         promoCodeRecord.setUser(userRecord);
     }
-
+    @Transactional
     @Test
     public void testDTOToRecord() {
         PromoCodeDTO promoCodeDTO = new PromoCodeDTO(promoCodeRecord);
