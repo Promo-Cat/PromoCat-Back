@@ -1,5 +1,7 @@
 package org.promocat.promocat.exception.validation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -16,6 +18,9 @@ import java.util.List;
  */
 @ControllerAdvice
 public class ApiValidationHandler {
+
+    private static Logger logger = LoggerFactory.getLogger(ApiValidationHandler.class);
+
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<Object> validationError(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
@@ -28,7 +33,8 @@ public class ApiValidationHandler {
                     fieldError.getDefaultMessage()
             ));
         }
-
-        return new ResponseEntity<>(new ApiValidationException(validationExceptionList), HttpStatus.BAD_REQUEST);
+        ApiValidationException validationException = new ApiValidationException(validationExceptionList);
+        logger.error("Validation errors: " + validationException);
+        return new ResponseEntity<>(validationException, HttpStatus.BAD_REQUEST);
     }
 }
