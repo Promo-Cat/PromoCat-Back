@@ -1,6 +1,9 @@
 package org.promocat.promocat.data_entities.user;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.promocat.promocat.data_entities.car.CarRecord;
 import org.promocat.promocat.data_entities.car.CarRepository;
 import org.promocat.promocat.data_entities.car_number.CarNumberRepository;
@@ -10,15 +13,14 @@ import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
 import org.promocat.promocat.data_entities.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -28,6 +30,9 @@ public class UserService {
     private final CarRepository carRepository;
     private final LoginAttemptRepository loginAttemptRepository;
     private final PromoCodeRepository promoCodeRepository;
+
+    @Value("${jwt.key}")
+    private String jwt_key;
 
     @Autowired
     public UserService(final UserRepository userRepository, final CarNumberRepository carNumberRepository,
@@ -76,14 +81,33 @@ public class UserService {
         // TODO: Тесты
         // TODO: Может заменить UUID на JWT
         if (userFromDB.isPresent()) {
-            String token = UUID.randomUUID().toString();
             UserRecord user = userFromDB.get();
+            String token = generateToken(new UserDTO(user));
             user.setToken(token);
             userRepository.save(user);
             return token;
         } else {
             throw new UsernameNotFoundException("User with number " + telephone + " don`t presented in database");
         }
+    }
+
+    /**
+     *
+     * @param userDTO
+     * @return
+     */
+    private String generateToken(UserDTO userDTO) {
+        Map<String, Object> tokenData = new HashMap<>();
+        tokenData.put("telephone", userDTO.getTelephone());
+        tokenData.put("account_type", "user");
+        tokenData.put("token_create_time", new Date().getTime());
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 1);
+        tokenData.put("token_expiration_date", calendar.getTime());
+        JwtBuilder jwtBuilder = Jwts.builder();
+        jwtBuilder.setExpiration(calendar.getTime());
+        jwtBuilder.setClaims(tokenData);
+        return jwtBuilder.compact();
     }
 
 
