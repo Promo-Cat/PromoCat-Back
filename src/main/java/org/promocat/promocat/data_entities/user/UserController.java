@@ -1,5 +1,7 @@
 package org.promocat.promocat.data_entities.user;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.data_entities.car.CarController;
@@ -19,10 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -93,7 +92,10 @@ public class UserController {
                     response = ApiException.class)
     })
     @RequestMapping(value = "/auth/token", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TokenDTO> getToken(@RequestBody LoginAttemptDTO loginAttempt) {
+    public ResponseEntity<TokenDTO> getToken(
+            @RequestParam("authorization_key") String authorization_key,
+            @RequestParam("code") String code) {
+        LoginAttemptDTO loginAttempt = new LoginAttemptDTO(authorization_key, code);
         Optional<UserRecord> userRecord = userService.checkLoginAttemptCode(loginAttempt);
         if (userRecord.isPresent()) {
             UserRecord user = userRecord.get();
@@ -116,9 +118,9 @@ public class UserController {
                     message = "Token isn`t valid",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/auth/valid", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> isTokenValid(@RequestBody TokenDTO token) {
-        if (userService.findByToken(token.getToken()).isPresent()) {
+    @RequestMapping(value = "/auth/valid", method = RequestMethod.GET)
+    public ResponseEntity<String> isTokenValid(@RequestHeader("token") String token) {
+        if (userService.findByToken(token).isPresent()) {
             logger.info("Valid token for: " + token);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
