@@ -1,34 +1,31 @@
 package org.promocat.promocat.data_entities.car_number;
 
-import org.promocat.promocat.data_entities.car.CarController;
-import org.promocat.promocat.data_entities.car.CarRecord;
-import org.promocat.promocat.data_entities.car_number.dto.CarNumberDTO;
+import org.promocat.promocat.dto.CarNumberDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 /**
- * Created by Danil Lyskin at 20:59 05.05.2020
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
  */
 @RestController
 public class CarNumberController {
 
-    private static CarNumberRecord fillIdNumRegion(CarNumberDTO carNumberDTO) {
-        CarNumberRecord carNumberRecord = new CarNumberRecord();
-        carNumberRecord.setId(carNumberDTO.getId());
-        carNumberRecord.setNumber(carNumberDTO.getNumber());
-        carNumberRecord.setRegion(carNumberDTO.getRegion());
-        return carNumberRecord;
+    private final CarNumberService carNumberService;
+
+    @Autowired
+    public CarNumberController(final CarNumberService carNumberService) {
+        this.carNumberService = carNumberService;
     }
 
-
-    public static CarNumberRecord carNumberDTOToRecord(CarNumberDTO carNumberDTO, CarRecord carRecord) {
-        CarNumberRecord carNumberRecord = fillIdNumRegion(carNumberDTO);
-        carNumberRecord.setCar(carRecord);
-        return carNumberRecord;
+    @RequestMapping(path = "/api/user/car/number", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CarNumberDTO addCar(@Valid @RequestBody CarNumberDTO number) {
+        return carNumberService.save(number);
     }
 
-    public static CarNumberRecord carNumberDTOToRecord(CarNumberDTO carNumberDTO) {
-        CarNumberRecord carNumberRecord = fillIdNumRegion(carNumberDTO);
-        carNumberRecord.setCar(CarController.carDTOToRecord(carNumberDTO.getCar()));
-        return carNumberRecord;
-    }
 }

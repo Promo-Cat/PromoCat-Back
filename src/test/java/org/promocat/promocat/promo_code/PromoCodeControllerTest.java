@@ -5,9 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeController;
-import org.promocat.promocat.data_entities.promo_code.PromoCodeRecord;
-import org.promocat.promocat.data_entities.promo_code.dto.PromoCodeDTO;
-import org.promocat.promocat.data_entities.user.UserRecord;
+import org.promocat.promocat.data_entities.promo_code.PromoCode;
+import org.promocat.promocat.dto.PromoCodeDTO;
+import org.promocat.promocat.data_entities.user.User;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -23,23 +23,23 @@ import javax.transaction.Transactional;
 @ActiveProfiles("test")
 public class PromoCodeControllerTest {
 
-    PromoCodeRecord promoCodeRecord = new PromoCodeRecord();
-    @Transactional
-    @Before
-    public void init() {
-        UserRecord userRecord = new UserRecord();
-        userRecord.setId(1L);
-        userRecord.setPromo_code(promoCodeRecord);
-        promoCodeRecord.setId(2L);
-        promoCodeRecord.setPromo_code("xxx");
-        promoCodeRecord.setUser(userRecord);
-    }
-    @Transactional
-    @Test
-    public void testDTOToRecord() {
-        PromoCodeDTO promoCodeDTO = new PromoCodeDTO(promoCodeRecord);
-        PromoCodeRecord testPromoCode = PromoCodeController.promoCodeDTOToRecord(promoCodeDTO);
-        Assert.assertNotNull(testPromoCode);
-        Assert.assertEquals(testPromoCode, promoCodeRecord);
-    }
+//    PromoCode promoCode = new PromoCode();
+//    @Transactional
+//    @Before
+//    public void init() {
+//        User user = new User();
+//        user.setId(1L);
+//        user.setPromo_code(promoCode);
+//        promoCode.setId(2L);
+//        promoCode.setPromo_code("xxx");
+//        promoCode.setUser(user);
+//    }
+//    @Transactional
+//    @Test
+//    public void testDTOToRecord() {
+//        PromoCodeDTO promoCodeDTO = new PromoCodeDTO(promoCode);
+//        PromoCode testPromoCode = PromoCodeController.promoCodeDTOToRecord(promoCodeDTO);
+//        Assert.assertNotNull(testPromoCode);
+//        Assert.assertEquals(testPromoCode, promoCode);
+//    }
 }

@@ -1,17 +1,33 @@
 package org.promocat.promocat.data_entities.stock;
 
-import org.promocat.promocat.data_entities.company.CompanyController;
-import org.promocat.promocat.data_entities.stock.dto.StockDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.dto.StockDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Created by Danil Lyskin at 19:56 12.05.2020
- */
+import javax.validation.Valid;
 
+/**
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
+ */
+@Slf4j
 @RestController
 public class StockController {
 
-    public static StockRecord stockDTOToRecord(StockDTO stockDTO) {
-        return new StockRecord(stockDTO.getId(), stockDTO.getStartTime() , stockDTO.getDuration(), CompanyController.companyDTOToRecord(stockDTO.getCompanyDTO()));
+    private final StockService stockService;
+
+    @Autowired
+    public StockController(final StockService stockService) {
+        this.stockService = stockService;
+    }
+
+    @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public StockDTO addCar(@Valid @RequestBody StockDTO stock) {
+        log.info(String.format("Trying to save stock from company with id: %d", stock.getCompanyId()));
+        return stockService.save(stock);
     }
 }

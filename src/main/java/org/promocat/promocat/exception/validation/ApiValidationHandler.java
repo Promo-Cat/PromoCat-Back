@@ -1,6 +1,5 @@
 package org.promocat.promocat.exception.validation;
 
-import org.h2.jdbc.JdbcSQLException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.promocat.promocat.exception.ApiException;
 import org.slf4j.Logger;

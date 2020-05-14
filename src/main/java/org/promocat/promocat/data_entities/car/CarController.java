@@ -1,37 +1,30 @@
 package org.promocat.promocat.data_entities.car;
 
-import org.promocat.promocat.data_entities.car.dto.CarDTO;
-import org.promocat.promocat.data_entities.car_number.CarNumberController;
-import org.promocat.promocat.data_entities.car_number.CarNumberRecord;
-import org.promocat.promocat.data_entities.user.UserController;
-import org.promocat.promocat.data_entities.user.UserRecord;
+import org.promocat.promocat.dto.CarDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 /**
- * Created by Danil Lyskin at 20:54 05.05.2020
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
  */
 @RestController
 public class CarController {
 
-    private static CarRecord fillIdMakeColorNum(CarDTO carDTO) {
-        CarRecord carRecord = new CarRecord();
-        carRecord.setId(carDTO.getId());
-        carRecord.setCar_make(carDTO.getCarMake());
-        carRecord.setColor(carDTO.getColor());
-        CarNumberRecord carNumberRecord = CarNumberController.carNumberDTOToRecord(carDTO.getNumber(), carRecord);
-        carRecord.setNumber(carNumberRecord);
-        return carRecord;
+    private final CarService carService;
+
+    @Autowired
+    public CarController(final CarService carService) {
+        this.carService = carService;
     }
 
-    public static CarRecord carDTOToRecord(CarDTO carDTO, UserRecord userRecord) {
-        CarRecord carRecord = fillIdMakeColorNum(carDTO);
-        carRecord.setUser(userRecord);
-        return carRecord;
-    }
-
-    public static CarRecord carDTOToRecord(CarDTO carDTO) {
-        CarRecord carRecord = fillIdMakeColorNum(carDTO);
-        carRecord.setUser(UserController.userDTOToRecord(carDTO.getUser()));
-        return carRecord;
+    @RequestMapping(path = "/api/user/car", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CarDTO addCar(@Valid @RequestBody CarDTO car) {
+        return carService.save(car);
     }
 }
