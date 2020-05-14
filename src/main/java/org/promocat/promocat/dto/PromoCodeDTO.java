@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
  * Created by Danil Lyskin at 20:44 05.05.2020
  */
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of = {}, callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

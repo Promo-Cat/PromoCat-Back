@@ -8,7 +8,7 @@ import lombok.ToString;
 
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of = {}, callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

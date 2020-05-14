@@ -23,7 +23,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Entity
 @Table(name = "car")
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,6 +39,7 @@ public class Car extends AbstractEntity {
         this.color = color;
         this.user = user;
     }
+
     /**
      * Марка автомобиля.
      */

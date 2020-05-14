@@ -20,7 +20,7 @@ import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "promo_code")
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor

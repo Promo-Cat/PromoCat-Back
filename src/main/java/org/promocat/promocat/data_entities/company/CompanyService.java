@@ -1,6 +1,5 @@
 package org.promocat.promocat.data_entities.company;
 
-import org.promocat.promocat.data_entities.car_number.CarNumber;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.springframework.beans.factory.annotation.Autowired;

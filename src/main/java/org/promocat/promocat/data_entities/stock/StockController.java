@@ -1,6 +1,5 @@
 package org.promocat.promocat.data_entities.stock;
 
-import org.promocat.promocat.dto.CarNumberDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

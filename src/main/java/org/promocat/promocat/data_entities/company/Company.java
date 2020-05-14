@@ -19,7 +19,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "company")
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor

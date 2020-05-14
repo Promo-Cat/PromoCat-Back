@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Entity
 @Table(name = "car_number")
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor

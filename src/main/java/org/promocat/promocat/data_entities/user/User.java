@@ -1,6 +1,5 @@
 package org.promocat.promocat.data_entities.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "users")
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor

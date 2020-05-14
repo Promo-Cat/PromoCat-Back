@@ -121,6 +121,8 @@ public class UserService {
 
     // TODO Javadoc
     public UserDTO findById(Long id) {
+//        Optional<User> user = userRepository.findById(id);
+//        return mapper.toDto(user.get());
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return mapper.toDto(user.get());

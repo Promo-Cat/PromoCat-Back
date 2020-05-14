@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "stock")
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor

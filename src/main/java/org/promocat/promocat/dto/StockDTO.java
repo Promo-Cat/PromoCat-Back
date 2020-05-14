@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * Created by Danil Lyskin at 19:54 12.05.2020
  */
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of = {}, callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
