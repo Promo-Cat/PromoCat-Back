@@ -34,6 +34,11 @@ public class Car extends AbstractEntity {
     private User user;
     private CarNumber number;
 
+    public Car(String carmake, String color, User user) {
+        this.car_make = carmake;
+        this.color = color;
+        this.user = user;
+    }
     /**
      * Марка автомобиля.
      */
@@ -55,7 +60,7 @@ public class Car extends AbstractEntity {
     /**
      * Пользователь, у которого данный автомобиль.
      */
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     public User getUser() {
         return user;

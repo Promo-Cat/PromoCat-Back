@@ -18,7 +18,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author maksimgrankin
@@ -36,9 +36,15 @@ public class User extends AbstractEntity {
     private String telephone;
     private String token;
     private Long balance;
-    private Set<Car> cars;
+    private List<Car> cars;
     private PromoCode promo_code;
 
+    public User(String name, String city, String telephone, Long balance) {
+        this.name = name;
+        this.city = city;
+        this.telephone = telephone;
+        this.balance = balance;
+    }
 
     /**
      * Имя пользователя.
@@ -90,7 +96,7 @@ public class User extends AbstractEntity {
      * Автомобили пользователя.
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    public Set<Car> getCars() {
+    public List<Car> getCars() {
         return cars;
     }
 
