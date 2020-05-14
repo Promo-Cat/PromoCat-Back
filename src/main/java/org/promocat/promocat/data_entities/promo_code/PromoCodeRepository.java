@@ -2,5 +2,8 @@ package org.promocat.promocat.data_entities.promo_code;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PromoCodeRepository extends JpaRepository<PromoCodeRecord, Long> {
+/**
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
+ */
+public interface PromoCodeRepository extends JpaRepository<PromoCode, Long> {
 }

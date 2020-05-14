@@ -4,9 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<UserRecord, Long> {
+/**
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
+ */
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<UserRecord> getByToken(String token);
-    Optional<UserRecord> getByTelephone(String telephone);
+    Optional<User> getByToken(String token);
+    Optional<User> getByTelephone(String telephone);
 
 }
