@@ -1,16 +1,12 @@
 package org.promocat.promocat.data_entities.user;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.promocat.promocat.data_entities.car.CarController;
-import org.promocat.promocat.data_entities.car.CarRecord;
-import org.promocat.promocat.data_entities.car.dto.CarDTO;
+import org.promocat.promocat.data_entities.car.CarService;
 import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
 import org.promocat.promocat.data_entities.login_attempt.dto.TokenDTO;
-import org.promocat.promocat.data_entities.promo_code.PromoCodeController;
-import org.promocat.promocat.data_entities.user.dto.UserDTO;
+import org.promocat.promocat.dto.CarDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -21,39 +17,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 public class UserController {
 
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final CarService carService;
 
     @Autowired
-    public UserController(final UserService userService) {
+    public UserController(final UserService userService, final CarService carService) {
         this.userService = userService;
-    }
-
-    public static UserRecord userDTOToRecord(final UserDTO userDTO) {
-        UserRecord userRecord = new UserRecord();
-        userRecord.setId(userDTO.getId());
-        userRecord.setName(userDTO.getName());
-        userRecord.setTelephone(userDTO.getTelephone());
-        userRecord.setCity(userDTO.getCity());
-        userRecord.setToken(userDTO.getToken());
-        userRecord.setBalance(userDTO.getBalance());
-        Set<CarRecord> cars = new HashSet<>();
-        for (CarDTO carDTO : userDTO.getCars()) {
-            cars.add(CarController.carDTOToRecord(carDTO, userRecord));
-        }
-        userRecord.setCars(cars);
-        userRecord.setPromo_code(PromoCodeController.promoCodeDTOToRecord(userDTO.getPromoCodeDTO(), userRecord));
-        return userRecord;
+        this.carService = carService;
     }
 
     @ApiResponses(value = {
@@ -68,9 +52,18 @@ public class UserController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/auth/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO addUser(@Valid @RequestBody UserRecord user) {
+    public UserDTO addUser(@Valid @RequestBody UserDTO user) {
         logger.info("Trying to save user with telephone: " + user.getTelephone());
         return userService.save(user);
+    }
+
+    // TEST
+    @RequestMapping(path = "/auth/addCar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CarDTO addCar(@Valid @RequestBody CarDTO car) {
+        CarDTO res = carService.save(car);
+        System.out.println(carService.findByID(1L));
+        logger.info(userService.findById(1L).toString());
+        return res;
     }
 
     // TODO API RESPONSES
@@ -96,9 +89,9 @@ public class UserController {
             @RequestParam("authorization_key") String authorization_key,
             @RequestParam("code") String code) {
         LoginAttemptDTO loginAttempt = new LoginAttemptDTO(authorization_key, code);
-        Optional<UserRecord> userRecord = userService.checkLoginAttemptCode(loginAttempt);
+        Optional<User> userRecord = userService.checkLoginAttemptCode(loginAttempt);
         if (userRecord.isPresent()) {
-            UserRecord user = userRecord.get();
+            User user = userRecord.get();
             try {
                 logger.info(String.format("User with telephone %s and auth key %s got token",
                         user.getTelephone(), loginAttempt.getAuthorization_key()));

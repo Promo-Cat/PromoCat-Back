@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Created by Danil Lyskin at 20:28 12.05.2020
  */
-public interface CompanyRepository extends JpaRepository<CompanyRecord, Long> {
+public interface CompanyRepository extends JpaRepository<Company, Long> {
 }

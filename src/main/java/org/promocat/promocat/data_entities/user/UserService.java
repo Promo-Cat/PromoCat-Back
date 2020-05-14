@@ -3,68 +3,46 @@ package org.promocat.promocat.data_entities.user;
 
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.promocat.promocat.data_entities.car.CarRecord;
-import org.promocat.promocat.data_entities.car.CarRepository;
-import org.promocat.promocat.data_entities.car_number.CarNumberRepository;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRecord;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRepository;
 import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
-import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
-import org.promocat.promocat.data_entities.user.dto.UserDTO;
+import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final CarNumberRepository carNumberRepository;
-    private final CarRepository carRepository;
     private final LoginAttemptRepository loginAttemptRepository;
-    private final PromoCodeRepository promoCodeRepository;
-
+    private final UserMapper mapper;
     @Value("${jwt.key}")
     private String jwt_key;
 
     @Autowired
-    public UserService(final UserRepository userRepository, final CarNumberRepository carNumberRepository,
-                       final CarRepository carRepository, final LoginAttemptRepository loginAttemptRepository,
-                       final PromoCodeRepository promoCodeRepository) {
+    public UserService(final UserRepository userRepository,
+                       final LoginAttemptRepository loginAttemptRepository,
+                       final UserMapper mapper) {
         this.userRepository = userRepository;
-        this.carNumberRepository = carNumberRepository;
-        this.carRepository = carRepository;
+        this.mapper = mapper;
         this.loginAttemptRepository = loginAttemptRepository;
-        this.promoCodeRepository = promoCodeRepository;
 
     }
 
     @Transactional
-    public UserDTO save(UserRecord user) {
-        UserRecord res = userRepository.save(user);
-
-        if (Objects.nonNull(res.getCars())) {
-            for (CarRecord car : res.getCars()) {
-                car.setUser(res);
-                carNumberRepository.save(car.getNumber());
-                car.getNumber().setCar(car);
-                carRepository.save(car);
-            }
-        }
-
-        if (Objects.nonNull(res.getPromo_code())) {
-            promoCodeRepository.save(res.getPromo_code());
-            res.getPromo_code().setUser(res);
-        }
-
-        return new UserDTO(res);
+    public UserDTO save(UserDTO dto) {
+        return mapper.toDto(userRepository.save(mapper.toEntity(dto)));
     }
 
 
@@ -77,12 +55,12 @@ public class UserService {
      */
     @Transactional
     public String getToken(String telephone) throws UsernameNotFoundException {
-        Optional<UserRecord> userFromDB = userRepository.getByTelephone(telephone);
+        Optional<User> userFromDB = userRepository.getByTelephone(telephone);
         // TODO: Тесты
         // TODO: Может заменить UUID на JWT
         if (userFromDB.isPresent()) {
-            UserRecord user = userFromDB.get();
-            String token = generateToken(new UserDTO(user));
+            User user = userFromDB.get();
+            String token = generateToken(mapper.toDto(user));
             user.setToken(token);
             userRepository.save(user);
             return token;
@@ -118,7 +96,7 @@ public class UserService {
      * @return true - если всё совпадает и можно выдавать токен
      */
     @Transactional
-    public Optional<UserRecord> checkLoginAttemptCode(LoginAttemptDTO attempt) {
+    public Optional<User> checkLoginAttemptCode(LoginAttemptDTO attempt) {
         LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorization_key());
         if (loginAttemptRecord.getPhoneCode().equals(attempt.getCode())) {
             return userRepository.getByTelephone(loginAttemptRecord.getTelephone());
@@ -134,11 +112,11 @@ public class UserService {
      * @throws UsernameNotFoundException если токен не найден в БД
      */
     @Transactional
-    public Optional<User> findByToken(String token) throws UsernameNotFoundException {
-        Optional<UserRecord> userRecord = userRepository.getByToken(token);
+    public Optional<org.springframework.security.core.userdetails.User> findByToken(String token) throws UsernameNotFoundException {
+        Optional<User> userRecord = userRepository.getByToken(token);
         if (userRecord.isPresent()) {
-            UserRecord user1 = userRecord.get();
-            User user = new User(user1.getTelephone(), "", true, true,
+            User user1 = userRecord.get();
+            org.springframework.security.core.userdetails.User user = new org.springframework.security.core.userdetails.User(user1.getTelephone(), "", true, true,
                     true, true, AuthorityUtils.createAuthorityList("user"));
             return Optional.of(user);
         } else {
@@ -149,9 +127,9 @@ public class UserService {
     // TODO Javadoc
     @Transactional
     public UserDTO findById(Long id) {
-        Optional<UserRecord> userRecord = userRepository.findById(id);
-        if (userRecord.isPresent()) {
-            return new UserDTO(userRecord.get());
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return mapper.toDto(user.get());
         } else {
             throw new UsernameNotFoundException(String.format("No user with such id: %d in db.", id));
         }

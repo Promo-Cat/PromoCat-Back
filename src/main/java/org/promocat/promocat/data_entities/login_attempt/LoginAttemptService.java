@@ -2,7 +2,7 @@ package org.promocat.promocat.data_entities.login_attempt;
 
 import net.bytebuddy.utility.RandomString;
 import org.promocat.promocat.data_entities.login_attempt.dto.SMSCResponseDTO;
-import org.promocat.promocat.data_entities.user.UserRecord;
+import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.exception.smsc.SMSCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +41,7 @@ public class LoginAttemptService {
         this.loginAttemptRepository = loginAttemptRepository;
     }
 
-    public LoginAttemptRecord create(UserRecord user) {
+    public LoginAttemptRecord create(User user) {
         LoginAttemptRecord res = new LoginAttemptRecord();
         res.setTelephone(user.getTelephone());
         if (doCall) {
