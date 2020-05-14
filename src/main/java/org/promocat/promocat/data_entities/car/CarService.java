@@ -2,7 +2,6 @@ package org.promocat.promocat.data_entities.car;
 // Created by Roman Devyatilov (Fr1m3n) in 19:10 05.05.2020
 
 
-import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.CarDTO;
 import org.promocat.promocat.mapper.CarMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +22,6 @@ public class CarService {
     }
 
     public CarDTO save(final CarDTO dto) {
-
-        System.out.println(mapper.toEntity(dto).getUser().getId());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 

@@ -1,15 +1,33 @@
 package org.promocat.promocat.data_entities.promo_code;
 
 import org.promocat.promocat.dto.PromoCodeDTO;
-import org.promocat.promocat.data_entities.user.UserController;
-import org.promocat.promocat.data_entities.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Objects;
+import javax.validation.Valid;
 
 /**
  * Created by Danil Lyskin at 22:13 05.05.2020
  */
 @RestController
 public class PromoCodeController {
+
+
+    private final PromoCodeService promoCodeService;
+
+    //TODO endpoint for adding promo codes by company???
+
+    @Autowired
+    public PromoCodeController(final PromoCodeService promoCodeService) {
+        this.promoCodeService = promoCodeService;
+    }
+
+    @RequestMapping(path = "/api/user/promoCode", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public PromoCodeDTO addPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
+        return promoCodeService.save(promoCodeDTO);
+    }
 }

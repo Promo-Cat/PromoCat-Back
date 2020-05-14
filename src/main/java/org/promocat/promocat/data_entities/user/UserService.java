@@ -14,7 +14,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,7 +39,6 @@ public class UserService {
 
     }
 
-    @Transactional
     public UserDTO save(UserDTO dto) {
         return mapper.toDto(userRepository.save(mapper.toEntity(dto)));
     }
@@ -53,7 +51,6 @@ public class UserService {
      * @return токен, присвоенный записи юзера
      * @throws UsernameNotFoundException если пользователь с заданным номером не найден в БД
      */
-    @Transactional
     public String getToken(String telephone) throws UsernameNotFoundException {
         Optional<User> userFromDB = userRepository.getByTelephone(telephone);
         // TODO: Тесты
@@ -95,7 +92,6 @@ public class UserService {
      * @param attempt DTO хранящий код, который получил юзер и специальный ключ
      * @return true - если всё совпадает и можно выдавать токен
      */
-    @Transactional
     public Optional<User> checkLoginAttemptCode(LoginAttemptDTO attempt) {
         LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorization_key());
         if (loginAttemptRecord.getPhoneCode().equals(attempt.getCode())) {
@@ -111,7 +107,6 @@ public class UserService {
      * @return объект класса User, соответствующий пользователю
      * @throws UsernameNotFoundException если токен не найден в БД
      */
-    @Transactional
     public Optional<org.springframework.security.core.userdetails.User> findByToken(String token) throws UsernameNotFoundException {
         Optional<User> userRecord = userRepository.getByToken(token);
         if (userRecord.isPresent()) {
@@ -125,7 +120,6 @@ public class UserService {
     }
 
     // TODO Javadoc
-    @Transactional
     public UserDTO findById(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {

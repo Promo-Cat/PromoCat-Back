@@ -2,10 +2,8 @@ package org.promocat.promocat.data_entities.user;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.promocat.promocat.data_entities.car.CarService;
 import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
 import org.promocat.promocat.data_entities.login_attempt.dto.TokenDTO;
-import org.promocat.promocat.dto.CarDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
@@ -32,12 +30,10 @@ public class UserController {
 
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    private final CarService carService;
 
     @Autowired
-    public UserController(final UserService userService, final CarService carService) {
+    public UserController(final UserService userService) {
         this.userService = userService;
-        this.carService = carService;
     }
 
     @ApiResponses(value = {
@@ -55,15 +51,6 @@ public class UserController {
     public UserDTO addUser(@Valid @RequestBody UserDTO user) {
         logger.info("Trying to save user with telephone: " + user.getTelephone());
         return userService.save(user);
-    }
-
-    // TEST
-    @RequestMapping(path = "/auth/addCar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public CarDTO addCar(@Valid @RequestBody CarDTO car) {
-        CarDTO res = carService.save(car);
-        System.out.println(carService.findByID(1L));
-        logger.info(userService.findById(1L).toString());
-        return res;
     }
 
     // TODO API RESPONSES

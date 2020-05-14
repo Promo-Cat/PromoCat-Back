@@ -1,15 +1,6 @@
 package org.promocat.promocat.data_entities.company;
 
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.data_entities.stock.StockController;
-import org.promocat.promocat.data_entities.stock.Stock;
-import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.exception.ApiException;
-import org.promocat.promocat.exception.validation.ApiValidationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,9 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * Created by Danil Lyskin at 20:42 12.05.2020
@@ -28,37 +16,15 @@ import java.util.Set;
 @RestController
 public class CompanyController {
 
-//    private static Logger logger = LoggerFactory.getLogger(CompanyController.class);
-//    private final CompanyService companyService;
-//
-//
-//    @Autowired
-//    public CompanyController(final CompanyService companyService) {
-//        this.companyService = companyService;
-//    }
-//
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 400,
-//                    message = "Validation error",
-//                    response = ApiValidationException.class),
-//            @ApiResponse(code = 415,
-//                    message = "Not acceptable media type",
-//                    response = ApiException.class),
-//            @ApiResponse(code = 406,
-//                    message = "Some DB problems",
-//                    response = ApiException.class)
-//    })
-//    @RequestMapping(path = "/auth/company/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public CompanyDTO addCompany(@Valid @RequestBody Company company) {
-//        logger.info("Trying to save company with telephone: " + company.getTelephone());
-//        CompanyDTO res = companyService.save(company);
-//        System.out.println(res.getStocks());
-//        return res;
-//    }
-//
-//    @RequestMapping(path = "/api/company/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public CompanyDTO getCompanyById(@RequestBody Long id) {
-//        logger.info("Trying to find company with id: " + id);
-//        return companyService.findById(id);
-//    }
+    private final CompanyService companyService;
+
+    @Autowired
+    public CompanyController(final CompanyService companyService) {
+        this.companyService = companyService;
+    }
+
+    @RequestMapping(path = "/auth/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CompanyDTO addCompany(@Valid @RequestBody CompanyDTO company) {
+        return companyService.save(company);
+    }
 }

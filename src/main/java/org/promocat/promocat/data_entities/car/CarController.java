@@ -1,15 +1,30 @@
 package org.promocat.promocat.data_entities.car;
 
 import org.promocat.promocat.dto.CarDTO;
-import org.promocat.promocat.data_entities.car_number.CarNumberController;
-import org.promocat.promocat.data_entities.car_number.CarNumber;
-import org.promocat.promocat.data_entities.user.UserController;
-import org.promocat.promocat.data_entities.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 /**
  * Created by Danil Lyskin at 20:54 05.05.2020
  */
 @RestController
 public class CarController {
+
+    private final CarService carService;
+
+    @Autowired
+    public CarController(final CarService carService) {
+        this.carService = carService;
+    }
+
+    @RequestMapping(path = "/api/user/car", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CarDTO addCar(@Valid @RequestBody CarDTO car) {
+        return carService.save(car);
+    }
 }

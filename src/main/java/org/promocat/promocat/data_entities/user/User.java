@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author maksimgrankin
@@ -36,7 +37,7 @@ public class User extends AbstractEntity {
     private String telephone;
     private String token;
     private Long balance;
-    private List<Car> cars;
+    private Set<Car> cars;
     private PromoCode promo_code;
 
     public User(String name, String city, String telephone, Long balance) {
@@ -96,7 +97,7 @@ public class User extends AbstractEntity {
      * Автомобили пользователя.
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    public List<Car> getCars() {
+    public Set<Car> getCars() {
         return cars;
     }
 

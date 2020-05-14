@@ -1,14 +1,12 @@
 package org.promocat.promocat.data_entities.company;
 
+import org.promocat.promocat.data_entities.car_number.CarNumber;
 import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.data_entities.stock.Stock;
-import org.promocat.promocat.data_entities.stock.StockRepository;
+import org.promocat.promocat.mapper.CompanyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -16,37 +14,25 @@ import java.util.Optional;
  */
 @Service
 public class CompanyService {
+    private final CompanyMapper mapper;
+    private final CompanyRepository repository;
 
-//    private final CompanyRepository companyRepository;
-//    private final StockRepository stockRepository;
-//
-//    @Autowired
-//    public CompanyService(final CompanyRepository companyRepository,
-//                         final StockRepository stockRepository) {
-//        this.companyRepository = companyRepository;
-//        this.stockRepository = stockRepository;
-//    }
-//
-//    @Transactional
-//    public CompanyDTO save(Company company) {
-//        Company res = companyRepository.save(company);
-//        if (Objects.nonNull(res.getStocks())) {
-//            for (Stock stock : res.getStocks()) {
-//                stock.setCompany(res);
-//                stockRepository.save(stock);
-//            }
-//        }
-//
-//        return new CompanyDTO(res);
-//    }
-//
-//    @Transactional
-//    public CompanyDTO findById(Long id) {
-//        Optional<Company> companyRecord = companyRepository.findById(id);
-//        if (companyRecord.isPresent()) {
-//            return new CompanyDTO(companyRecord.get());
-//        } else {
-//            throw new UsernameNotFoundException(String.format("No company with such id: %d in db.", id));
-//        }
-//    }
+    @Autowired
+    public CompanyService(final CompanyMapper mapper, final CompanyRepository repository) {
+        this.mapper = mapper;
+        this.repository = repository;
+    }
+
+    public CompanyDTO save(CompanyDTO dto) {
+        return mapper.toDto(repository.save(mapper.toEntity(dto)));
+    }
+
+    public CompanyDTO findById(Long id) {
+        Optional<Company> company = repository.findById(id);
+        if (company.isPresent()) {
+            return mapper.toDto(company.get());
+        } else {
+            throw new UsernameNotFoundException(String.format("No company with such id: %d in db.", id));
+        }
+    }
 }
