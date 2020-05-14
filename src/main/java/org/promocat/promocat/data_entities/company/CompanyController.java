@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 /**
- * Created by Danil Lyskin at 20:42 12.05.2020
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
  */
 @RestController
 public class CompanyController {

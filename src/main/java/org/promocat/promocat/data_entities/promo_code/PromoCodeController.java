@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.promo_code;
 
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import javax.validation.Valid;
 /**
  * Created by Danil Lyskin at 22:13 05.05.2020
  */
+@Slf4j
 @RestController
 public class PromoCodeController {
 

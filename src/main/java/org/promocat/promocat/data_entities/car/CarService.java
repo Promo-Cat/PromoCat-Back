@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
+ */
 @Service
 public class CarService {
     private final CarRepository repository;

@@ -18,6 +18,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+/**
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
+ */
 @Entity
 @Table(name = "promo_code")
 @EqualsAndHashCode(of = {}, callSuper = true)

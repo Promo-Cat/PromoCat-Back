@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.user;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
 import org.promocat.promocat.data_entities.login_attempt.dto.TokenDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -25,10 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.Optional;
 
+/**
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
+ */
+@Slf4j
 @RestController
 public class UserController {
 
-    private static Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     @Autowired
@@ -49,14 +53,14 @@ public class UserController {
     })
     @RequestMapping(path = "/auth/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO addUser(@Valid @RequestBody UserDTO user) {
-        logger.info("Trying to save user with telephone: " + user.getTelephone());
+        log.info("Trying to save user with telephone: " + user.getTelephone());
         return userService.save(user);
     }
 
     // TODO API RESPONSES
     @RequestMapping(path = "/api/user/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO getUserById(@RequestBody Long id) {
-        logger.info("Trying to find user with id: " + id);
+        log.info("Trying to find user with id: " + id);
         return userService.findById(id);
     }
 
@@ -80,7 +84,7 @@ public class UserController {
         if (userRecord.isPresent()) {
             User user = userRecord.get();
             try {
-                logger.info(String.format("User with telephone %s and auth key %s got token",
+                log.info(String.format("User with telephone %s and auth key %s got token",
                         user.getTelephone(), loginAttempt.getAuthorization_key()));
                 return new ResponseEntity<>(new TokenDTO(userService.getToken(user.getTelephone())), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
@@ -101,7 +105,7 @@ public class UserController {
     @RequestMapping(value = "/auth/valid", method = RequestMethod.GET)
     public ResponseEntity<String> isTokenValid(@RequestHeader("token") String token) {
         if (userService.findByToken(token).isPresent()) {
-            logger.info("Valid token for: " + token);
+            log.info("Valid token for: " + token);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

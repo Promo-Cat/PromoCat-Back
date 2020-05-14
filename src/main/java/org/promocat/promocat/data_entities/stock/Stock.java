@@ -17,6 +17,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+/**
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
+ */
 @Entity
 @Table(name = "stock")
 @EqualsAndHashCode(of = {}, callSuper = true)

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 /**
- * Created by Danil Lyskin at 20:29 12.05.2020
+ * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
  */
 @Service
 public class CompanyService {
