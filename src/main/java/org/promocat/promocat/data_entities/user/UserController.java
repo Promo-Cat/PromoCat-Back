@@ -91,7 +91,7 @@ public class UserController {
                     message = "Not acceptable media type",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/auth/token", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/auth/token", method = RequestMethod.GET)
     public ResponseEntity<TokenDTO> getToken(
             @RequestParam("authorization_key") String authorization_key,
             @RequestParam("code") String code) {
