@@ -1,5 +1,6 @@
 package org.promocat.promocat.exception.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.exception.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +16,9 @@ import java.time.ZonedDateTime;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 19:25 08.05.2020
  */
+@Slf4j
 @ControllerAdvice
 public class ApiUserNotFoundHandler {
-
-    private static Logger logger = LoggerFactory.getLogger(ApiUserNotFoundHandler.class);
 
     @ExceptionHandler(value = {UsernameNotFoundException.class})
     public ResponseEntity<Object> handleNonexistentUser(UsernameNotFoundException e) {
@@ -28,7 +28,7 @@ public class ApiUserNotFoundHandler {
                 notFound,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        logger.error("User not found: " + e.getMessage());
+        log.error("User not found: " + e.getMessage());
         return new ResponseEntity<>(apiException, notFound);
     }
 }

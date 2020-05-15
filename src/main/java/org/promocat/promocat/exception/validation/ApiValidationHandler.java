@@ -1,5 +1,6 @@
 package org.promocat.promocat.exception.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.promocat.promocat.exception.ApiException;
 import org.slf4j.Logger;
@@ -20,10 +21,10 @@ import java.util.List;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 14:24 07.05.2020
  */
+@Slf4j
 @ControllerAdvice
 public class ApiValidationHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(ApiValidationHandler.class);
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<ApiValidationException> validationError(MethodArgumentNotValidException ex) {
@@ -38,7 +39,7 @@ public class ApiValidationHandler {
             ));
         }
         ApiValidationException validationException = new ApiValidationException(validationExceptionList);
-        logger.error("Validation errors: " + validationException);
+        log.error("Validation errors: " + validationException);
         return new ResponseEntity<>(validationException, HttpStatus.BAD_REQUEST);
     }
 
@@ -51,7 +52,7 @@ public class ApiValidationHandler {
                 conflict,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        logger.error("SQL exception: " + ex.getMessage());
+        log.error("SQL exception: " + ex.getMessage());
         return new ResponseEntity<>(apiException, conflict);
     }
 }

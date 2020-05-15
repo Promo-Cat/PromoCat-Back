@@ -1,5 +1,6 @@
 package org.promocat.promocat.exception.smsc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.exception.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +15,9 @@ import java.time.ZonedDateTime;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 18:31 09.05.2020
  */
+@Slf4j
 @ControllerAdvice
 public class SMSCHandler {
-
-    private static Logger logger = LoggerFactory.getLogger(SMSCHandler.class);
 
     @ExceptionHandler
     public ResponseEntity<Object> handleSomeSMSCError(SMSCException e) {
@@ -27,7 +27,7 @@ public class SMSCHandler {
                 serverError,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        logger.error("Some problems with smsc" + e.getMessage());
+        log.error("Some problems with smsc" + e.getMessage());
         return new ResponseEntity<>(apiException, serverError);
     }
 }
