@@ -31,7 +31,7 @@ public class PromoCode extends AbstractEntity {
 
     private String promo_code;
     private Stock stock;
-    private User user;
+    private Boolean is_active;
 
     /**
      * Промокод.
@@ -51,12 +51,8 @@ public class PromoCode extends AbstractEntity {
         return stock;
     }
 
-    /**
-     * Пользователь, у которого активен данный промокод.
-     */
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    public User getUser() {
-        return user;
+    @Column(name = "is_active")
+    public Boolean getIs_active() {
+        return (is_active == null ? false : is_active);
     }
 }

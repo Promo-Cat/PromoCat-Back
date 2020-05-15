@@ -42,36 +42,36 @@ public class PromoCatApplicationTests {
     @Autowired
     private CarRepository carRepository;
 
-    @Before
-    public void init() {
-        user = createUser();
-        cars = createCars(user);
-    }
-
-    @Test
-    public void mapperTest() {
-        user = userRepository.findById(user.getId())
-                .orElseThrow(() -> new DataAccessException("Unable to get entity from Database by id " + user.getId()) {
-                });
-
-        System.out.println("huii");
-        System.out.println(user.getCars().size());
-        cars = carRepository.findAllByIdIn(cars.stream().map(Car::getId).collect(Collectors.toList()));
-
-        UserDTO unicornDto = userMapper.toDto(user);
-        user = userMapper.toEntity(unicornDto);
-
-        Assert.assertEquals(user.getId(), unicornDto.getId());
-    }
-
-    private User createUser() {
-        return userRepository.save(new User("maxim", "das", "+7(999)243-26-99", 12L));
-    }
-
-    private List<Car> createCars(User unicorn) {
-        return Stream.generate(() -> carRepository.save(new Car("eblo", "eblo", unicorn)))
-                .limit(3L)
-                .collect(Collectors.toList());
-    }
+//    @Before
+//    public void init() {
+//        user = createUser();
+//        cars = createCars(user);
+//    }
+//
+//    @Test
+//    public void mapperTest() {
+//        user = userRepository.findById(user.getId())
+//                .orElseThrow(() -> new DataAccessException("Unable to get entity from Database by id " + user.getId()) {
+//                });
+//
+//        System.out.println("huii");
+//        System.out.println(user.getCars().size());
+//        cars = carRepository.findAllByIdIn(cars.stream().map(Car::getId).collect(Collectors.toList()));
+//
+//        UserDTO unicornDto = userMapper.toDto(user);
+//        user = userMapper.toEntity(unicornDto);
+//
+//        Assert.assertEquals(user.getId(), unicornDto.getId());
+//    }
+//
+//    private User createUser() {
+//        return userRepository.save(new User("maxim", "das", "+7(999)243-26-99", 12L));
+//    }
+//
+//    private List<Car> createCars(User unicorn) {
+//        return Stream.generate(() -> carRepository.save(new Car("eblo", "eblo", unicorn)))
+//                .limit(3L)
+//                .collect(Collectors.toList());
+//    }
 
 }

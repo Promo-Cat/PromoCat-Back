@@ -21,5 +21,5 @@ public class UserDTO extends AbstractDTO {
     private String city;
     private Long balance;
     private Set<CarDTO> cars;
-    private PromoCodeDTO promoCodeDTO;
+    private Long promoCodeDTOId;
 }

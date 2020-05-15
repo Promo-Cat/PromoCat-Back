@@ -30,8 +30,8 @@ public class PromoCodeController {
 
     @RequestMapping(path = "/api/user/promoCode", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public PromoCodeDTO addPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
-        log.info(String.format("Trying to set promo code: %s from stock: %d to user: %d",
-                promoCodeDTO.getPromoCode(), promoCodeDTO.getStockId(), promoCodeDTO.getUserId()));
+        log.info(String.format("Trying to set promo code: %s from stock: %d",
+                promoCodeDTO.getPromoCode(), promoCodeDTO.getStockId()));
         return promoCodeService.save(promoCodeDTO);
     }
 }
