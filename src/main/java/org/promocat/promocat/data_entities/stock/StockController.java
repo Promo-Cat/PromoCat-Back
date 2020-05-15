@@ -31,7 +31,7 @@ public class StockController {
         return stockService.save(stock);
     }
 
-    @RequestMapping(path = "/api/stock/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "/auth/stock/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public StockDTO getStockById(@RequestBody Long id) {
         return stockService.findById(id);
     }

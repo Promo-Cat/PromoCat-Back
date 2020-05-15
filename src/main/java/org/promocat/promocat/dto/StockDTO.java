@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Created by Danil Lyskin at 19:54 12.05.2020
@@ -20,4 +21,5 @@ public class StockDTO extends AbstractDTO{
     private LocalDateTime start_time;
     private LocalDateTime duration;
     private Long companyId;
+    private List<PromoCodeDTO> codes;
 }
