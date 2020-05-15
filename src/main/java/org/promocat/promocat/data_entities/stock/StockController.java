@@ -2,7 +2,6 @@ package org.promocat.promocat.data_entities.stock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;

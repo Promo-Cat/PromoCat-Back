@@ -1,9 +1,7 @@
 package org.promocat.promocat.data_entities.stock;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
-import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.mapper.StockMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
