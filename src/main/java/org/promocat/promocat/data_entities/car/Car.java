@@ -1,18 +1,13 @@
 package org.promocat.promocat.data_entities.car;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
-import org.promocat.promocat.data_entities.car_number.CarNumber;
 import org.promocat.promocat.data_entities.user.User;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 /**
