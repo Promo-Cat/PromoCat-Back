@@ -51,6 +51,9 @@ public class PromoCode extends AbstractEntity {
         return stock;
     }
 
+    /**
+     * Активность промокода
+     */
     @Column(name = "is_active")
     public Boolean getIs_active() {
         return (is_active == null ? false : is_active);
