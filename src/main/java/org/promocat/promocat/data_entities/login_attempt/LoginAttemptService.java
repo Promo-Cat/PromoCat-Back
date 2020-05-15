@@ -41,8 +41,8 @@ public class LoginAttemptService {
         this.loginAttemptRepository = loginAttemptRepository;
     }
 
-    public LoginAttemptRecord create(User user) {
-        LoginAttemptRecord res = new LoginAttemptRecord();
+    public LoginAttempt create(User user) {
+        LoginAttempt res = new LoginAttempt();
         res.setTelephone(user.getTelephone());
         if (doCall) {
             Optional<String> code = doCallAndGetCode(user.getTelephone());

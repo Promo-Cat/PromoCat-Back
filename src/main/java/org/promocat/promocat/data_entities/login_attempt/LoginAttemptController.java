@@ -61,9 +61,9 @@ public class LoginAttemptController {
     public ResponseEntity<AuthorizationKeyDTO> login(@Valid @RequestParam("telephone") String telephone) {
         Optional<User> userRecord = userRepository.getByTelephone(telephone);
         if (userRecord.isPresent()) {
-            LoginAttemptRecord loginAttemptRecord = loginAttemptService.create(userRecord.get());
+            LoginAttempt loginAttempt = loginAttemptService.create(userRecord.get());
             logger.info("User with telephone logined: " + telephone);
-            return new ResponseEntity<>(new AuthorizationKeyDTO(loginAttemptRecord.getAuthorizationKey()), HttpStatus.OK);
+            return new ResponseEntity<>(new AuthorizationKeyDTO(loginAttempt.getAuthorizationKey()), HttpStatus.OK);
         } else {
             throw new UsernameNotFoundException(
                     "User with phone number " + telephone + " does not exists"

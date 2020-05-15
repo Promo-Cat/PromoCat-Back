@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.login_attempt;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.data_entities.AbstractEntity;
 
@@ -18,27 +19,38 @@ import javax.persistence.Table;
 
 @Entity
 @Data
+@EqualsAndHashCode(of = {}, callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Table(name = "login_attempt")
-public class LoginAttemptRecord extends AbstractEntity {
+public class LoginAttempt extends AbstractEntity {
+
+    private String authorizationKey;
+    private String phoneCode;
+    private String telephone;
 
     /**
      * Ключ авторизации, который соответствует попытке входа.
      */
     @Column(name = "authorization_key", unique = true, nullable = false)
-    private String authorizationKey;
+    public String getAuthorizationKey() {
+        return authorizationKey;
+    }
 
     /**
      * Телефонный код, который ожидается от юзера.
      */
     @Column(name = "phone_code", nullable = false)
-    private String phoneCode;
+    public String getPhoneCode() {
+        return phoneCode;
+    }
 
     /**
      * Телефонный номер юзера.
      */
     @Column(name = "telephone", nullable = false)
-    private String telephone;
+    public String getTelephone() {
+        return telephone;
+    }
 
 }
