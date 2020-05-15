@@ -1,20 +1,9 @@
 package org.promocat.promocat.car_number;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.promocat.promocat.data_entities.car.Car;
-import org.promocat.promocat.data_entities.car_number.CarNumberController;
-import org.promocat.promocat.data_entities.car_number.CarNumber;
-import org.promocat.promocat.dto.CarNumberDTO;
-import org.promocat.promocat.data_entities.promo_code.PromoCode;
-import org.promocat.promocat.data_entities.user.User;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.transaction.Transactional;
 
 /**
  * Created by Danil Lyskin at 13:05 07.05.2020

@@ -1,21 +1,12 @@
 package org.promocat.promocat.data_entities.car;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
-import org.promocat.promocat.data_entities.car_number.CarNumber;
 import org.promocat.promocat.data_entities.user.User;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -25,19 +16,21 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "car")
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Car extends AbstractEntity {
 
     private String car_make;
     private String color;
     private User user;
-    private CarNumber number;
+    private String number;
+    private String region;
 
-    public Car(String carmake, String color, User user) {
-        this.car_make = carmake;
+    public Car(String carMake, String color, User user, String number, String region) {
+        this.car_make = carMake;
         this.color = color;
         this.user = user;
+        this.number = number;
+        this.region = region;
     }
 
     /**
@@ -70,8 +63,18 @@ public class Car extends AbstractEntity {
     /**
      * Номерной знак автомобиля.
      */
-    @OneToOne(mappedBy = "car", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    public CarNumber getNumber() {
+    @NotBlank(message = "Номер автомобиля не может быть пустым")
+    @Column(name = "number")
+    public String getNumber() {
         return number;
+    }
+
+    /**
+     * Регион автомобиля.
+     */
+    @NotBlank(message = "Регион автомобиля не может быть пустым")
+    @Column(name = "region")
+    public String getRegion() {
+        return region;
     }
 }
