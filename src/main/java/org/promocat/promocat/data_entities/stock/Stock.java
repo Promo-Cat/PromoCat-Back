@@ -6,16 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
+import org.promocat.promocat.data_entities.promo_code.PromoCode;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -32,6 +29,7 @@ public class Stock extends AbstractEntity {
     private LocalDateTime start_time;
     private LocalDateTime duration;
     private Company company;
+    List<PromoCode> codes;
 
     /**
      * Название акции.
@@ -67,4 +65,13 @@ public class Stock extends AbstractEntity {
     public Company getCompany() {
         return company;
     }
+
+    /**
+     * Промокоды
+     */
+    @OneToMany(mappedBy = "stock", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    public List<PromoCode> getCodes() {
+        return codes;
+    }
 }
+

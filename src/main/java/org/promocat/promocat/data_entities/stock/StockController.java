@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.stock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,5 +30,10 @@ public class StockController {
     public StockDTO addCar(@Valid @RequestBody StockDTO stock) {
         log.info(String.format("Trying to save stock from company: %d", stock.getCompanyId()));
         return stockService.save(stock);
+    }
+
+    @RequestMapping(path = "/api/stock/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public StockDTO getStockById(@RequestBody Long id) {
+        return stockService.findById(id);
     }
 }
