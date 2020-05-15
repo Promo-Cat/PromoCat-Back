@@ -25,7 +25,6 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "car")
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Car extends AbstractEntity {
 
@@ -34,10 +33,11 @@ public class Car extends AbstractEntity {
     private User user;
     private CarNumber number;
 
-    public Car(String carmake, String color, User user) {
+    public Car(String carmake, String color, User user, CarNumber number) {
         this.car_make = carmake;
         this.color = color;
         this.user = user;
+        this.number = number;
     }
 
     /**

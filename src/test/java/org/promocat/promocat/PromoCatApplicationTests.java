@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.car.CarRepository;
+import org.promocat.promocat.data_entities.car_number.CarNumber;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.UserDTO;
@@ -55,7 +56,10 @@ public class PromoCatApplicationTests {
                 });
 
         System.out.println("huii");
-        System.out.println(user.getCars().size());
+        for (Car car : user.getCars()) {
+            System.out.println(car.getNumber().getId());
+        }
+
         cars = carRepository.findAllByIdIn(cars.stream().map(Car::getId).collect(Collectors.toList()));
 
         UserDTO unicornDto = userMapper.toDto(user);
@@ -69,7 +73,7 @@ public class PromoCatApplicationTests {
     }
 
     private List<Car> createCars(User unicorn) {
-        return Stream.generate(() -> carRepository.save(new Car("eblo", "eblo", unicorn)))
+        return Stream.generate(() -> carRepository.save(new Car("eblo", "eblo", unicorn, new CarNumber("12", "12"))))
                 .limit(3L)
                 .collect(Collectors.toList());
     }

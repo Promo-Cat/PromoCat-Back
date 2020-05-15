@@ -31,6 +31,11 @@ public class CarNumber extends AbstractEntity {
     private String region;
     private Car car;
 
+    public CarNumber(String number, String region) {
+        this.number = number;
+        this.region = region;
+    }
+
     /**
      * Номер автомобиля.
      */
