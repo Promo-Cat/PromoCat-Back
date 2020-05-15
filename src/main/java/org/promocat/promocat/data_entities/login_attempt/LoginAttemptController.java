@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.login_attempt;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserController;
@@ -25,12 +26,10 @@ import java.util.Optional;
 /**
  * @author Roman Devyatilov (Fr1m3n)
  */
-
+@Slf4j
 @RestController
 @RequestMapping(value = "/auth")
 public class LoginAttemptController {
-
-    private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserRepository userRepository;
     private final LoginAttemptService loginAttemptService;
@@ -62,7 +61,7 @@ public class LoginAttemptController {
         Optional<User> userRecord = userRepository.getByTelephone(telephone);
         if (userRecord.isPresent()) {
             LoginAttempt loginAttempt = loginAttemptService.create(userRecord.get());
-            logger.info("User with telephone logined: " + telephone);
+            log.info("User logined with telephone: " + telephone);
             return new ResponseEntity<>(new AuthorizationKeyDTO(loginAttempt.getAuthorizationKey()), HttpStatus.OK);
         } else {
             throw new UsernameNotFoundException(
