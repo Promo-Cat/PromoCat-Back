@@ -37,13 +37,14 @@ public class User extends AbstractEntity {
     private String token;
     private Long balance;
     private Set<Car> cars;
-    private PromoCode promo_code;
+    private Long promo_code_id;
 
-    public User(String name, String city, String telephone, Long balance) {
+    public User(String name, String city, String telephone, Long balance, Long promo_code_id) {
         this.name = name;
         this.city = city;
         this.telephone = telephone;
         this.balance = balance;
+        this.promo_code_id = promo_code_id;
     }
 
     /**
@@ -103,8 +104,8 @@ public class User extends AbstractEntity {
     /**
      * Действующий промокод.
      */
-    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    public PromoCode getPromo_code() {
-        return promo_code;
+    @Column(name = "promo_code")
+    public Long getPromo_code_id() {
+        return promo_code_id;
     }
 }

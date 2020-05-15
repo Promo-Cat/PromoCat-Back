@@ -31,7 +31,6 @@ public class PromoCatApplicationTests {
 
     @Autowired
     private CarRepository carRepository;
-//
 //    @Before
 //    public void init() {
 //        user = createUser();
@@ -49,6 +48,7 @@ public class PromoCatApplicationTests {
 //            System.out.println(car.getNumber().getId());
 //        }
 //
+//        System.out.println(user.getCars().size());
 //        cars = carRepository.findAllByIdIn(cars.stream().map(Car::getId).collect(Collectors.toList()));
 //
 //        UserDTO unicornDto = userMapper.toDto(user);

@@ -18,41 +18,35 @@ import java.util.Objects;
 public class PromoCodeMapper extends AbstractMapper<PromoCode, PromoCodeDTO> {
 
     private final ModelMapper mapper;
-    private final UserRepository userRepository;
     private final StockRepository stockRepository;
 
     @Autowired
-    public PromoCodeMapper(final ModelMapper mapper, final UserRepository userRepository, final StockRepository stockRepository) {
+    public PromoCodeMapper(final ModelMapper mapper, final StockRepository stockRepository) {
         super(PromoCode.class, PromoCodeDTO.class);
         this.mapper = mapper;
-        this.userRepository = userRepository;
         this.stockRepository = stockRepository;
     }
 
     @PostConstruct
     public void setupMapper() {
         mapper.createTypeMap(PromoCode.class, PromoCodeDTO.class)
-                .addMappings(m -> m.skip(PromoCodeDTO::setUserId))
                 .addMappings(m -> m.skip(PromoCodeDTO::setStockId)).setPostConverter(toDtoConverter());
         mapper.createTypeMap(PromoCodeDTO.class, PromoCode.class)
-                .addMappings(m -> m.skip(PromoCode::setUser))
                 .addMappings(m -> m.skip(PromoCode::setStock)).setPostConverter(toEntityConverter());
 
     }
 
     @Override
     public void mapSpecificFields(PromoCode source, PromoCodeDTO destination) {
-        destination.setUserId(getId(source));
         destination.setStockId(getId(source));
     }
 
     private Long getId(PromoCode source) {
-        return Objects.isNull(source) || Objects.isNull(source.getId()) ? null : source.getUser().getId();
+        return Objects.isNull(source) || Objects.isNull(source.getId()) ? null : source.getStock().getId();
     }
 
     @Override
     void mapSpecificFields(PromoCodeDTO source, PromoCode destination) {
-        destination.setUser(userRepository.findById(source.getUserId()).orElse(null));
         destination.setStock(stockRepository.findById(source.getStockId()).orElse(null));
     }
 }

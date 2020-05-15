@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.car;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name = "car", indexes = { @Index (columnList = "number,region", unique = true)})
 @EqualsAndHashCode(of = {}, callSuper = true)
+@AllArgsConstructor
 @Setter
 @NoArgsConstructor
 public class Car extends AbstractEntity {
@@ -24,14 +26,6 @@ public class Car extends AbstractEntity {
     private User user;
     private String number;
     private String region;
-
-    public Car(String carMake, String color, User user, String number, String region) {
-        this.car_make = carMake;
-        this.color = color;
-        this.user = user;
-        this.number = number;
-        this.region = region;
-    }
 
     /**
      * Марка автомобиля.
@@ -63,7 +57,7 @@ public class Car extends AbstractEntity {
     /**
      * Номерной знак автомобиля.
      */
-    @NotBlank(message = "Номер автомобиля не может быть пустым")
+    @NotBlank(message = "Номер не может быть пустым.")
     @Column(name = "number")
     public String getNumber() {
         return number;
@@ -72,7 +66,7 @@ public class Car extends AbstractEntity {
     /**
      * Регион автомобиля.
      */
-    @NotBlank(message = "Регион автомобиля не может быть пустым")
+    @NotBlank(message = "Регион не может быть пустым.")
     @Column(name = "region")
     public String getRegion() {
         return region;
