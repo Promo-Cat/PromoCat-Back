@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
  * @author maksimgrankin
  */
 @Entity
-@Table(name = "car")
+@Table(name = "car", indexes = { @Index (columnList = "number,region", unique = true)})
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
 @NoArgsConstructor
