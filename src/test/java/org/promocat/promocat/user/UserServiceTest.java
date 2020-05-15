@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.data_entities.user.UserController;
-import org.promocat.promocat.data_entities.user.UserRecord;
+import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserService;
-import org.promocat.promocat.data_entities.user.dto.UserDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,76 +24,76 @@ import javax.validation.ConstraintViolationException;
 @ActiveProfiles("test")
 public class UserServiceTest {
 
-    @Autowired
-    private UserService userService;
-
-    UserRecord userRecord = new UserRecord();
-
-    @Transactional
-    @Test(expected = ConstraintViolationException.class)
-    public void saveWithoutName() {
-        userRecord.setId(1L);
-        userRecord.setTelephone("+7(962)401-15-60");
-        userRecord.setBalance(1L);
-        userRecord.setCity("Saint-Petersburg");
-
-        userService.save(userRecord);
-    }
-
-    @Transactional
-    @Test(expected = ConstraintViolationException.class)
-    public void saveWithoutCity() {
-        userRecord.setId(1L);
-        userRecord.setName("My");
-        userRecord.setTelephone("+7(962)401-15-60");
-        userRecord.setBalance(1L);
-
-        userService.save(userRecord);
-    }
-
-    @Transactional
-    @Test(expected = ConstraintViolationException.class)
-    public void saveWithoutTelephone() {
-        userRecord.setId(1L);
-        userRecord.setName("My");
-        userRecord.setBalance(1L);
-        userRecord.setCity("Saint-Petersburg");
-
-        userService.save(userRecord);
-    }
-
-    @Transactional
-    @Test(expected = ConstraintViolationException.class)
-    public void saveWithoutValidTelephone() {
-        userRecord.setId(1L);
-        userRecord.setName("My");
-        userRecord.setBalance(1L);
-        userRecord.setTelephone("+7(962)-401-15-60");
-        userRecord.setCity("Saint-Petersburg");
-
-        userService.save(userRecord);
-    }
-
-    @Transactional
-    @Test(expected = ConstraintViolationException.class)
-    public void saveWithoutBalance() {
-        userRecord.setId(1L);
-        userRecord.setName("My");
-        userRecord.setTelephone("+7(962)4011560");
-        userRecord.setCity("Saint-Petersburg");
-        userService.save(userRecord);
-    }
-
-    @Transactional
-    @Test
-    public void saveWithAllCorrect() {
-        userRecord.setId(1L);
-        userRecord.setName("My");
-        userRecord.setTelephone("+7(962)401-15-60");
-        userRecord.setBalance(1L);
-        userRecord.setCity("Saint-Petersburg");
-
-        UserDTO userDTO = userService.save(userRecord);
-        Assert.assertEquals(userRecord, UserController.userDTOToRecord(userDTO));
-    }
+//    @Autowired
+//    private UserService userService;
+//
+//    User user = new User();
+//
+//    @Transactional
+//    @Test(expected = ConstraintViolationException.class)
+//    public void saveWithoutName() {
+//        user.setId(1L);
+//        user.setTelephone("+7(962)401-15-60");
+//        user.setBalance(1L);
+//        user.setCity("Saint-Petersburg");
+//
+//        userService.save(user);
+//    }
+//
+//    @Transactional
+//    @Test(expected = ConstraintViolationException.class)
+//    public void saveWithoutCity() {
+//        user.setId(1L);
+//        user.setName("My");
+//        user.setTelephone("+7(962)401-15-60");
+//        user.setBalance(1L);
+//
+//        userService.save(user);
+//    }
+//
+//    @Transactional
+//    @Test(expected = ConstraintViolationException.class)
+//    public void saveWithoutTelephone() {
+//        user.setId(1L);
+//        user.setName("My");
+//        user.setBalance(1L);
+//        user.setCity("Saint-Petersburg");
+//
+//        userService.save(user);
+//    }
+//
+//    @Transactional
+//    @Test(expected = ConstraintViolationException.class)
+//    public void saveWithoutValidTelephone() {
+//        user.setId(1L);
+//        user.setName("My");
+//        user.setBalance(1L);
+//        user.setTelephone("+7(962)-401-15-60");
+//        user.setCity("Saint-Petersburg");
+//
+//        userService.save(user);
+//    }
+//
+//    @Transactional
+//    @Test(expected = ConstraintViolationException.class)
+//    public void saveWithoutBalance() {
+//        user.setId(1L);
+//        user.setName("My");
+//        user.setTelephone("+7(962)4011560");
+//        user.setCity("Saint-Petersburg");
+//        userService.save(user);
+//    }
+//
+//    @Transactional
+//    @Test
+//    public void saveWithAllCorrect() {
+//        user.setId(1L);
+//        user.setName("My");
+//        user.setTelephone("+7(962)401-15-60");
+//        user.setBalance(1L);
+//        user.setCity("Saint-Petersburg");
+//
+//        UserDTO userDTO = userService.save(user);
+//        Assert.assertEquals(user, UserController.userDTOToRecord(userDTO));
+//    }
 }

@@ -1,5 +1,9 @@
 package org.promocat.promocat.exception.validation;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.promocat.promocat.exception.ApiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -8,6 +12,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +22,11 @@ import java.util.List;
  */
 @ControllerAdvice
 public class ApiValidationHandler {
+
+    private static Logger logger = LoggerFactory.getLogger(ApiValidationHandler.class);
+
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    public ResponseEntity<Object> validationError(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiValidationException> validationError(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
         final List<FieldError> fieldErrors = result.getFieldErrors();
         List<ApiFieldException> validationExceptionList = new ArrayList<>();
@@ -28,7 +37,21 @@ public class ApiValidationHandler {
                     fieldError.getDefaultMessage()
             ));
         }
+        ApiValidationException validationException = new ApiValidationException(validationExceptionList);
+        logger.error("Validation errors: " + validationException);
+        return new ResponseEntity<>(validationException, HttpStatus.BAD_REQUEST);
+    }
 
-        return new ResponseEntity<>(new ApiValidationException(validationExceptionList), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    public ResponseEntity<ApiException> handleSQLException(ConstraintViolationException ex) {
+        final HttpStatus conflict = HttpStatus.CONFLICT;
+        // TODO адекватное сообщение?
+        ApiException apiException = new ApiException(
+                ex.getSQLException().getSQLState(),
+                conflict,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        logger.error("SQL exception: " + ex.getMessage());
+        return new ResponseEntity<>(apiException, conflict);
     }
 }

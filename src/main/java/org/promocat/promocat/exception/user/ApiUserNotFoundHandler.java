@@ -1,6 +1,8 @@
 package org.promocat.promocat.exception.user;
 
 import org.promocat.promocat.exception.ApiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +17,9 @@ import java.time.ZonedDateTime;
  */
 @ControllerAdvice
 public class ApiUserNotFoundHandler {
+
+    private static Logger logger = LoggerFactory.getLogger(ApiUserNotFoundHandler.class);
+
     @ExceptionHandler(value = {UsernameNotFoundException.class})
     public ResponseEntity<Object> handleNonexistentUser(UsernameNotFoundException e) {
         final HttpStatus notFound = HttpStatus.NOT_FOUND;
@@ -23,6 +28,7 @@ public class ApiUserNotFoundHandler {
                 notFound,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
+        logger.error("User not found: " + e.getMessage());
         return new ResponseEntity<>(apiException, notFound);
     }
 }

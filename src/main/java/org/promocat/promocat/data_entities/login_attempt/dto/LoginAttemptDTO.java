@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.login_attempt.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Data;
  */
 
 @Data
+@AllArgsConstructor
 public class LoginAttemptDTO {
 
     private String authorization_key;

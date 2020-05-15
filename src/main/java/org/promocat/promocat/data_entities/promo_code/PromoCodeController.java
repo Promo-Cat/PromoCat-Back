@@ -1,30 +1,37 @@
 package org.promocat.promocat.data_entities.promo_code;
 
-import org.promocat.promocat.data_entities.promo_code.dto.PromoCodeDTO;
-import org.promocat.promocat.data_entities.user.UserController;
-import org.promocat.promocat.data_entities.user.UserRecord;
+import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.dto.PromoCodeDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Objects;
+import javax.validation.Valid;
 
 /**
  * Created by Danil Lyskin at 22:13 05.05.2020
  */
+@Slf4j
 @RestController
 public class PromoCodeController {
 
-    public static PromoCodeRecord promoCodeDTOToRecord(PromoCodeDTO promoCodeDTO, UserRecord userRecord) {
-        if (Objects.isNull(promoCodeDTO)) {
-            return null;
-        }
-        return new PromoCodeRecord(promoCodeDTO.getId(), promoCodeDTO.getPromoCode(), userRecord);
+
+    private final PromoCodeService promoCodeService;
+
+    //TODO endpoint for adding promo codes by company???
+
+    @Autowired
+    public PromoCodeController(final PromoCodeService promoCodeService) {
+        this.promoCodeService = promoCodeService;
     }
 
-    public static PromoCodeRecord promoCodeDTOToRecord(PromoCodeDTO promoCodeDTO) {
-        if (Objects.isNull(promoCodeDTO)) {
-            return null;
-        }
-        return new PromoCodeRecord(promoCodeDTO.getId(), promoCodeDTO.getPromoCode(),
-                UserController.userDTOToRecord(promoCodeDTO.getUserDTO()));
+    @RequestMapping(path = "/api/user/promoCode", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public PromoCodeDTO addPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
+        log.info(String.format("Trying to set promo code: %s from stock: %d to user: %d",
+                promoCodeDTO.getPromoCode(), promoCodeDTO.getStockId(), promoCodeDTO.getUserId()));
+        return promoCodeService.save(promoCodeDTO);
     }
 }
