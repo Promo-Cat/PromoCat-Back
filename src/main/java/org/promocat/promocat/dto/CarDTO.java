@@ -13,5 +13,6 @@ public class CarDTO extends AbstractDTO {
     private String car_make;
     private String color;
     private Long userId;
-    private CarNumberDTO number;
+    private String number;
+    private String region;
 }
