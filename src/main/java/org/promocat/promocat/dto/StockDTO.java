@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockDTO extends AbstractDTO{
-    private LocalDateTime startTime;
+    private String name;
+    private LocalDateTime start_time;
     private LocalDateTime duration;
     private Long companyId;
 }
