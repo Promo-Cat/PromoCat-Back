@@ -1,7 +1,8 @@
-package org.promocat.promocat.data_entities.login_attempt.dto;
+package org.promocat.promocat.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -9,8 +10,8 @@ import lombok.NoArgsConstructor;
  */
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class TokenDTO {
 
     private String token;

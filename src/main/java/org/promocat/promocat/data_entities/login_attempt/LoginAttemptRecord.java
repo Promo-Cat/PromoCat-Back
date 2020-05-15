@@ -3,6 +3,7 @@ package org.promocat.promocat.data_entities.login_attempt;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.data_entities.AbstractEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,12 +21,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Table(name = "login_attempt")
-public class LoginAttemptRecord {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true)
-    private Long id;
+public class LoginAttemptRecord extends AbstractEntity {
 
     /**
      * Ключ авторизации, который соответствует попытке входа.
@@ -45,9 +41,4 @@ public class LoginAttemptRecord {
     @Column(name = "telephone", nullable = false)
     private String telephone;
 
-    public LoginAttemptRecord(final String authorizationKey, final String phoneCode, final String telephone) {
-        this.authorizationKey = authorizationKey;
-        this.phoneCode = phoneCode;
-        this.telephone = telephone;
-    }
 }

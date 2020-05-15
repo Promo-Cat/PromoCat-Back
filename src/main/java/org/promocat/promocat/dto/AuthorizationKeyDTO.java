@@ -1,17 +1,19 @@
-package org.promocat.promocat.data_entities.login_attempt.dto;
+package org.promocat.promocat.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Roman Devyatilov (Fr1m3n)
  */
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class LoginAttemptDTO {
+public class AuthorizationKeyDTO {
 
     private String authorization_key;
-    private String code;
 
 }

@@ -5,7 +5,7 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRecord;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRepository;
-import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
+import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;

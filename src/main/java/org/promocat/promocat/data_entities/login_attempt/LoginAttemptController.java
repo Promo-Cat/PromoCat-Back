@@ -2,7 +2,7 @@ package org.promocat.promocat.data_entities.login_attempt;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.promocat.promocat.data_entities.login_attempt.dto.AuthorizationKeyDTO;
+import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserController;
 import org.promocat.promocat.data_entities.user.UserRepository;
