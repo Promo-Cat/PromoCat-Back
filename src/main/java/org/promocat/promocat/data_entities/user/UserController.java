@@ -9,8 +9,6 @@ import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -60,7 +58,7 @@ public class UserController {
     // TODO API RESPONSES
     @RequestMapping(path = "/api/user/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO getUserById(@RequestBody Long id) {
-        log.info("Trying to find user with id: " + id);
+        log.info("Trying to find user: " + id);
         return userService.findById(id);
     }
 
@@ -84,7 +82,7 @@ public class UserController {
         if (userRecord.isPresent()) {
             User user = userRecord.get();
             try {
-                log.info(String.format("User with telephone %s and auth key %s got token",
+                log.info(String.format("User with telephone: %s and auth key: %s got token",
                         user.getTelephone(), loginAttempt.getAuthorization_key()));
                 return new ResponseEntity<>(new TokenDTO(userService.getToken(user.getTelephone())), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {

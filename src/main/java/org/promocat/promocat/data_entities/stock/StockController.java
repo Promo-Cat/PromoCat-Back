@@ -27,7 +27,7 @@ public class StockController {
 
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public StockDTO addCar(@Valid @RequestBody StockDTO stock) {
-        log.info(String.format("Trying to save stock from company with id: %d", stock.getCompanyId()));
+        log.info(String.format("Trying to save stock from company: %d", stock.getCompanyId()));
         return stockService.save(stock);
     }
 }
