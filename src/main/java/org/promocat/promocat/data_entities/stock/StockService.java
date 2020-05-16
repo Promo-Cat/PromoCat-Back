@@ -4,7 +4,10 @@ package org.promocat.promocat.data_entities.stock;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.mapper.StockMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -23,5 +26,14 @@ public class StockService {
 
     public StockDTO save(StockDTO dto) {
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
+    }
+
+    public StockDTO findById(Long id) {
+        Optional<Stock> stock = repository.findById(id);
+        if (stock.isPresent()) {
+            return mapper.toDto(stock.get());
+        } else {
+            throw new UsernameNotFoundException(String.format("No stock with such id: %d in db.", id));
+        }
     }
 }

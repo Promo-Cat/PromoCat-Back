@@ -6,16 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.stock.Stock;
-import org.promocat.promocat.data_entities.user.User;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -29,17 +21,17 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class PromoCode extends AbstractEntity {
 
-    private String promo_code;
+    private String promoCode;
     private Stock stock;
-    private User user;
+    private Boolean isActive;
 
     /**
      * Промокод.
      */
     @NotBlank(message = "Промокод не может быть пустым")
-    @Column(name = "promo_code")
-    public String getPromo_code() {
-        return promo_code;
+    @Column(name = "promo_code", unique = true)
+    public String getPromoCode() {
+        return promoCode;
     }
 
     /**
@@ -52,11 +44,10 @@ public class PromoCode extends AbstractEntity {
     }
 
     /**
-     * Пользователь, у которого активен данный промокод.
+     * Активность промокода
      */
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    public User getUser() {
-        return user;
+    @Column(name = "is_active")
+    public Boolean getIsActive() {
+        return (isActive == null ? false : isActive);
     }
 }

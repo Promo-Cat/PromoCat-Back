@@ -15,5 +15,5 @@ import lombok.NoArgsConstructor;
 public class PromoCodeDTO extends AbstractDTO {
     private String promoCode;
     private Long stockId;
-    private Long userId;
+    private Boolean isActive;
 }

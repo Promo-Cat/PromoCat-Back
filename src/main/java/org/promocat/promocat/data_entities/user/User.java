@@ -7,15 +7,8 @@ import lombok.Setter;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
-import org.promocat.promocat.data_entities.promo_code.PromoCode;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -35,12 +28,13 @@ public class User extends AbstractAccount {
     private String city;
     private Long balance;
     private Set<Car> cars;
-    private PromoCode promo_code;
+    private Long promo_code_id;
 
-    public User(String name, String city, Long balance) {
+    public User(String name, String city, Long balance, Long promo_code_id) {
         this.name = name;
         this.city = city;
         this.balance = balance;
+        this.promo_code_id = promo_code_id;
         this.setAccount_type(AccountType.USER);
     }
 
@@ -82,8 +76,8 @@ public class User extends AbstractAccount {
     /**
      * Действующий промокод.
      */
-    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    public PromoCode getPromo_code() {
-        return promo_code;
+    @Column(name = "promo_code")
+    public Long getPromo_code_id() {
+        return promo_code_id;
     }
 }

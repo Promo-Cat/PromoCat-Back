@@ -1,10 +1,6 @@
 package org.promocat.promocat.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Set;
 
@@ -19,5 +15,5 @@ public class UserDTO extends AbstractAccountDTO {
     private String city;
     private Long balance;
     private Set<CarDTO> cars;
-    private PromoCodeDTO promoCodeDTO;
+    private Long promoCodeDTOId;
 }

@@ -8,12 +8,7 @@ import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.stock.Stock;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.Set;
@@ -29,10 +24,10 @@ import java.util.Set;
 @NoArgsConstructor
 public class Company extends AbstractAccount {
 
-    private String organization_name;
-    private String supervisor_first_name;
-    private String supervisor_second_name;
-    private String supervisor_patronymic;
+    private String organizationName;
+    private String supervisorFirstName;
+    private String supervisorSecondName;
+    private String supervisorPatronymic;
     private String ogrn;
     private String inn;
     private String mail;
@@ -44,8 +39,8 @@ public class Company extends AbstractAccount {
      */
     @NotBlank(message = "Имя организации не может быть пустым.")
     @Column(name = "organization_name", unique = true)
-    public String getOrganization_name() {
-        return organization_name;
+    public String getOrganizationName() {
+        return organizationName;
     }
 
     /**
@@ -53,8 +48,8 @@ public class Company extends AbstractAccount {
      */
     @NotBlank(message = "Имя руководителя не может быть пустым.")
     @Column(name = "supervisor_first_name")
-    public String getSupervisor_first_name() {
-        return supervisor_first_name;
+    public String getSupervisorFirstName() {
+        return supervisorFirstName;
     }
 
     /**
@@ -62,15 +57,15 @@ public class Company extends AbstractAccount {
      */
     @NotBlank(message = "Фамилия руководителя не может быть пустой.")
     @Column(name = "supervisor_second_name")
-    public String getSupervisor_second_name() {
-        return supervisor_second_name;
+    public String getSupervisorSecondName() {
+        return supervisorSecondName;
     }
     /**
      * Отчество руководителя.
      */
     @Column(name = "supervisor_patronymic")
-    public String getSupervisor_patronymic() {
-        return supervisor_patronymic;
+    public String getSupervisorPatronymic() {
+        return supervisorPatronymic;
     }
 
     /**
