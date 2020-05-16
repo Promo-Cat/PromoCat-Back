@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.attributes.AccountType;
 
 /**
  * @author Roman Devyatilov (Fr1m3n)
@@ -17,5 +18,5 @@ public class LoginAttemptDTO extends AbstractDTO {
 
     private String authorizationKey;
     private String code;
-
+    //TODO: Account type
 }
