@@ -154,4 +154,13 @@ public class UserService {
             throw new UsernameNotFoundException(String.format("No user with such id: %d in db.", id));
         }
     }
+
+    public UserDTO findByTelephone(String telephone) {
+        Optional<User> user = userRepository.getByTelephone(telephone);
+        if (user.isPresent()) {
+            return userMapper.toDto(user.get());
+        } else {
+            throw new UsernameNotFoundException(String.format("No user with such telephone: %d in db.", telephone));
+        }
+    }
 }
