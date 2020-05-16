@@ -9,17 +9,15 @@ import org.promocat.promocat.data_entities.user.User;
  */
 public enum AccountType {
 
-    USER(0L, "User", User.class),
-    COMPANY(1L, "Company", Company.class),
-    ADMIN(2L, "Admin", User.class);
+    USER(0L, "User"),
+    COMPANY(1L, "Company"),
+    ADMIN(2L, "Admin");
 
-    AccountType(Long id, String type, Class<? extends AbstractAccount> accountEntity) {
+    AccountType(Long id, String type) {
         this.id = id;
         this.type = type;
-        this.accountEntity = accountEntity;
     }
 
-    private final Class<? extends AbstractAccount> accountEntity;
     private final Long id;
     private final String type;
 
@@ -31,7 +29,4 @@ public enum AccountType {
         return type;
     }
 
-    public Class<? extends AbstractAccount> getAccountEntity() {
-        return accountEntity;
-    }
 }
