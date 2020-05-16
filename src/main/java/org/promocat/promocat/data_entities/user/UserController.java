@@ -1,5 +1,9 @@
 package org.promocat.promocat.data_entities.user;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.JwtParserBuilder;
+import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -57,17 +61,24 @@ public class UserController {
         return userService.save(user);
     }
 
+
     // TODO API RESPONSES
+    @ApiOperation(value = "Get authorizated user",
+            notes = "Returning user, which token is in header (get authorizated user)",
+            response = UserDTO.class)
     @ApiResponses(
             @ApiResponse(code = 404,
                     message = "User not found",
                     response = ApiException.class)
     )
-    @RequestMapping(path = "/api/user/", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO getUserById(@RequestBody Long id) {
-        //TODO: whoami
-        log.info("Trying to find user: " + id);
-        return userService.findById(id);
+    @RequestMapping(path = "/api/user", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public UserDTO getUserById(@RequestHeader("token") String jwtToken) {
+        JwtParser jwtParser = Jwts.parserBuilder().build();
+        //TODO: секретный ключ для шифрования JWT
+        Claims jwtBody = jwtParser.parseClaimsJwt(jwtToken).getBody();
+        String telephone = jwtBody.get("telephone", String.class);
+        log.info("Trying to find user: " + telephone);
+        return userService.findByTelephone(telephone);
     }
 
     @ApiResponses(value = {
