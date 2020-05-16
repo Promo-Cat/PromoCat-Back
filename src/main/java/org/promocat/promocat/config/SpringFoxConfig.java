@@ -37,7 +37,7 @@ public class SpringFoxConfig {
                 .groupName("auth")
                 .apiInfo(apiDetails())
                 .select()
-                .paths(PathSelectors.ant("/auth/*"))
+                .paths(PathSelectors.ant("/auth/**"))
                 .apis(RequestHandlerSelectors.basePackage("org.promocat.promocat.data_entities"))
                 .build();
     }
