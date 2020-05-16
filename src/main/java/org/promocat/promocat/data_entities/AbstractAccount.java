@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.promocat.promocat.attributes.AccountType;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,7 +24,7 @@ public abstract class AbstractAccount extends AbstractEntity {
 
     String token;
     String telephone;
-    AccountType account_type;
+    AccountType accountType;
 
     /**
      * Токен закрепленный за аккаунтом
@@ -51,7 +50,7 @@ public abstract class AbstractAccount extends AbstractEntity {
      */
     @NotNull
     @Column(name = "account_type")
-    public AccountType getAccount_type() {
-        return account_type;
+    public AccountType getAccountType() {
+        return accountType;
     }
 }

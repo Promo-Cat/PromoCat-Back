@@ -35,7 +35,7 @@ public class User extends AbstractAccount {
         this.city = city;
         this.balance = balance;
         this.promoCodeId = promoCodeId;
-        this.setAccount_type(AccountType.USER);
+        this.setAccountType(AccountType.USER);
     }
 
     /**

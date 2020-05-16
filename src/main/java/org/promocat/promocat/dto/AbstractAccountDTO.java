@@ -23,7 +23,6 @@ public class AbstractAccountDTO extends AbstractDTO {
             message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
     private String telephone;
 
-    @NotBlank(message = "Аккаунт не может быть пустой.")
     private AccountType accountType;
     private String token;
 

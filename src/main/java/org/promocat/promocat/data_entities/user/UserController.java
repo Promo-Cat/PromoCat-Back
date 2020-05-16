@@ -83,10 +83,10 @@ public class UserController {
     })
     @RequestMapping(value = "/auth/user/token", method = RequestMethod.GET)
     public ResponseEntity<TokenDTO> getToken(
-            @RequestParam("authorization_key") String authorization_key,
+            @RequestParam("authorizationKey") String authorizationKey,
             @RequestParam("code") String code) {
         // TODO: Получать account type из LoginAttempt
-        LoginAttemptDTO loginAttempt = new LoginAttemptDTO(authorization_key, code);
+        LoginAttemptDTO loginAttempt = new LoginAttemptDTO(authorizationKey, code);
         Optional<User> userRecord = userService.checkLoginAttemptCode(loginAttempt);
         if (userRecord.isPresent()) {
             User user = userRecord.get();
