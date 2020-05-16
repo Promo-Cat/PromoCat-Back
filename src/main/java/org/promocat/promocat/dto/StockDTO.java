@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class StockDTO extends AbstractDTO{
     private String name;
+    private Long count;
     private LocalDateTime start_time;
     private LocalDateTime duration;
     private Long companyId;

@@ -26,6 +26,7 @@ import java.util.List;
 public class Stock extends AbstractEntity {
 
     private String name;
+    private Long count;
     private LocalDateTime start_time;
     private LocalDateTime duration;
     private Company company;
@@ -40,6 +41,14 @@ public class Stock extends AbstractEntity {
         return name;
     }
 
+    /**
+     * Количество промокодов.
+     */
+    //@NotNull(message = "Количество промокодов не может быть нулем.")
+    @Column(name = "count")
+    public Long getCount() {
+        return count;
+    }
     /**
      * Время начала акции.
      */

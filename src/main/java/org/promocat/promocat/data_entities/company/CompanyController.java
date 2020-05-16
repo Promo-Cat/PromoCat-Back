@@ -28,7 +28,7 @@ public class CompanyController {
     @RequestMapping(path = "/auth/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public CompanyDTO addCompany(@Valid @RequestBody CompanyDTO company) {
         log.info(String.format("Trying to save company: %s. Organization telephone: %s",
-                company.getOrganization_name(), company.getTelephone()));
+                company.getOrganizationName(), company.getTelephone()));
         return companyService.save(company);
     }
 }

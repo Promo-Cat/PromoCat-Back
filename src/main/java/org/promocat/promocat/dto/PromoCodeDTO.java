@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PromoCodeDTO extends AbstractDTO {
-    private String promo_code;
+    private String promCode;
     private Long stockId;
-    private Boolean is_active;
+    private Boolean isActive;
 }

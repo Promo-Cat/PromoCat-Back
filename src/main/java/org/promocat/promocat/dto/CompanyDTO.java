@@ -16,10 +16,10 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompanyDTO extends AbstractDTO {
-    private String organization_name;
-    private String supervisor_first_name;
-    private String supervisor_second_name;
-    private String supervisor_patronymic;
+    private String organizationName;
+    private String supervisorFirstName;
+    private String supervisorSecondName;
+    private String supervisorPatronymic;
     private String ogrn;
     private String inn;
     private String telephone;
