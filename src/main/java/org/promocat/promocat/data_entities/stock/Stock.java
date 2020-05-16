@@ -11,6 +11,7 @@ import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -46,6 +47,7 @@ public class Stock extends AbstractEntity {
      */
     //@NotNull(message = "Количество промокодов не может быть нулем.")
     @Column(name = "count")
+    @Size(min = 500)
     public Long getCount() {
         return count;
     }
