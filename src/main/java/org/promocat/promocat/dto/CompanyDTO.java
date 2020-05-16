@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 /**
@@ -15,15 +17,32 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyDTO extends AbstractDTO {
+public class CompanyDTO extends AbstractAccountDTO {
+
+    @NotBlank(message = "Имя организации не может быть пустым.")
     private String organizationName;
+
+    @NotBlank(message = "Имя руководителя не может быть пустым.")
     private String supervisorFirstName;
+
+    @NotBlank(message = "Фамилия руководителя не может быть пустой.")
     private String supervisorSecondName;
+
     private String supervisorPatronymic;
+
+    @NotBlank(message = "ОГРН организации не может быть пустым.")
     private String ogrn;
+
+    @NotBlank(message = "ИНН организации не может быть пустым.")
     private String inn;
-    private String telephone;
+
+    // TODO норм email, javax говно
+    @Email
+    @NotBlank(message = "Имя почты не может быть пустым.")
     private String mail;
+
+    @NotBlank(message = "Город не может быть пустым.")
     private String city;
+
     private Set<StockDTO> stocks;
 }

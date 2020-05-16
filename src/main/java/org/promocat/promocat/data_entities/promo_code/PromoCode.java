@@ -28,7 +28,7 @@ public class PromoCode extends AbstractEntity {
     /**
      * Промокод.
      */
-    @NotBlank(message = "Промокод не может быть пустым")
+    @NotBlank(message = "Промокод не может быть пустым.")
     @Column(name = "promo_code", unique = true)
     public String getPromoCode() {
         return promoCode;
@@ -46,8 +46,8 @@ public class PromoCode extends AbstractEntity {
     /**
      * Активность промокода
      */
-    @Column(name = "is_active")
+    @Column(columnDefinition = "boolean default false", name = "is_active")
     public Boolean getIsActive() {
-        return (isActive == null ? false : isActive);
+        return isActive;
     }
 }

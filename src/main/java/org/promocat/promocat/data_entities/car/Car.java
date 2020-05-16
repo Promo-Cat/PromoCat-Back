@@ -27,7 +27,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class Car extends AbstractEntity {
 
-    private String car_make;
+    private String carMake;
     private String color;
     private User user;
     private String number;
@@ -36,16 +36,16 @@ public class Car extends AbstractEntity {
     /**
      * Марка автомобиля.
      */
-    @NotBlank(message = "Марка машины не может быть пустой")
+    @NotBlank(message = "Марка машины не может быть пустой.")
     @Column(name = "car_make")
-    public String getCar_make() {
-        return car_make;
+    public String getCarMake() {
+        return carMake;
     }
 
     /**
      * Цвет автомобиля.
      */
-    @NotBlank(message = "Цвет не может быть пустым")
+    @NotBlank(message = "Цвет не может быть пустым.")
     @Column(name = "color")
     public String getColor() {
         return color;

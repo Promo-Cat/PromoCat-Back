@@ -29,7 +29,7 @@ public class Stock extends AbstractEntity {
     private Long count;
     private String city;
     private Company company;
-    private LocalDateTime start_time;
+    private LocalDateTime startTime;
     private LocalDateTime duration;
     List<PromoCode> codes;
 
@@ -45,7 +45,6 @@ public class Stock extends AbstractEntity {
     /**
      * Количество промокодов.
      */
-    //@NotNull(message = "Количество промокодов не может быть нулем.")
     @Column(name = "count")
     public Long getCount() {
         return count;
@@ -65,8 +64,8 @@ public class Stock extends AbstractEntity {
      */
     @NotNull(message = "Время начала акции не может быть пустым.")
     @Column
-    public LocalDateTime getStart_time() {
-        return start_time;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
     /**
