@@ -1,6 +1,7 @@
 package org.promocat.promocat;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,7 +25,7 @@ public class PromoCatApplication {
 				.setMatchingStrategy(MatchingStrategies.STRICT)
 				.setFieldMatchingEnabled(true)
 				.setSkipNullEnabled(true)
-				.setFieldAccessLevel(PRIVATE);
+				.setFieldAccessLevel(Configuration.AccessLevel.PUBLIC);
 		return mapper;
 	}
 }

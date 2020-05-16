@@ -3,10 +3,16 @@ package org.promocat.promocat.data_entities.user;
 
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
+import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.AbstractAccountRepository;
+import org.promocat.promocat.data_entities.company.CompanyRepository;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttempt;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRepository;
+import org.promocat.promocat.dto.AbstractAccountDTO;
 import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.mapper.AbstractAccountMapper;
 import org.promocat.promocat.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,11 +20,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -27,23 +29,28 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
     private final LoginAttemptRepository loginAttemptRepository;
-    private final UserMapper mapper;
+    private final AbstractAccountMapper abstractAccountMapper;
+    private final UserMapper userMapper;
     @Value("${jwt.key}")
     private String jwt_key;
 
     @Autowired
     public UserService(final UserRepository userRepository,
+                       final CompanyRepository companyRepository,
                        final LoginAttemptRepository loginAttemptRepository,
+                       final AbstractAccountMapper abstractAccountMapper,
                        final UserMapper mapper) {
         this.userRepository = userRepository;
-        this.mapper = mapper;
+        this.companyRepository = companyRepository;
+        this.abstractAccountMapper = abstractAccountMapper;
+        this.userMapper = mapper;
         this.loginAttemptRepository = loginAttemptRepository;
-
     }
 
     public UserDTO save(UserDTO dto) {
-        return mapper.toDto(userRepository.save(mapper.toEntity(dto)));
+        return userMapper.toDto(userRepository.save(userMapper.toEntity(dto)));
     }
 
 
@@ -54,30 +61,41 @@ public class UserService {
      * @return токен, присвоенный записи юзера
      * @throws UsernameNotFoundException если пользователь с заданным номером не найден в БД
      */
-    public String getToken(String telephone) throws UsernameNotFoundException {
-        Optional<User> userFromDB = userRepository.getByTelephone(telephone);
-        // TODO: Тесты
-        // TODO: Может заменить UUID на JWT
-        if (userFromDB.isPresent()) {
-            User user = userFromDB.get();
-            String token = generateToken(mapper.toDto(user));
-            user.setToken(token);
-            userRepository.save(user);
-            return token;
-        } else {
+    public String getToken(String telephone, AccountType accountType) throws UsernameNotFoundException {
+        AbstractAccount account = null;
+        AbstractAccountRepository repository;
+        switch (accountType) {
+            case ADMIN:
+            case USER:
+                // TODO: получать аккаунт админа
+                repository = userRepository;
+                break;
+            case COMPANY:
+                repository = companyRepository;
+            default:
+                // TODO: InvalidAccountTypeException
+                throw new RuntimeException("InvalidAccountType");
+        }
+        try {
+            account = (AbstractAccount) repository.getByTelephone(telephone).orElseThrow();
+        } catch (NoSuchElementException e) {
             throw new UsernameNotFoundException("User with number " + telephone + " don`t presented in database");
         }
+        String token = generateToken(abstractAccountMapper.toDto(account));
+        account.setToken(token);
+        repository.save(account);
+        return token;
+
     }
 
     /**
-     *
-     * @param userDTO
+     * @param accountDTO
      * @return
      */
-    private String generateToken(UserDTO userDTO) {
+    private String generateToken(AbstractAccountDTO accountDTO) {
         Map<String, Object> tokenData = new HashMap<>();
-        tokenData.put("telephone", userDTO.getTelephone());
-        tokenData.put("account_type", "user");
+        tokenData.put("telephone", accountDTO.getTelephone());
+        tokenData.put("account_type", accountDTO.getAccount_type().toString());
         tokenData.put("token_create_time", new Date().getTime());
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.YEAR, 1);
@@ -128,7 +146,7 @@ public class UserService {
 //        return mapper.toDto(user.get());
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
-            return mapper.toDto(user.get());
+            return userMapper.toDto(user.get());
         } else {
             throw new UsernameNotFoundException(String.format("No user with such id: %d in db.", id));
         }

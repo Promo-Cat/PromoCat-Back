@@ -4,14 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author Roman Devyatilov (Fr1m3n)
@@ -51,6 +47,14 @@ public class LoginAttempt extends AbstractEntity {
     @Column(name = "telephone", nullable = false)
     public String getTelephone() {
         return telephone;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "account_type", nullable = false)
+    private AccountType accountType;
+
+    public LoginAttempt(AccountType accountType) {
+        this.accountType = accountType;
     }
 
 }
