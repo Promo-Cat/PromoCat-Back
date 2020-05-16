@@ -113,6 +113,7 @@ public class UserService {
      * @param attempt DTO хранящий код, который получил юзер и специальный ключ
      * @return true - если всё совпадает и можно выдавать токен
      */
+    // TODO: AbstractAccountRepo
     public Optional<User> checkLoginAttemptCode(LoginAttemptDTO attempt) {
         LoginAttempt loginAttempt = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorization_key());
         if (loginAttempt.getPhoneCode().equals(attempt.getCode())) {

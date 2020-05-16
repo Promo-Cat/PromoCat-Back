@@ -51,7 +51,7 @@ public class UserController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/auth/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "/auth/user/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO addUser(@Valid @RequestBody UserDTO user) {
         log.info("Trying to save user with telephone: " + user.getTelephone());
         return userService.save(user);
@@ -63,8 +63,9 @@ public class UserController {
                     message = "User not found",
                     response = ApiException.class)
     )
-    @RequestMapping(path = "/api/user/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "/api/user/", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO getUserById(@RequestBody Long id) {
+        //TODO: whoami
         log.info("Trying to find user: " + id);
         return userService.findById(id);
     }
@@ -84,6 +85,7 @@ public class UserController {
     public ResponseEntity<TokenDTO> getToken(
             @RequestParam("authorization_key") String authorization_key,
             @RequestParam("code") String code) {
+        // TODO: Получать account type из LoginAttempt
         LoginAttemptDTO loginAttempt = new LoginAttemptDTO(authorization_key, code);
         Optional<User> userRecord = userService.checkLoginAttemptCode(loginAttempt);
         if (userRecord.isPresent()) {
