@@ -11,7 +11,6 @@ import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,9 +27,10 @@ public class Stock extends AbstractEntity {
 
     private String name;
     private Long count;
+    private String city;
+    private Company company;
     private LocalDateTime start_time;
     private LocalDateTime duration;
-    private Company company;
     List<PromoCode> codes;
 
     /**
@@ -47,10 +47,19 @@ public class Stock extends AbstractEntity {
      */
     //@NotNull(message = "Количество промокодов не может быть нулем.")
     @Column(name = "count")
-    @Size(min = 500)
     public Long getCount() {
         return count;
     }
+
+    /**
+     * Город
+     */
+    @NotBlank(message = "Город не может быть пустым.")
+    @Column(name = "city")
+    public String getCity() {
+        return city;
+    }
+
     /**
      * Время начала акции.
      */

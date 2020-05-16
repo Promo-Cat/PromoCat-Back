@@ -19,8 +19,9 @@ import java.util.List;
 public class StockDTO extends AbstractDTO{
     private String name;
     private Long count;
+    private Long companyId;
+    private String city;
     private LocalDateTime start_time;
     private LocalDateTime duration;
-    private Long companyId;
     private List<PromoCodeDTO> codes;
 }
