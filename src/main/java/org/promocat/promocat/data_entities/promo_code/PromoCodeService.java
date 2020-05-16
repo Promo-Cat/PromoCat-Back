@@ -63,7 +63,7 @@ public class PromoCodeService {
         List<PromoCodeDTO> codes = generate(stock.getCount(), stock.getId());
         for (PromoCodeDTO code : codes) {
             System.out.println(code.getId());
-            System.out.println(code.getPromCode());
+            System.out.println(code.getPromoCode());
             save(code);
         }
         return stock;
