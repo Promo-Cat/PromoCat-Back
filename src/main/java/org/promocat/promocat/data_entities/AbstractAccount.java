@@ -16,9 +16,8 @@ import javax.validation.constraints.Pattern;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 20:24 15.05.2020
  */
-//@MappedSuperclass
+@MappedSuperclass
 @Setter
-@Entity
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor

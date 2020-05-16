@@ -13,7 +13,7 @@ import org.promocat.promocat.attributes.AccountType;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class AbstractAccountDTO extends AbstractDTO {
+public class AbstractAccountDTO extends AbstractDTO {
 
     private String telephone;
     private AccountType account_type;

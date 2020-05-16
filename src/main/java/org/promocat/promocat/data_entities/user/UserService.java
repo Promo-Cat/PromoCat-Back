@@ -33,7 +33,6 @@ public class UserService {
     private final LoginAttemptRepository loginAttemptRepository;
     private final AbstractAccountMapper abstractAccountMapper;
     private final UserMapper userMapper;
-    private final AbstractAccountRepository<? extends AbstractAccount> abstractAccountRepository;
     @Value("${jwt.key}")
     private String jwt_key;
 
@@ -42,14 +41,12 @@ public class UserService {
                        final CompanyRepository companyRepository,
                        final LoginAttemptRepository loginAttemptRepository,
                        final AbstractAccountMapper abstractAccountMapper,
-                       final UserMapper mapper,
-                       final AbstractAccountRepository<? extends AbstractAccount> abstractAccountRepository) {
+                       final UserMapper mapper) {
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
         this.abstractAccountMapper = abstractAccountMapper;
         this.userMapper = mapper;
         this.loginAttemptRepository = loginAttemptRepository;
-        this.abstractAccountRepository = abstractAccountRepository;
     }
 
     public UserDTO save(UserDTO dto) {

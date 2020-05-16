@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
@@ -40,6 +41,7 @@ public class User extends AbstractAccount {
         this.name = name;
         this.city = city;
         this.balance = balance;
+        this.setAccount_type(AccountType.USER);
     }
 
     /**
