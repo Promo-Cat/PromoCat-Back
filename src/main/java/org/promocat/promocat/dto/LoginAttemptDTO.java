@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginAttemptDTO extends AbstractDTO {
 
-    private String authorization_key;
+    private String authorizationKey;
     private String code;
 
 }

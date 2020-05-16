@@ -28,13 +28,13 @@ public class User extends AbstractAccount {
     private String city;
     private Long balance;
     private Set<Car> cars;
-    private Long promo_code_id;
+    private Long promoCodeId;
 
-    public User(String name, String city, Long balance, Long promo_code_id) {
+    public User(String name, String city, Long balance, Long promoCodeId) {
         this.name = name;
         this.city = city;
         this.balance = balance;
-        this.promo_code_id = promo_code_id;
+        this.promoCodeId = promoCodeId;
         this.setAccount_type(AccountType.USER);
     }
 
@@ -77,7 +77,7 @@ public class User extends AbstractAccount {
      * Действующий промокод.
      */
     @Column(name = "promo_code")
-    public Long getPromo_code_id() {
-        return promo_code_id;
+    public Long getPromoCodeId() {
+        return promoCodeId;
     }
 }

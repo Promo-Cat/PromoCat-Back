@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CarDTO extends AbstractDTO {
-    private String car_make;
+    private String carMake;
     private String color;
     private Long userId;
     private String number;

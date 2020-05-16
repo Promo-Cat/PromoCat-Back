@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuthorizationKeyDTO {
 
-    private String authorization_key;
+    private String authorizationKey;
 
 }

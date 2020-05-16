@@ -90,7 +90,7 @@ public class UserController {
             User user = userRecord.get();
             try {
                 log.info(String.format("User with telephone: %s and auth key: %s got token",
-                        user.getTelephone(), loginAttempt.getAuthorization_key()));
+                        user.getTelephone(), loginAttempt.getAuthorizationKey()));
                 return new ResponseEntity<>(new TokenDTO(userService.getToken(user.getTelephone(), AccountType.USER)), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
                 throw new UsernameNotFoundException(e.getMessage());

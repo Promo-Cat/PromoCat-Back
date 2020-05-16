@@ -62,7 +62,9 @@ public class UserService {
      * @throws UsernameNotFoundException если пользователь с заданным номером не найден в БД
      */
     public String getToken(String telephone, AccountType accountType) throws UsernameNotFoundException {
-        AbstractAccount account = null;
+        AbstractAccount account;
+
+        //noinspection rawtypes
         AbstractAccountRepository repository;
         switch (accountType) {
             case ADMIN:
@@ -95,7 +97,7 @@ public class UserService {
     private String generateToken(AbstractAccountDTO accountDTO) {
         Map<String, Object> tokenData = new HashMap<>();
         tokenData.put("telephone", accountDTO.getTelephone());
-        tokenData.put("account_type", accountDTO.getAccount_type().toString());
+        tokenData.put("account_type", accountDTO.getAccountType().toString());
         tokenData.put("token_create_time", new Date().getTime());
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.YEAR, 1);
@@ -114,7 +116,7 @@ public class UserService {
      * @return true - если всё совпадает и можно выдавать токен
      */
     public Optional<User> checkLoginAttemptCode(LoginAttemptDTO attempt) {
-        LoginAttempt loginAttempt = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorization_key());
+        LoginAttempt loginAttempt = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorizationKey());
         if (loginAttempt.getPhoneCode().equals(attempt.getCode())) {
             return userRepository.getByTelephone(loginAttempt.getTelephone());
         }

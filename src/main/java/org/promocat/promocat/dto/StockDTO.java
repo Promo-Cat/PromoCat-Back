@@ -21,7 +21,7 @@ public class StockDTO extends AbstractDTO{
     private Long count;
     private Long companyId;
     private String city;
-    private LocalDateTime start_time;
+    private LocalDateTime startTime;
     private LocalDateTime duration;
     private List<PromoCodeDTO> codes;
 }
