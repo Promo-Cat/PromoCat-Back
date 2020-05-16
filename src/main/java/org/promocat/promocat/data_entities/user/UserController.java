@@ -113,7 +113,7 @@ public class UserController {
     public ResponseEntity<String> isTokenValid(@RequestHeader("token") String token) {
         if (userService.findByToken(token).isPresent()) {
             log.info("Valid token for: " + token);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok("{ }");
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
