@@ -57,6 +57,11 @@ public class UserController {
     }
 
     // TODO API RESPONSES
+    @ApiResponses(
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class)
+    )
     @RequestMapping(path = "/api/user/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO getUserById(@RequestBody Long id) {
         log.info("Trying to find user: " + id);

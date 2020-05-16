@@ -7,7 +7,7 @@ import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
-import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRecord;
+import org.promocat.promocat.data_entities.login_attempt.LoginAttempt;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRepository;
 import org.promocat.promocat.dto.AbstractAccountDTO;
 import org.promocat.promocat.dto.LoginAttemptDTO;
@@ -117,9 +117,9 @@ public class UserService {
      * @return true - если всё совпадает и можно выдавать токен
      */
     public Optional<User> checkLoginAttemptCode(LoginAttemptDTO attempt) {
-        LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorization_key());
-        if (loginAttemptRecord.getPhoneCode().equals(attempt.getCode())) {
-            return userRepository.getByTelephone(loginAttemptRecord.getTelephone());
+        LoginAttempt loginAttempt = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorization_key());
+        if (loginAttempt.getPhoneCode().equals(attempt.getCode())) {
+            return userRepository.getByTelephone(loginAttempt.getTelephone());
         }
         return Optional.empty();
     }

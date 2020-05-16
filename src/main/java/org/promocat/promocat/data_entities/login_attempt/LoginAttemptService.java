@@ -55,7 +55,7 @@ public class LoginAttemptService {
      * @param user экзепляр объекта юзера, который авторизуется
      * @return Экземпляр объекта попытки входа, сохранённого в бд
      */
-    public LoginAttemptRecord create(AbstractAccount user) {
+    public LoginAttempt create(AbstractAccount user) {
         AccountType accountType = AccountType.ADMIN;
         if (user instanceof User) {
             accountType = AccountType.USER;
@@ -65,7 +65,8 @@ public class LoginAttemptService {
             // TODO: Сделать админа
             log.error("Undefined type of account");
         }
-        LoginAttemptRecord res = new LoginAttemptRecord(accountType);
+        LoginAttempt res = new LoginAttempt(accountType);
+
         res.setTelephone(user.getTelephone());
         if (doCall) {
             Optional<String> code = doCallAndGetCode(user.getTelephone());
@@ -104,7 +105,7 @@ public class LoginAttemptService {
      * @return
      */
     public AuthorizationKeyDTO login(AbstractAccount account) {
-        LoginAttemptRecord loginAttemptRecord = create(account);
+        LoginAttempt loginAttemptRecord = create(account);
         log.info("User with telephone logined: " + account.getTelephone());
         return new AuthorizationKeyDTO(loginAttemptRecord.getAuthorizationKey());
     }
