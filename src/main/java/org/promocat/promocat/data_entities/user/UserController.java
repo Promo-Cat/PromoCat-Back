@@ -1,10 +1,12 @@
 package org.promocat.promocat.data_entities.user;
 
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
-import org.promocat.promocat.data_entities.login_attempt.dto.TokenDTO;
+import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.dto.LoginAttemptDTO;
+import org.promocat.promocat.dto.TokenDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
@@ -33,6 +35,11 @@ public class UserController {
         this.userService = userService;
     }
 
+
+    @ApiOperation(value = "Registering user",
+            notes = "Registering user with unique telephone in format +X(XXX)XXX-XX-XX",
+            response = UserDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 400,
                     message = "Validation error",
@@ -51,6 +58,11 @@ public class UserController {
     }
 
     // TODO API RESPONSES
+    @ApiResponses(
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class)
+    )
     @RequestMapping(path = "/api/user/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO getUserById(@RequestBody Long id) {
         log.info("Trying to find user: " + id);
@@ -68,7 +80,7 @@ public class UserController {
                     message = "Not acceptable media type",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/auth/token", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/user/token", method = RequestMethod.GET)
     public ResponseEntity<TokenDTO> getToken(
             @RequestParam("authorization_key") String authorization_key,
             @RequestParam("code") String code) {
@@ -79,7 +91,7 @@ public class UserController {
             try {
                 log.info(String.format("User with telephone: %s and auth key: %s got token",
                         user.getTelephone(), loginAttempt.getAuthorization_key()));
-                return new ResponseEntity<>(new TokenDTO(userService.getToken(user.getTelephone())), HttpStatus.OK);
+                return new ResponseEntity<>(new TokenDTO(userService.getToken(user.getTelephone(), AccountType.USER)), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
                 throw new UsernameNotFoundException(e.getMessage());
             }

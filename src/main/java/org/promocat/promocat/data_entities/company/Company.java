@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.stock.Stock;
 
@@ -21,7 +22,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Company extends AbstractEntity {
+public class Company extends AbstractAccount {
 
     private String organizationName;
     private String supervisorFirstName;
@@ -29,7 +30,6 @@ public class Company extends AbstractEntity {
     private String supervisorPatronymic;
     private String ogrn;
     private String inn;
-    private String telephone;
     private String mail;
     private String city;
     private Set<Stock> stocks;
@@ -84,17 +84,6 @@ public class Company extends AbstractEntity {
     @Column(name = "inn")
     public String getInn() {
         return inn;
-    }
-
-    /**
-     * Телефон руководителя.
-     */
-    @NotBlank(message = "Телефон не может быть пустым.")
-    @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}",
-            message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
-    @Column(name = "telephone", unique = true)
-    public String getTelephone() {
-        return telephone;
     }
 
     /**

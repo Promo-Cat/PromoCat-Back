@@ -2,10 +2,12 @@ package org.promocat.promocat.data_entities.login_attempt;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.promocat.promocat.data_entities.login_attempt.dto.AuthorizationKeyDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserController;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.slf4j.Logger;
@@ -25,12 +27,10 @@ import java.util.Optional;
 /**
  * @author Roman Devyatilov (Fr1m3n)
  */
-
+@Slf4j
 @RestController
 @RequestMapping(value = "/auth")
 public class LoginAttemptController {
-
-    private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserRepository userRepository;
     private final LoginAttemptService loginAttemptService;
@@ -57,13 +57,11 @@ public class LoginAttemptController {
                     message = "Not acceptable media type",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/login", method = RequestMethod.GET)
     public ResponseEntity<AuthorizationKeyDTO> login(@Valid @RequestParam("telephone") String telephone) {
         Optional<User> userRecord = userRepository.getByTelephone(telephone);
         if (userRecord.isPresent()) {
-            LoginAttemptRecord loginAttemptRecord = loginAttemptService.create(userRecord.get());
-            logger.info("User with telephone logined: " + telephone);
-            return new ResponseEntity<>(new AuthorizationKeyDTO(loginAttemptRecord.getAuthorizationKey()), HttpStatus.OK);
+            return ResponseEntity.ok(loginAttemptService.login(userRecord.get()));
         } else {
             throw new UsernameNotFoundException(
                     "User with phone number " + telephone + " does not exists"

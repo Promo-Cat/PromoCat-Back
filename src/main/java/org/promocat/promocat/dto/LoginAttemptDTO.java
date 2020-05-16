@@ -6,14 +6,16 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * Created by Danil Lyskin at 20:44 05.05.2020
+ * @author Roman Devyatilov (Fr1m3n)
  */
+
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PromoCodeDTO extends AbstractDTO {
-    private String promoCode;
-    private Long stockId;
-    private Boolean isActive;
+public class LoginAttemptDTO extends AbstractDTO {
+
+    private String authorization_key;
+    private String code;
+
 }

@@ -9,11 +9,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserDTO extends AbstractDTO {
+public class UserDTO extends AbstractAccountDTO {
 
     private String name;
-    private String telephone;
-    private String token;
     private String city;
     private Long balance;
     private Set<CarDTO> cars;
