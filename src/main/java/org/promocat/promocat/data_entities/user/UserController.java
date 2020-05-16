@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.user;
 
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,11 @@ public class UserController {
         this.userService = userService;
     }
 
+
+    @ApiOperation(value = "Registering user",
+            notes = "Registering user with unique telephone in format +X(XXX)XXX-XX-XX",
+            response = UserDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 400,
                     message = "Validation error",

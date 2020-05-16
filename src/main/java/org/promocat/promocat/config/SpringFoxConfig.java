@@ -23,23 +23,25 @@ public class SpringFoxConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("api")
-                .apiInfo(apiDetails())
                 .select()
                 .paths(PathSelectors.ant("/api/**"))
                 .apis(RequestHandlerSelectors.basePackage("org.promocat.promocat.data_entities"))
-                .build();
+                .build()
+                .groupName("api")
+                .apiInfo(apiDetails())
+                .useDefaultResponseMessages(false);
     }
 
     @Bean
     public Docket auth() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("auth")
-                .apiInfo(apiDetails())
                 .select()
                 .paths(PathSelectors.ant("/auth/**"))
                 .apis(RequestHandlerSelectors.basePackage("org.promocat.promocat.data_entities"))
-                .build();
+                .build()
+                .groupName("auth")
+                .apiInfo(apiDetails())
+                .useDefaultResponseMessages(false);
     }
 
     private ApiInfo apiDetails() {
