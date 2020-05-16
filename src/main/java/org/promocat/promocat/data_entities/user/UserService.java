@@ -12,6 +12,7 @@ import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRepository;
 import org.promocat.promocat.dto.AbstractAccountDTO;
 import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.mapper.AbstractAccountMapper;
 import org.promocat.promocat.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,20 +31,22 @@ public class UserService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final LoginAttemptRepository loginAttemptRepository;
+    private final AbstractAccountMapper abstractAccountMapper;
     private final UserMapper userMapper;
     private final AbstractAccountRepository<? extends AbstractAccount> abstractAccountRepository;
     @Value("${jwt.key}")
     private String jwt_key;
-    private Object User;
 
     @Autowired
     public UserService(final UserRepository userRepository,
                        final CompanyRepository companyRepository,
                        final LoginAttemptRepository loginAttemptRepository,
+                       final AbstractAccountMapper abstractAccountMapper,
                        final UserMapper mapper,
                        final AbstractAccountRepository<? extends AbstractAccount> abstractAccountRepository) {
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
+        this.abstractAccountMapper = abstractAccountMapper;
         this.userMapper = mapper;
         this.loginAttemptRepository = loginAttemptRepository;
         this.abstractAccountRepository = abstractAccountRepository;
@@ -63,27 +66,27 @@ public class UserService {
      */
     public String getToken(String telephone, AccountType accountType) throws UsernameNotFoundException {
         AbstractAccount account = null;
+        AbstractAccountRepository repository;
+        switch (accountType) {
+            case ADMIN:
+            case USER:
+                // TODO: получать аккаунт админа
+                repository = userRepository;
+                break;
+            case COMPANY:
+                repository = companyRepository;
+            default:
+                // TODO: InvalidAccountTypeException
+                throw new RuntimeException("InvalidAccountType");
+        }
         try {
-            switch (accountType) {
-                case ADMIN:
-                    // TODO: получать аккаунт админа
-                    account = abstractAccountRepository<User>.getByTelephone(telephone).orElseThrow();
-                    break;
-                case USER:
-                    account = userRepository.getByTelephone(telephone).orElseThrow();
-                    break;
-                case COMPANY:
-                    account = companyRepository.getByTelephone(telephone).orElseThrow();
-                default:
-                    // TODO: InvalidAccountTypeException
-                    throw new RuntimeException("InvalidAccountType");
-            }
+            account = (AbstractAccount) repository.getByTelephone(telephone).orElseThrow();
         } catch (NoSuchElementException e) {
             throw new UsernameNotFoundException("User with number " + telephone + " don`t presented in database");
         }
-        String token = generateToken(userMapper.toDto(account));
+        String token = generateToken(abstractAccountMapper.toDto(account));
         account.setToken(token);
-        userRepository.save(user);
+        repository.save(account);
         return token;
 
     }

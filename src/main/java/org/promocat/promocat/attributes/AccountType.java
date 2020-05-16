@@ -9,9 +9,9 @@ import org.promocat.promocat.data_entities.user.User;
  */
 public enum AccountType {
 
-    ADMIN(0L, "Admin", User.class),
-    USER(1L, "User", User.class),
-    COMPANY(2L, "Company", Company.class);
+    USER(0L, "User", User.class),
+    COMPANY(1L, "Company", Company.class),
+    ADMIN(2L, "Admin", User.class);
 
     AccountType(Long id, String type, Class<? extends AbstractAccount> accountEntity) {
         this.id = id;

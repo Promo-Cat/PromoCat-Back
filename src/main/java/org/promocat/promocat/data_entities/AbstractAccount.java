@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.promocat.promocat.attributes.AccountType;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,8 +16,9 @@ import javax.validation.constraints.Pattern;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 20:24 15.05.2020
  */
-@MappedSuperclass
+//@MappedSuperclass
 @Setter
+@Entity
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor

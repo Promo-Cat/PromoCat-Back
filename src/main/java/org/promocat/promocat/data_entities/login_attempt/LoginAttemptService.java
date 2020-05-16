@@ -1,12 +1,19 @@
 package org.promocat.promocat.data_entities.login_attempt;
 
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
+import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.company.Company;
+import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.SMSCResponseDTO;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.exception.smsc.SMSCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,6 +25,7 @@ import java.util.Optional;
  */
 
 @Service
+@Slf4j
 public class LoginAttemptService {
 
     public static final int AUTHORIZATION_KEY_LENGTH = 16;
@@ -25,7 +33,7 @@ public class LoginAttemptService {
     final LoginAttemptRepository loginAttemptRepository;
     @Value("${auth.doCall}")
     private boolean doCall;
-//    private static final Map<String, String> SMSC_URI_PARAMETERS = Map.of(
+    //    private static final Map<String, String> SMSC_URI_PARAMETERS = Map.of(
 //            "login", "promocatcompany",
 //            "psw", "promocattest123",
 //            "mes", "code",
@@ -41,8 +49,23 @@ public class LoginAttemptService {
         this.loginAttemptRepository = loginAttemptRepository;
     }
 
-    public LoginAttemptRecord create(User user) {
-        LoginAttemptRecord res = new LoginAttemptRecord();
+    /**
+     * Создаёт попытку авторизации
+     *
+     * @param user экзепляр объекта юзера, который авторизуется
+     * @return Экземпляр объекта попытки входа, сохранённого в бд
+     */
+    public LoginAttemptRecord create(AbstractAccount user) {
+        AccountType accountType = AccountType.ADMIN;
+        if (user instanceof User) {
+            accountType = AccountType.USER;
+        } else if (user instanceof Company) {
+            accountType = AccountType.COMPANY;
+        } else {
+            // TODO: Сделать админа
+            log.error("Undefined type of account");
+        }
+        LoginAttemptRecord res = new LoginAttemptRecord(accountType);
         res.setTelephone(user.getTelephone());
         if (doCall) {
             Optional<String> code = doCallAndGetCode(user.getTelephone());
@@ -57,6 +80,12 @@ public class LoginAttemptService {
         return loginAttemptRepository.save(res);
     }
 
+    /**
+     * Выполняет запрос к SMSC API на звонок и возвращает код, который мы ожидаем от юзера.
+     *
+     * @param telephone телефон, по которому будет произведён звонок
+     * @return Код, если запрос к SMSC успешен, иначе Optional.empty()
+     */
     private Optional<String> doCallAndGetCode(String telephone) {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<SMSCResponseDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + telephone,
@@ -68,4 +97,16 @@ public class LoginAttemptService {
             return Optional.empty();
         }
     }
+
+    /**
+     *
+     * @param account
+     * @return
+     */
+    public AuthorizationKeyDTO login(AbstractAccount account) {
+        LoginAttemptRecord loginAttemptRecord = create(account);
+        log.info("User with telephone logined: " + account.getTelephone());
+        return new AuthorizationKeyDTO(loginAttemptRecord.getAuthorizationKey());
+    }
+
 }
