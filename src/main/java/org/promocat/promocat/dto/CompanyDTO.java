@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.attributes.AccountType;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -15,7 +16,6 @@ import java.util.Set;
 
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class CompanyDTO extends AbstractAccountDTO {
 
@@ -45,4 +45,8 @@ public class CompanyDTO extends AbstractAccountDTO {
     private String city;
 
     private Set<StockDTO> stocks;
+
+    public CompanyDTO() {
+        this.setAccountType(AccountType.COMPANY);
+    }
 }

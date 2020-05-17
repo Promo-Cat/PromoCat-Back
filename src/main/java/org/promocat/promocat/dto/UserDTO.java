@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.promocat.promocat.attributes.AccountType;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -12,7 +13,6 @@ import java.util.Set;
 
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class UserDTO extends AbstractAccountDTO {
@@ -29,4 +29,8 @@ public class UserDTO extends AbstractAccountDTO {
     private Set<CarDTO> cars;
 
     private Long promoCodeDTOId;
+
+    public UserDTO() {
+        this.setAccountType(AccountType.USER);
+    }
 }
