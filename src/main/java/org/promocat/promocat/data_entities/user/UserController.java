@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.login_attempt.LoginAttemptService;
 import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.dto.TokenDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -37,10 +39,13 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final LoginAttemptService loginAttemptService;
 
     @Autowired
-    public UserController(final UserService userService) {
+    public UserController(final UserService userService,
+                          final LoginAttemptService loginAttemptService) {
         this.userService = userService;
+        this.loginAttemptService = loginAttemptService;
     }
 
 
@@ -105,19 +110,19 @@ public class UserController {
                     message = "Not acceptable media type",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/auth/user/token", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/token", method = RequestMethod.GET)
     public ResponseEntity<TokenDTO> getToken(
             @RequestParam("authorizationKey") String authorizationKey,
             @RequestParam("code") String code) {
         // TODO: Получать account type из LoginAttempt
         LoginAttemptDTO loginAttempt = new LoginAttemptDTO(authorizationKey, code);
-        Optional<User> userRecord = userService.checkLoginAttemptCode(loginAttempt);
-        if (userRecord.isPresent()) {
-            User user = userRecord.get();
+        Optional<? extends AbstractAccount> accountRecord = loginAttemptService.checkLoginAttemptCode(loginAttempt);
+        if (accountRecord.isPresent()) {
+            AbstractAccount account = accountRecord.get();
             try {
                 log.info(String.format("User with telephone: %s and auth key: %s got token",
-                        user.getTelephone(), loginAttempt.getAuthorizationKey()));
-                return new ResponseEntity<>(new TokenDTO(userService.getToken(user.getTelephone(), AccountType.USER)), HttpStatus.OK);
+                        account.getTelephone(), loginAttempt.getAuthorizationKey()));
+                return new ResponseEntity<>(new TokenDTO(userService.getToken(account.getTelephone(), account.getAccountType())), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
                 throw new UsernameNotFoundException(e.getMessage());
             }
