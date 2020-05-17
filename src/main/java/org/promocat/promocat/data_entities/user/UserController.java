@@ -2,7 +2,6 @@ package org.promocat.promocat.data_entities.user;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -20,7 +19,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -66,11 +70,17 @@ public class UserController {
     @ApiOperation(value = "Get authorizated user",
             notes = "Returning user, which token is in header (get authorizated user)",
             response = UserDTO.class)
-    @ApiResponses(
+    @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
                     response = ApiException.class)
-    )
+    })
     @RequestMapping(path = "/api/user", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO getUserById(@RequestHeader("token") String jwtToken) {
         JwtParser jwtParser = Jwts.parserBuilder().build();
@@ -81,6 +91,9 @@ public class UserController {
         return userService.findByTelephone(telephone);
     }
 
+    @ApiOperation(value = "Get users token",
+            notes = "Getting users token by auth key and code from smsc",
+            response = TokenDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "User not found",
@@ -113,19 +126,24 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "Check token validity",
+            notes = "Check token validity, if token is valid returns {}. Token have to be in HEADER.",
+            response = String.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200,
-                    message = "Token is valid"),
             @ApiResponse(code = 404,
                     message = "Token isn`t valid",
+                    response = ApiException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
                     response = ApiException.class)
     })
     @RequestMapping(value = "/auth/valid", method = RequestMethod.GET)
     public ResponseEntity<String> isTokenValid(@RequestHeader("token") String token) {
         if (userService.findByToken(token).isPresent()) {
-            log.info("Valid token for: " + token);
-            return ResponseEntity.ok("{ }");
+            log.info(String.format("Token valid: %s", token));
+            return ResponseEntity.ok("{}");
         } else {
+            log.warn(String.format("Token invalid: %s", token));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
