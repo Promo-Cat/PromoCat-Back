@@ -3,7 +3,6 @@ package org.promocat.promocat.data_entities;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import javax.persistence.MappedSuperclass;
 import java.util.Optional;
 
 @NoRepositoryBean

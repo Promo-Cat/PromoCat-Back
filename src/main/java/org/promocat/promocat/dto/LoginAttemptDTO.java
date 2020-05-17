@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.promocat.promocat.attributes.AccountType;
 
 /**
  * @author Roman Devyatilov (Fr1m3n)

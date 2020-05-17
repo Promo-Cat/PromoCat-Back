@@ -5,15 +5,13 @@ import net.bytebuddy.utility.RandomString;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.company.Company;
+import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.SMSCResponseDTO;
-import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.exception.smsc.SMSCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

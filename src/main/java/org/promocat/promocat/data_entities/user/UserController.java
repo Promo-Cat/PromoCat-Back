@@ -66,9 +66,8 @@ public class UserController {
     }
 
 
-    // TODO API RESPONSES
-    @ApiOperation(value = "Get authorizated user",
-            notes = "Returning user, which token is in header (get authorizated user)",
+    @ApiOperation(value = "Get authorized user",
+            notes = "Returning user, which token is in header (get authorized user)",
             response = UserDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
@@ -133,8 +132,8 @@ public class UserController {
             @ApiResponse(code = 404,
                     message = "Token isn`t valid",
                     response = ApiException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
                     response = ApiException.class)
     })
     @RequestMapping(value = "/auth/valid", method = RequestMethod.GET)

@@ -20,7 +20,12 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -90,6 +95,7 @@ public class UserService {
 
     }
 
+    // TODO Javadoc
     /**
      * @param accountDTO
      * @return
@@ -143,10 +149,14 @@ public class UserService {
         }
     }
 
-    // TODO Javadoc
+    /**
+     * Находит пользователя в БД по id.
+     *
+     * @param id id пользователя
+     * @return объект класса UserDTO, содержащий все необходимые данные о пользователе.
+     * @throws UsernameNotFoundException если не найден пользователь с таким id.
+     */
     public UserDTO findById(Long id) {
-//        Optional<User> user = userRepository.findById(id);
-//        return mapper.toDto(user.get());
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return userMapper.toDto(user.get());
@@ -155,12 +165,18 @@ public class UserService {
         }
     }
 
+    /**
+     * Находит пользователя в БД по номеру телефона.
+     * @param telephone номер телефона, соответствующий шаблону +X(XXX)XXX-XX-XX
+     * @return объект класса UserDTO, содержащий все необходимые данные о пользователе.
+     * @throws UsernameNotFoundException если не найден пользователь с таким номером телефона или формат задан не верно.
+     */
     public UserDTO findByTelephone(String telephone) {
         Optional<User> user = userRepository.getByTelephone(telephone);
         if (user.isPresent()) {
             return userMapper.toDto(user.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No user with such telephone: %d in db.", telephone));
+            throw new UsernameNotFoundException(String.format("No user with such telephone: %s in db.", telephone));
         }
     }
 }
