@@ -85,7 +85,7 @@ public class UserService {
     private String generateToken(AbstractAccountDTO accountDTO) {
         Map<String, Object> tokenData = new HashMap<>();
         tokenData.put("telephone", accountDTO.getTelephone());
-        tokenData.put("account_type", accountDTO.getAccountType().toString());
+        tokenData.put("account_type", accountDTO.getAccountType());
         tokenData.put("token_create_time", new Date().getTime());
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.YEAR, 1);

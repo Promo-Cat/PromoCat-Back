@@ -1,5 +1,7 @@
 package org.promocat.promocat.attributes;
 
+import java.security.InvalidKeyException;
+
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 20:26 15.05.2020
  */
@@ -12,6 +14,16 @@ public enum AccountType {
     AccountType(Long id, String type) {
         this.id = id;
         this.type = type;
+    }
+
+    public static AccountType of(String str) {
+        for (AccountType value : values()) {
+            if (value.getType().toLowerCase().equals(str.toLowerCase())) {
+                return value;
+            }
+        }
+        //TODO: TRY TO CATCH THIS, MAX
+        throw new RuntimeException("Account type: " + str + " doesn`t exist");
     }
 
     private final Long id;

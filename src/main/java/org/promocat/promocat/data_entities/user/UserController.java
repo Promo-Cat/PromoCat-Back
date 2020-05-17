@@ -1,13 +1,12 @@
 package org.promocat.promocat.data_entities.user;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.AbstractAccountRepository;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptService;
 import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.dto.TokenDTO;
@@ -15,6 +14,8 @@ import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.AccountRepositoryManager;
+import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,12 +40,15 @@ public class UserController {
 
     private final UserService userService;
     private final LoginAttemptService loginAttemptService;
+    private final AccountRepositoryManager accountRepositoryManager;
 
     @Autowired
     public UserController(final UserService userService,
-                          final LoginAttemptService loginAttemptService) {
+                          final LoginAttemptService loginAttemptService,
+                          final AccountRepositoryManager accountRepositoryManager) {
         this.userService = userService;
         this.loginAttemptService = loginAttemptService;
+        this.accountRepositoryManager = accountRepositoryManager;
     }
 
 
@@ -87,10 +91,8 @@ public class UserController {
     })
     @RequestMapping(path = "/api/user", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO getUserById(@RequestHeader("token") String jwtToken) {
-        JwtParser jwtParser = Jwts.parserBuilder().build();
-        //TODO: секретный ключ для шифрования JWT
-        Claims jwtBody = jwtParser.parseClaimsJwt(jwtToken).getBody();
-        String telephone = jwtBody.get("telephone", String.class);
+        JwtReader jwtReader = new JwtReader(jwtToken);
+        String telephone = jwtReader.getValue("telephone");
         log.info("Trying to find user: " + telephone);
         return userService.findByTelephone(telephone);
     }
@@ -143,7 +145,11 @@ public class UserController {
     })
     @RequestMapping(value = "/auth/valid", method = RequestMethod.GET)
     public ResponseEntity<String> isTokenValid(@RequestHeader("token") String token) {
-        if (userService.findByToken(token).isPresent()) {
+        JwtReader jwtReader = new JwtReader(token);
+        AccountType accountType = AccountType.of(jwtReader.getValue("account_type"));
+        //noinspection rawtypes
+        AbstractAccountRepository repository = accountRepositoryManager.getRepository(accountType);
+        if (repository.getByToken(token).isPresent()) {
             log.info(String.format("Token valid: %s", token));
             return ResponseEntity.ok("{}");
         } else {
