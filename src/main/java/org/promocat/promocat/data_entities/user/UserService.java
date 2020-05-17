@@ -6,8 +6,6 @@ import io.jsonwebtoken.Jwts;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
-import org.promocat.promocat.data_entities.company.CompanyRepository;
-import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRepository;
 import org.promocat.promocat.dto.AbstractAccountDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.mapper.AbstractAccountMapper;
