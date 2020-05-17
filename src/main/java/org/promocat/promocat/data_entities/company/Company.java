@@ -77,7 +77,7 @@ public class Company extends AbstractAccount {
      * ОГРН компании.
      */
     @NotBlank(message = "ОГРН организации не может быть пустым.")
-    @Pattern(regexp = "\\d{13}", message = "ОГРН задан неверно.")
+    @Pattern(regexp = "\\d{13}", message = "ОГРН задан неверно, должен состоять из 13 цифр.")
     @Column(name = "ogrn")
     public String getOgrn() {
         return ogrn;
@@ -87,6 +87,8 @@ public class Company extends AbstractAccount {
      * ИНН компании.
      */
     @NotBlank(message = "ИНН организации не может быть пустым.")
+    @Pattern(regexp = "\\d{10}", message = "ИНН задан неверно, должен состоять из 10 цифр. " +
+            "Работа ведется только с Юр лицами")
     @Column(name = "inn")
     public String getInn() {
         return inn;

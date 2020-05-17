@@ -3,7 +3,6 @@ package org.promocat.promocat.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.promocat.promocat.attributes.AccountType;
 
 import javax.validation.constraints.Email;
@@ -35,6 +34,8 @@ public class CompanyDTO extends AbstractAccountDTO {
     @NotBlank(message = "ОГРН организации не может быть пустым.")
     private String ogrn;
 
+    @Pattern(regexp = "\\d{10}", message = "ИНН задан неверно, должен состоять из 10 цифр. " +
+            "Работа ведется только с юридическими лицами.")
     @NotBlank(message = "ИНН организации не может быть пустым.")
     private String inn;
 

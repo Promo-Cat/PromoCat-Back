@@ -3,7 +3,6 @@ package org.promocat.promocat.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
 
