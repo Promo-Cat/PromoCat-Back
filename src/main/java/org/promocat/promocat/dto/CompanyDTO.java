@@ -8,6 +8,7 @@ import org.promocat.promocat.attributes.AccountType;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Set;
 
 /**
@@ -30,6 +31,7 @@ public class CompanyDTO extends AbstractAccountDTO {
 
     private String supervisorPatronymic;
 
+    @Pattern(regexp = "\\d{13}", message = "ОГРН задан неверно.")
     @NotBlank(message = "ОГРН организации не может быть пустым.")
     private String ogrn;
 

@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Set;
 
 /**
@@ -76,6 +77,7 @@ public class Company extends AbstractAccount {
      * ОГРН компании.
      */
     @NotBlank(message = "ОГРН организации не может быть пустым.")
+    @Pattern(regexp = "\\d{13}", message = "ОГРН задан неверно.")
     @Column(name = "ogrn")
     public String getOgrn() {
         return ogrn;
