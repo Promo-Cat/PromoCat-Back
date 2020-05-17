@@ -68,7 +68,8 @@ public class UserController {
 
     @ApiOperation(value = "Get authorized user",
             notes = "Returning user, which token is in header (get authorized user)",
-            response = UserDTO.class)
+            response = UserDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "User not found",

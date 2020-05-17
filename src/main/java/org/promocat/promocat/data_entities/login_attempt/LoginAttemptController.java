@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.login_attempt;
 
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +39,11 @@ public class LoginAttemptController {
         this.loginAttemptService = loginAttemptService;
     }
 
+    @ApiOperation(value = "Login user",
+            notes = "Logining user with telephone specified in request, returning authorization key. " +
+                    "Telephone format +X(XXX)XXX-XX-XX",
+            response = AuthorizationKeyDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "User not found",
