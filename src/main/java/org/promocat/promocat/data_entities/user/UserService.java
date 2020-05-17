@@ -7,13 +7,12 @@ import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
-import org.promocat.promocat.data_entities.login_attempt.LoginAttempt;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRepository;
 import org.promocat.promocat.dto.AbstractAccountDTO;
-import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.mapper.AbstractAccountMapper;
 import org.promocat.promocat.mapper.UserMapper;
+import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -34,8 +33,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final CompanyRepository companyRepository;
-    private final LoginAttemptRepository loginAttemptRepository;
+    private final AccountRepositoryManager accountRepositoryManager;
     private final AbstractAccountMapper abstractAccountMapper;
     private final UserMapper userMapper;
     @Value("${jwt.key}")
@@ -43,15 +41,13 @@ public class UserService {
 
     @Autowired
     public UserService(final UserRepository userRepository,
-                       final CompanyRepository companyRepository,
-                       final LoginAttemptRepository loginAttemptRepository,
+                       final AccountRepositoryManager accountRepositoryManager,
                        final AbstractAccountMapper abstractAccountMapper,
                        final UserMapper mapper) {
         this.userRepository = userRepository;
-        this.companyRepository = companyRepository;
+        this.accountRepositoryManager = accountRepositoryManager;
         this.abstractAccountMapper = abstractAccountMapper;
         this.userMapper = mapper;
-        this.loginAttemptRepository = loginAttemptRepository;
     }
 
     public UserDTO save(UserDTO dto) {
@@ -70,23 +66,11 @@ public class UserService {
         AbstractAccount account;
 
         //noinspection rawtypes
-        AbstractAccountRepository repository;
-        switch (accountType) {
-            case ADMIN:
-            case USER:
-                // TODO: получать аккаунт админа
-                repository = userRepository;
-                break;
-            case COMPANY:
-                repository = companyRepository;
-            default:
-                // TODO: InvalidAccountTypeException
-                throw new RuntimeException("InvalidAccountType");
-        }
+        AbstractAccountRepository repository = accountRepositoryManager.getRepository(accountType);
         try {
             account = (AbstractAccount) repository.getByTelephone(telephone).orElseThrow();
         } catch (NoSuchElementException e) {
-            throw new UsernameNotFoundException("User with number " + telephone + " don`t presented in database");
+            throw new UsernameNotFoundException("User with number " + telephone + " doesn`t presented in database");
         }
         String token = generateToken(abstractAccountMapper.toDto(account));
         account.setToken(token);
@@ -115,20 +99,7 @@ public class UserService {
     }
 
 
-    /**
-     * Проверяет код пришедший на телефон.
-     *
-     * @param attempt DTO хранящий код, который получил юзер и специальный ключ
-     * @return true - если всё совпадает и можно выдавать токен
-     */
-    // TODO: AbstractAccountRepo
-    public Optional<User> checkLoginAttemptCode(LoginAttemptDTO attempt) {
-        LoginAttempt loginAttempt = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorizationKey());
-        if (loginAttempt.getPhoneCode().equals(attempt.getCode())) {
-            return userRepository.getByTelephone(loginAttempt.getTelephone());
-        }
-        return Optional.empty();
-    }
+
 
     /**
      * Находит пользователя в БД по токену.
