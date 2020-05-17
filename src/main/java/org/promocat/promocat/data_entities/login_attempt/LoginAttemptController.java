@@ -76,6 +76,11 @@ public class LoginAttemptController {
         }
     }
 
+    @ApiOperation(value = "Login company",
+            notes = "Logining company with telephone specified in request, returning authorization key. " +
+                    "Telephone format +X(XXX)XXX-XX-XX",
+            response = AuthorizationKeyDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Company not found",
@@ -98,7 +103,7 @@ public class LoginAttemptController {
             return ResponseEntity.ok(loginAttemptService.login(companyRecord.get()));
         } else {
             throw new UsernameNotFoundException(
-                    "User with phone number " + telephone + " does not exists"
+                    "Company with phone number " + telephone + " does not exists"
             );
         }
     }

@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +24,9 @@ public class AbstractAccountDTO extends AbstractDTO {
             message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
     private String telephone;
 
+    @JsonIgnore
     private AccountType accountType;
+
     private String token;
 
 }

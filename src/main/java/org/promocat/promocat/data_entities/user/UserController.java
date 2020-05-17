@@ -96,15 +96,15 @@ public class UserController {
         return userService.findByTelephone(telephone);
     }
 
-    @ApiOperation(value = "Get users token",
-            notes = "Getting users token by auth key and code from smsc",
+    @ApiOperation(value = "Get accounts token",
+            notes = "Getting accounts token by auth key and code from smsc",
             response = TokenDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
-                    message = "User not found",
+                    message = "Account not found",
                     response = ApiException.class),
             @ApiResponse(code = 405,
-                    message = "Wrong code from user",
+                    message = "Wrong code from account",
                     response = ApiException.class),
             @ApiResponse(code = 415,
                     message = "Not acceptable media type",
