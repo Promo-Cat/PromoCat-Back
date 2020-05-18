@@ -31,7 +31,9 @@ public class User extends AbstractAccount {
 
     private String name;
     private String city;
-    private Long balance;
+
+    // TODO make with columnDefinition
+    private Long balance = 0L;
     private Set<Car> cars;
     private Long promoCodeId;
 
@@ -64,7 +66,6 @@ public class User extends AbstractAccount {
     /**
      * Баланс пользователя.
      */
-    @NotNull(message = "Баланс не может быть не задан")
     @Column(name = "balance")
     public Long getBalance() {
         return balance;
