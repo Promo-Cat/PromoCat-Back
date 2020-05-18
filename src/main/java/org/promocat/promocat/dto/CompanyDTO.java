@@ -31,11 +31,6 @@ public class CompanyDTO extends AbstractAccountDTO {
 
     private String supervisorPatronymic;
 
-    // TODO убрать
-    @Pattern(regexp = "\\d{13}", message = "ОГРН задан неверно.")
-    @NotBlank(message = "ОГРН организации не может быть пустым.")
-    private String ogrn;
-
     @Pattern(regexp = "\\d{10}", message = "ИНН задан неверно, должен состоять из 10 цифр. " +
             "Работа ведется только с юридическими лицами.")
     @NotBlank(message = "ИНН организации не может быть пустым.")

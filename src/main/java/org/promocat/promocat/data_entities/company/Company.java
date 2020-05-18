@@ -33,7 +33,6 @@ public class Company extends AbstractAccount {
     private String supervisorFirstName;
     private String supervisorSecondName;
     private String supervisorPatronymic;
-    private String ogrn;
     private String inn;
     private String mail;
     private String city;
@@ -65,22 +64,13 @@ public class Company extends AbstractAccount {
     public String getSupervisorSecondName() {
         return supervisorSecondName;
     }
+
     /**
      * Отчество руководителя.
      */
     @Column(name = "supervisor_patronymic")
     public String getSupervisorPatronymic() {
         return supervisorPatronymic;
-    }
-
-    /**
-     * ОГРН компании.
-     */
-    @NotBlank(message = "ОГРН организации не может быть пустым.")
-    @Pattern(regexp = "\\d{13}", message = "ОГРН задан неверно, должен состоять из 13 цифр.")
-    @Column(name = "ogrn")
-    public String getOgrn() {
-        return ogrn;
     }
 
     /**
