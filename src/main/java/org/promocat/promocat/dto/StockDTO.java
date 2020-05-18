@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,6 +24,7 @@ public class StockDTO extends AbstractDTO{
     @NotBlank(message = "Название акции не может быть пустым.")
     private String name;
 
+    @NotNull(message = "Количество постеров не может быть пустым.")
     private Long count;
 
     @NotNull(message = "Id компании не может быть пустым.")
@@ -37,5 +39,6 @@ public class StockDTO extends AbstractDTO{
     @NotNull(message = "Время продолжительности акции не может быть пустым.")
     private LocalDateTime duration;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<PromoCodeDTO> codes;
 }

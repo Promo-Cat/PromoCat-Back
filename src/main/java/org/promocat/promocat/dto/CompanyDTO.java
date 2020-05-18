@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,6 +31,7 @@ public class CompanyDTO extends AbstractAccountDTO {
 
     private String supervisorPatronymic;
 
+    // TODO убрать
     @Pattern(regexp = "\\d{13}", message = "ОГРН задан неверно.")
     @NotBlank(message = "ОГРН организации не может быть пустым.")
     private String ogrn;
@@ -47,6 +49,7 @@ public class CompanyDTO extends AbstractAccountDTO {
     @NotBlank(message = "Город не может быть пустым.")
     private String city;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<StockDTO> stocks;
 
     public CompanyDTO() {

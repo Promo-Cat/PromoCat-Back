@@ -1,6 +1,7 @@
 package org.promocat.promocat.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,6 +28,7 @@ public class AbstractAccountDTO extends AbstractDTO {
     @JsonIgnore
     private AccountType accountType;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String token;
 
 }
