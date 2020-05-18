@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,9 +23,10 @@ public class UserDTO extends AbstractAccountDTO {
     @NotBlank(message = "Город не может быть пустой")
     private String city;
 
-    @NotNull(message = "Баланс не может быть не задан")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long balance;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<CarDTO> cars;
 
     private Long promoCodeDTOId;

@@ -14,8 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 /**
@@ -31,7 +31,9 @@ public class User extends AbstractAccount {
 
     private String name;
     private String city;
-    private Long balance;
+
+    // TODO columnDef not working HELP!
+    private Long balance = 0L;
     private Set<Car> cars;
     private Long promoCodeId;
 
@@ -64,7 +66,7 @@ public class User extends AbstractAccount {
     /**
      * Баланс пользователя.
      */
-    @NotNull(message = "Баланс не может быть не задан")
+    @Min(0)
     @Column(name = "balance")
     public Long getBalance() {
         return balance;
