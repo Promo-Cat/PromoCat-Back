@@ -25,6 +25,8 @@ public class StockDTO extends AbstractDTO{
 
     private Long count;
 
+    private Boolean isAlive;
+
     @NotNull(message = "Id компании не может быть пустым.")
     private Long companyId;
 
@@ -35,7 +37,7 @@ public class StockDTO extends AbstractDTO{
     private LocalDateTime startTime;
 
     @NotNull(message = "Время продолжительности акции не может быть пустым.")
-    private LocalDateTime duration;
+    private Long duration;
 
     private List<PromoCodeDTO> codes;
 }

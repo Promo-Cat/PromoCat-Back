@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -35,5 +37,9 @@ public class StockService {
         } else {
             throw new UsernameNotFoundException(String.format("No stock with such id: %d in db.", id));
         }
+    }
+
+    public List<Stock> getByTime(LocalDateTime time, Long days) {
+        return repository.getByStartTimeLessThanAndDurationEquals(time, days);
     }
 }

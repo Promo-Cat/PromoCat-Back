@@ -66,4 +66,8 @@ public class PromoCodeService {
         }
         return stock;
     }
+
+    public void delById(Long id) {
+        repository.deleteById(id);
+    }
 }

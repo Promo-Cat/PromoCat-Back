@@ -33,11 +33,13 @@ public class Stock extends AbstractEntity {
 
     private String name;
     private Long count;
+    private Boolean isAlive;
     private String city;
     private Company company;
     private LocalDateTime startTime;
-    private LocalDateTime duration;
-    List<PromoCode> codes;
+    private Long duration;
+    private List<PromoCode> codes;
+    private static Long[] days = new Long[] {7L, 14L, 21L, 28L};
 
     /**
      * Название акции.
@@ -54,6 +56,14 @@ public class Stock extends AbstractEntity {
     @Column(name = "count")
     public Long getCount() {
         return count;
+    }
+
+    /**
+     * Активность промокода
+     */
+    @Column(name = "isAlive")
+    public Boolean getIsAlive() {
+        return isAlive;
     }
 
     /**
@@ -79,7 +89,7 @@ public class Stock extends AbstractEntity {
      */
     @NotNull(message = "Время продолжительности акции не может быть пустым.")
     @Column
-    public LocalDateTime getDuration() {
+    public Long getDuration() {
         return duration;
     }
 
@@ -97,6 +107,14 @@ public class Stock extends AbstractEntity {
     @OneToMany(mappedBy = "stock", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public List<PromoCode> getCodes() {
         return codes;
+    }
+
+    public static Long getDay(int index) {
+        return days[index];
+    }
+
+    public static int daysLength() {
+        return days.length;
     }
 }
 
