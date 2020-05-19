@@ -10,7 +10,4 @@ import java.util.Optional;
  */
 @Repository
 public interface UserRepository extends AbstractAccountRepository<User> {
-
-    Optional<User> getById(Long id);
-
 }
