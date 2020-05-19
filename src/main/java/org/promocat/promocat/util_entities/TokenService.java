@@ -34,6 +34,7 @@ public class TokenService {
         JwtReader reader = new JwtReader(token);
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         String accountType = reader.getValue("account_type").toUpperCase();
+        System.out.println(accountType);
         if (!accountType.isBlank()) {
             authorities.add(new SimpleGrantedAuthority(accountType));
         }
@@ -54,6 +55,7 @@ public class TokenService {
         Optional<? extends AbstractAccount> userRecord = accountRepositoryManager.getRepository(accountType).getByToken(token);
         if (userRecord.isPresent()) {
             AbstractAccount user1 = userRecord.get();
+            System.out.println(user1.getAccountType().toString());
             User user = new User(user1.getTelephone(), "", true, true,
                     true, true, AuthorityUtils.createAuthorityList(accountType.toString().toUpperCase()));
             return Optional.of(user);
