@@ -121,7 +121,11 @@ public class LoginAttemptService {
      */
     // TODO: AbstractAccountRepo
     public Optional<? extends AbstractAccount> checkLoginAttemptCode(LoginAttemptDTO attempt) {
+        System.out.println(attempt.getAuthorizationKey() + "! " + attempt.getCode());
         LoginAttempt loginAttempt = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorizationKey());
+        System.out.println(loginAttempt);
+        System.out.println(loginAttempt.getAuthorizationKey() + "@ " + loginAttempt.getPhoneCode());
+
         if (loginAttempt.getPhoneCode().equals(attempt.getCode())) {
             return accountRepositoryManager.getRepository(loginAttempt.getAccountType()).getByTelephone(loginAttempt.getTelephone());
         }

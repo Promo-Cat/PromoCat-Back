@@ -3,6 +3,7 @@ package org.promocat.promocat.utils;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
+import org.promocat.promocat.data_entities.admin.AdminRepository;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,11 @@ public class AccountRepositoryManagerImpl implements AccountRepositoryManager {
 
     @Autowired
     public AccountRepositoryManagerImpl(final UserRepository userRepository,
-                                        final CompanyRepository companyRepository) {
+                                        final CompanyRepository companyRepository,
+                                        final AdminRepository adminRepository) {
         map.put(AccountType.USER, userRepository);
         map.put(AccountType.COMPANY, companyRepository);
+        map.put(AccountType.ADMIN, adminRepository);
     }
 
     @Override

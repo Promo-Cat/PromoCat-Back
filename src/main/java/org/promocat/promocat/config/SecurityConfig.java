@@ -33,6 +33,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             new AntPathRequestMatcher("/api/**")
     );
 
+    private static final RequestMatcher ADMIN_URLS = new OrRequestMatcher(
+            new AntPathRequestMatcher("/admin/**")
+    );
+
 
     SecurityProvider provider;
 
@@ -68,6 +72,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .requestMatchers(PROTECTED_URLS)
                 .authenticated()
+                .requestMatchers(ADMIN_URLS)
+                .hasRole("ADMIN")
                 .and()
                 .csrf().disable()
                 .httpBasic().disable()

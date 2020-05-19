@@ -1,5 +1,7 @@
 package org.promocat.promocat.security;
 
+import org.promocat.promocat.util_entities.TokenService;
+import org.promocat.promocat.utils.JwtReader;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -28,7 +30,7 @@ public class SecurityFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String token = request.getHeader(TOKEN_HEADER);
-        Authentication requestAuth = new UsernamePasswordAuthenticationToken(token, token);
+        Authentication requestAuth = new UsernamePasswordAuthenticationToken(token, token, TokenService.getAuthorities(token));
         return getAuthenticationManager().authenticate(requestAuth);
     }
 

@@ -99,24 +99,7 @@ public class UserService {
 
 
 
-    /**
-     * Находит пользователя в БД по токену.
-     *
-     * @param token токен
-     * @return объект класса User, соответствующий пользователю
-     * @throws UsernameNotFoundException если токен не найден в БД
-     */
-    public Optional<org.springframework.security.core.userdetails.User> findByToken(String token) throws UsernameNotFoundException {
-        Optional<User> userRecord = userRepository.getByToken(token);
-        if (userRecord.isPresent()) {
-            User user1 = userRecord.get();
-            org.springframework.security.core.userdetails.User user = new org.springframework.security.core.userdetails.User(user1.getTelephone(), "", true, true,
-                    true, true, AuthorityUtils.createAuthorityList("user"));
-            return Optional.of(user);
-        } else {
-            throw new UsernameNotFoundException("Token is not found in db.");
-        }
-    }
+
 
     /**
      * Находит пользователя в БД по id.
