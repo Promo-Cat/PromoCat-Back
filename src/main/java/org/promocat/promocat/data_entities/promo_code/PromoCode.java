@@ -43,7 +43,7 @@ public class PromoCode extends AbstractEntity {
     /**
      * Id акции.
      */
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id")
     public Stock getStock() {
         return stock;

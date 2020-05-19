@@ -90,7 +90,7 @@ public class UserController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/api/user", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO getUserById(@RequestHeader("token") String jwtToken) {
+    public UserDTO getUser(@RequestHeader("token") String jwtToken) {
         JwtReader jwtReader = new JwtReader(jwtToken);
         String telephone = jwtReader.getValue("telephone");
         log.info("Trying to find user: " + telephone);
@@ -157,4 +157,19 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    // ------ Admin methods ------
+
+    @RequestMapping(value = "/admin/user/id", method = RequestMethod.GET)
+    public ResponseEntity<UserDTO> getUserById(@RequestParam("id") Long id) {
+        log.info(String.format("Admin trying to get user with id: %d", id));
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @RequestMapping(value = "/admin/user/telephone", method = RequestMethod.GET)
+    public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {
+        log.info(String.format("Admin trying to get user with id: %s", telephone));
+        return ResponseEntity.ok(userService.findByTelephone(telephone));
+    }
+
 }
