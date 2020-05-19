@@ -103,7 +103,10 @@ public class Company extends AbstractAccount {
         return city;
     }
 
-    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    /**
+     * Набор акций, которые принадлежат компании.
+     */
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Stock> getStocks() {
         return stocks;
     }

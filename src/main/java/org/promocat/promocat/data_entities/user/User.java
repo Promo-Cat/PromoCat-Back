@@ -75,7 +75,7 @@ public class User extends AbstractAccount {
     /**
      * Автомобили пользователя.
      */
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Car> getCars() {
         return cars;
     }
