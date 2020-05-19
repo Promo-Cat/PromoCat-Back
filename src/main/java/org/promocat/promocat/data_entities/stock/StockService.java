@@ -39,6 +39,7 @@ public class StockService {
         }
     }
 
+    // TODO возвращать лист Stock --- плохо, нужно возвращать лист StockDTO
     public List<Stock> getByTime(LocalDateTime time, Long days) {
         return repository.getByStartTimeLessThanAndDurationEquals(time, days);
     }
