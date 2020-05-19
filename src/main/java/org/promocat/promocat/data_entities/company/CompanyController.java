@@ -9,9 +9,12 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -23,11 +26,11 @@ import javax.validation.Valid;
 @RestController
 public class CompanyController {
 
-    private final CompanyService companyService;
+    private final CompanyService service;
 
     @Autowired
-    public CompanyController(final CompanyService companyService) {
-        this.companyService = companyService;
+    public CompanyController(final CompanyService service) {
+        this.service = service;
     }
 
     @ApiOperation(value = "Register company",
@@ -49,6 +52,28 @@ public class CompanyController {
     public CompanyDTO addCompany(@Valid @RequestBody CompanyDTO company) {
         log.info(String.format("Trying to save company: %s. Organization telephone: %s",
                 company.getOrganizationName(), company.getTelephone()));
-        return companyService.save(company);
+        return service.save(company);
+    }
+
+    // ------ Admin methods ------
+
+    @RequestMapping(path = "/admin/company/id", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getById(@RequestParam("id") Long id) {
+        return ResponseEntity.ok(service.findById(id));
+    }
+
+    @RequestMapping(path = "/admin/company/telephone", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getByTelephone(@RequestParam("telephone") String telephone) {
+        return ResponseEntity.ok(service.findByTelephone(telephone));
+    }
+
+    @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getByOrganizationName(@RequestParam("organizationName") String organizationName) {
+        return ResponseEntity.ok(service.findByOrganizationName(organizationName));
+    }
+
+    @RequestMapping(path = "/admin/company/mail", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") String mail) {
+        return ResponseEntity.ok(service.findByMail(mail));
     }
 }

@@ -9,9 +9,11 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -23,11 +25,11 @@ import javax.validation.Valid;
 @RestController
 public class CarController {
 
-    private final CarService carService;
+    private final CarService service;
 
     @Autowired
-    public CarController(final CarService carService) {
-        this.carService = carService;
+    public CarController(final CarService service) {
+        this.service = service;
     }
 
     @ApiOperation(value = "Add car",
@@ -46,8 +48,26 @@ public class CarController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/api/user/car", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public CarDTO addCar(@Valid @RequestBody CarDTO car) {
+    public ResponseEntity<CarDTO> addCar(@Valid @RequestBody CarDTO car) {
         log.info(String.format("Trying to add car to user: %d", car.getUserId()));
-        return carService.save(car);
+        return ResponseEntity.ok(service.save(car));
+    }
+
+
+    // ------ Admin methods ------
+
+    @RequestMapping(path = "/admin/car/number", method = RequestMethod.GET)
+    public ResponseEntity<CarDTO> getCarByNumberAndRegion(
+            @RequestParam("number") String number,
+            @RequestParam("region") String region) {
+        log.info(String.format("Admin trying to find car with number: %s, region: %s",
+                number, region));
+        return ResponseEntity.ok(service.findByNumberAndRegion(number, region));
+    }
+
+    @RequestMapping(path = "admin/car/id", method = RequestMethod.GET)
+    public ResponseEntity<CarDTO> getCarById(@RequestParam("id") Long id) {
+        log.info(String.format("Admin trying to find car with id: %d", id));
+        return ResponseEntity.ok(service.findByID(id));
     }
 }

@@ -33,7 +33,17 @@ public class CarService {
         if (car.isPresent()) {
             return mapper.toDto(car.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No user with such id: %d in db.", id));
+            throw new UsernameNotFoundException(String.format("No car with such id: %d in database.", id));
+        }
+    }
+
+    public CarDTO findByNumberAndRegion(final String number, final String region) {
+        Optional<Car> car = repository.findByNumberAndRegion(number, region);
+        if (car.isPresent()) {
+            return mapper.toDto(car.get());
+        } else {
+            throw new UsernameNotFoundException(String.format(
+                    "No car with such number: %s, region: %s, in database.", number,region));
         }
     }
 }
