@@ -16,7 +16,7 @@ import java.util.List;
 @EnableScheduling
 public class StockAlive {
 
-    // TODO autowired не будут работать если StockAlive это не бин, разобраться
+    // TODO autowired не будут работать если StockAlive это не бин, разобраться. Наверное это @Configuration
     @Autowired
     private StockService stockService;
 
