@@ -162,11 +162,13 @@ public class UserController {
 
     @RequestMapping(value = "/admin/user/id", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserById(@RequestParam("id") Long id) {
+        log.info(String.format("Admin trying to get user with id: %d", id));
         return ResponseEntity.ok(userService.findById(id));
     }
 
     @RequestMapping(value = "/admin/user/telephone", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {
+        log.info(String.format("Admin trying to get user with id: %s", telephone));
         return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
 

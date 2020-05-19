@@ -59,21 +59,25 @@ public class CompanyController {
 
     @RequestMapping(path = "/admin/company/id", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getById(@RequestParam("id") Long id) {
+        log.info(String.format("Admin trying to get company with id: %d", id));
         return ResponseEntity.ok(service.findById(id));
     }
 
     @RequestMapping(path = "/admin/company/telephone", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByTelephone(@RequestParam("telephone") String telephone) {
+        log.info(String.format("Admin trying to get company with telephone: %s", telephone));
         return ResponseEntity.ok(service.findByTelephone(telephone));
     }
 
     @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByOrganizationName(@RequestParam("organizationName") String organizationName) {
+        log.info(String.format("Admin trying to get company with organization name: %s", organizationName));
         return ResponseEntity.ok(service.findByOrganizationName(organizationName));
     }
 
     @RequestMapping(path = "/admin/company/mail", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") String mail) {
+        log.info(String.format("Admin trying to get company with mail: %s", mail));
         return ResponseEntity.ok(service.findByMail(mail));
     }
 }
