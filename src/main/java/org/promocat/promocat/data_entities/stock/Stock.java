@@ -39,6 +39,8 @@ public class Stock extends AbstractEntity {
     private LocalDateTime startTime;
     private Long duration;
     private List<PromoCode> codes;
+
+    // TODO стоит вынести тк будет маппится в БД
     private static Long[] days = new Long[] {7L, 14L, 21L, 28L};
 
     /**

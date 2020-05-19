@@ -16,6 +16,7 @@ import java.util.List;
 @EnableScheduling
 public class StockAlive {
 
+    // TODO autowired не будут работать если StockAlive это не бин, разобраться
     @Autowired
     private StockService stockService;
 
@@ -33,6 +34,7 @@ public class StockAlive {
                 for (PromoCode code : stock.getCodes()) {
                     promoCodeService.delById(code.getId());
                 }
+                // TODO сделать [] вместо null
                 stock.setCodes(null);
                 stock.setIsAlive(false);
                 stockService.save(stockMapper.toDto(stock));
