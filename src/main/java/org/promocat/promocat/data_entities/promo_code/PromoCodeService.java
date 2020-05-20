@@ -42,16 +42,11 @@ public class PromoCodeService {
         }
     }
 
-    private boolean findByPromoCode(String promo_code) {
-        Optional<PromoCode> promoCode = repository.getByPromoCode(promo_code);
-        return promoCode.isPresent();
-    }
-
     private List<PromoCodeDTO> generate(Long cnt, Long stockId) {
         List<PromoCodeDTO> codes = new ArrayList<>();
         while (codes.size() != cnt) {
             String code = Generator.generate();
-            if (findByPromoCode(code)) {
+            if (repository.existsByPromoCode(code)) {
                 continue;
             }
             codes.add(new PromoCodeDTO(code, stockId, false));
