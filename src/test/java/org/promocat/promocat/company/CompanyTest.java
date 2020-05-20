@@ -44,34 +44,6 @@ public class CompanyTest {
 
     @Transactional
     @Test
-    public void testSaveCompanyWithoutSupervisorFirstName() throws Exception {
-        CompanyDTO company = new CompanyDTO();
-        company.setOrganizationName("HHH");
-        company.setCity("W");
-        company.setInn("1111111111");
-        company.setTelephone("+7(222)222-22-22");
-        company.setMail("qwfqwf@mail.ru");
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    @Transactional
-    @Test
-    public void testSaveCompanyWithoutSupervisorSecondName() throws Exception {
-        CompanyDTO company = new CompanyDTO();
-        company.setOrganizationName("HHH");
-        company.setCity("W");
-        company.setInn("1111111111");
-        company.setTelephone("+7(222)222-22-22");
-        company.setMail("qwfqwf@mail.ru");
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    @Transactional
-    @Test
     public void testSaveCompanyWithoutTelephone() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setOrganizationName("HHH");
