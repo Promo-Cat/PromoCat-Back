@@ -40,9 +40,6 @@ public class Stock extends AbstractEntity {
     private Long duration;
     private List<PromoCode> codes;
 
-    // TODO стоит вынести тк будет маппится в БД
-    private static Long[] days = new Long[] {7L, 14L, 21L, 28L};
-
     /**
      * Название акции.
      */
@@ -109,14 +106,6 @@ public class Stock extends AbstractEntity {
     @OneToMany(mappedBy = "stock", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public List<PromoCode> getCodes() {
         return codes;
-    }
-
-    public static Long getDay(int index) {
-        return days[index];
-    }
-
-    public static int daysLength() {
-        return days.length;
     }
 }
 

@@ -1,43 +1,42 @@
 package org.promocat.promocat.data_entities.stock;
 
-import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
-import org.promocat.promocat.mapper.StockMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.promocat.promocat.dto.PromoCodeDTO;
+import org.promocat.promocat.dto.StockDTO;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Danil Lyskin at 20:30 18.05.2020
  */
+@Configuration
 @EnableScheduling
 public class StockAlive {
+    private final StockService stockService;
 
-    // TODO autowired не будут работать если StockAlive это не бин, разобраться. Наверное это @Configuration
-    @Autowired
-    private StockService stockService;
+    private final PromoCodeService promoCodeService;
 
-    @Autowired
-    private PromoCodeService promoCodeService;
-
-    @Autowired
-    private StockMapper stockMapper;
+    public StockAlive(StockService stockService, PromoCodeService promoCodeService) {
+        this.stockService = stockService;
+        this.promoCodeService = promoCodeService;
+    }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void checkAlive() {
-        for (int i = 0; i < Stock.daysLength(); i++) {
-            List<Stock> stocks = stockService.getByTime(LocalDateTime.now().minusDays(Stock.getDay(i)), Stock.getDay(i));
-            for (Stock stock : stocks) {
-                for (PromoCode code : stock.getCodes()) {
+        for (int i = 0; i < StockDTO.daysLength(); i++) {
+            List<StockDTO> stocks = stockService.getByTime(LocalDateTime.now().minusDays(StockDTO.getDay(i)), StockDTO.getDay(i));
+            for (StockDTO stock : stocks) {
+                for (PromoCodeDTO code : stock.getCodes()) {
                     promoCodeService.delById(code.getId());
                 }
-                // TODO сделать [] вместо null
-                stock.setCodes(null);
+                stock.setCodes(new ArrayList<>());
                 stock.setIsAlive(false);
-                stockService.save(stockMapper.toDto(stock));
+                stockService.save(stock);
             }
         }
     }
