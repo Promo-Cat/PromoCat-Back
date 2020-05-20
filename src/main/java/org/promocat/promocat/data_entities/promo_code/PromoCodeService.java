@@ -8,7 +8,6 @@ import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeNotFoundException;
 import org.promocat.promocat.mapper.PromoCodeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -52,16 +51,11 @@ public class PromoCodeService {
         }
     }
 
-    // TODO есть методы репозитория, которые позвооляют выполнить эту задачу!
-    private boolean isExists(String code) {
-        Optional<PromoCode> promoCode = repository.getByPromoCode(code);
-        return promoCode.isPresent();
-    }
     private List<PromoCodeDTO> generate(Long cnt, Long stockId) {
         List<PromoCodeDTO> codes = new ArrayList<>();
         while (codes.size() != cnt) {
             String code = Generator.generate();
-            if (isExists(code)) {
+            if (repository.existsByPromoCode(code)) {
                 continue;
             }
             codes.add(new PromoCodeDTO(code, stockId, false));
