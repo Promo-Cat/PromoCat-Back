@@ -33,7 +33,6 @@ public class CarTest {
     public void testSaveCarWithoutCarMake() throws Exception {
         CarDTO car = new CarDTO();
         car.setUserId(1L);
-        car.setColor("www");
         car.setNumber("awfawfaf");
         car.setRegion("26");
 
@@ -46,7 +45,6 @@ public class CarTest {
     @Test
     public void testSaveCarWithoutColor() throws Exception {
         CarDTO car = new CarDTO();
-        car.setCarMake("sss");
         car.setNumber("awfawfaf");
         car.setRegion("26");
 
@@ -59,8 +57,6 @@ public class CarTest {
     @Test
     public void testSaveCarWithoutNumber() throws Exception {
         CarDTO car = new CarDTO();
-        car.setColor("www");
-        car.setCarMake("rrr");
         car.setRegion("26");
 
         mockMvc.perform(post("/api/user/car").contentType(MediaType.APPLICATION_JSON)
@@ -72,8 +68,6 @@ public class CarTest {
     @Test
     public void testSaveCarWithoutRegion() throws Exception {
         CarDTO car = new CarDTO();
-        car.setColor("www");
-        car.setCarMake("sss");
         car.setNumber("awfawfaf");
 
         mockMvc.perform(post("/api/user/car").contentType(MediaType.APPLICATION_JSON)
@@ -85,8 +79,6 @@ public class CarTest {
     @Test
     public void testSaveCarWithAllCorrect() throws Exception {
         CarDTO car = new CarDTO();
-        car.setCarMake("sss");
-        car.setColor("www");
         car.setNumber("awfawfaf");
         car.setRegion("26");
 
