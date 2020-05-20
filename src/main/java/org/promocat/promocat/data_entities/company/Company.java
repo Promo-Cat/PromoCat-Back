@@ -30,9 +30,6 @@ import java.util.Set;
 public class Company extends AbstractAccount {
 
     private String organizationName;
-    private String supervisorFirstName;
-    private String supervisorSecondName;
-    private String supervisorPatronymic;
     private String inn;
     private String mail;
     private String city;
@@ -45,32 +42,6 @@ public class Company extends AbstractAccount {
     @Column(name = "organization_name", unique = true)
     public String getOrganizationName() {
         return organizationName;
-    }
-
-    /**
-     * Имя руководителя.
-     */
-    @NotBlank(message = "Имя руководителя не может быть пустым.")
-    @Column(name = "supervisor_first_name")
-    public String getSupervisorFirstName() {
-        return supervisorFirstName;
-    }
-
-    /**
-     * Фамилия руководителя.
-     */
-    @NotBlank(message = "Фамилия руководителя не может быть пустой.")
-    @Column(name = "supervisor_second_name")
-    public String getSupervisorSecondName() {
-        return supervisorSecondName;
-    }
-
-    /**
-     * Отчество руководителя.
-     */
-    @Column(name = "supervisor_patronymic")
-    public String getSupervisorPatronymic() {
-        return supervisorPatronymic;
     }
 
     /**

@@ -37,8 +37,6 @@ public class CompanyTest {
         company.setInn("1111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -53,7 +51,6 @@ public class CompanyTest {
         company.setInn("1111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -68,7 +65,6 @@ public class CompanyTest {
         company.setInn("1111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorFirstName("I");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -82,8 +78,6 @@ public class CompanyTest {
         company.setCity("W");
         company.setInn("1111111111");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -98,8 +92,6 @@ public class CompanyTest {
         company.setInn("1111111111");
         company.setTelephone("+7(222)-222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -113,8 +105,6 @@ public class CompanyTest {
         company.setCity("W");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -129,8 +119,6 @@ public class CompanyTest {
         company.setInn("111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -145,8 +133,6 @@ public class CompanyTest {
         company.setInn("11111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -160,8 +146,6 @@ public class CompanyTest {
         company.setCity("W");
         company.setInn("111111111");
         company.setTelephone("+7(222)222-22-22");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -176,8 +160,6 @@ public class CompanyTest {
         company.setInn("111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwfmail.ru");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -191,8 +173,6 @@ public class CompanyTest {
         company.setInn("111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().is4xxClientError());
@@ -207,8 +187,6 @@ public class CompanyTest {
         company.setInn("1111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().isOk());
@@ -224,8 +202,6 @@ public class CompanyTest {
         company.setInn("1111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        company.setSupervisorFirstName("I");
-        company.setSupervisorSecondName("U");
         MvcResult result = this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().isOk()).andReturn();

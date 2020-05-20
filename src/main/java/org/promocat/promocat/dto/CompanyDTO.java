@@ -23,14 +23,6 @@ public class CompanyDTO extends AbstractAccountDTO {
     @NotBlank(message = "Имя организации не может быть пустым.")
     private String organizationName;
 
-    @NotBlank(message = "Имя руководителя не может быть пустым.")
-    private String supervisorFirstName;
-
-    @NotBlank(message = "Фамилия руководителя не может быть пустой.")
-    private String supervisorSecondName;
-
-    private String supervisorPatronymic;
-
     @Pattern(regexp = "\\d{10}", message = "ИНН задан неверно, должен состоять из 10 цифр. " +
             "Работа ведется только с юридическими лицами.")
     @NotBlank(message = "ИНН организации не может быть пустым.")
