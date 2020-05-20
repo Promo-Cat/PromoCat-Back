@@ -58,7 +58,7 @@ public class StockService {
         return result;
     }
 
-    @Scheduled(cron = "* 59 23 * * ")
+    @Scheduled(cron = "* 59 23 * * *")
     public void checkAlive() {
         for (int i = 0; i < StockDTO.daysLength(); i++) {
             log.info(String.format("Clear stock with end time after: %d", StockDTO.getDay(i)));
