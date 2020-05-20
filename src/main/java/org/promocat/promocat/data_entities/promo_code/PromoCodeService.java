@@ -33,7 +33,7 @@ public class PromoCodeService {
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
-    public PromoCodeDTO findByID(Long id) {
+    public PromoCodeDTO findById(final Long id) {
         Optional<PromoCode> promoCode = repository.findById(id);
         if (promoCode.isPresent()) {
             return mapper.toDto(promoCode.get());
@@ -42,8 +42,17 @@ public class PromoCodeService {
         }
     }
 
-    private boolean findByPromoCode(String promo_code) {
-        Optional<PromoCode> promoCode = repository.getByPromoCode(promo_code);
+    public PromoCodeDTO findByPromoCode(final String promoCode) {
+        Optional<PromoCode> code = repository.getByPromoCode(promoCode);
+        if (code.isPresent()) {
+            return mapper.toDto(code.get());
+        } else {
+            throw new UsernameNotFoundException(String.format("No promo code: %s in db.", promoCode));
+        }
+    }
+
+    private boolean isExists(String code) {
+        Optional<PromoCode> promoCode = repository.getByPromoCode(code);
         return promoCode.isPresent();
     }
 
@@ -51,7 +60,7 @@ public class PromoCodeService {
         List<PromoCodeDTO> codes = new ArrayList<>();
         while (codes.size() != cnt) {
             String code = Generator.generate();
-            if (findByPromoCode(code)) {
+            if (isExists(code)) {
                 continue;
             }
             codes.add(new PromoCodeDTO(code, stockId, false));
