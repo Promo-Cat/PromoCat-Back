@@ -16,10 +16,10 @@ import java.time.ZonedDateTime;
  */
 @Slf4j
 @ControllerAdvice
-public class ApiUserNotFoundHandler {
+public class ApiUserExceptionHandler {
 
-    @ExceptionHandler(value = {UsernameNotFoundException.class})
-    public ResponseEntity<Object> handleNonexistentUser(UsernameNotFoundException e) {
+    @ExceptionHandler(value = {ApiUserNotFoundException.class})
+    public ResponseEntity<Object> handleNonexistentUser(ApiUserNotFoundException e) {
         final HttpStatus notFound = HttpStatus.NOT_FOUND;
         ApiException apiException = new ApiException(
                 e.getMessage(),

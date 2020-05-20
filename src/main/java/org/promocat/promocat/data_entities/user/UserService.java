@@ -8,6 +8,7 @@ import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
 import org.promocat.promocat.dto.AbstractAccountDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.mapper.AbstractAccountMapper;
 import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.AccountRepositoryManager;
@@ -96,24 +97,19 @@ public class UserService {
         return jwtBuilder.compact();
     }
 
-
-
-
-
-
     /**
      * Находит пользователя в БД по id.
      *
      * @param id id пользователя
      * @return объект класса UserDTO, содержащий все необходимые данные о пользователе.
-     * @throws UsernameNotFoundException если не найден пользователь с таким id.
+     * @throws ApiUserNotFoundException если не найден пользователь с таким id.
      */
     public UserDTO findById(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return userMapper.toDto(user.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No user with such id: %d in db.", id));
+            throw new ApiUserNotFoundException(String.format("No user with such id: %d in db.", id));
         }
     }
 
@@ -121,14 +117,14 @@ public class UserService {
      * Находит пользователя в БД по номеру телефона.
      * @param telephone номер телефона, соответствующий шаблону +X(XXX)XXX-XX-XX
      * @return объект класса UserDTO, содержащий все необходимые данные о пользователе.
-     * @throws UsernameNotFoundException если не найден пользователь с таким номером телефона или формат задан не верно.
+     * @throws ApiUserNotFoundException если не найден пользователь с таким номером телефона или формат задан не верно.
      */
     public UserDTO findByTelephone(String telephone) {
         Optional<User> user = userRepository.getByTelephone(telephone);
         if (user.isPresent()) {
             return userMapper.toDto(user.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No user with such telephone: %s in db.", telephone));
+            throw new ApiUserNotFoundException(String.format("No user with such telephone: %s in db.", telephone));
         }
     }
 }
