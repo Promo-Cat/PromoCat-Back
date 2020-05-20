@@ -11,6 +11,7 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,15 +55,15 @@ public class StockController {
         return stockService.save(stock);
     }
 
-    // TODO admin
+    // TODO нужен ли нам этот эндпоинт?
 //    @RequestMapping(path = "/api/stock/id", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 //    public StockDTO getStockById(@RequestBody Long id) {
 //        return stockService.findById(id);
 //    }
 
     @RequestMapping(path = "/api/promoCode/stock", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public StockDTO getStockByPromoCode(@RequestBody PromoCodeDTO promoCodeDTO) {
-        return getStockById(promoCodeDTO.getStockId());
+    public ResponseEntity<StockDTO> getStockByPromoCode(@RequestBody PromoCodeDTO promoCodeDTO) {
+        return ResponseEntity.ok(stockService.findById(promoCodeDTO.getStockId()));
     }
 
     // ------ Admin methods ------
@@ -82,7 +83,7 @@ public class StockController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/admin/stock/id", method = RequestMethod.GET)
-    public StockDTO getStockById(@RequestParam("id") Long id) {
-        return stockService.findById(id);
+    public ResponseEntity<StockDTO> getStockById(@RequestParam("id") Long id) {
+        return ResponseEntity.ok(stockService.findById(id));
     }
 }
