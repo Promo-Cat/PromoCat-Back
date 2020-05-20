@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 public class StockDTO extends AbstractDTO{
 
+    @JsonIgnore
     private static Long[] days = new Long[] {7L, 14L, 21L, 28L};
 
     public static Long getDay(int index) {

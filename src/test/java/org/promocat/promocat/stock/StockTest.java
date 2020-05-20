@@ -37,6 +37,7 @@ public class StockTest {
         stock.setCity("Here");
         stock.setStartTime(LocalDateTime.now());
         stock.setDuration(1L);
+        stock.setCount(1L);
 
         this.mockMvc.perform(post("/api/stock").contentType(MediaType.APPLICATION_JSON)
                     .content(new ObjectMapper().writeValueAsString(stock)))
@@ -50,6 +51,7 @@ public class StockTest {
         stock.setName("www");
         stock.setStartTime(LocalDateTime.now());
         stock.setDuration(1L);
+        stock.setCount(1L);
 
         this.mockMvc.perform(post("/api/stock").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(stock)))
@@ -63,6 +65,7 @@ public class StockTest {
         stock.setName("www");
         stock.setCity("Here");
         stock.setDuration(1L);
+        stock.setCount(1L);
 
         this.mockMvc.perform(post("/api/stock").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(stock)))
@@ -76,10 +79,25 @@ public class StockTest {
         stock.setName("www");
         stock.setCity("Here");
         stock.setStartTime(LocalDateTime.now());
+        stock.setCount(1L);
 
         this.mockMvc.perform(post("/api/stock").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(stock)))
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Transactional
+    @Test
+    public void testSaveStockWithoutCount() throws Exception {
+        StockDTO stock = new StockDTO();
+        stock.setName("www");
+        stock.setCity("Here");
+        stock.setStartTime(LocalDateTime.now());
+        stock.setDuration(1L);
+
+        this.mockMvc.perform(post("/api/stock").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(stock)))
+                .andExpect(status().isOk());
     }
 
     @Transactional
@@ -90,6 +108,7 @@ public class StockTest {
         stock.setCity("Here");
         stock.setStartTime(LocalDateTime.now());
         stock.setDuration(1L);
+        stock.setCount(1L);
 
         this.mockMvc.perform(post("/api/stock").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(stock)))
