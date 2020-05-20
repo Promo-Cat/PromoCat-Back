@@ -1,6 +1,7 @@
 package org.promocat.promocat.data_entities.company;
 
 import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,7 +32,7 @@ public class CompanyService {
         if (company.isPresent()) {
             return mapper.toDto(company.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No company with such id: %d in db.", id));
+            throw new ApiCompanyNotFoundException(String.format("No company with such id: %d in db.", id));
         }
     }
 
@@ -40,7 +41,7 @@ public class CompanyService {
         if (company.isPresent()) {
             return mapper.toDto(company.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No company with such telephone: %s in db.", telephone));
+            throw new ApiCompanyNotFoundException(String.format("No company with such telephone: %s in db.", telephone));
         }
     }
 
@@ -49,7 +50,7 @@ public class CompanyService {
         if (company.isPresent()) {
             return mapper.toDto(company.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No company with such token: %s in db.", token));
+            throw new ApiCompanyNotFoundException(String.format("No company with such token: %s in db.", token));
         }
     }
 
@@ -58,7 +59,7 @@ public class CompanyService {
         if (company.isPresent()) {
             return mapper.toDto(company.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No company with such name: %s in db.", organizationName));
+            throw new ApiCompanyNotFoundException(String.format("No company with such name: %s in db.", organizationName));
         }
     }
 
@@ -67,7 +68,7 @@ public class CompanyService {
         if (company.isPresent()) {
             return mapper.toDto(company.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No company with such mail: %s in db.", mail));
+            throw new ApiCompanyNotFoundException(String.format("No company with such mail: %s in db.", mail));
         }
     }
 }
