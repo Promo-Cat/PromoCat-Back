@@ -1,5 +1,6 @@
 package org.promocat.promocat.config;
 
+import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.security.SecurityFilter;
 import org.promocat.promocat.security.SecurityProvider;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
-            new AntPathRequestMatcher("/api/**")
+            new AntPathRequestMatcher("/api/**"),
+            new AntPathRequestMatcher("/admin/**")
     );
 
     private static final RequestMatcher ADMIN_URLS = new OrRequestMatcher(
@@ -70,10 +72,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationProvider(provider)
                 .addFilterBefore(authenticationFilter(), AnonymousAuthenticationFilter.class)
                 .authorizeRequests()
+                .requestMatchers(ADMIN_URLS)
+                .hasAuthority("ROLE_" + AccountType.ADMIN.getType().toUpperCase())
                 .requestMatchers(PROTECTED_URLS)
                 .authenticated()
-//                .requestMatchers(ADMIN_URLS)
-//                .hasAuthority("ADMIN")
                 .and()
                 .csrf().disable()
                 .httpBasic().disable()

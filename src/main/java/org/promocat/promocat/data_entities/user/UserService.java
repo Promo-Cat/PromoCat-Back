@@ -74,7 +74,6 @@ public class UserService {
         account.setToken(token);
         repository.save(account);
         return token;
-
     }
 
     // TODO Javadoc

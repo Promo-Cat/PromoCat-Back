@@ -2,13 +2,13 @@ package org.promocat.promocat.util_entities;
 
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.security.SecurityUser;
 import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -48,16 +48,14 @@ public class TokenService {
      * @return объект класса User, соответствующий пользователю
      * @throws UsernameNotFoundException если токен не найден в БД
      */
-    public Optional<User> findByToken(String token) throws UsernameNotFoundException {
+    public Optional<UserDetails> findByToken(String token) throws UsernameNotFoundException {
         JwtReader reader = new JwtReader(token);
         AccountType accountType = AccountType.of(reader.getValue("account_type"));
 
         Optional<? extends AbstractAccount> userRecord = accountRepositoryManager.getRepository(accountType).getByToken(token);
         if (userRecord.isPresent()) {
             AbstractAccount user1 = userRecord.get();
-            System.out.println(user1.getAccountType().toString());
-            User user = new User(user1.getTelephone(), "", true, true,
-                    true, true, AuthorityUtils.createAuthorityList(accountType.toString().toUpperCase()));
+            SecurityUser user = new SecurityUser(user1.getTelephone(), user1.getAccountType());
             return Optional.of(user);
         } else {
             throw new UsernameNotFoundException("Token is not found in db.");
