@@ -95,6 +95,7 @@ public class Stock extends AbstractEntity {
     /**
      * Id организации, которой принадлежит акция.
      */
+    // TODO test FetchType.LAZY
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public Company getCompany() {
         return company;

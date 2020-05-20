@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 /**
  * Created by Danil Lyskin at 22:13 05.05.2020
  */
@@ -32,7 +34,7 @@ public class PromoCodeController {
 
     //TODO Responses
     @RequestMapping(path = "/api/company/stock/generate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public StockDTO generate(@RequestBody StockDTO stock) {
+    public StockDTO generate(@Valid @RequestBody StockDTO stock) {
         return promoCodeService.savePromoCodes(stock);
     }
 

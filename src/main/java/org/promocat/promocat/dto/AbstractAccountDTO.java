@@ -28,7 +28,7 @@ public class AbstractAccountDTO extends AbstractDTO {
     @JsonIgnore
     private AccountType accountType;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnore
     private String token;
 
 }

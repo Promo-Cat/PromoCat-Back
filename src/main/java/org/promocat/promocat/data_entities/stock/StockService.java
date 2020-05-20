@@ -49,7 +49,7 @@ public class StockService {
         }
     }
 
-    public List<StockDTO> getByTime(LocalDateTime time, Long days) {
+    private List<StockDTO> getByTime(LocalDateTime time, Long days) {
         List<Stock> stocks = repository.getByStartTimeLessThanAndDurationEquals(time, days);
         List<StockDTO> result = new ArrayList<>();
         for (Stock stock : stocks) {

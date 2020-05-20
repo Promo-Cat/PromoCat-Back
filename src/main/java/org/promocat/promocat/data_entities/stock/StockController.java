@@ -69,7 +69,7 @@ public class StockController {
     // ------ Admin methods ------
 
     @ApiOperation(value = "Get stock",
-            notes = "Returning stock",
+            notes = "Returning stock with id specified in request",
             response = StockDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
