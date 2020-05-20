@@ -5,6 +5,7 @@ package org.promocat.promocat.data_entities.promo_code;
 import org.promocat.promocat.data_entities.generator.Generator;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.exception.promo_code.ApiPromoCodeNotFoundException;
 import org.promocat.promocat.mapper.PromoCodeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,20 +34,34 @@ public class PromoCodeService {
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
-    public PromoCodeDTO findByID(Long id) {
+    public PromoCodeDTO findById(final Long id) {
         Optional<PromoCode> promoCode = repository.findById(id);
         if (promoCode.isPresent()) {
             return mapper.toDto(promoCode.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No promo code with such id: %d in db.", id));
+            throw new ApiPromoCodeNotFoundException(String.format("No promo code with such id: %d in db.", id));
         }
     }
 
+    public PromoCodeDTO findByPromoCode(final String promoCode) {
+        Optional<PromoCode> code = repository.getByPromoCode(promoCode);
+        if (code.isPresent()) {
+            return mapper.toDto(code.get());
+        } else {
+            throw new ApiPromoCodeNotFoundException(String.format("No promo code: %s in db.", promoCode));
+        }
+    }
+
+    // TODO есть методы репозитория, которые позвооляют выполнить эту задачу!
+    private boolean isExists(String code) {
+        Optional<PromoCode> promoCode = repository.getByPromoCode(code);
+        return promoCode.isPresent();
+    }
     private List<PromoCodeDTO> generate(Long cnt, Long stockId) {
         List<PromoCodeDTO> codes = new ArrayList<>();
         while (codes.size() != cnt) {
             String code = Generator.generate();
-            if (repository.existsByPromoCode(code)) {
+            if (isExists(code)) {
                 continue;
             }
             codes.add(new PromoCodeDTO(code, stockId, false));

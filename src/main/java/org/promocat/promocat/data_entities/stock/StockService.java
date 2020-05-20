@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.stock;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.StockMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,7 +37,7 @@ public class StockService {
         if (stock.isPresent()) {
             return mapper.toDto(stock.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No stock with such id: %d in db.", id));
+            throw new ApiStockNotFoundException(String.format("No stock with such id: %d in db.", id));
         }
     }
 
