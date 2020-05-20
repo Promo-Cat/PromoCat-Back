@@ -51,6 +51,7 @@ public class PromoCodeService {
         }
     }
 
+    // TODO есть методы репозитория, которые позвооляют выполнить эту задачу!
     private boolean isExists(String code) {
         Optional<PromoCode> promoCode = repository.getByPromoCode(code);
         return promoCode.isPresent();
