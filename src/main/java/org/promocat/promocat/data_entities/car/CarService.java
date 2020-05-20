@@ -6,7 +6,6 @@ import org.promocat.promocat.dto.CarDTO;
 import org.promocat.promocat.exception.car.ApiCarNotFoundException;
 import org.promocat.promocat.mapper.CarMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
