@@ -11,8 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,11 +56,14 @@ public class UserTest {
     @Test
     public void testSaveUserWithAllCorrect() throws Exception {
         UserDTO user = new UserDTO();
+        user.setId(1L);
         user.setName("I");
         user.setCity("Here");
         user.setTelephone("+7(222)222-22-22");
-        this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
                     .content(new ObjectMapper().writeValueAsString(user)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk()).andReturn();
+        UserDTO test = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+        assertEquals(test, user);
     }
 }

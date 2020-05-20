@@ -11,8 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -216,6 +218,7 @@ public class CompanyTest {
     @Test
     public void testSaveCorrectCompany() throws Exception {
         CompanyDTO company = new CompanyDTO();
+        company.setId(1L);
         company.setCity("www");
         company.setOrganizationName("HHH");
         company.setInn("1111111111");
@@ -223,8 +226,10 @@ public class CompanyTest {
         company.setMail("qwfqwf@mail.ru");
         company.setSupervisorFirstName("I");
         company.setSupervisorSecondName("U");
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()).andReturn();
+        CompanyDTO test = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
+        assertEquals(company, test);
     }
 }
