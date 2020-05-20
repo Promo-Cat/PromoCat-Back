@@ -5,6 +5,7 @@ package org.promocat.promocat.data_entities.promo_code;
 import org.promocat.promocat.data_entities.generator.Generator;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.exception.promo_code.ApiPromoCodeNotFoundException;
 import org.promocat.promocat.mapper.PromoCodeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,7 +39,7 @@ public class PromoCodeService {
         if (promoCode.isPresent()) {
             return mapper.toDto(promoCode.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No promo code with such id: %d in db.", id));
+            throw new ApiPromoCodeNotFoundException(String.format("No promo code with such id: %d in db.", id));
         }
     }
 
@@ -47,7 +48,7 @@ public class PromoCodeService {
         if (code.isPresent()) {
             return mapper.toDto(code.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No promo code: %s in db.", promoCode));
+            throw new ApiPromoCodeNotFoundException(String.format("No promo code: %s in db.", promoCode));
         }
     }
 
