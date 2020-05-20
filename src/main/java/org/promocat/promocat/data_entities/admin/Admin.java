@@ -4,7 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.promocat.promocat.data_entities.AbstractAccount;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Entity

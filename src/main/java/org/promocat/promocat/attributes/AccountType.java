@@ -1,7 +1,5 @@
 package org.promocat.promocat.attributes;
 
-import java.security.InvalidKeyException;
-
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 20:26 15.05.2020
  */

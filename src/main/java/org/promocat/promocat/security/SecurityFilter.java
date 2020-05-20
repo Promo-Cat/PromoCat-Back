@@ -2,7 +2,6 @@ package org.promocat.promocat.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.util_entities.TokenService;
-import org.promocat.promocat.utils.JwtReader;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;

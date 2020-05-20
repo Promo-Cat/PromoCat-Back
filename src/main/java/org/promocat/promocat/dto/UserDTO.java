@@ -8,7 +8,6 @@ import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @EqualsAndHashCode(of = {}, callSuper = true)

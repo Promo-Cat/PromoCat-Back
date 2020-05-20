@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.stock.Stock;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
