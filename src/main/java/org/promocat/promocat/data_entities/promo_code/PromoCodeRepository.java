@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface PromoCodeRepository extends JpaRepository<PromoCode, Long> {
     Optional<PromoCode> getByPromoCode(String promo_code);
     void deleteById(Long id);
+    Boolean existsByPromoCode(String promo_code);
 }

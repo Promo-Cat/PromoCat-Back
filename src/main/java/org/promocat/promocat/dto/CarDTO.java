@@ -14,12 +14,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class CarDTO extends AbstractDTO {
 
-    @NotBlank(message = "Марка машины не может быть пустой.")
-    private String carMake;
-
-    @NotBlank(message = "Цвет не может быть пустым.")
-    private String color;
-
     @NotNull(message = "Id пользователя должно быть задано.")
     private Long userId;
 

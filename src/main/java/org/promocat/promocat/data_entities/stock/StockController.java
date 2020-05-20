@@ -4,15 +4,18 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -52,10 +55,22 @@ public class StockController {
         return stockService.save(stock);
     }
 
-    // TODO admin
+    // TODO нужен ли нам этот эндпоинт?
+//    @RequestMapping(path = "/api/stock/id", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public StockDTO getStockById(@RequestBody Long id) {
+//        return stockService.findById(id);
+//    }
+
+    @RequestMapping(path = "/api/promoCode/stock", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<StockDTO> getStockByPromoCode(@RequestBody PromoCodeDTO promoCodeDTO) {
+        return ResponseEntity.ok(stockService.findById(promoCodeDTO.getStockId()));
+    }
+
+    // ------ Admin methods ------
+
     @ApiOperation(value = "Get stock",
             notes = "Returning stock",
-            response = UserDTO.class)
+            response = StockDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Stock not found",
@@ -67,8 +82,8 @@ public class StockController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/stock/getById", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public StockDTO getStockById(@RequestBody Long id) {
-        return stockService.findById(id);
+    @RequestMapping(path = "/admin/stock/id", method = RequestMethod.GET)
+    public ResponseEntity<StockDTO> getStockById(@RequestParam("id") Long id) {
+        return ResponseEntity.ok(stockService.findById(id));
     }
 }
