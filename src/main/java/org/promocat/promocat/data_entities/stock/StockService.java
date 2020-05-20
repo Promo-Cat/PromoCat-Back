@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,8 +41,12 @@ public class StockService {
         }
     }
 
-    // TODO возвращать лист Stock --- плохо, нужно возвращать лист StockDTO
-    public List<Stock> getByTime(LocalDateTime time, Long days) {
-        return repository.getByStartTimeLessThanAndDurationEquals(time, days);
+    public List<StockDTO> getByTime(LocalDateTime time, Long days) {
+        List<Stock> stocks = repository.getByStartTimeLessThanAndDurationEquals(time, days);
+        List<StockDTO> result = new ArrayList<>();
+        for (Stock stock : stocks) {
+            result.add(mapper.toDto(stock));
+        }
+        return result;
     }
 }

@@ -57,7 +57,6 @@ public class PromoCodeService {
         Optional<PromoCode> promoCode = repository.getByPromoCode(code);
         return promoCode.isPresent();
     }
-
     private List<PromoCodeDTO> generate(Long cnt, Long stockId) {
         List<PromoCodeDTO> codes = new ArrayList<>();
         while (codes.size() != cnt) {
