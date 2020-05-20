@@ -54,47 +54,7 @@ public class UserService {
     }
 
 
-    /**
-     * Возвращает токен для авторизации. Вызывать после проверки подтверждения авторизации.
-     *
-     * @param telephone телефон юзера, которому выдаётся токен
-     * @return токен, присвоенный записи юзера
-     * @throws UsernameNotFoundException если пользователь с заданным номером не найден в БД
-     */
-    public String getToken(String telephone, AccountType accountType) throws UsernameNotFoundException {
-        AbstractAccount account;
 
-        //noinspection rawtypes
-        AbstractAccountRepository repository = accountRepositoryManager.getRepository(accountType);
-        try {
-            account = (AbstractAccount) repository.getByTelephone(telephone).orElseThrow();
-        } catch (NoSuchElementException e) {
-            throw new UsernameNotFoundException("User with number " + telephone + " doesn`t presented in database");
-        }
-        String token = generateToken(abstractAccountMapper.toDto(account));
-        account.setToken(token);
-        repository.save(account);
-        return token;
-    }
-
-    // TODO Javadoc
-    /**
-     * @param accountDTO
-     * @return
-     */
-    private String generateToken(AbstractAccountDTO accountDTO) {
-        Map<String, Object> tokenData = new HashMap<>();
-        tokenData.put("telephone", accountDTO.getTelephone());
-        tokenData.put("account_type", accountDTO.getAccountType());
-        tokenData.put("token_create_time", new Date().getTime());
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.YEAR, 1);
-        tokenData.put("token_expiration_date", calendar.getTime());
-        JwtBuilder jwtBuilder = Jwts.builder();
-        jwtBuilder.setExpiration(calendar.getTime());
-        jwtBuilder.setClaims(tokenData);
-        return jwtBuilder.compact();
-    }
 
     /**
      * Находит пользователя в БД по id.

@@ -103,7 +103,6 @@ public class LoginAttemptService {
     }
 
     /**
-     *
      * @param account
      * @return
      */
@@ -119,13 +118,18 @@ public class LoginAttemptService {
      * @param attempt DTO хранящий код, который получил юзер и специальный ключ
      * @return true - если всё совпадает и можно выдавать токен
      */
-    // TODO: AbstractAccountRepo
     public Optional<? extends AbstractAccount> checkLoginAttemptCode(LoginAttemptDTO attempt) {
         LoginAttempt loginAttempt = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorizationKey());
-               if (loginAttempt.getPhoneCode().equals(attempt.getCode())) {
+        if (loginAttempt.getPhoneCode().equals(attempt.getCode())) {
+            delete(loginAttempt);
             return accountRepositoryManager.getRepository(loginAttempt.getAccountType()).getByTelephone(loginAttempt.getTelephone());
         }
         return Optional.empty();
+    }
+
+    public void delete(LoginAttempt attemptDTO) {
+        log.info("Trying to delete LoginAttempt with authorization key {}", attemptDTO.getAuthorizationKey());
+        loginAttemptRepository.delete(attemptDTO);
     }
 
 }

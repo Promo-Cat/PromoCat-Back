@@ -1,7 +1,13 @@
 package org.promocat.promocat.util_entities;
 
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.AbstractAccountRepository;
+import org.promocat.promocat.data_entities.login_attempt.LoginAttemptService;
+import org.promocat.promocat.dto.AbstractAccountDTO;
+import org.promocat.promocat.mapper.AbstractAccountMapper;
 import org.promocat.promocat.security.SecurityUser;
 import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.JwtReader;
@@ -18,10 +24,16 @@ import java.util.*;
 public class TokenService {
 
     private final AccountRepositoryManager accountRepositoryManager;
+    private final AbstractAccountMapper abstractAccountMapper;
+    private final LoginAttemptService loginAttemptService;
 
     @Autowired
-    public TokenService(final AccountRepositoryManager accountRepositoryManager) {
+    public TokenService(final AccountRepositoryManager accountRepositoryManager,
+                        final AbstractAccountMapper abstractAccountMapper,
+                        final LoginAttemptService loginAttemptService) {
         this.accountRepositoryManager = accountRepositoryManager;
+        this.abstractAccountMapper = abstractAccountMapper;
+        this.loginAttemptService = loginAttemptService;
     }
 
 
@@ -60,6 +72,48 @@ public class TokenService {
         } else {
             throw new UsernameNotFoundException("Token is not found in db.");
         }
+    }
+
+    /**
+     * Возвращает токен для авторизации. Вызывать после проверки подтверждения авторизации.
+     *
+     * @param telephone телефон юзера, которому выдаётся токен
+     * @return токен, присвоенный записи юзера
+     * @throws UsernameNotFoundException если пользователь с заданным номером не найден в БД
+     */
+    public String getToken(String telephone, AccountType accountType) throws UsernameNotFoundException {
+        AbstractAccount account;
+
+        //noinspection rawtypes
+        AbstractAccountRepository repository = accountRepositoryManager.getRepository(accountType);
+        try {
+            account = (AbstractAccount) repository.getByTelephone(telephone).orElseThrow();
+        } catch (NoSuchElementException e) {
+            throw new UsernameNotFoundException("User with number " + telephone + " doesn`t presented in database");
+        }
+        String token = generateToken(abstractAccountMapper.toDto(account));
+        account.setToken(token);
+        repository.save(account);
+        return token;
+    }
+
+    // TODO Javadoc
+    /**
+     * @param accountDTO
+     * @return
+     */
+    private String generateToken(AbstractAccountDTO accountDTO) {
+        Map<String, Object> tokenData = new HashMap<>();
+        tokenData.put("telephone", accountDTO.getTelephone());
+        tokenData.put("account_type", accountDTO.getAccountType());
+        tokenData.put("token_create_time", new Date().getTime());
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 1);
+        tokenData.put("token_expiration_date", calendar.getTime());
+        JwtBuilder jwtBuilder = Jwts.builder();
+        jwtBuilder.setExpiration(calendar.getTime());
+        jwtBuilder.setClaims(tokenData);
+        return jwtBuilder.compact();
     }
 
 }

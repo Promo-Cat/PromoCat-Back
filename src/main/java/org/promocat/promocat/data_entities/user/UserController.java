@@ -14,6 +14,7 @@ import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.util_entities.TokenService;
 import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +42,17 @@ public class UserController {
     private final UserService userService;
     private final LoginAttemptService loginAttemptService;
     private final AccountRepositoryManager accountRepositoryManager;
+    private final TokenService tokenService;
 
     @Autowired
     public UserController(final UserService userService,
                           final LoginAttemptService loginAttemptService,
-                          final AccountRepositoryManager accountRepositoryManager) {
+                          final AccountRepositoryManager accountRepositoryManager,
+                          final TokenService tokenService) {
         this.userService = userService;
         this.loginAttemptService = loginAttemptService;
         this.accountRepositoryManager = accountRepositoryManager;
+        this.tokenService = tokenService;
     }
 
 
@@ -123,7 +127,7 @@ public class UserController {
             try {
                 log.info(String.format("User with telephone: %s and auth key: %s got token",
                         account.getTelephone(), loginAttempt.getAuthorizationKey()));
-                return new ResponseEntity<>(new TokenDTO(userService.getToken(account.getTelephone(), account.getAccountType())), HttpStatus.OK);
+                return new ResponseEntity<>(new TokenDTO(tokenService.getToken(account.getTelephone(), account.getAccountType())), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
                 throw new UsernameNotFoundException(e.getMessage());
             }
