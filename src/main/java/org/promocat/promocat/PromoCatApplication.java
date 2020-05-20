@@ -16,6 +16,7 @@ public class PromoCatApplication {
 		SpringApplication.run(PromoCatApplication.class, args);
 	}
 
+	// TODO remove to config
 	@Bean
 	public ModelMapper modelMapper() {
 		ModelMapper mapper = new ModelMapper();
