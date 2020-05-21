@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.CarDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,17 @@ public class CarController {
 
     // ------ Admin methods ------
 
+    @ApiOperation(value = "Get car by number",
+            notes = "Returning car, which number specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Car not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/admin/car/number", method = RequestMethod.GET)
     public ResponseEntity<CarDTO> getCarByNumberAndRegion(
             @RequestParam("number") String number,
@@ -68,6 +80,17 @@ public class CarController {
         return ResponseEntity.ok(service.findByNumberAndRegion(number, region));
     }
 
+    @ApiOperation(value = "Get car by id",
+            notes = "Returning car, which id specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Car not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "admin/car/id", method = RequestMethod.GET)
     public ResponseEntity<CarDTO> getCarById(@RequestParam("id") Long id) {
         log.info(String.format("Admin trying to find car with id: %d", id));

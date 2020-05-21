@@ -2,6 +2,7 @@ package org.promocat.promocat.util_entities;
 
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
@@ -12,6 +13,7 @@ import org.promocat.promocat.security.SecurityUser;
 import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +32,8 @@ import java.util.Optional;
 
 @Service
 public class TokenService {
+
+    public static String JWT_KEY;
 
     private final AccountRepositoryManager accountRepositoryManager;
     private final AbstractAccountMapper abstractAccountMapper;
@@ -121,7 +125,12 @@ public class TokenService {
         JwtBuilder jwtBuilder = Jwts.builder();
         jwtBuilder.setExpiration(calendar.getTime());
         jwtBuilder.setClaims(tokenData);
-        return jwtBuilder.compact();
+        return jwtBuilder.signWith(Keys.hmacShaKeyFor(JWT_KEY.getBytes())).compact();
+    }
+
+    @Value("${jwt.key}")
+    public void setJwtKey(String jwtKey) {
+        JWT_KEY = jwtKey;
     }
 
 }

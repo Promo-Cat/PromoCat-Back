@@ -79,15 +79,8 @@ public class StockController {
 //    }
 
     //TODO rewrite
-    @RequestMapping(path = "/api/promoCode/stock", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<StockDTO> getStockByPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
-        return ResponseEntity.ok(stockService.findById(promoCodeDTO.getStockId()));
-    }
-
-    // ------ Admin methods ------
-
-    @ApiOperation(value = "Get stock",
-            notes = "Returning stock with id specified in request",
+    @ApiOperation(value = "Get stock by promo-code",
+            notes = "Returning stock with promo-code specified in request",
             response = StockDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
@@ -95,6 +88,24 @@ public class StockController {
                     response = ApiException.class),
             @ApiResponse(code = 415,
                     message = "Not acceptable media type",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(path = "/api/promoCode/stock", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<StockDTO> getStockByPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
+        return ResponseEntity.ok(stockService.findById(promoCodeDTO.getStockId()));
+    }
+
+    // ------ Admin methods ------
+
+    @ApiOperation(value = "Get stock by id",
+            notes = "Returning stock with id specified in request",
+            response = StockDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
