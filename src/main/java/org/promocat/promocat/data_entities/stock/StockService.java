@@ -7,6 +7,7 @@ import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.StockMapper;
+import org.promocat.promocat.validators.StockDurationConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -60,9 +61,9 @@ public class StockService {
 
     @Scheduled(cron = "* 59 23 * * *")
     public void checkAlive() {
-        for (int i = 0; i < StockDTO.daysLength(); i++) {
-            log.info(String.format("Clear stock with end time after: %d", StockDTO.getDay(i)));
-            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(StockDTO.getDay(i)), StockDTO.getDay(i));
+        for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
+            log.info(String.format("Clear stock with end time after: %d", day));
+            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
             for (StockDTO stock : stocks) {
                 for (PromoCodeDTO code : stock.getCodes()) {
                     promoCodeService.delById(code.getId());
@@ -72,5 +73,17 @@ public class StockService {
                 save(stock);
             }
         }
+//        for (int i = 0; i < StockDTO.daysLength(); i++) {
+//            log.info(String.format("Clear stock with end time after: %d", StockDTO.getDay(i)));
+//            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(StockDTO.getDay(i)), StockDTO.getDay(i));
+//            for (StockDTO stock : stocks) {
+//                for (PromoCodeDTO code : stock.getCodes()) {
+//                    promoCodeService.delById(code.getId());
+//                }
+//                stock.setCodes(new ArrayList<>());
+//                stock.setIsAlive(false);
+//                save(stock);
+//            }
+//        }
     }
 }

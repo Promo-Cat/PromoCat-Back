@@ -23,17 +23,6 @@ import java.util.List;
 @AllArgsConstructor
 public class StockDTO extends AbstractDTO{
 
-    @JsonIgnore
-    private static Long[] days = new Long[] {7L, 14L, 21L, 28L};
-
-    public static Long getDay(int index) {
-        return days[index];
-    }
-
-    public static int daysLength() {
-        return days.length;
-    }
-
     @NotBlank(message = "Название акции не может быть пустым.")
     private String name;
 

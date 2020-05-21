@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = StockDurationConstraintValidator.class)
 public @interface StockDurationConstraint {
-    String message() default "Not appropriate duration";
+    String message() default "Not supported duration";
 
     Class<?>[] groups() default {};
 
