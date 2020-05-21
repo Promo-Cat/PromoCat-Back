@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -30,10 +32,12 @@ import javax.validation.Valid;
 public class StockController {
 
     private final StockService stockService;
+    private final PromoCodeService promoCodeService;
 
     @Autowired
-    public StockController(final StockService stockService) {
+    public StockController(final StockService stockService, final PromoCodeService promoCodeService) {
         this.stockService = stockService;
+        this.promoCodeService = promoCodeService;
     }
 
     @ApiOperation(value = "Create stock",
@@ -57,12 +61,24 @@ public class StockController {
         return stockService.save(stock);
     }
 
+    //TODO Response
+    @RequestMapping(path = "/admin/company/stock/generate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public StockDTO generate(@RequestBody Long id) {
+        StockDTO stock = stockService.findById(id);
+        if (Objects.isNull(stock.getIsAlive())) {
+            stockService.setActive(id, true);
+            return promoCodeService.savePromoCodes(stock);
+        }
+        return stock;
+    }
+
     // TODO нужен ли нам этот эндпоинт?
 //    @RequestMapping(path = "/api/stock/id", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 //    public StockDTO getStockById(@RequestBody Long id) {
 //        return stockService.findById(id);
 //    }
 
+    //TODO rewrite
     @RequestMapping(path = "/api/promoCode/stock", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> getStockByPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
         return ResponseEntity.ok(stockService.findById(promoCodeDTO.getStockId()));

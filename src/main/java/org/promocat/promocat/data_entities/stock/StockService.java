@@ -51,10 +51,14 @@ public class StockService {
     }
 
     private List<StockDTO> getByTime(LocalDateTime time, Long days) {
-        List<Stock> stocks = repository.getByStartTimeLessThanAndDurationEquals(time, days);
+        Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndDurationEquals(time, days);
         List<StockDTO> result = new ArrayList<>();
-        for (Stock stock : stocks) {
-            result.add(mapper.toDto(stock));
+        if (optional.isPresent()) {
+            for (Stock stock : optional.get()) {
+                result.add(mapper.toDto(stock));
+            }
+        } else {
+            return null; //TODO Exceptional
         }
         return result;
     }
@@ -73,17 +77,11 @@ public class StockService {
                 save(stock);
             }
         }
-//        for (int i = 0; i < StockDTO.daysLength(); i++) {
-//            log.info(String.format("Clear stock with end time after: %d", StockDTO.getDay(i)));
-//            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(StockDTO.getDay(i)), StockDTO.getDay(i));
-//            for (StockDTO stock : stocks) {
-//                for (PromoCodeDTO code : stock.getCodes()) {
-//                    promoCodeService.delById(code.getId());
-//                }
-//                stock.setCodes(new ArrayList<>());
-//                stock.setIsAlive(false);
-//                save(stock);
-//            }
-//        }
+    }
+
+    public StockDTO setActive(Long id, Boolean active) {
+        StockDTO stock = findById(id);
+        stock.setIsAlive(active);
+        return save(stock);
     }
 }
