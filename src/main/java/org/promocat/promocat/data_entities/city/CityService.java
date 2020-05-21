@@ -34,10 +34,6 @@ public class CityService {
         city.setPopulation(cityFields[22]);
         city.setActive(false);
 
-        // TODO delete tests
-        if (cityFields[1].equals("385200") || cityFields[1].equals("649000")) {
-            city.setActive(true);
-        }
         return mapper.toDto(repository.save(city));
     }
 
