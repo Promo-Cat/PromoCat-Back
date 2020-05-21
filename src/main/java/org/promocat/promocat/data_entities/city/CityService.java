@@ -34,6 +34,7 @@ public class CityService {
         city.setPopulation(cityFields[22]);
         city.setActive(false);
 
+        // TODO delete tests
         if (cityFields[1].equals("385200") || cityFields[1].equals("649000")) {
             city.setActive(true);
         }
@@ -46,7 +47,19 @@ public class CityService {
 
     public List<CityDTO> getActiveCities() {
         Optional<List<City>> city = repository.findByActiveTrue();
+        // TODO Exception
         return city.map(cities -> cities.stream().map(mapper::toDto).collect(Collectors.toList())).orElse(null);
     }
 
+    public CityDTO findByCity(String city) {
+        Optional<City> cty = repository.findByCity(city);
+        // TODO Exception
+        return mapper.toDto(cty.orElse(null));
+    }
+
+    public CityDTO setActive(String city) {
+        CityDTO dto = findByCity(city);
+        dto.setActive(true);
+        return mapper.toDto(repository.save(mapper.toEntity(dto)));
+    }
 }

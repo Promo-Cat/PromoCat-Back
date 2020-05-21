@@ -15,17 +15,17 @@ import java.util.List;
 @RestController
 public class CityController {
 
-    private final CityService cityService;
+    private final CityService service;
 
-    public CityController(final CityService cityService) {
-        this.cityService = cityService;
+    public CityController(final CityService service) {
+        this.service = service;
     }
 
     @RequestMapping(value = "/auth/cities", method = RequestMethod.POST)
     public ResponseEntity<String> uploadCities(@RequestParam("file") MultipartFile file) {
         if (!file.isEmpty()) {
             try {
-                cityService.addCities(CSVCityReader.readFromFile(file));
+                service.addCities(CSVCityReader.readFromFile(file));
                 return ResponseEntity.ok("Города успешно добавлены!");
             } catch (IOException e) {
                 return new ResponseEntity<>("Ошибка во время открытия файла", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -38,11 +38,18 @@ public class CityController {
 
     @RequestMapping(value = "/auth/cities/active", method = RequestMethod.GET)
     public ResponseEntity<List<CityDTO>> getActiveCities() {
-        return ResponseEntity.ok(cityService.getActiveCities());
+        return ResponseEntity.ok(service.getActiveCities());
     }
 
-    @RequestMapping(value = "/admin/city", method = RequestMethod.POST)
-    public ResponseEntity<CityDTO> activateCity() {
-        return ResponseEntity.ok(new CityDTO());
+    // ------ Admin methods ------
+
+    @RequestMapping(value = "/admin/city", method = RequestMethod.GET)
+    public ResponseEntity<CityDTO> getCity(@RequestParam("city") String city) {
+        return ResponseEntity.ok(service.findByCity(city));
+    }
+
+    @RequestMapping(value = "/admin/city/active", method = RequestMethod.PUT)
+    public ResponseEntity<CityDTO> activateCity(@RequestParam("city") String city) {
+        return ResponseEntity.ok(service.setActive(city));
     }
 }
