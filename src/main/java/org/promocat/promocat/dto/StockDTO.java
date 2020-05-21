@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.constraints.StockDurationConstraint;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -51,6 +52,7 @@ public class StockDTO extends AbstractDTO{
     private LocalDateTime startTime;
 
     @NotNull(message = "Время продолжительности акции не может быть пустым.")
+    @StockDurationConstraint
     private Long duration;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

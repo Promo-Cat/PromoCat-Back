@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.promocat.promocat.constraints.StockDurationConstraint;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
@@ -58,7 +59,7 @@ public class Stock extends AbstractEntity {
     }
 
     /**
-     * Активность промокода
+     * Активность акции.
      */
     @Column(name = "isAlive")
     public Boolean getIsAlive() {
@@ -78,7 +79,7 @@ public class Stock extends AbstractEntity {
      * Время начала акции.
      */
     @NotNull(message = "Время начала акции не может быть пустым.")
-    @Column
+    @Column(name = "start_time")
     public LocalDateTime getStartTime() {
         return startTime;
     }
@@ -87,7 +88,8 @@ public class Stock extends AbstractEntity {
      * Время продолжительности акции.
      */
     @NotNull(message = "Время продолжительности акции не может быть пустым.")
-    @Column
+    @Column(name = "duration")
+    @StockDurationConstraint
     public Long getDuration() {
         return duration;
     }

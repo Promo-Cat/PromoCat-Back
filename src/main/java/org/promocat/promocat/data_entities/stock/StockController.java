@@ -61,7 +61,7 @@ public class StockController {
 //    }
 
     @RequestMapping(path = "/api/promoCode/stock", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<StockDTO> getStockByPromoCode(@RequestBody PromoCodeDTO promoCodeDTO) {
+    public ResponseEntity<StockDTO> getStockByPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
         return ResponseEntity.ok(stockService.findById(promoCodeDTO.getStockId()));
     }
 
