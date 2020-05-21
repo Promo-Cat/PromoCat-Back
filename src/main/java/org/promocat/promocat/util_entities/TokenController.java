@@ -96,7 +96,7 @@ public class TokenController {
             return ResponseEntity.ok("{}");
         } else {
             log.warn(String.format("Token invalid: %s", token));
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("{}",HttpStatus.NOT_FOUND);
         }
     }
 
