@@ -29,7 +29,7 @@ public abstract class AbstractAccount extends AbstractEntity {
     /**
      * Токен закрепленный за аккаунтом
      */
-    @Column(name = "token", unique = true)
+    @Column(name = "token", unique = true, length = 512)
     public String getToken() {
         return token;
     }

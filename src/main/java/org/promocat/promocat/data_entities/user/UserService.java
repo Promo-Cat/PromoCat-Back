@@ -18,8 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    @Value("${jwt.key}")
-    private String jwt_key;
+
 
     @Autowired
     public UserService(final UserRepository userRepository,
