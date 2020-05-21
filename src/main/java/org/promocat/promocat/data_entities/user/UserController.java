@@ -4,24 +4,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.promocat.promocat.attributes.AccountType;
-import org.promocat.promocat.data_entities.AbstractAccount;
-import org.promocat.promocat.data_entities.AbstractAccountRepository;
-import org.promocat.promocat.data_entities.login_attempt.LoginAttemptService;
-import org.promocat.promocat.dto.LoginAttemptDTO;
-import org.promocat.promocat.dto.TokenDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
-import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
-import org.promocat.promocat.util_entities.TokenService;
-import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -40,21 +28,11 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final LoginAttemptService loginAttemptService;
-    private final AccountRepositoryManager accountRepositoryManager;
-    private final TokenService tokenService;
 
     @Autowired
-    public UserController(final UserService userService,
-                          final LoginAttemptService loginAttemptService,
-                          final AccountRepositoryManager accountRepositoryManager,
-                          final TokenService tokenService) {
+    public UserController(final UserService userService) {
         this.userService = userService;
-        this.loginAttemptService = loginAttemptService;
-        this.accountRepositoryManager = accountRepositoryManager;
-        this.tokenService = tokenService;
     }
-
 
     @ApiOperation(value = "Registering user",
             notes = "Registering user with unique telephone in format +X(XXX)XXX-XX-XX",
@@ -79,7 +57,7 @@ public class UserController {
 
 
     @ApiOperation(value = "Get authorized user",
-            notes = "Returning user, which token is in header (get authorized user)",
+            notes = "Returning user, whose token is in header (get authorized user)",
             response = UserDTO.class,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
@@ -104,15 +82,43 @@ public class UserController {
 
     // ------ Admin methods ------
 
+    @ApiOperation(value = "Get user by id",
+            notes = "Returning user, whose id specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(value = "/admin/user/id", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserById(@RequestParam("id") Long id) {
         log.info(String.format("Admin trying to get user with id: %d", id));
         return ResponseEntity.ok(userService.findById(id));
     }
 
+    @ApiOperation(value = "Get user by telephone",
+            notes = "Returning user, whose telephone specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(value = "/admin/user/telephone", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {
-        log.info(String.format("Admin trying to get user with id: %s", telephone));
+        log.info(String.format("Admin trying to get user with telephone: %s", telephone));
         return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
 

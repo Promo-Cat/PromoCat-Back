@@ -2,6 +2,10 @@ package org.promocat.promocat.data_entities.city;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CityRepository extends JpaRepository<City, Long> {
+import java.util.List;
+import java.util.Optional;
 
+public interface CityRepository extends JpaRepository<City, Long> {
+    Optional<List<City>> findByActiveTrue();
+    Optional<City> findByCity(String city);
 }

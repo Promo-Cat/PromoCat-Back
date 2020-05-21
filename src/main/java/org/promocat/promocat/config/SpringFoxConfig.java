@@ -44,6 +44,18 @@ public class SpringFoxConfig {
                 .useDefaultResponseMessages(false);
     }
 
+    @Bean
+    public Docket admin() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .paths(PathSelectors.ant("/admin/**"))
+                .apis(RequestHandlerSelectors.basePackage("org.promocat.promocat.data_entities"))
+                .build()
+                .groupName("admin")
+                .apiInfo(apiDetails())
+                .useDefaultResponseMessages(false);
+    }
+
     private ApiInfo apiDetails() {
         return new ApiInfo(
                 "PromoCat application API",

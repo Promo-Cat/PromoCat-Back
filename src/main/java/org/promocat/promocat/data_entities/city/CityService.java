@@ -1,15 +1,17 @@
 package org.promocat.promocat.data_entities.city;
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.dto.CityDTO;
+import org.promocat.promocat.mapper.CityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,20 +19,18 @@ import java.util.stream.Collectors;
 public class CityService {
 
     private final CityRepository cityRepository;
+    private final CityMapper cityMapper;
 
     @Autowired
-    public CityService(final CityRepository cityRepository) {
+    public CityService(final CityRepository cityRepository, final CityMapper cityMapper) {
         this.cityRepository = cityRepository;
+        this.cityMapper = cityMapper;
     }
 
-    public City addCity(String[] cityFields) {
+    public CityDTO addCity(String[] cityFields) {
         City city = new City();
-//        for (String cityField : cityFields) {
-//            System.out.print(cityField + ",");
-//        }
-//        System.out.println();
         city.setAddress(cityFields[0]);
-        city.setPostal_code(cityFields[1]);
+        city.setPostalCode(cityFields[1]);
         city.setCountry(cityFields[2]);
         city.setRegion(cityFields[5]);
         city.setCity(cityFields[9]);
@@ -40,10 +40,10 @@ public class CityService {
         city.setPopulation(cityFields[22]);
         city.setActive(false);
 
-        return cityRepository.save(city);
+        return cityMapper.toDto(cityRepository.save(city));
     }
 
-    public List<City> addCities(List<String[]> cities) {
+    public List<CityDTO> addCities(List<String[]> cities) {
         return cities.stream().map(this::addCity).collect(Collectors.toList());
     }
 
@@ -60,5 +60,22 @@ public class CityService {
             log.error("Ошибка I/O", e);
         }
         return 0;
+    }
+    public List<CityDTO> getActiveCities() {
+        Optional<List<City>> city = cityRepository.findByActiveTrue();
+        // TODO Exception
+        return city.map(cities -> cities.stream().map(cityMapper::toDto).collect(Collectors.toList())).orElse(null);
+    }
+
+    public CityDTO findByCity(String city) {
+        Optional<City> cty = cityRepository.findByCity(city);
+        // TODO Exception
+        return cityMapper.toDto(cty.orElse(null));
+    }
+
+    public CityDTO setActive(String city) {
+        CityDTO dto = findByCity(city);
+        dto.setActive(true);
+        return cityMapper.toDto(cityRepository.save(cityMapper.toEntity(dto)));
     }
 }
