@@ -101,66 +101,6 @@ public class UserController {
         return userService.findByTelephone(telephone);
     }
 
-    @ApiOperation(value = "Get accounts token",
-            notes = "Getting accounts token by auth key and code from smsc",
-            response = TokenDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Account not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 405,
-                    message = "Wrong code from account",
-                    response = ApiException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class)
-    })
-    @RequestMapping(value = "/auth/token", method = RequestMethod.GET)
-    public ResponseEntity<TokenDTO> getToken(
-            @RequestParam("authorizationKey") String authorizationKey,
-            @RequestParam("code") String code) {
-        // TODO: Получать account type из LoginAttempt
-        LoginAttemptDTO loginAttempt = new LoginAttemptDTO(authorizationKey, code);
-        Optional<? extends AbstractAccount> accountRecord = loginAttemptService.checkLoginAttemptCode(loginAttempt);
-        if (accountRecord.isPresent()) {
-            AbstractAccount account = accountRecord.get();
-            try {
-                log.info(String.format("User with telephone: %s and auth key: %s got token",
-                        account.getTelephone(), loginAttempt.getAuthorizationKey()));
-                return new ResponseEntity<>(new TokenDTO(tokenService.getToken(account.getTelephone(), account.getAccountType())), HttpStatus.OK);
-            } catch (UsernameNotFoundException e) {
-                throw new UsernameNotFoundException(e.getMessage());
-            }
-        } else {
-            throw new ApiWrongCodeException("Wrong code from user");
-        }
-    }
-
-    @ApiOperation(value = "Check token validity",
-            notes = "Check token validity, if token is valid returns {}. Token have to be in HEADER.",
-            response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Token isn`t valid",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(value = "/auth/valid", method = RequestMethod.GET)
-    public ResponseEntity<String> isTokenValid(@RequestHeader("token") String token) {
-        JwtReader jwtReader = new JwtReader(token);
-        AccountType accountType = AccountType.of(jwtReader.getValue("account_type"));
-        //noinspection rawtypes
-        AbstractAccountRepository repository = accountRepositoryManager.getRepository(accountType);
-        if (repository.getByToken(token).isPresent()) {
-            log.info(String.format("Token valid: %s", token));
-            return ResponseEntity.ok("{}");
-        } else {
-            log.warn(String.format("Token invalid: %s", token));
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
 
     // ------ Admin methods ------
 
