@@ -1,5 +1,7 @@
 package org.promocat.promocat.data_entities.city;
 
+import org.promocat.promocat.dto.CityDTO;
+import org.promocat.promocat.mapper.CityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,20 +13,18 @@ import java.util.stream.Collectors;
 public class CityService {
 
     private final CityRepository repository;
+    private final CityMapper mapper;
 
     @Autowired
-    public CityService(final CityRepository repository) {
+    public CityService(final CityRepository repository, final CityMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
-    public City addCity(String[] cityFields) {
+    public CityDTO addCity(String[] cityFields) {
         City city = new City();
-//        for (String cityField : cityFields) {
-//            System.out.print(cityField + ",");
-//        }
-//        System.out.println();
         city.setAddress(cityFields[0]);
-        city.setPostal_code(cityFields[1]);
+        city.setPostalCode(cityFields[1]);
         city.setCountry(cityFields[2]);
         city.setRegion(cityFields[5]);
         city.setCity(cityFields[9]);
@@ -37,15 +37,16 @@ public class CityService {
         if (cityFields[1].equals("385200") || cityFields[1].equals("649000")) {
             city.setActive(true);
         }
-        return repository.save(city);
+        return mapper.toDto(repository.save(city));
     }
 
-    public List<City> addCities(List<String[]> cities) {
+    public List<CityDTO> addCities(List<String[]> cities) {
         return cities.stream().map(this::addCity).collect(Collectors.toList());
     }
 
-    public List<City> getActiveCities() {
+    public List<CityDTO> getActiveCities() {
         Optional<List<City>> city = repository.findByActiveTrue();
-        return city.orElse(null);
+        return city.map(cities -> cities.stream().map(mapper::toDto).collect(Collectors.toList())).orElse(null);
     }
+
 }

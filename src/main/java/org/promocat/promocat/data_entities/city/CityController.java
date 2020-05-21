@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.city;
 
+import org.promocat.promocat.dto.CityDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +22,13 @@ public class CityController {
     }
 
     @RequestMapping(value = "/auth/cities", method = RequestMethod.POST)
-    public ResponseEntity<String> uploadCities(@RequestParam("name") String name,
-                                               @RequestParam("file")MultipartFile file) {
+    public ResponseEntity<String> uploadCities(@RequestParam("file") MultipartFile file) {
         if (!file.isEmpty()) {
             try {
                 cityService.addCities(CSVCityReader.readFromFile(file));
                 return ResponseEntity.ok("Города успешно добавлены!");
             } catch (IOException e) {
-                return new ResponseEntity<String>("Ошибка во время открытия файла", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("Ошибка во время открытия файла", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
         } else {
@@ -37,7 +37,12 @@ public class CityController {
     }
 
     @RequestMapping(value = "/auth/cities/active", method = RequestMethod.GET)
-    public ResponseEntity<List<City>> getActiveCities() {
+    public ResponseEntity<List<CityDTO>> getActiveCities() {
         return ResponseEntity.ok(cityService.getActiveCities());
+    }
+
+    @RequestMapping(value = "/admin/city", method = RequestMethod.POST)
+    public ResponseEntity<CityDTO> activateCity() {
+        return ResponseEntity.ok(new CityDTO());
     }
 }

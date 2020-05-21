@@ -1,50 +1,81 @@
 package org.promocat.promocat.data_entities.city;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.promocat.promocat.data_entities.AbstractEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-@Data
+@Table(name = "city")
+@EqualsAndHashCode(of = {}, callSuper = true)
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
-public class City {
+public class City extends AbstractEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String address;
+    private String postalCode;
+    private String country;
+    private String region;
+    private String city;
+    private String timezone;
+    private String latitude;
+    private String longitude;
+    private String population;
+    private Boolean active;
 
     @Column(name = "address")
-    private String address;
+    public String getAddress() {
+        return address;
+    }
 
     @Column(name = "postal_code")
-    private String postal_code;
+    public String getPostalCode() {
+        return postalCode;
+    }
 
     @Column(name = "country")
-    private String country;
+    public String getCountry() {
+        return country;
+    }
 
     @Column(name = "region")
-    private String region;
+    public String getRegion() {
+        return region;
+    }
 
     @Column(name = "city")
-    private String city;
+    public String getCity() {
+        return city;
+    }
 
     @Column(name = "timezone")
-    private String timezone;
+    public String getTimezone() {
+        return timezone;
+    }
 
     @Column(name = "geo_lat")
-    private String latitude;
+    public String getLatitude() {
+        return latitude;
+    }
 
     @Column(name = "geo_lon")
-    private String longitude;
+    public String getLongitude() {
+        return longitude;
+    }
 
     @Column(name = "population")
-    private String population;
+    public String getPopulation() {
+        return population;
+    }
 
     @Column(name = "active")
-    private Boolean active;
+    public Boolean getActive() {
+        return active;
+    }
 }
