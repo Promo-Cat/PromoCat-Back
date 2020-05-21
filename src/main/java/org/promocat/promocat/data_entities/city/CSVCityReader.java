@@ -6,6 +6,7 @@ import au.com.bytecode.opencsv.bean.CsvToBean;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,21 +15,17 @@ public class CSVCityReader {
 
     public static List<String[]> readFromFile(MultipartFile file) throws IOException {
         List<String[]> citiesFields = new ArrayList<>();
-        CsvToBean<City> cityCsvToBean = new CsvToBean<>();
-        CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()));
+        return readFromStreamReader(new InputStreamReader(file.getInputStream()));
+    }
+
+    public static List<String[]> readFromStreamReader(InputStreamReader inputStreamReader) throws IOException {
+        List<String[]> citiesFields = new ArrayList<>();
+        CSVReader csvReader = new CSVReader(inputStreamReader);
         String[] line;
         while ((line = csvReader.readNext()) != null) {
             citiesFields.add(line);
         }
         return citiesFields;
-//        return cities;
     }
 
-    private static ColumnPositionMappingStrategy<City> setColumnMapping() {
-        ColumnPositionMappingStrategy<City> strategy = new ColumnPositionMappingStrategy<>();
-        strategy.setType(City.class);
-        String[] columns = new String[] {"address", "postalCode", "country", "region", "city", "geoLat", "geoLon", "population"};
-        strategy.setColumnMapping(columns);
-        return strategy;
-    }
 }

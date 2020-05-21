@@ -22,14 +22,13 @@ public class CityController {
     }
 
     @RequestMapping(value = "/auth/cities", method = RequestMethod.POST)
-    public ResponseEntity<String> uploadCities(@RequestParam("name") String name,
-                                               @RequestParam("file")MultipartFile file) {
+    public ResponseEntity<String> uploadCities(@RequestParam("file")MultipartFile file) {
         if (!file.isEmpty()) {
             try {
                 cityService.addCities(CSVCityReader.readFromFile(file));
                 return ResponseEntity.ok("Города успешно добавлены!");
             } catch (IOException e) {
-                return new ResponseEntity<String>("Ошибка во время открытия файла", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("Ошибка во время открытия файла", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
         } else {

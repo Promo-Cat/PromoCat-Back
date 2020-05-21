@@ -1,14 +1,19 @@
 package org.promocat.promocat.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.File;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.admin.Admin;
 import org.promocat.promocat.data_entities.admin.AdminRepository;
+import org.promocat.promocat.data_entities.city.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Этот класс определяет логику, которая будет выполнена после инициализации приложения.
@@ -21,10 +26,19 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Value("${admin.default.telephone}")
     private String ADMIN_DEFAULT_TELEPHONE;
 
+    @Value("${data.cities.file}")
+    private String CITIES_FILE;
+
+    @Value("${data.cities.autoLoad}")
+    private boolean NEED_TO_AUTOLOAD_CITIES;
+
+    private final CityService cityService;
     private final AdminRepository adminRepository;
 
     @Autowired
-    public SetupDataLoader(final AdminRepository adminRepository) {
+    public SetupDataLoader(final CityService cityService,
+                           final AdminRepository adminRepository) {
+        this.cityService = cityService;
         this.adminRepository = adminRepository;
     }
 
@@ -38,6 +52,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             return;
         }
         createAdminIfNotFound();
+        loadCitiesIfNeed();
         alreadySetup = true;
     }
 
@@ -52,6 +67,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             admin.setTelephone(ADMIN_DEFAULT_TELEPHONE);
             admin.setAccountType(AccountType.ADMIN);
             adminRepository.save(admin);
+        }
+    }
+
+    private void loadCitiesIfNeed() {
+        if (cityService.needToLoad() && NEED_TO_AUTOLOAD_CITIES) {
+            cityService.loadFromFile(Paths.get(CITIES_FILE));
         }
     }
 }
