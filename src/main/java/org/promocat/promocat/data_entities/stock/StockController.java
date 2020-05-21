@@ -62,8 +62,8 @@ public class StockController {
     }
 
     //TODO Response
-    @RequestMapping(path = "/admin/company/stock/generate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public StockDTO generate(@RequestBody Long id) {
+    @RequestMapping(path = "/admin/company/stock/generate", method = RequestMethod.POST)
+    public StockDTO generate(@RequestParam("id") Long id) {
         StockDTO stock = stockService.findById(id);
         if (Objects.isNull(stock.getIsAlive())) {
             stockService.setActive(id, true);
