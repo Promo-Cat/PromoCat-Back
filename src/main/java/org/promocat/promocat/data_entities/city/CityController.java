@@ -9,16 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 public class CityController {
 
     private final CityService cityService;
-    private final CityRepository cityRepository;
 
-    public CityController(final CityService cityService, CityRepository cityRepository) {
+    public CityController(final CityService cityService) {
         this.cityService = cityService;
-        this.cityRepository = cityRepository;
     }
 
     @RequestMapping(value = "/auth/cities", method = RequestMethod.POST)
@@ -35,5 +34,10 @@ public class CityController {
         } else {
             return ResponseEntity.badRequest().body("File is empty");
         }
+    }
+
+    @RequestMapping(value = "/auth/cities/active", method = RequestMethod.GET)
+    public ResponseEntity<List<City>> getActiveCities() {
+        return ResponseEntity.ok(cityService.getActiveCities());
     }
 }

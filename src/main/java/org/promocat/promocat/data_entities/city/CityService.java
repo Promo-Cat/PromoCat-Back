@@ -4,16 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CityService {
 
-    private final CityRepository cityRepository;
+    private final CityRepository repository;
 
     @Autowired
-    public CityService(final CityRepository cityRepository) {
-        this.cityRepository = cityRepository;
+    public CityService(final CityRepository repository) {
+        this.repository = repository;
     }
 
     public City addCity(String[] cityFields) {
@@ -33,10 +34,18 @@ public class CityService {
         city.setPopulation(cityFields[22]);
         city.setActive(false);
 
-        return cityRepository.save(city);
+        if (cityFields[1].equals("385200") || cityFields[1].equals("649000")) {
+            city.setActive(true);
+        }
+        return repository.save(city);
     }
 
     public List<City> addCities(List<String[]> cities) {
         return cities.stream().map(this::addCity).collect(Collectors.toList());
+    }
+
+    public List<City> getActiveCities() {
+        Optional<List<City>> city = repository.findByActiveTrue();
+        return city.orElse(null);
     }
 }
