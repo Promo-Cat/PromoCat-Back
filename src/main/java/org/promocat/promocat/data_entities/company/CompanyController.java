@@ -1,10 +1,13 @@
 package org.promocat.promocat.data_entities.company;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
+@Api(tags = {SpringFoxConfig.COMPANY})
 public class CompanyController {
 
     private final CompanyService service;
@@ -56,24 +60,68 @@ public class CompanyController {
 
     // ------ Admin methods ------
 
+    @ApiOperation(value = "Get company by id",
+            notes = "Returning company, which id specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/admin/company/id", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getById(@RequestParam("id") Long id) {
         log.info(String.format("Admin trying to get company with id: %d", id));
         return ResponseEntity.ok(service.findById(id));
     }
 
+    @ApiOperation(value = "Get company by telephone",
+            notes = "Returning company, which telephone specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/admin/company/telephone", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByTelephone(@RequestParam("telephone") String telephone) {
         log.info(String.format("Admin trying to get company with telephone: %s", telephone));
         return ResponseEntity.ok(service.findByTelephone(telephone));
     }
 
+    @ApiOperation(value = "Get company by organization name",
+            notes = "Returning company, which organization name specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByOrganizationName(@RequestParam("organizationName") String organizationName) {
         log.info(String.format("Admin trying to get company with organization name: %s", organizationName));
         return ResponseEntity.ok(service.findByOrganizationName(organizationName));
     }
 
+    @ApiOperation(value = "Get company by mail",
+            notes = "Returning company, which mail specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/admin/company/mail", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") String mail) {
         log.info(String.format("Admin trying to get company with mail: %s", mail));

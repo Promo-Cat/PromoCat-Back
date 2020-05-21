@@ -1,6 +1,8 @@
 package org.promocat.promocat.data_entities.promo_code;
 
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
+@Api(tags = {SpringFoxConfig.PROMO_CODE})
 public class PromoCodeController {
 
 

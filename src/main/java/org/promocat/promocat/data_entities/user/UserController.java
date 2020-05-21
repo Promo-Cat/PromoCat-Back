@@ -1,9 +1,11 @@
 package org.promocat.promocat.data_entities.user;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -25,6 +27,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
+@Api(tags = {SpringFoxConfig.USER})
 public class UserController {
 
     private final UserService userService;
@@ -89,9 +92,6 @@ public class UserController {
             @ApiResponse(code = 404,
                     message = "User not found",
                     response = ApiException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
                     response = ApiException.class)
@@ -108,9 +108,6 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "User not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",

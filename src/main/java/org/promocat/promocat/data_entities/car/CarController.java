@@ -1,9 +1,11 @@
 package org.promocat.promocat.data_entities.car;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.CarDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -23,6 +25,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
+@Api(tags = {SpringFoxConfig.CAR})
 public class CarController {
 
     private final CarService service;

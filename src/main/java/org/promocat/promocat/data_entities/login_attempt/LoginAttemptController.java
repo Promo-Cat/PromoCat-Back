@@ -1,9 +1,11 @@
 package org.promocat.promocat.data_entities.login_attempt;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.admin.Admin;
 import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.company.Company;
@@ -32,6 +34,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping(value = "/auth")
+@Api(tags = {SpringFoxConfig.LOGIN})
 public class LoginAttemptController {
 
     private final UserRepository userRepository;

@@ -1,9 +1,11 @@
 package org.promocat.promocat.data_entities.stock;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
@@ -24,6 +26,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
+@Api(tags = {SpringFoxConfig.STOCK})
 public class StockController {
 
     private final StockService stockService;

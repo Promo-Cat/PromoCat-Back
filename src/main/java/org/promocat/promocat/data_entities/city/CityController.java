@@ -1,5 +1,7 @@
 package org.promocat.promocat.data_entities.city;
 
+import io.swagger.annotations.Api;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.CityDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@Api(tags = {SpringFoxConfig.CITY})
 public class CityController {
 
     private final CityService service;
