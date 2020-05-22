@@ -41,7 +41,6 @@ public class StockTest {
         company = new CompanyDTO();
         company.setOrganizationName("I");
         company.setTelephone("+7(999)243-26-49");
-        company.setCity("Here");
         company.setInn("1111111111");
         company.setMail("wqfqw@mail.ru");
         mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
