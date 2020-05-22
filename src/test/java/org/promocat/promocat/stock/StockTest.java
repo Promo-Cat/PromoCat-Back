@@ -123,7 +123,7 @@ public class StockTest {
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(stock)))
-                .andExpect(status().isOk());
+                .andExpect(status().is4xxClientError());
     }
 
     @Transactional
