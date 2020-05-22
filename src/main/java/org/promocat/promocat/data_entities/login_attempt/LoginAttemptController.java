@@ -5,7 +5,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.admin.Admin;
 import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.company.Company;
@@ -16,11 +18,11 @@ import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.login.ApiLoginAttemptNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,16 +44,19 @@ public class LoginAttemptController {
     private final CompanyRepository companyRepository;
     private final LoginAttemptService loginAttemptService;
     private final AdminService adminService;
+    private final AccountRepositoryManager accountRepositoryManager;
 
     @Autowired
     public LoginAttemptController(final UserRepository userRepository,
                                   final CompanyRepository companyRepository,
                                   final LoginAttemptService loginAttemptService,
-                                  final AdminService adminService) {
+                                  final AdminService adminService,
+                                  final AccountRepositoryManager accountRepositoryManager) {
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
         this.loginAttemptService = loginAttemptService;
         this.adminService = adminService;
+        this.accountRepositoryManager = accountRepositoryManager;
     }
 
     @ApiOperation(value = "Login user",
@@ -76,14 +81,7 @@ public class LoginAttemptController {
     })
     @RequestMapping(value = "/user/login", method = RequestMethod.GET)
     public ResponseEntity<AuthorizationKeyDTO> loginUser(@Valid @RequestParam("telephone") String telephone) {
-        Optional<User> userRecord = userRepository.getByTelephone(telephone);
-        if (userRecord.isPresent()) {
-            return ResponseEntity.ok(loginAttemptService.login(userRecord.get()));
-        } else {
-            throw new ApiLoginAttemptNotFoundException(
-                    "User with phone number " + telephone + " does not exists"
-            );
-        }
+        return login(AccountType.USER, telephone);
     }
 
     @ApiOperation(value = "Login company",
@@ -108,14 +106,7 @@ public class LoginAttemptController {
     })
     @RequestMapping(value = "/company/login", method = RequestMethod.GET)
     public ResponseEntity<AuthorizationKeyDTO> loginCompany(@Valid @RequestParam("telephone") String telephone) {
-        Optional<Company> companyRecord = companyRepository.getByTelephone(telephone);
-        if (companyRecord.isPresent()) {
-            return ResponseEntity.ok(loginAttemptService.login(companyRecord.get()));
-        } else {
-            throw new ApiLoginAttemptNotFoundException(
-                    "Company with phone number " + telephone + " does not exists"
-            );
-        }
+        return login(AccountType.COMPANY, telephone);
     }
 
     @ApiOperation(value = "Login Admin",
@@ -143,12 +134,17 @@ public class LoginAttemptController {
         if (!adminService.isAdmin(telephone)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        Optional<Admin> adminRecord = adminService.getByTelephone(telephone);
-        if (adminRecord.isPresent()) {
-            return ResponseEntity.ok(loginAttemptService.login(adminRecord.get()));
+        return login(AccountType.ADMIN, telephone);
+    }
+
+    private ResponseEntity<AuthorizationKeyDTO> login(AccountType accountType, String telephone) {
+        loginAttemptService.deleteIfExists(accountType, telephone);
+        Optional<? extends AbstractAccount> account = accountRepositoryManager.getRepository(accountType).getByTelephone(telephone);
+        if (account.isPresent()) {
+            return ResponseEntity.ok(loginAttemptService.login(account.get()));
         } else {
             throw new ApiLoginAttemptNotFoundException(
-                    "Admin with phone number " + telephone + " does not exists"
+                    accountType.getType() + " with phone number " + telephone + " does not exists"
             );
         }
     }
