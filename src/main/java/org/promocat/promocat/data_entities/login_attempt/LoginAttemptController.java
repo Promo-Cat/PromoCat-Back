@@ -14,6 +14,7 @@ import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.login.ApiLoginAttemptNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -79,7 +80,7 @@ public class LoginAttemptController {
         if (userRecord.isPresent()) {
             return ResponseEntity.ok(loginAttemptService.login(userRecord.get()));
         } else {
-            throw new UsernameNotFoundException(
+            throw new ApiLoginAttemptNotFoundException(
                     "User with phone number " + telephone + " does not exists"
             );
         }
@@ -146,7 +147,7 @@ public class LoginAttemptController {
         if (adminRecord.isPresent()) {
             return ResponseEntity.ok(loginAttemptService.login(adminRecord.get()));
         } else {
-            throw new UsernameNotFoundException(
+            throw new ApiLoginAttemptNotFoundException(
                     "Company with phone number " + telephone + " does not exists"
             );
         }
