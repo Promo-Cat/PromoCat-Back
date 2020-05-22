@@ -61,7 +61,17 @@ public class StockController {
         return stockService.save(stock);
     }
 
-    //TODO Response
+    @ApiOperation(value = "Generate promo-codes to stock.",
+            notes = "Returning stock with id specified in request",
+            response = StockDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/admin/company/stock/generate", method = RequestMethod.POST)
     public StockDTO generate(@RequestParam("id") Long id) {
         StockDTO stock = stockService.findById(id);
@@ -72,13 +82,6 @@ public class StockController {
         return stock;
     }
 
-    // TODO нужен ли нам этот эндпоинт?
-//    @RequestMapping(path = "/api/stock/id", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public StockDTO getStockById(@RequestBody Long id) {
-//        return stockService.findById(id);
-//    }
-
-    //TODO rewrite
     @ApiOperation(value = "Get stock by promo-code",
             notes = "Returning stock with promo-code specified in request",
             response = StockDTO.class)

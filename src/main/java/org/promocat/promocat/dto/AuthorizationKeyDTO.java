@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,10 @@ import lombok.NoArgsConstructor;
  * @author Roman Devyatilov (Fr1m3n)
  */
 
+@ApiModel(
+        value = "Authorization key",
+        description = "Authorization key used for login."
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

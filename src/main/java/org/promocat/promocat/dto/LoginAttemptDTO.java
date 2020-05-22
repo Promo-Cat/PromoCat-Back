@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
  * @author Roman Devyatilov (Fr1m3n)
  */
 
+
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
 @NoArgsConstructor

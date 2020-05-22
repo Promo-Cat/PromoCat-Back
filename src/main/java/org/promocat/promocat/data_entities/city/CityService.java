@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.city;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.CityDTO;
+import org.promocat.promocat.exception.city.ApiCityNotFoundException;
 import org.promocat.promocat.mapper.CityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,16 +63,15 @@ public class CityService {
         }
         return 0;
     }
+
     public List<CityDTO> getActiveCities() {
         Optional<List<City>> city = cityRepository.findByActiveTrue();
-        // TODO Exception
-        return city.map(cities -> cities.stream().map(cityMapper::toDto).collect(Collectors.toList())).orElse(null);
+        return city.map(cities -> cities.stream().map(cityMapper::toDto).collect(Collectors.toList())).orElse(new ArrayList<>());
     }
 
     public CityDTO findByCity(String city) {
         Optional<City> cty = cityRepository.findByCity(city);
-        // TODO Exception
-        return cityMapper.toDto(cty.orElse(null));
+        return cityMapper.toDto(cty.orElseThrow(() -> new ApiCityNotFoundException("No such city in db.")));
     }
 
     public CityDTO setActive(String city) {

@@ -1,6 +1,7 @@
 package org.promocat.promocat.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,6 +16,11 @@ import java.util.Set;
  * Created by Danil Lyskin at 20:21 12.05.2020
  */
 
+@ApiModel(
+        value = "Company",
+        description = "Object representation of company of PromoCat application.",
+        parent = AbstractAccountDTO.class
+)
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
 @AllArgsConstructor
@@ -28,7 +34,6 @@ public class CompanyDTO extends AbstractAccountDTO {
     @NotBlank(message = "ИНН организации не может быть пустым.")
     private String inn;
 
-    // TODO норм email, javax говно
     @Email
     @NotBlank(message = "Имя почты не может быть пустым.")
     private String mail;

@@ -10,6 +10,5 @@ import java.util.Optional;
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
  */
 public interface StockRepository extends JpaRepository<Stock, Long> {
-    // TODO возващать Optional
     Optional<List<Stock>> getByStartTimeLessThanAndDurationEquals(LocalDateTime time, Long days);
 }
