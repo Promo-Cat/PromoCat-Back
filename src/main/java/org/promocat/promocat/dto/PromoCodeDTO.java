@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +12,11 @@ import javax.validation.constraints.NotNull;
 /**
  * Created by Danil Lyskin at 20:44 05.05.2020
  */
+@ApiModel(
+        value = "Promo-code",
+        description = "Object representation of stocks promo-codes.",
+        parent = AbstractDTO.class
+)
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
 @NoArgsConstructor
