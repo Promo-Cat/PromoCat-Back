@@ -58,9 +58,9 @@ public class UserController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/auth/user/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO addUser(@Valid @RequestBody UserDTO user) {
+    public ResponseEntity<UserDTO> addUser(@Valid @RequestBody UserDTO user) {
         log.info("Trying to save user with telephone: " + user.getTelephone());
-        return userService.save(user);
+        return ResponseEntity.ok(userService.save(user));
     }
 
 
@@ -80,11 +80,11 @@ public class UserController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/api/user", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO getUser(@RequestHeader("token") String jwtToken) {
+    public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String jwtToken) {
         JwtReader jwtReader = new JwtReader(jwtToken);
         String telephone = jwtReader.getValue("telephone");
         log.info("Trying to find user: " + telephone);
-        return userService.findByTelephone(telephone);
+        return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
 
 
@@ -122,7 +122,7 @@ public class UserController {
                     response = ApiException.class)
     })
     @RequestMapping(value = "/admin/user/setPromoCode", method = RequestMethod.POST)
-    public UserDTO setPromoCode(@RequestParam("id") Long id, @RequestParam("promoCode") String promoCode) {
+    public ResponseEntity<UserDTO> setPromoCode(@RequestParam("id") Long id, @RequestParam("promoCode") String promoCode) {
         PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
         if (promoCodeDTO.getIsActive()) {
             throw new ApiPromoCodeActiveException(String.format("Promo-code: %s already active", promoCode));
@@ -133,7 +133,7 @@ public class UserController {
 
         promoCodeService.save(promoCodeDTO);
         userService.save(user);
-        return user;
+        return ResponseEntity.ok(user);
     }
 
     @ApiOperation(value = "Get user by telephone",
