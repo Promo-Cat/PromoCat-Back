@@ -16,8 +16,9 @@ import java.time.ZonedDateTime;
 @Slf4j
 @ControllerAdvice
 public class ApiPromoCodeExceptionHandler {
+
     @ExceptionHandler(value = {ApiPromoCodeNotFoundException.class})
-    public ResponseEntity<Object> handleNonexistentCar(ApiPromoCodeNotFoundException e) {
+    public ResponseEntity<Object> handleNonexistentPromoCode(ApiPromoCodeNotFoundException e) {
         final HttpStatus notFound = HttpStatus.NOT_FOUND;
         ApiException apiException = new ApiException(
                 e.getMessage(),
@@ -25,6 +26,18 @@ public class ApiPromoCodeExceptionHandler {
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
         log.error("Promo-code not found: " + e.getMessage());
+        return new ResponseEntity<>(apiException, notFound);
+    }
+
+    @ExceptionHandler(value = {ApiPromoCodeActiveException.class})
+    public ResponseEntity<Object> handleActivePromoCode(ApiPromoCodeActiveException e) {
+        final HttpStatus notFound = HttpStatus.NOT_FOUND;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                notFound,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Promo-code is active: " + e.getMessage());
         return new ResponseEntity<>(apiException, notFound);
     }
 }

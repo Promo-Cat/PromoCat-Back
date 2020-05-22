@@ -2,6 +2,7 @@ package org.promocat.promocat.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,18 +27,39 @@ import java.util.Set;
 @AllArgsConstructor
 public class CompanyDTO extends AbstractAccountDTO {
 
+    @ApiModelProperty(
+            value = "Company name",
+            dataType = "String",
+            required = true
+    )
     @NotBlank(message = "Имя организации не может быть пустым.")
     private String organizationName;
 
+    @ApiModelProperty(
+            value = "Company INN",
+            dataType = "String",
+            required = true,
+            allowableValues = "INN in format 10 digits format."
+    )
     @Pattern(regexp = "\\d{10}", message = "ИНН задан неверно, должен состоять из 10 цифр. " +
             "Работа ведется только с юридическими лицами.")
     @NotBlank(message = "ИНН организации не может быть пустым.")
     private String inn;
 
+    @ApiModelProperty(
+            value = "Company Email",
+            dataType = "String",
+            required = true,
+            allowableValues = "Standard email format."
+    )
     @Email
     @NotBlank(message = "Имя почты не может быть пустым.")
     private String mail;
 
+    @ApiModelProperty(
+            value = "Stocks list",
+            dataType = "List"
+    )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<StockDTO> stocks;
 
