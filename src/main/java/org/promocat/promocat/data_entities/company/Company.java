@@ -32,7 +32,6 @@ public class Company extends AbstractAccount {
     private String organizationName;
     private String inn;
     private String mail;
-    private String city;
     private Set<Stock> stocks;
 
     /**
@@ -63,15 +62,6 @@ public class Company extends AbstractAccount {
     @Column(name = "mail", unique = true)
     public String getMail() {
         return mail;
-    }
-
-    /**
-     * Город.
-     */
-    @NotBlank(message = "Город не может быть пустым.")
-    @Column(name = "city")
-    public String getCity() {
-        return city;
     }
 
     /**

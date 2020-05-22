@@ -33,7 +33,6 @@ public class CompanyTest {
     @Test
     public void testSaveCompanyWithoutOrganizationName() throws Exception {
         CompanyDTO company = new CompanyDTO();
-        company.setCity("W");
         company.setInn("1111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
@@ -47,7 +46,6 @@ public class CompanyTest {
     public void testSaveCompanyWithoutTelephone() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setOrganizationName("HHH");
-        company.setCity("W");
         company.setInn("1111111111");
         company.setMail("qwfqwf@mail.ru");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
@@ -60,7 +58,6 @@ public class CompanyTest {
     public void testSaveCompanyWithIncorrectTelephone() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setOrganizationName("HHH");
-        company.setCity("W");
         company.setInn("1111111111");
         company.setTelephone("+7(222)-222-22-22");
         company.setMail("qwfqwf@mail.ru");
@@ -74,7 +71,6 @@ public class CompanyTest {
     public void testSaveCompanyWithoutInn() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setOrganizationName("HHH");
-        company.setCity("W");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
@@ -87,7 +83,6 @@ public class CompanyTest {
     public void testSaveCompanyWithIncorrectInn1() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setOrganizationName("HHH");
-        company.setCity("W");
         company.setInn("111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
@@ -101,7 +96,6 @@ public class CompanyTest {
     public void testSaveCompanyWithIncorrectInn2() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setOrganizationName("HHH");
-        company.setCity("W");
         company.setInn("11111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
@@ -115,7 +109,6 @@ public class CompanyTest {
     public void testSaveCompanyWithoutMail() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setOrganizationName("HHH");
-        company.setCity("W");
         company.setInn("111111111");
         company.setTelephone("+7(222)222-22-22");
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
@@ -128,7 +121,6 @@ public class CompanyTest {
     public void testSaveCompanyWithIncorrectMail() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setOrganizationName("HHH");
-        company.setCity("W");
         company.setInn("111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwfmail.ru");
@@ -154,7 +146,6 @@ public class CompanyTest {
     @Test
     public void testSaveCompanyWithoutAccountType() throws Exception {
         CompanyDTO company = new CompanyDTO();
-        company.setCity("www");
         company.setOrganizationName("HHH");
         company.setInn("1111111111");
         company.setTelephone("+7(222)222-22-22");
@@ -169,7 +160,6 @@ public class CompanyTest {
     public void testSaveCorrectCompany() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setId(1L);
-        company.setCity("www");
         company.setOrganizationName("HHH");
         company.setInn("1111111111");
         company.setTelephone("+7(222)222-22-22");

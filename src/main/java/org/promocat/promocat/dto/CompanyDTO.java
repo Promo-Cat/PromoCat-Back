@@ -33,9 +33,6 @@ public class CompanyDTO extends AbstractAccountDTO {
     @NotBlank(message = "Имя почты не может быть пустым.")
     private String mail;
 
-    @NotBlank(message = "Город не может быть пустым.")
-    private String city;
-
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<StockDTO> stocks;
 
