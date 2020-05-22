@@ -41,7 +41,7 @@ public class PromoCodeMapper extends AbstractMapper<PromoCode, PromoCodeDTO> {
     }
 
     private Long getId(PromoCode source) {
-        return Objects.isNull(source) || Objects.isNull(source.getId()) ? null : source.getStock().getId();
+        return Objects.isNull(source) || Objects.isNull(source.getStock()) ? null : source.getStock().getId();
     }
 
     @Override

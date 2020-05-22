@@ -17,8 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -35,6 +34,8 @@ public class StockTest {
 
     private CompanyDTO company;
     private String token;
+    private String adminToken;
+    private Long cityId;
 
     @Before
     public void init() throws Exception {
@@ -43,17 +44,31 @@ public class StockTest {
         company.setTelephone("+7(999)243-26-49");
         company.setInn("1111111111");
         company.setMail("wqfqw@mail.ru");
-        mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
+        company.setId(1L);
+        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().isOk());
-        MvcResult key = mockMvc.perform(get("/auth/company/login?telephone=+7(999)243-26-49"))
+        MvcResult key = this.mockMvc.perform(get("/auth/company/login?telephone=+7(999)243-26-49"))
                 .andExpect(status().isOk())
                 .andReturn();
-        MvcResult tokenR = mockMvc.perform(get("/auth/token?authorizationKey="
+        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
                 + new ObjectMapper().readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
         token = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
+
+        key = this.mockMvc.perform(get("/auth/admin/login?telephone=+7(999)243-26-99"))
+                        .andExpect(status().isOk()).andReturn();
+        tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
+                        + new ObjectMapper().readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
+                        + "&code=1337")).andExpect(status().isOk())
+                        .andReturn();
+        adminToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
+        MvcResult cityR = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
+                .andExpect(status().isOk()).andReturn();
+        CityDTO city = new ObjectMapper().readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
+        cityId = city.getId();
+        System.out.println(city.getActive());
     }
 
     @Transactional
@@ -62,8 +77,9 @@ public class StockTest {
         StockDTO stock = new StockDTO();
         stock.setCityId(2L);
         stock.setStartTime(LocalDateTime.now());
-        stock.setDuration(1L);
+        stock.setDuration(7L);
         stock.setCount(1L);
+        stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
                     .content(new ObjectMapper().writeValueAsString(stock)))
@@ -76,8 +92,9 @@ public class StockTest {
         StockDTO stock = new StockDTO();
         stock.setName("www");
         stock.setStartTime(LocalDateTime.now());
-        stock.setDuration(1L);
+        stock.setDuration(7L);
         stock.setCount(1L);
+        stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(stock)))
@@ -89,9 +106,10 @@ public class StockTest {
     public void testSaveStockWithoutStartTime() throws Exception {
         StockDTO stock = new StockDTO();
         stock.setName("www");
-        stock.setCityId(2L);
-        stock.setDuration(1L);
+        stock.setCityId(cityId);
+        stock.setDuration(7L);
         stock.setCount(1L);
+        stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(stock)))
@@ -103,9 +121,10 @@ public class StockTest {
     public void testSaveStockWithoutDuration() throws Exception {
         StockDTO stock = new StockDTO();
         stock.setName("www");
-        stock.setCityId(2L);
+        stock.setCityId(cityId);
         stock.setStartTime(LocalDateTime.now());
         stock.setCount(1L);
+        stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(stock)))
@@ -117,9 +136,25 @@ public class StockTest {
     public void testSaveStockWithoutCount() throws Exception {
         StockDTO stock = new StockDTO();
         stock.setName("www");
-        stock.setCityId(2L);
+        stock.setCityId(cityId);
         stock.setStartTime(LocalDateTime.now());
-        stock.setDuration(1L);
+        stock.setDuration(7L);
+        stock.setCompanyId(company.getId());
+
+        this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(stock)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Transactional
+    @Test
+    public void testSaveStockWithoutCompanyId() throws Exception {
+        StockDTO stock = new StockDTO();
+        stock.setName("www");
+        stock.setCityId(cityId);
+        stock.setStartTime(LocalDateTime.now());
+        stock.setDuration(7L);
+        stock.setCount(1L);
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(stock)))
@@ -131,10 +166,11 @@ public class StockTest {
     public void testSaveStockWithAllCorrect() throws Exception {
         StockDTO stock = new StockDTO();
         stock.setName("www");
-        stock.setCityId(2L);
+        stock.setCityId(cityId);
         stock.setStartTime(LocalDateTime.now());
-        stock.setDuration(1L);
+        stock.setDuration(7L);
         stock.setCount(1L);
+        stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(stock)))

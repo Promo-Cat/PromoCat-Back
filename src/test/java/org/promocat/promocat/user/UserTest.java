@@ -11,10 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,11 +57,8 @@ public class UserTest {
         user.setName("I");
         user.setCityId(2L);
         user.setTelephone("+7(222)222-22-22");
-        MvcResult result = this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
                     .content(new ObjectMapper().writeValueAsString(user)))
-                    .andExpect(status().isOk()).andReturn();
-        UserDTO test = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
-        user.setId(test.getId());
-        assertEquals(test, user);
+                    .andExpect(status().isOk());
     }
 }

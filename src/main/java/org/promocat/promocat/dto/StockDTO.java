@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.constraints.StockDurationConstraint;
-import org.promocat.promocat.data_entities.city.City;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -66,7 +65,7 @@ public class StockDTO extends AbstractDTO {
             required = true
     )
     @NotNull(message = "Id города не может быть пустым.")
-    private Long cityId;
+    private Long cityId; //TODO fix documentation
 
     @ApiModelProperty(
             value = "Start time of stock",

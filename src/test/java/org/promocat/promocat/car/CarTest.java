@@ -46,13 +46,13 @@ public class CarTest {
         user.setTelephone("+7(999)243-26-99");
         user.setCityId(2L);
         user.setId(1L);
-        mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(status().isOk());
-        MvcResult key = mockMvc.perform(get("/auth/user/login?telephone=+7(999)243-26-99"))
+        MvcResult key = this.mockMvc.perform(get("/auth/user/login?telephone=+7(999)243-26-99"))
                 .andExpect(status().isOk())
                 .andReturn();
-        MvcResult tokenR = mockMvc.perform(get("/auth/token?authorizationKey="
+        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
                 + new ObjectMapper().readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
@@ -66,7 +66,7 @@ public class CarTest {
         car.setRegion("26");
         car.setUserId(1L);
 
-        mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().is4xxClientError());
     }
@@ -78,7 +78,7 @@ public class CarTest {
         car.setNumber("awfawfaf");
         car.setUserId(1L);
 
-        mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().is4xxClientError());
     }
@@ -90,7 +90,7 @@ public class CarTest {
         car.setNumber("awfawfaf");
         car.setRegion("26");
 
-        mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().is4xxClientError());
     }
@@ -103,7 +103,7 @@ public class CarTest {
         car.setRegion("26");
         car.setUserId(user.getId());
 
-        mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().isOk());
     }

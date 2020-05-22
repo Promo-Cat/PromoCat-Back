@@ -11,10 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -164,10 +162,8 @@ public class CompanyTest {
         company.setInn("1111111111");
         company.setTelephone("+7(222)222-22-22");
         company.setMail("qwfqwf@mail.ru");
-        MvcResult result = this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().isOk()).andReturn();
-        CompanyDTO test = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
-        assertEquals(company, test);
+                .andExpect(status().isOk());
     }
 }

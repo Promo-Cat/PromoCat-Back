@@ -48,6 +48,7 @@ public class Stock extends AbstractEntity {
     /**
      * Количество промокодов.
      */
+    @NotNull(message = "Количество промокодов не может быть нулем.")
     @Column(name = "count")
     public Long getCount() {
         return count;

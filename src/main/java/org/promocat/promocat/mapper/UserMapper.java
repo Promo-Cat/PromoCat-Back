@@ -2,7 +2,6 @@ package org.promocat.promocat.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.promocat.promocat.data_entities.city.CityRepository;
-import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class UserMapper extends AbstractMapper<User, UserDTO> {
     }
 
     private Long getCityId(User source) {
-        return Objects.isNull(source) || Objects.isNull(source.getId()) ? null : source.getCity().getId();
+        return Objects.isNull(source) || Objects.isNull(source.getCity()) ? null : source.getCity().getId();
     }
 
     @Override
