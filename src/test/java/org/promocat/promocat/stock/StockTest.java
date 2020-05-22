@@ -68,7 +68,6 @@ public class StockTest {
                 .andExpect(status().isOk()).andReturn();
         CityDTO city = new ObjectMapper().readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
         cityId = city.getId();
-        System.out.println(city.getActive());
     }
 
     @Transactional
