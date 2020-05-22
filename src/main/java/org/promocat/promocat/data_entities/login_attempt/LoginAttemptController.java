@@ -112,7 +112,7 @@ public class LoginAttemptController {
         if (companyRecord.isPresent()) {
             return ResponseEntity.ok(loginAttemptService.login(companyRecord.get()));
         } else {
-            throw new UsernameNotFoundException(
+            throw new ApiLoginAttemptNotFoundException(
                     "Company with phone number " + telephone + " does not exists"
             );
         }
@@ -148,7 +148,7 @@ public class LoginAttemptController {
             return ResponseEntity.ok(loginAttemptService.login(adminRecord.get()));
         } else {
             throw new ApiLoginAttemptNotFoundException(
-                    "Company with phone number " + telephone + " does not exists"
+                    "Admin with phone number " + telephone + " does not exists"
             );
         }
     }
