@@ -7,15 +7,12 @@ import lombok.Setter;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
+import org.promocat.promocat.data_entities.city.City;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 /**
@@ -30,12 +27,12 @@ import java.util.Set;
 public class User extends AbstractAccount {
 
     private String name;
-    private String city;
+    private City city;
     private Long balance = 0L;
     private Set<Car> cars;
     private Long promoCodeId;
 
-    public User(String name, String city, Long balance, Long promoCodeId) {
+    public User(String name, City city, Long balance, Long promoCodeId) {
         this.name = name;
         this.city = city;
         this.balance = balance;
@@ -55,9 +52,10 @@ public class User extends AbstractAccount {
     /**
      * Город пользователя.
      */
-    @NotBlank(message = "Город не может быть пустой")
-    @Column(name = "city")
-    public String getCity() {
+    @NotNull(message = "Город не может быть пустой")
+    @ManyToOne
+    @JoinColumn(name = "city")
+    public City getCity() {
         return city;
     }
 

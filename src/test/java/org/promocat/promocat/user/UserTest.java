@@ -34,7 +34,7 @@ public class UserTest {
     public void testSaveUserIncorrectTelephone() throws Exception {
         UserDTO user = new UserDTO();
         user.setName("I");
-        user.setCity("Here");
+        user.setCityId(2L);
         user.setTelephone("+7(222)-222-22-22");
         this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(user)))
@@ -46,7 +46,7 @@ public class UserTest {
     public void testSaveUserWithoutTelephone() throws Exception{
         UserDTO user = new UserDTO();
         user.setName("I");
-        user.setCity("Here");
+        user.setCityId(2L);
         this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(status().is4xxClientError());
@@ -58,7 +58,7 @@ public class UserTest {
         UserDTO user = new UserDTO();
         user.setId(1L);
         user.setName("I");
-        user.setCity("Here");
+        user.setCityId(2L);
         user.setTelephone("+7(222)222-22-22");
         MvcResult result = this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
                     .content(new ObjectMapper().writeValueAsString(user)))

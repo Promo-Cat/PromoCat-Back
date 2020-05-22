@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.constraints.StockDurationConstraint;
+import org.promocat.promocat.data_entities.city.City;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -39,8 +40,8 @@ public class StockDTO extends AbstractDTO {
     @NotNull(message = "Id компании не может быть пустым.")
     private Long companyId;
 
-    @NotBlank(message = "Город не может быть пустым.")
-    private String city;
+    @NotNull(message = "Id города не может быть пустым.")
+    private Long cityId;
 
     @NotNull(message = "Время начала акции не может быть пустым.")
     private LocalDateTime startTime;

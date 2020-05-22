@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @ApiModel(
@@ -25,8 +26,8 @@ public class UserDTO extends AbstractAccountDTO {
     @NotBlank(message = "Имя не может быть пустым")
     private String name;
 
-    @NotBlank(message = "Город не может быть пустой")
-    private String city;
+    @NotNull(message = "ID города не может быть пустой")
+    private Long cityId;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long balance;

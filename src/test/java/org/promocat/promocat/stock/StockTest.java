@@ -3,6 +3,7 @@ package org.promocat.promocat.stock;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.promocat.promocat.dto.CityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,7 +35,7 @@ public class StockTest {
     @Test
     public void testSaveStockWithoutName() throws Exception {
         StockDTO stock = new StockDTO();
-        stock.setCity("Here");
+        stock.setCityId(2L);
         stock.setStartTime(LocalDateTime.now());
         stock.setDuration(1L);
         stock.setCount(1L);
@@ -63,7 +64,7 @@ public class StockTest {
     public void testSaveStockWithoutStartTime() throws Exception {
         StockDTO stock = new StockDTO();
         stock.setName("www");
-        stock.setCity("Here");
+        stock.setCityId(2L);
         stock.setDuration(1L);
         stock.setCount(1L);
 
@@ -77,7 +78,7 @@ public class StockTest {
     public void testSaveStockWithoutDuration() throws Exception {
         StockDTO stock = new StockDTO();
         stock.setName("www");
-        stock.setCity("Here");
+        stock.setCityId(2L);
         stock.setStartTime(LocalDateTime.now());
         stock.setCount(1L);
 
@@ -91,7 +92,7 @@ public class StockTest {
     public void testSaveStockWithoutCount() throws Exception {
         StockDTO stock = new StockDTO();
         stock.setName("www");
-        stock.setCity("Here");
+        stock.setCityId(2L);
         stock.setStartTime(LocalDateTime.now());
         stock.setDuration(1L);
 
@@ -105,7 +106,7 @@ public class StockTest {
     public void testSaveStockWithAllCorrect() throws Exception {
         StockDTO stock = new StockDTO();
         stock.setName("www");
-        stock.setCity("Here");
+        stock.setCityId(2L);
         stock.setStartTime(LocalDateTime.now());
         stock.setDuration(1L);
         stock.setCount(1L);

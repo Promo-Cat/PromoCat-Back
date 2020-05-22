@@ -40,6 +40,7 @@ public class CarMapper extends AbstractMapper<Car, CarDTO> {
         destination.setUserId(getId(source));
     }
 
+    // TODO: МБ критическая бага (source.getId() зачем?)
     private Long getId(Car source) {
         return Objects.isNull(source) || Objects.isNull(source.getId()) ? null : source.getUser().getId();
     }

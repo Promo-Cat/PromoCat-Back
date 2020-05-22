@@ -6,16 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.constraints.StockDurationConstraint;
 import org.promocat.promocat.data_entities.AbstractEntity;
+import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -35,7 +30,7 @@ public class Stock extends AbstractEntity {
     private String name;
     private Long count;
     private Boolean isAlive;
-    private String city;
+    private City city;
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
@@ -69,9 +64,10 @@ public class Stock extends AbstractEntity {
     /**
      * Город
      */
-    @NotBlank(message = "Город не может быть пустым.")
-    @Column(name = "city")
-    public String getCity() {
+    @NotNull(message = "Город не может быть пустым.")
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    public City getCity() {
         return city;
     }
 
