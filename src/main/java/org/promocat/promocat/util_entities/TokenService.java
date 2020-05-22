@@ -58,7 +58,6 @@ public class TokenService {
         JwtReader reader = new JwtReader(token);
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         String accountType = reader.getValue("account_type").toUpperCase();
-        System.out.println(accountType);
         if (!accountType.isBlank()) {
             authorities.add(new SimpleGrantedAuthority(accountType));
         }
