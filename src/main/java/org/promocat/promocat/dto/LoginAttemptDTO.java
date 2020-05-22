@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +16,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginAttemptDTO extends AbstractDTO {
-
     private String authorizationKey;
     private String code;
     //TODO: Account type
