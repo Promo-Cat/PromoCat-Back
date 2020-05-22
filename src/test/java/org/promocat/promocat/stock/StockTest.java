@@ -1,6 +1,8 @@
 package org.promocat.promocat.stock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -165,14 +167,18 @@ public class StockTest {
     public void testSaveStockWithAllCorrect() throws Exception {
         StockDTO stock = new StockDTO();
         stock.setName("www");
-        stock.setCityId(cityId);
+        stock.setCount(1L);
         stock.setStartTime(LocalDateTime.now());
         stock.setDuration(7L);
-        stock.setCount(1L);
         stock.setCompanyId(company.getId());
+        stock.setCityId(cityId);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(stock)))
-                .andExpect(status().isOk());
+                .content(mapper.writeValueAsString(stock)))
+                .andExpect(status().is2xxSuccessful());
     }
 }
