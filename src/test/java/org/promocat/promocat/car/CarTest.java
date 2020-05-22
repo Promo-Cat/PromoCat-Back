@@ -45,6 +45,7 @@ public class CarTest {
         user.setName("I");
         user.setTelephone("+7(999)243-26-99");
         user.setCityId(2L);
+        user.setId(1L);
         mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(status().isOk());

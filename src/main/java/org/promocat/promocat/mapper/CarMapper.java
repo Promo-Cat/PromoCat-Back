@@ -41,7 +41,7 @@ public class CarMapper extends AbstractMapper<Car, CarDTO> {
     }
 
     private Long getId(Car source) {
-        return Objects.isNull(source) || Objects.isNull(source.getId()) ? null : source.getUser().getId();
+        return Objects.isNull(source) || Objects.isNull(source.getUser()) ? null : source.getUser().getId();
     }
 
     @Override
