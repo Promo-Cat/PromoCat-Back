@@ -10,6 +10,7 @@ import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.promo_code.ApiPromoCodeActiveException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +114,9 @@ public class UserController {
             @ApiResponse(code = 404,
                     message = "User not found",
                     response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Promo-code not found",
+                    response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
                     response = ApiException.class)
@@ -121,7 +125,7 @@ public class UserController {
     public UserDTO setPromoCode(@RequestParam("id") Long id, @RequestParam("promoCode") String promoCode) {
         PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
         if (promoCodeDTO.getIsActive()) {
-            return null; //TODO Exception
+            throw new ApiPromoCodeActiveException(String.format("Promo-code: %s already active", promoCode));
         }
         promoCodeDTO.setIsActive(true);
         UserDTO user = userService.findById(id);
