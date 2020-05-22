@@ -31,8 +31,6 @@ public class User extends AbstractAccount {
 
     private String name;
     private String city;
-
-    // TODO columnDef not working HELP!
     private Long balance = 0L;
     private Set<Car> cars;
     private Long promoCodeId;

@@ -44,7 +44,6 @@ public class ApiValidationHandler {
     @ExceptionHandler(value = {ConstraintViolationException.class})
     public ResponseEntity<ApiException> handleSQLException(ConstraintViolationException ex) {
         final HttpStatus conflict = HttpStatus.CONFLICT;
-        // TODO адекватное сообщение?
         ApiException apiException = new ApiException(
                 ex.getSQLException().getSQLState(),
                 conflict,
