@@ -61,7 +61,7 @@ public class StockService {
         return result;
     }
 
-    @Scheduled(cron = "59 30 17 * * *")
+    @Scheduled(cron = "59 41 17 * * *")
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info(String.format("Clear stock with end time after: %d", day));
