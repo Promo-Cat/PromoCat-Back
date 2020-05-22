@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
+import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -31,10 +33,12 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
+    private final PromoCodeService promoCodeService;
 
     @Autowired
-    public UserController(final UserService userService) {
+    public UserController(final UserService userService, final PromoCodeService promoCodeService) {
         this.userService = userService;
+        this.promoCodeService = promoCodeService;
     }
 
     @ApiOperation(value = "Registering user",
@@ -100,6 +104,32 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserById(@RequestParam("id") Long id) {
         log.info(String.format("Admin trying to get user with id: %d", id));
         return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @ApiOperation(value = "Set user's promoCode",
+            notes = "Returning user, whose id specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/user/setPromoCode", method = RequestMethod.POST)
+    public UserDTO setPromoCode(@RequestParam("id") Long id, @RequestParam("promoCode") String promoCode) {
+        PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
+        if (promoCodeDTO.getIsActive()) {
+            return null; //TODO Exception
+        }
+        promoCodeDTO.setIsActive(true);
+        UserDTO user = userService.findById(id);
+        user.setPromoCodeDTOId(promoCodeDTO.getId());
+
+        promoCodeService.save(promoCodeDTO);
+        userService.save(user);
+        return user;
     }
 
     @ApiOperation(value = "Get user by telephone",

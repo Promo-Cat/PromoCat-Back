@@ -1,9 +1,13 @@
 package org.promocat.promocat.car;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.CarDTO;
+import org.promocat.promocat.dto.TokenDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,8 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,29 +34,28 @@ public class CarTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Transactional
-    @Test
-    public void testSaveCarWithoutCarMake() throws Exception {
-        CarDTO car = new CarDTO();
-        car.setUserId(1L);
-        car.setNumber("awfawfaf");
-        car.setRegion("26");
+    private UserDTO user;
 
-        mockMvc.perform(post("/api/user/car").contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(car)))
-                .andExpect(status().is4xxClientError());
-    }
+    private String token;
 
     @Transactional
-    @Test
-    public void testSaveCarWithoutColor() throws Exception {
-        CarDTO car = new CarDTO();
-        car.setNumber("awfawfaf");
-        car.setRegion("26");
-
-        mockMvc.perform(post("/api/user/car").contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(car)))
-                .andExpect(status().is4xxClientError());
+    @Before
+    public void init() throws Exception {
+        user = new UserDTO();
+        user.setName("I");
+        user.setTelephone("+7(999)243-26-99");
+        user.setCity("Here");
+        mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().isOk());
+        MvcResult key = mockMvc.perform(get("/auth/user/login?telephone=+7(999)243-26-99"))
+                .andExpect(status().isOk())
+                .andReturn();
+        MvcResult tokenR = mockMvc.perform(get("/auth/token?authorizationKey="
+                + new ObjectMapper().readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
+                + "&code=1337")).andExpect(status().isOk())
+                .andReturn();
+        token = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
     }
 
     @Transactional
@@ -58,8 +63,9 @@ public class CarTest {
     public void testSaveCarWithoutNumber() throws Exception {
         CarDTO car = new CarDTO();
         car.setRegion("26");
+        car.setUserId(1L);
 
-        mockMvc.perform(post("/api/user/car").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().is4xxClientError());
     }
@@ -69,8 +75,21 @@ public class CarTest {
     public void testSaveCarWithoutRegion() throws Exception {
         CarDTO car = new CarDTO();
         car.setNumber("awfawfaf");
+        car.setUserId(1L);
 
-        mockMvc.perform(post("/api/user/car").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(car)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Transactional
+    @Test
+    public void testSaveCarWithoutUserId() throws Exception {
+        CarDTO car = new CarDTO();
+        car.setNumber("awfawfaf");
+        car.setRegion("26");
+
+        mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().is4xxClientError());
     }
@@ -81,8 +100,9 @@ public class CarTest {
         CarDTO car = new CarDTO();
         car.setNumber("awfawfaf");
         car.setRegion("26");
+        car.setUserId(user.getId());
 
-        mockMvc.perform(post("/api/user/car").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().isOk());
     }

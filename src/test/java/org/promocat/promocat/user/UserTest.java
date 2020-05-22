@@ -56,7 +56,6 @@ public class UserTest {
     @Test
     public void testSaveUserWithAllCorrect() throws Exception {
         UserDTO user = new UserDTO();
-        user.setId(1L);
         user.setName("I");
         user.setCity("Here");
         user.setTelephone("+7(222)222-22-22");
@@ -64,6 +63,7 @@ public class UserTest {
                     .content(new ObjectMapper().writeValueAsString(user)))
                     .andExpect(status().isOk()).andReturn();
         UserDTO test = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+        user.setId(test.getId());
         assertEquals(test, user);
     }
 }
