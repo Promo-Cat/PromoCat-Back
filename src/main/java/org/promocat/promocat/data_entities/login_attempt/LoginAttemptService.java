@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.admin.Admin;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.AuthorizationKeyDTO;
@@ -59,13 +60,14 @@ public class LoginAttemptService {
      * @return Экземпляр объекта попытки входа, сохранённого в бд
      */
     public LoginAttempt create(AbstractAccount user) {
-        AccountType accountType = AccountType.ADMIN;
+        AccountType accountType = null;
         if (user instanceof User) {
             accountType = AccountType.USER;
         } else if (user instanceof Company) {
             accountType = AccountType.COMPANY;
+        } else if (user instanceof Admin) {
+            accountType = AccountType.ADMIN;
         } else {
-            // TODO: Сделать админа
             log.error("Undefined type of account");
         }
         LoginAttempt res = new LoginAttempt(accountType);
@@ -130,6 +132,18 @@ public class LoginAttemptService {
     public void delete(LoginAttempt attemptDTO) {
         log.info("Trying to delete LoginAttempt with authorization key {}", attemptDTO.getAuthorizationKey());
         loginAttemptRepository.delete(attemptDTO);
+    }
+
+    public Optional<LoginAttempt> get(AccountType accountType, String telephone) {
+        return loginAttemptRepository.getByAccountTypeAndTelephone(accountType, telephone);
+    }
+
+    public void deleteIfExists(AccountType accountType, String telephone) {
+        Optional<LoginAttempt> loginAttempt = get(accountType, telephone);
+        if (loginAttempt.isPresent()) {
+            log.info("Found another login attempt for account with number {}. Deleting it...", telephone);
+            loginAttemptRepository.delete(loginAttempt.get());
+        }
     }
 
 }

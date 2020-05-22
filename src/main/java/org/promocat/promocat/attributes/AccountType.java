@@ -1,5 +1,7 @@
 package org.promocat.promocat.attributes;
 
+import org.promocat.promocat.exception.login.ApiLoginAttemptNotFoundException;
+
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 20:26 15.05.2020
  */
@@ -20,8 +22,7 @@ public enum AccountType {
                 return value;
             }
         }
-        //TODO: TRY TO CATCH THIS, MAX
-        throw new RuntimeException("Account type: " + str + " doesn`t exist");
+        throw new ApiLoginAttemptNotFoundException("Account type: " + str + " doesn`t exist");
     }
 
     private final Long id;

@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,6 +11,9 @@ import java.io.Serializable;
 @Data
 public abstract class AbstractDTO implements Serializable {
 
+    @ApiModelProperty(
+            hidden = true
+    )
     private Long id;
 
 }

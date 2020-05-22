@@ -57,13 +57,11 @@ public class StockService {
             for (Stock stock : optional.get()) {
                 result.add(mapper.toDto(stock));
             }
-        } else {
-            return null; //TODO Exceptional
         }
         return result;
     }
 
-    @Scheduled(cron = "* 59 23 * * *")
+    @Scheduled(cron = "59 59 23 * * *")
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info(String.format("Clear stock with end time after: %d", day));
