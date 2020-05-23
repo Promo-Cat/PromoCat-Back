@@ -52,6 +52,7 @@ public class AdminService {
         Admin record = new Admin();
         record.setAccountType(AccountType.ADMIN);
         record.setTelephone(telephone);
+        log.info("New admin added to DB");
         return adminMapper.toDto(adminRepository.save(record));
     }
 
