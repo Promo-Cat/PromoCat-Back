@@ -24,11 +24,11 @@ public class EmailSender {
 
     public void send() throws MessagingException {
         MimeMessage msg = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(msg);
+        MimeMessageHelper helper = new MimeMessageHelper(msg, true);
 
         helper.setTo("lyskin-2013@mail.ru");
         helper.setSubject("PromoCodes");
-        helper.addAttachment("promo-code", Paths.get("src", "main", "resources", "promo-code.txt").toFile());
+        helper.addAttachment("promo-code.txt", Paths.get("src", "main", "resources", "promo-code.txt").toFile());
         javaMailSender.send(msg);
     }
 }
