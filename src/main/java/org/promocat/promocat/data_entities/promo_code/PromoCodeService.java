@@ -69,7 +69,7 @@ public class PromoCodeService {
         }
         try (FileWriter writer = new FileWriter(new File("src/main/resources/promo-code.txt"))) {
             for (PromoCodeDTO code : codes) {
-                writer.write(code + "\n");
+                writer.write(code.getPromoCode() + "\n");
             }
             emailSender.send();
         } catch (IOException e) {
