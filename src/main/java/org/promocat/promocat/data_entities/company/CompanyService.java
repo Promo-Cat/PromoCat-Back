@@ -24,11 +24,22 @@ public class CompanyService {
         this.repository = repository;
     }
 
+    /**
+     * Сохранение компании в БД.
+     * @param dto объектное представление компании.
+     * @return представление комании в БД.
+     */
     public CompanyDTO save(final CompanyDTO dto) {
         log.info("Trying to save company with telephone: {}", dto.getTelephone());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
+    /**
+     * Поиск компании по {@code id}.
+     * @param id компании.
+     * @return представление компании в БД.
+     * @throws ApiCompanyNotFoundException если такой компании не существует.
+     */
     public CompanyDTO findById(final Long id) {
         Optional<Company> company = repository.findById(id);
         if (company.isPresent()) {
@@ -40,6 +51,12 @@ public class CompanyService {
         }
     }
 
+    /**
+     * Поиск компании по номеру телефона.
+     * @param telephone номер телефона.
+     * @return представление компании в БД.
+     * @throws ApiCompanyNotFoundException если такой компании не существует.
+     */
     public CompanyDTO findByTelephone(final String telephone) {
         Optional<Company> company = repository.findByTelephone(telephone);
         if (company.isPresent()) {
@@ -51,6 +68,12 @@ public class CompanyService {
         }
     }
 
+    /**
+     * Поиск компании по имени организации.
+     * @param organizationName имя организации.
+     * @return представление компании в БД.
+     * @throws ApiCompanyNotFoundException если такой компании не существует.
+     */
     public CompanyDTO findByOrganizationName(final String organizationName) {
         Optional<Company> company = repository.findByOrganizationName(organizationName);
         if (company.isPresent()) {
@@ -62,6 +85,12 @@ public class CompanyService {
         }
     }
 
+    /**
+     * Поиск компании по почте.
+     * @param mail почта компании.
+     * @return представление компании в БД.
+     * @throws ApiCompanyNotFoundException если такой компании не существует.
+     */
     public CompanyDTO findByMail(final String mail) {
         Optional<Company> company = repository.findByMail(mail);
         if (company.isPresent()) {

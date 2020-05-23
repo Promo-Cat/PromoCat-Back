@@ -37,8 +37,8 @@ public class CarService {
     }
 
     /**
-     * Поиск автомобиля по id.
-     * @param id id автомобиля.
+     * Поиск автомобиля по {@code id}.
+     * @param id автомобиля.
      * @return представление автомобиля, хранящееся в БД {@link CarDTO}.
      * @throws ApiCarNotFoundException если не найден автомобиль в БД.
      */
