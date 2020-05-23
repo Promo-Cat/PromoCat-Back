@@ -26,11 +26,22 @@ public class CarService {
         this.mapper = mapper;
     }
 
+    /**
+     * Сохранение автомобиля в БД.
+     * @param dto объектное представление автомобиля.
+     * @return представление автомобиля, хранящееся в БД.
+     */
     public CarDTO save(final CarDTO dto) {
         log.info("Saving car with number: [{}] and region: [{}]", dto.getNumber(), dto.getRegion());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
+    /**
+     * Поиск автомобиля по id.
+     * @param id id автомобиля.
+     * @return представление автомобиля, хранящееся в БД.
+     * @throws ApiCarNotFoundException если не найден автомобиль в БД.
+     */
     public CarDTO findByID(final Long id) {
         Optional<Car> car = repository.findById(id);
         if (car.isPresent()) {
@@ -42,6 +53,13 @@ public class CarService {
         }
     }
 
+    /**
+     * Поиск автомобиля по гос. номеру.
+     * @param number номер автомобиля.
+     * @param region регион автомобиля.
+     * @return представление автомобиля, хранящееся в БД.
+     * @throws ApiCarNotFoundException если не найден автомобиль в БД.
+     */
     public CarDTO findByNumberAndRegion(final String number, final String region) {
         Optional<Car> car = repository.findByNumberAndRegion(number, region);
         if (car.isPresent()) {
