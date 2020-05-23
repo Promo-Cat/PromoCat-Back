@@ -37,11 +37,22 @@ public class StockService {
         this.promoCodeService = promoCodeService;
     }
 
+    /**
+     * Сохранеие акции.
+     * @param dto объектное представление акции.
+     * @return представление акции в БД. {@link StockDTO}
+     */
     public StockDTO save(final StockDTO dto) {
         log.info("Saving stock with name: {}", dto.getName());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
+    /**
+     * Поиск акции по id.
+     * @param id акции.
+     * @return представление акции в БД. {@link StockDTO}
+     * @throws ApiStockNotFoundException если акция не найдена.
+     */
     public StockDTO findById(final Long id) {
         Optional<Stock> stock = repository.findById(id);
         if (stock.isPresent()) {
@@ -52,6 +63,12 @@ public class StockService {
         }
     }
 
+    /**
+     * Получение просроченных акций.
+     * @param time стартовая дата.
+     * @param days длительность акции
+     * @return список прросроченных акций. {@link List<StockDTO>}
+     */
     private List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
         log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
                 time, days);
@@ -65,6 +82,9 @@ public class StockService {
         return result;
     }
 
+    /**
+     * Удаление всеъ просроченных промокодов и установка акций в неактивное состояние.
+     */
     @Scheduled(cron = "59 59 23 * * *")
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
@@ -81,6 +101,12 @@ public class StockService {
         }
     }
 
+    /**
+     * Установка активности акции
+     * @param id акции
+     * @param active требуемое состояние {@code true} активно, {@code false} неактивно. {@code null} неизвестно.
+     * @return представление акциив  БД. {@link StockDTO}
+     */
     public StockDTO setActive(final Long id, final Boolean active) {
         log.info("Setting stock: {} active: {}", id, active);
         StockDTO stock = findById(id);
