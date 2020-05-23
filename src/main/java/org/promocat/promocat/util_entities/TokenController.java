@@ -30,8 +30,6 @@ import java.util.Optional;
 @Slf4j
 public class TokenController {
 
-    // TODO А че тут ептыть происходит?
-
     private final LoginAttemptService loginAttemptService;
     private final TokenService tokenService;
     private final AccountRepositoryManager accountRepositoryManager;
