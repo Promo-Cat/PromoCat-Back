@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.nio.file.Paths;
 
 /**
  * Created by Danil Lyskin at 17:42 23.05.2020
@@ -26,9 +27,8 @@ public class EmailSender {
         MimeMessageHelper helper = new MimeMessageHelper(msg);
 
         helper.setTo("lyskin-2013@mail.ru");
-        helper.setSubject("Test mail from PromoCat");
-        helper.setText("Hi, I'm you");
-
+        helper.setSubject("PromoCodes");
+        helper.addAttachment("promo-code", Paths.get("src", "main", "resources", "promo-code.txt").toFile());
         javaMailSender.send(msg);
     }
 }

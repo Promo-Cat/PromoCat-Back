@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -64,8 +67,13 @@ public class PromoCodeService {
             }
             codes.add(new PromoCodeDTO(code, stockId, false));
         }
-        try {
+        try (FileWriter writer = new FileWriter(new File("src/main/resources/promo-code.txt"))) {
+            for (PromoCodeDTO code : codes) {
+                writer.write(code + "\n");
+            }
             emailSender.send();
+        } catch (IOException e) {
+            System.out.printf("An exception occurs %s", e.getMessage());
         } catch (MessagingException e) {
             e.printStackTrace();
         }
