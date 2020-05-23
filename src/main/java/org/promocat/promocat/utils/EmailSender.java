@@ -28,6 +28,7 @@ public class EmailSender {
 
         helper.setTo("lyskin-2013@mail.ru");
         helper.setSubject("PromoCodes");
+        helper.setText("");
         helper.addAttachment("promo-code.txt", Paths.get("src", "main", "resources", "promo-code.txt").toFile());
         javaMailSender.send(msg);
     }

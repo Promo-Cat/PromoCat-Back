@@ -71,9 +71,11 @@ public class PromoCodeService {
             for (PromoCodeDTO code : codes) {
                 writer.write(code.getPromoCode() + "\n");
             }
-            emailSender.send();
         } catch (IOException e) {
             System.out.printf("An exception occurs %s", e.getMessage());
+        }
+        try {
+            emailSender.send();
         } catch (MessagingException e) {
             e.printStackTrace();
         }
