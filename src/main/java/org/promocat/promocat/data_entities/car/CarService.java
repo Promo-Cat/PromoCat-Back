@@ -29,7 +29,7 @@ public class CarService {
     /**
      * Сохранение автомобиля в БД.
      * @param dto объектное представление автомобиля.
-     * @return представление автомобиля, хранящееся в БД.
+     * @return представление автомобиля, хранящееся в БД {@link CarDTO}.
      */
     public CarDTO save(final CarDTO dto) {
         log.info("Saving car with number: [{}] and region: [{}]", dto.getNumber(), dto.getRegion());
@@ -39,7 +39,7 @@ public class CarService {
     /**
      * Поиск автомобиля по id.
      * @param id id автомобиля.
-     * @return представление автомобиля, хранящееся в БД.
+     * @return представление автомобиля, хранящееся в БД {@link CarDTO}.
      * @throws ApiCarNotFoundException если не найден автомобиль в БД.
      */
     public CarDTO findByID(final Long id) {
@@ -57,7 +57,7 @@ public class CarService {
      * Поиск автомобиля по гос. номеру.
      * @param number номер автомобиля.
      * @param region регион автомобиля.
-     * @return представление автомобиля, хранящееся в БД.
+     * @return представление автомобиля, хранящееся в БД. {@link CarDTO}
      * @throws ApiCarNotFoundException если не найден автомобиль в БД.
      */
     public CarDTO findByNumberAndRegion(final String number, final String region) {
