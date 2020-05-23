@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.company;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class CompanyService {
     /**
      * Сохранение компании в БД.
      * @param dto объектное представление компании.
-     * @return представление комании в БД.
+     * @return представление комании в БД. {@link CompanyDTO}
      */
     public CompanyDTO save(final CompanyDTO dto) {
         log.info("Trying to save company with telephone: {}", dto.getTelephone());
@@ -37,7 +38,7 @@ public class CompanyService {
     /**
      * Поиск компании по {@code id}.
      * @param id компании.
-     * @return представление компании в БД.
+     * @return представление компании в БД. {@link CompanyDTO}
      * @throws ApiCompanyNotFoundException если такой компании не существует.
      */
     public CompanyDTO findById(final Long id) {
@@ -54,7 +55,7 @@ public class CompanyService {
     /**
      * Поиск компании по номеру телефона.
      * @param telephone номер телефона.
-     * @return представление компании в БД.
+     * @return представление компании в БД. {@link CompanyDTO}
      * @throws ApiCompanyNotFoundException если такой компании не существует.
      */
     public CompanyDTO findByTelephone(final String telephone) {
@@ -71,7 +72,7 @@ public class CompanyService {
     /**
      * Поиск компании по имени организации.
      * @param organizationName имя организации.
-     * @return представление компании в БД.
+     * @return представление компании в БД. {@link CompanyDTO}
      * @throws ApiCompanyNotFoundException если такой компании не существует.
      */
     public CompanyDTO findByOrganizationName(final String organizationName) {
@@ -88,7 +89,7 @@ public class CompanyService {
     /**
      * Поиск компании по почте.
      * @param mail почта компании.
-     * @return представление компании в БД.
+     * @return представление компании в БД. {@link CompanyDTO}
      * @throws ApiCompanyNotFoundException если такой компании не существует.
      */
     public CompanyDTO findByMail(final String mail) {
