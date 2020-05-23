@@ -97,10 +97,10 @@ public class TokenController {
         //noinspection rawtypes
         AbstractAccountRepository repository = accountRepositoryManager.getRepository(accountType);
         if (repository.getByToken(token).isPresent()) {
-            log.info(String.format("Token valid: %s", token));
+            log.info("Token valid: {}", token);
             return ResponseEntity.ok("{}");
         } else {
-            log.warn(String.format("Token invalid: %s", token));
+            log.warn("Token invalid: {}", token);
             return new ResponseEntity<>("{}",HttpStatus.NOT_FOUND);
         }
     }
