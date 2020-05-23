@@ -8,9 +8,14 @@ import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeNotFoundException;
 import org.promocat.promocat.mapper.PromoCodeMapper;
+import org.promocat.promocat.utils.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +29,13 @@ public class PromoCodeService {
 
     private final PromoCodeMapper mapper;
     private final PromoCodeRepository repository;
+    private final EmailSender emailSender;
 
     @Autowired
-    public PromoCodeService(final PromoCodeMapper mapper, final PromoCodeRepository repository) {
+    public PromoCodeService(final PromoCodeMapper mapper, final PromoCodeRepository repository, final EmailSender emailSender) {
         this.mapper = mapper;
         this.repository = repository;
+        this.emailSender = emailSender;
     }
 
     /**
@@ -90,6 +97,18 @@ public class PromoCodeService {
                 continue;
             }
             codes.add(new PromoCodeDTO(code, stockId, false));
+        }
+        try (FileWriter writer = new FileWriter(new File("src/main/resources/promo-code.txt"))) {
+            for (PromoCodeDTO code : codes) {
+                writer.write(code.getPromoCode() + "\n");
+            }
+        } catch (IOException e) {
+            System.out.printf("An exception occurs %s", e.getMessage());
+        }
+        try {
+            emailSender.send();
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
         return codes;
     }
