@@ -38,9 +38,14 @@ public class StockTest {
     private String token;
     private String adminToken;
     private Long cityId;
+    private ObjectMapper mapper;
 
     @Before
     public void init() throws Exception {
+        mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         company = new CompanyDTO();
         company.setOrganizationName("I");
         company.setTelephone("+7(999)243-26-49");
@@ -48,13 +53,13 @@ public class StockTest {
         company.setMail("wqfqw@mail.ru");
         company.setId(1L);
         this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(company)))
+                .content(mapper.writeValueAsString(company)))
                 .andExpect(status().isOk());
         MvcResult key = this.mockMvc.perform(get("/auth/company/login?telephone=+7(999)243-26-49"))
                 .andExpect(status().isOk())
                 .andReturn();
         MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
-                + new ObjectMapper().readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
+                + mapper.readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
         token = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
@@ -62,13 +67,13 @@ public class StockTest {
         key = this.mockMvc.perform(get("/auth/admin/login?telephone=+7(999)243-26-99"))
                         .andExpect(status().isOk()).andReturn();
         tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
-                        + new ObjectMapper().readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
+                        + mapper.readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
                         + "&code=1337")).andExpect(status().isOk())
                         .andReturn();
-        adminToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
+        adminToken = mapper.readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
         MvcResult cityR = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
                 .andExpect(status().isOk()).andReturn();
-        CityDTO city = new ObjectMapper().readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
+        CityDTO city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
         cityId = city.getId();
     }
 
@@ -83,7 +88,7 @@ public class StockTest {
         stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                    .content(new ObjectMapper().writeValueAsString(stock)))
+                    .content(mapper.writeValueAsString(stock)))
                     .andExpect(status().is4xxClientError());
     }
 
@@ -98,7 +103,7 @@ public class StockTest {
         stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(stock)))
+                .content(mapper.writeValueAsString(stock)))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -113,7 +118,7 @@ public class StockTest {
         stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(stock)))
+                .content(mapper.writeValueAsString(stock)))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -143,7 +148,7 @@ public class StockTest {
         stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(stock)))
+                .content(mapper.writeValueAsString(stock)))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -158,7 +163,7 @@ public class StockTest {
         stock.setCount(1L);
 
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(stock)))
+                .content(mapper.writeValueAsString(stock)))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -173,12 +178,8 @@ public class StockTest {
         stock.setCompanyId(company.getId());
         stock.setCityId(cityId);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(stock)))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().isOk());
     }
 }
