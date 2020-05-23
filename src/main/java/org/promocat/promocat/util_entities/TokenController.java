@@ -30,6 +30,8 @@ import java.util.Optional;
 @Slf4j
 public class TokenController {
 
+    // TODO А че тут ептыть происходит?
+
     private final LoginAttemptService loginAttemptService;
     private final TokenService tokenService;
     private final AccountRepositoryManager accountRepositoryManager;
@@ -67,10 +69,11 @@ public class TokenController {
         if (accountRecord.isPresent()) {
             AbstractAccount account = accountRecord.get();
             try {
-                log.info(String.format("User with telephone: %s and auth key: %s got token",
-                        account.getTelephone(), loginAttempt.getAuthorizationKey()));
+                log.info("Account with telephone: {} and auth key: {} got token",
+                        account.getTelephone(), loginAttempt.getAuthorizationKey());
                 return new ResponseEntity<>(new TokenDTO(tokenService.getToken(account.getTelephone(), account.getAccountType())), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
+                // TODO нормальный эксепшен
                 throw new UsernameNotFoundException(e.getMessage());
             }
         } else {

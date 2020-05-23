@@ -43,7 +43,6 @@ public class CityController {
     })
     @RequestMapping(value = "/auth/cities/active", method = RequestMethod.GET)
     public ResponseEntity<List<CityDTO>> getActiveCities() {
-        log.info("Getting active cities");
         return ResponseEntity.ok(service.getActiveCities());
     }
 
@@ -62,7 +61,6 @@ public class CityController {
     })
     @RequestMapping(value = "/admin/city", method = RequestMethod.GET)
     public ResponseEntity<CityDTO> getCity(@RequestParam("city") String city) {
-        log.info("Trying to get information about city: {}", city);
         return ResponseEntity.ok(service.findByCity(city));
     }
 
@@ -79,7 +77,6 @@ public class CityController {
     })
     @RequestMapping(value = "/admin/city/active", method = RequestMethod.PUT)
     public ResponseEntity<CityDTO> activateCity(@RequestParam("city") String city) {
-        log.info("Trying to activate city: {}", city);
         return ResponseEntity.ok(service.setActive(city));
     }
 }
