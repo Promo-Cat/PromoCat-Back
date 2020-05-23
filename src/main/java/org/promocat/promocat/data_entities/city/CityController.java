@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.CityDTO;
 import org.promocat.promocat.dto.StockDTO;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @RestController
 @Api(tags = {SpringFoxConfig.CITY})
+@Slf4j
 public class CityController {
 
     private final CityService service;
@@ -41,6 +43,7 @@ public class CityController {
     })
     @RequestMapping(value = "/auth/cities/active", method = RequestMethod.GET)
     public ResponseEntity<List<CityDTO>> getActiveCities() {
+        log.info("Getting active cities");
         return ResponseEntity.ok(service.getActiveCities());
     }
 
@@ -59,6 +62,7 @@ public class CityController {
     })
     @RequestMapping(value = "/admin/city", method = RequestMethod.GET)
     public ResponseEntity<CityDTO> getCity(@RequestParam("city") String city) {
+        log.info("Trying to get information about city: {}", city);
         return ResponseEntity.ok(service.findByCity(city));
     }
 
@@ -75,6 +79,7 @@ public class CityController {
     })
     @RequestMapping(value = "/admin/city/active", method = RequestMethod.PUT)
     public ResponseEntity<CityDTO> activateCity(@RequestParam("city") String city) {
+        log.info("Trying to activate city: {}", city);
         return ResponseEntity.ok(service.setActive(city));
     }
 }

@@ -46,6 +46,7 @@ public class PromoCodeController {
     })
     @RequestMapping(path = "/admin/promoCode/id", method = RequestMethod.GET)
     public ResponseEntity<PromoCodeDTO> getPromoCodeById(@RequestParam("id") Long id) {
+        log.info("Admin trying to get promo-code by id: {}", id);
         return ResponseEntity.ok(promoCodeService.findById(id));
     }
 
@@ -62,6 +63,7 @@ public class PromoCodeController {
     })
     @RequestMapping(path = "/admin/promoCode/promoCode", method = RequestMethod.GET)
     public ResponseEntity<PromoCodeDTO> getPromoCodeByPromoCode(@RequestParam("promoCode") String promoCode) {
+        log.info("Admin trying to get promo-code: {}", promoCode);
         return ResponseEntity.ok(promoCodeService.findByPromoCode(promoCode));
     }
 }

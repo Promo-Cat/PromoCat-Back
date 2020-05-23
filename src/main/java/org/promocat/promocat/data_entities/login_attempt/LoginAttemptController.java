@@ -40,20 +40,14 @@ import java.util.Optional;
 @Api(tags = {SpringFoxConfig.LOGIN})
 public class LoginAttemptController {
 
-    private final UserRepository userRepository;
-    private final CompanyRepository companyRepository;
     private final LoginAttemptService loginAttemptService;
     private final AdminService adminService;
     private final AccountRepositoryManager accountRepositoryManager;
 
     @Autowired
-    public LoginAttemptController(final UserRepository userRepository,
-                                  final CompanyRepository companyRepository,
-                                  final LoginAttemptService loginAttemptService,
+    public LoginAttemptController(final LoginAttemptService loginAttemptService,
                                   final AdminService adminService,
                                   final AccountRepositoryManager accountRepositoryManager) {
-        this.userRepository = userRepository;
-        this.companyRepository = companyRepository;
         this.loginAttemptService = loginAttemptService;
         this.adminService = adminService;
         this.accountRepositoryManager = accountRepositoryManager;
@@ -81,6 +75,7 @@ public class LoginAttemptController {
     })
     @RequestMapping(value = "/user/login", method = RequestMethod.GET)
     public ResponseEntity<AuthorizationKeyDTO> loginUser(@Valid @RequestParam("telephone") String telephone) {
+        log.info("Trying to login user, telephone: {}", telephone);
         return login(AccountType.USER, telephone);
     }
 
@@ -106,6 +101,7 @@ public class LoginAttemptController {
     })
     @RequestMapping(value = "/company/login", method = RequestMethod.GET)
     public ResponseEntity<AuthorizationKeyDTO> loginCompany(@Valid @RequestParam("telephone") String telephone) {
+        log.info("Trying to login company, telephone: {}", telephone);
         return login(AccountType.COMPANY, telephone);
     }
 
@@ -131,9 +127,12 @@ public class LoginAttemptController {
     })
     @RequestMapping(value = "/admin/login", method = RequestMethod.GET)
     public ResponseEntity<AuthorizationKeyDTO> loginAdmin(@Valid @RequestParam("telephone") String telephone) {
+        log.info("Trying to login admin with telephone: {}", telephone);
         if (!adminService.isAdmin(telephone)) {
+            log.error("User with telephone: {} is not admin", telephone);
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        log.info("Admin logged in, telephone: {}", telephone);
         return login(AccountType.ADMIN, telephone);
     }
 

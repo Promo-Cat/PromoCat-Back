@@ -57,7 +57,7 @@ public class StockController {
     })
     @RequestMapping(path = "/api/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public StockDTO addStock(@Valid @RequestBody StockDTO stock) {
-        log.info(String.format("Trying to save stock from company: %d", stock.getCompanyId()));
+        log.info("Trying to save stock from company: {}", stock.getCompanyId());
         return stockService.save(stock);
     }
 
@@ -76,6 +76,7 @@ public class StockController {
     public StockDTO generate(@RequestParam("id") Long id) {
         StockDTO stock = stockService.findById(id);
         if (Objects.isNull(stock.getIsAlive())) {
+            log.info("Generating promo-codes to stock with id: {}", id);
             stockService.setActive(id, true);
             return promoCodeService.savePromoCodes(stock);
         }
@@ -98,6 +99,7 @@ public class StockController {
     })
     @RequestMapping(path = "/api/promoCode/stock", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> getStockByPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
+        log.info("Trying to get stock by promo-code {}, id: {}", promoCodeDTO.getPromoCode(), promoCodeDTO.getId());
         return ResponseEntity.ok(stockService.findById(promoCodeDTO.getStockId()));
     }
 
@@ -116,6 +118,7 @@ public class StockController {
     })
     @RequestMapping(path = "/admin/stock/id", method = RequestMethod.GET)
     public ResponseEntity<StockDTO> getStockById(@RequestParam("id") Long id) {
+        log.info("Trying to get stock by id: {}", id);
         return ResponseEntity.ok(stockService.findById(id));
     }
 }
