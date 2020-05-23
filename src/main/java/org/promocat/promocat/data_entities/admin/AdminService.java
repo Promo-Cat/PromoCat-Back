@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.admin;
 
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.dto.AdminDTO;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class AdminService {
 
     private final AdminRepository adminRepository;
@@ -49,6 +51,10 @@ public class AdminService {
 
     // TODO проверить на существование админа и кинуть ошибку
     public void delete(Long id) {
+        if (!adminRepository.existsById(id)) {
+
+            throw new ApiAdminNotFoundException(String.format("Admin with id %d not found", id));
+        }
         adminRepository.deleteById(id);
     }
 }
