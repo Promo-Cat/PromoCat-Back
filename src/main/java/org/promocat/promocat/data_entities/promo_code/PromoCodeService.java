@@ -31,11 +31,22 @@ public class PromoCodeService {
         this.repository = repository;
     }
 
+    /**
+     * Сохранение промокода в БД.
+     * @param dto объектное представление промо-кода.
+     * @return представление промо-кода в БД. {@link PromoCodeDTO}
+     */
     public PromoCodeDTO save(PromoCodeDTO dto) {
         log.info("Trying to save promo-code: {} to stock id: {}", dto.getPromoCode(), dto.getStockId());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
+    /**
+     * Поиск промо-кода по id.
+     * @param id промокода.
+     * @return представление промо-кода в БД. {@link PromoCodeDTO}
+     * @throws ApiPromoCodeNotFoundException если такого промо-кода не существует.
+     */
     public PromoCodeDTO findById(final Long id) {
         Optional<PromoCode> promoCode = repository.findById(id);
         if (promoCode.isPresent()) {
@@ -47,6 +58,12 @@ public class PromoCodeService {
         }
     }
 
+    /**
+     * Поиск промо-кода по самому промо-коду.
+     * @param promoCode промокод.
+     * @return представление промо-кода в БД. {@link PromoCodeDTO}
+     * @throws ApiPromoCodeNotFoundException если такого промо-кода не существует.
+     */
     public PromoCodeDTO findByPromoCode(final String promoCode) {
         Optional<PromoCode> code = repository.getByPromoCode(promoCode);
         if (code.isPresent()) {
@@ -58,6 +75,12 @@ public class PromoCodeService {
         }
     }
 
+    /**
+     * Генерация промо-кодов для акции.
+     * @param cnt количество промокодов.
+     * @param stockId айди акции.
+     * @return Массив из сгенерированных промокодов. {@link List<PromoCodeDTO>}
+     */
     private List<PromoCodeDTO> generate(Long cnt, Long stockId) {
         log.info("Generating {} promo-codes to stock: {} .....", cnt, stockId);
         List<PromoCodeDTO> codes = new ArrayList<>();
@@ -71,6 +94,11 @@ public class PromoCodeService {
         return codes;
     }
 
+    /**
+     * Сохранение промокодов к ациии.
+     * @param stock объектное представление акции.
+     * @return представление акции в БД. {@link StockDTO}
+     */
     public StockDTO savePromoCodes(StockDTO stock) {
         log.info("Saving {} promo-codes to stock: {}", stock.getCount(), stock.getId());
         List<PromoCodeDTO> codes = generate(stock.getCount(), stock.getId());
@@ -80,6 +108,10 @@ public class PromoCodeService {
         return stock;
     }
 
+    /**
+     * Удаление промокода по его id.
+     * @param id промокода.
+     */
     public void delById(Long id) {
         log.info("Deleting promo-code: {}", id);
         repository.deleteById(id);
