@@ -68,7 +68,7 @@ public class LoginAttemptService {
         } else if (user instanceof Admin) {
             accountType = AccountType.ADMIN;
         } else {
-            log.error("Undefined type of account");
+            log.error("User account type undefined. Users telephone: {}", user.getTelephone());
         }
         LoginAttempt res = new LoginAttempt(accountType);
 
@@ -76,6 +76,7 @@ public class LoginAttemptService {
         if (doCall) {
             Optional<String> code = doCallAndGetCode(user.getTelephone());
             if (code.isEmpty()) {
+                log.error("SMSC problems, code is empty");
                 throw new SMSCException("Something wrong with smsc");
             }
             res.setPhoneCode(code.get().substring(2));
@@ -104,13 +105,14 @@ public class LoginAttemptService {
         }
     }
 
+    // TODO Javac
     /**
      * @param account
      * @return
      */
     public AuthorizationKeyDTO login(AbstractAccount account) {
         LoginAttempt loginAttemptRecord = create(account);
-        log.info("User with telephone logined: " + account.getTelephone());
+        log.info("Account with telephone: {} logged in", account.getTelephone());
         return new AuthorizationKeyDTO(loginAttemptRecord.getAuthorizationKey());
     }
 
@@ -124,17 +126,19 @@ public class LoginAttemptService {
         LoginAttempt loginAttempt = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorizationKey());
         if (loginAttempt.getPhoneCode().equals(attempt.getCode())) {
             delete(loginAttempt);
+            log.info("Login success with auth-key: {} and code: {}", attempt.getAuthorizationKey(), attempt.getCode());
             return accountRepositoryManager.getRepository(loginAttempt.getAccountType()).getByTelephone(loginAttempt.getTelephone());
         }
         return Optional.empty();
     }
 
     public void delete(LoginAttempt attemptDTO) {
-        log.info("Trying to delete LoginAttempt with authorization key {}", attemptDTO.getAuthorizationKey());
+        log.info("Trying to delete LoginAttempt with authorization key: {}", attemptDTO.getAuthorizationKey());
         loginAttemptRepository.delete(attemptDTO);
     }
 
     public Optional<LoginAttempt> get(AccountType accountType, String telephone) {
+        log.info("Trying to get LoginAttempt with telephone: {}", telephone);
         return loginAttemptRepository.getByAccountTypeAndTelephone(accountType, telephone);
     }
 

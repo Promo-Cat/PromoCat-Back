@@ -59,7 +59,6 @@ public class UserController {
     })
     @RequestMapping(path = "/auth/user/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> addUser(@Valid @RequestBody UserDTO user) {
-        log.info("Trying to save user with telephone: {}", user.getTelephone());
         return ResponseEntity.ok(userService.save(user));
     }
 
@@ -83,7 +82,6 @@ public class UserController {
     public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String jwtToken) {
         JwtReader jwtReader = new JwtReader(jwtToken);
         String telephone = jwtReader.getValue("telephone");
-        log.info("Trying to find user: {}", telephone);
         return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
 
@@ -103,7 +101,6 @@ public class UserController {
     })
     @RequestMapping(value = "/admin/user/id", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserById(@RequestParam("id") Long id) {
-        log.info("Admin trying to get user with id: {}", id);
         return ResponseEntity.ok(userService.findById(id));
     }
 
@@ -123,7 +120,6 @@ public class UserController {
     })
     @RequestMapping(value = "/admin/user/setPromoCode", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> setPromoCode(@RequestParam("id") Long id, @RequestParam("promoCode") String promoCode) {
-        log.info("Trying to set promo-code: {}, to used: {}", promoCode, id);
         PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
         if (promoCodeDTO.getIsActive()) {
             log.error("Promo-code {} already active", promoCode);
@@ -135,7 +131,6 @@ public class UserController {
 
         promoCodeService.save(promoCodeDTO);
         userService.save(user);
-        log.info("Promo-code: {} set to used: {}", promoCode, id);
         return ResponseEntity.ok(user);
     }
 
@@ -152,7 +147,6 @@ public class UserController {
     })
     @RequestMapping(value = "/admin/user/telephone", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {
-        log.info("Admin trying to get user with telephone: {}", telephone);
         return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
 

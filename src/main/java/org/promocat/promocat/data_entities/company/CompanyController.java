@@ -53,8 +53,6 @@ public class CompanyController {
     })
     @RequestMapping(path = "/auth/register/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public CompanyDTO addCompany(@Valid @RequestBody CompanyDTO company) {
-        log.info("Trying to save company: {}. Organization telephone: {}",
-                company.getOrganizationName(), company.getTelephone());
         return service.save(company);
     }
 
@@ -73,7 +71,6 @@ public class CompanyController {
     })
     @RequestMapping(path = "/admin/company/id", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getById(@RequestParam("id") Long id) {
-        log.info("Admin trying to get company with id: {}", id);
         return ResponseEntity.ok(service.findById(id));
     }
 
@@ -90,7 +87,6 @@ public class CompanyController {
     })
     @RequestMapping(path = "/admin/company/telephone", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByTelephone(@RequestParam("telephone") String telephone) {
-        log.info("Admin trying to get company with telephone: {}", telephone);
         return ResponseEntity.ok(service.findByTelephone(telephone));
     }
 
@@ -107,7 +103,6 @@ public class CompanyController {
     })
     @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByOrganizationName(@RequestParam("organizationName") String organizationName) {
-        log.info("Admin trying to get company with organization name: {}", organizationName);
         return ResponseEntity.ok(service.findByOrganizationName(organizationName));
     }
 
@@ -124,7 +119,6 @@ public class CompanyController {
     })
     @RequestMapping(path = "/admin/company/mail", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") String mail) {
-        log.info("Admin trying to get company with mail: {}", mail);
         return ResponseEntity.ok(service.findByMail(mail));
     }
 }

@@ -37,20 +37,24 @@ public class StockService {
         this.promoCodeService = promoCodeService;
     }
 
-    public StockDTO save(StockDTO dto) {
+    public StockDTO save(final StockDTO dto) {
+        log.info("Saving stock with name: {}", dto.getName());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
-    public StockDTO findById(Long id) {
+    public StockDTO findById(final Long id) {
         Optional<Stock> stock = repository.findById(id);
         if (stock.isPresent()) {
+            log.info("Found stock with id: {}", id);
             return mapper.toDto(stock.get());
         } else {
             throw new ApiStockNotFoundException(String.format("No stock with such id: %d in db.", id));
         }
     }
 
-    private List<StockDTO> getByTime(LocalDateTime time, Long days) {
+    private List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
+        log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
+                time, days);
         Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndDurationEquals(time, days);
         List<StockDTO> result = new ArrayList<>();
         if (optional.isPresent()) {
@@ -64,7 +68,7 @@ public class StockService {
     @Scheduled(cron = "59 59 23 * * *")
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
-            log.info(String.format("Clear stock with end time after: %d", day));
+            log.info("Clear stock with end time after: {}", day);
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
             for (StockDTO stock : stocks) {
                 for (PromoCodeDTO code : stock.getCodes()) {
@@ -77,7 +81,8 @@ public class StockService {
         }
     }
 
-    public StockDTO setActive(Long id, Boolean active) {
+    public StockDTO setActive(final Long id, final Boolean active) {
+        log.info("Setting stock: {} active: {}", id, active);
         StockDTO stock = findById(id);
         stock.setIsAlive(active);
         return save(stock);
