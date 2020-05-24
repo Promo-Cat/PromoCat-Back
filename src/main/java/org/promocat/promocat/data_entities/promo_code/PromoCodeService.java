@@ -2,7 +2,7 @@ package org.promocat.promocat.data_entities.promo_code;
 // Created by Roman Devyatilov (Fr1m3n) in 20:24 05.05.2020
 
 
-import org.promocat.promocat.data_entities.generator.Generator;
+import org.promocat.promocat.utils.Generator;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeNotFoundException;
@@ -87,6 +87,7 @@ public class PromoCodeService {
         for (PromoCodeDTO code : codes) {
             save(code);
         }
+        stock.setCodes(codes);
         return stock;
     }
 

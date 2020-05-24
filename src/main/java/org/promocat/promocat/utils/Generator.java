@@ -1,4 +1,4 @@
-package org.promocat.promocat.data_entities.generator;
+package org.promocat.promocat.utils;
 
 import java.util.Random;
 
