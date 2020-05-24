@@ -100,8 +100,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "Delete user by id",
-            notes = "Deleting user, whose id specified in params",
-            response = UserDTO.class)
+            notes = "Deleting user, whose id specified in params")
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "User not found",

@@ -55,14 +55,23 @@ public class CompanyController {
         return service.save(company);
     }
 
-
+    @ApiOperation(value = "Get company, who authorized with token from request header",
+            notes = "Registering company with telephone in format +X(XXX)XXX-XX-XX",
+            response = CompanyDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Not company`s token"),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getCompany(@RequestHeader("token") String token) {
         JwtReader jwtReader = new JwtReader(token);
         String telephone = jwtReader.getValue("telephone");
         AccountType accountType = AccountType.of(jwtReader.getValue("account_type"));
         if (accountType != AccountType.COMPANY) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         return ResponseEntity.ok(service.findByTelephone(telephone));
     }

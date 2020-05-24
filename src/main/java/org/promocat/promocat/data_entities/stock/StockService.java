@@ -113,4 +113,13 @@ public class StockService {
         stock.setIsAlive(active);
         return save(stock);
     }
+
+    public void deleteById(final Long id) {
+        log.info("Trying to delete Stock by id: {}", id);
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        } else {
+            throw new ApiStockNotFoundException(String.format("Stock with id %d doesn`t exists in DB", id));
+        }
+    }
 }
