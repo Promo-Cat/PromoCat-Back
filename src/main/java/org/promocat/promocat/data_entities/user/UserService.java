@@ -58,6 +58,7 @@ public class UserService {
 
     /**
      * Находит пользователя в БД по номеру телефона.
+     *
      * @param telephone номер телефона, соответствующий шаблону +X(XXX)XXX-XX-XX
      * @return объект класса UserDTO, содержащий все необходимые данные о пользователе.
      * @throws ApiUserNotFoundException если не найден пользователь с таким номером телефона или формат задан не верно.
@@ -70,6 +71,21 @@ public class UserService {
         } else {
             log.warn("No such user with telephone: {}", telephone);
             throw new ApiUserNotFoundException(String.format("No user with such telephone: %s in db.", telephone));
+        }
+    }
+
+    /**
+     * Удаляет юзера по id из БД.
+     *
+     * @param id id удаляемого юзера
+     */
+    public void deleteById(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            log.info("User with id {} deleted from DB", id);
+        } else {
+            log.warn("Attempt to delete user with id {}, who doesn`t exist in DB", id);
+            throw new ApiUserNotFoundException(String.format("User with id %d doesn`t found", id));
         }
     }
 }

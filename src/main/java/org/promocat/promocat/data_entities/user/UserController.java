@@ -16,12 +16,7 @@ import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -99,9 +94,26 @@ public class UserController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/admin/user/id", method = RequestMethod.GET)
-    public ResponseEntity<UserDTO> getUserById(@RequestParam("id") Long id) {
+    @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @ApiOperation(value = "Delete user by id",
+            notes = "Deleting user, whose id specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.GET)
+    public ResponseEntity<String> deleteUserById(@PathVariable("id") Long id) {
+        userService.deleteById(id);
+        return ResponseEntity.ok("{}");
     }
 
     @ApiOperation(value = "Set user's promoCode",
