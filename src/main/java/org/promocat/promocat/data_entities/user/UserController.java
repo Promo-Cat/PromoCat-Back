@@ -80,6 +80,35 @@ public class UserController {
         return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
 
+    @ApiOperation(value = "Set user's promo-code",
+            notes = "Returning user, whose id specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Promo-code not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/promo-code", method = RequestMethod.POST)
+    public ResponseEntity<UserDTO> setPromoCode(@RequestParam("id") Long id, @RequestParam("promo-code") String promoCode) {
+        PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
+        if (promoCodeDTO.getIsActive()) {
+            log.error("Promo-code {} already active", promoCode);
+            throw new ApiPromoCodeActiveException(String.format("Promo-code: %s already active", promoCode));
+        }
+        promoCodeDTO.setIsActive(true);
+        UserDTO user = userService.findById(id);
+        user.setPromoCodeDTOId(promoCodeDTO.getId());
+
+        promoCodeService.save(promoCodeDTO);
+        userService.save(user);
+        return ResponseEntity.ok(user);
+    }
 
     // ------ Admin methods ------
 
@@ -114,36 +143,6 @@ public class UserController {
     public ResponseEntity<String> deleteUserById(@PathVariable("id") Long id) {
         userService.deleteById(id);
         return ResponseEntity.ok("{}");
-    }
-
-    @ApiOperation(value = "Set user's promoCode",
-            notes = "Returning user, whose id specified in params",
-            response = UserDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "User not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Promo-code not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(value = "/admin/user/setPromoCode", method = RequestMethod.POST)
-    public ResponseEntity<UserDTO> setPromoCode(@RequestParam("id") Long id, @RequestParam("promoCode") String promoCode) {
-        PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
-        if (promoCodeDTO.getIsActive()) {
-            log.error("Promo-code {} already active", promoCode);
-            throw new ApiPromoCodeActiveException(String.format("Promo-code: %s already active", promoCode));
-        }
-        promoCodeDTO.setIsActive(true);
-        UserDTO user = userService.findById(id);
-        user.setPromoCodeDTOId(promoCodeDTO.getId());
-
-        promoCodeService.save(promoCodeDTO);
-        userService.save(user);
-        return ResponseEntity.ok(user);
     }
 
     @ApiOperation(value = "Get user by telephone",
