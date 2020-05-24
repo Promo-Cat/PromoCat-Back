@@ -74,11 +74,9 @@ public class PromoCodeTest {
         CityDTO city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
 
         stock = new StockDTO("www", 10L, null, company.getId(), city.getId(), LocalDateTime.now(), 7L, null);
-        MvcResult stockR = this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(stock)))
-                .andExpect(status().isOk()).andReturn();
-
-        StockDTO t = mapper.readValue(stockR.getResponse().getContentAsString(), StockDTO.class);
+                .andExpect(status().isOk());
     }
 
     @Transactional
