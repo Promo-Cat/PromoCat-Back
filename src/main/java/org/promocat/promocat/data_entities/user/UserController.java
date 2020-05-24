@@ -94,7 +94,7 @@ public class UserController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
@@ -110,7 +110,7 @@ public class UserController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteUserById(@PathVariable("id") Long id) {
         userService.deleteById(id);
         return ResponseEntity.ok("{}");
