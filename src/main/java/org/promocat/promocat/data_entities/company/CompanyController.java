@@ -5,19 +5,18 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -56,6 +55,17 @@ public class CompanyController {
         return service.save(company);
     }
 
+
+    @RequestMapping(path = "/api/company", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getCompany(@RequestHeader("token") String token) {
+        JwtReader jwtReader = new JwtReader(token);
+        String telephone = jwtReader.getValue("telephone");
+        AccountType accountType = AccountType.of(jwtReader.getValue("account_type"));
+        if (accountType != AccountType.COMPANY) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(service.findByTelephone(telephone));
+    }
     // ------ Admin methods ------
 
     @ApiOperation(value = "Get company by id",

@@ -70,9 +70,9 @@ public class CityService {
     }
 
     /**
-     * ??? TODO Roman
-     * @param file
-     * @return
+     * Подгружает города из csv файла.
+     * @param file путь до csv файла
+     * @return кол-во добавленных городов
      */
     public int loadFromFile(Path file) {
         try {

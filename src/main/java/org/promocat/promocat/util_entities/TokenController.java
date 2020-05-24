@@ -61,7 +61,6 @@ public class TokenController {
     public ResponseEntity<TokenDTO> getToken(
             @RequestParam("authorizationKey") String authorizationKey,
             @RequestParam("code") String code) {
-        // TODO: Получать account type из LoginAttempt
         LoginAttemptDTO loginAttempt = new LoginAttemptDTO(authorizationKey, code);
         Optional<? extends AbstractAccount> accountRecord = loginAttemptService.checkLoginAttemptCode(loginAttempt);
         if (accountRecord.isPresent()) {
