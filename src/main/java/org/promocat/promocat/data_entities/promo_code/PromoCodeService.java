@@ -131,8 +131,13 @@ public class PromoCodeService {
      * Удаление промокода по его id.
      * @param id промокода.
      */
-    public void delById(Long id) {
-        log.info("Deleting promo-code: {}", id);
-        repository.deleteById(id);
+    public void setActive(Long id, Boolean active) {
+        log.info("Update active promo-code: {}", id);
+        Optional<PromoCode> res = repository.findById(id);
+        if (res.isPresent()) {
+            PromoCodeDTO promoCode = mapper.toDto(res.get());
+            promoCode.setIsActive(active);
+            save(promoCode);
+        }
     }
 }

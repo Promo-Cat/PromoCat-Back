@@ -92,9 +92,9 @@ public class StockService {
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
             for (StockDTO stock : stocks) {
                 for (PromoCodeDTO code : stock.getCodes()) {
-                    promoCodeService.delById(code.getId());
+                    promoCodeService.setActive(code.getId(), false);
+                    code.setIsActive(false);
                 }
-                stock.setCodes(new ArrayList<>());
                 stock.setIsAlive(false);
                 save(stock);
             }
