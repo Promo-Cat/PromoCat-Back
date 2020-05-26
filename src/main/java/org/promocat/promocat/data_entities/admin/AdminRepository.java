@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AdminRepository extends AbstractAccountRepository<Admin> {
 
-    boolean existsAdminByTelephone(String telephone);
+    boolean existsByTelephone(String telephone);
+
 
 }

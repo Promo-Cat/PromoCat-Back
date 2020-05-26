@@ -9,16 +9,13 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Objects;
@@ -57,7 +54,6 @@ public class StockController {
     })
     @RequestMapping(path = "/api/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public StockDTO addStock(@Valid @RequestBody StockDTO stock) {
-        log.info("Trying to save stock from company: {}", stock.getCompanyId());
         return stockService.save(stock);
     }
 
@@ -76,7 +72,6 @@ public class StockController {
     public StockDTO generate(@RequestParam("id") Long id) {
         StockDTO stock = stockService.findById(id);
         if (Objects.isNull(stock.getIsAlive())) {
-            log.info("Generating promo-codes to stock with id: {}", id);
             stockService.setActive(id, true);
             return promoCodeService.savePromoCodes(stock);
         }
@@ -99,7 +94,6 @@ public class StockController {
     })
     @RequestMapping(path = "/api/promoCode/stock", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> getStockByPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
-        log.info("Trying to get stock by promo-code {}, id: {}", promoCodeDTO.getPromoCode(), promoCodeDTO.getId());
         return ResponseEntity.ok(stockService.findById(promoCodeDTO.getStockId()));
     }
 
@@ -116,9 +110,24 @@ public class StockController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/stock/id", method = RequestMethod.GET)
-    public ResponseEntity<StockDTO> getStockById(@RequestParam("id") Long id) {
-        log.info("Trying to get stock by id: {}", id);
+    @RequestMapping(path = "/admin/stock/{id}", method = RequestMethod.GET)
+    public ResponseEntity<StockDTO> getStockById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(stockService.findById(id));
+    }
+
+    @ApiOperation(value = "Delete stock by id",
+            notes = "Deleting stock, whose id specified in params")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/stock/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteStockById(@PathVariable("id") Long id) {
+        stockService.deleteById(id);
+        return ResponseEntity.ok("{}");
     }
 }

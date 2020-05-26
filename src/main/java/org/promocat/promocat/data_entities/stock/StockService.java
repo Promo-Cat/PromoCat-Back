@@ -37,20 +37,41 @@ public class StockService {
         this.promoCodeService = promoCodeService;
     }
 
-    public StockDTO save(StockDTO dto) {
+    /**
+     * Сохранеие акции.
+     * @param dto объектное представление акции.
+     * @return представление акции в БД. {@link StockDTO}
+     */
+    public StockDTO save(final StockDTO dto) {
+        log.info("Saving stock with name: {}", dto.getName());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
-    public StockDTO findById(Long id) {
+    /**
+     * Поиск акции по id.
+     * @param id акции.
+     * @return представление акции в БД. {@link StockDTO}
+     * @throws ApiStockNotFoundException если акция не найдена.
+     */
+    public StockDTO findById(final Long id) {
         Optional<Stock> stock = repository.findById(id);
         if (stock.isPresent()) {
+            log.info("Found stock with id: {}", id);
             return mapper.toDto(stock.get());
         } else {
             throw new ApiStockNotFoundException(String.format("No stock with such id: %d in db.", id));
         }
     }
 
-    private List<StockDTO> getByTime(LocalDateTime time, Long days) {
+    /**
+     * Получение просроченных акций.
+     * @param time стартовая дата.
+     * @param days длительность акции
+     * @return список прросроченных акций. {@link List<StockDTO>}
+     */
+    private List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
+        log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
+                time, days);
         Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndDurationEquals(time, days);
         List<StockDTO> result = new ArrayList<>();
         if (optional.isPresent()) {
@@ -61,25 +82,44 @@ public class StockService {
         return result;
     }
 
+    /**
+     * Удаление всеъ просроченных промокодов и установка акций в неактивное состояние.
+     */
     @Scheduled(cron = "59 59 23 * * *")
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
-            log.info(String.format("Clear stock with end time after: %d", day));
+            log.info("Clear stock with end time after: {}", day);
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
             for (StockDTO stock : stocks) {
                 for (PromoCodeDTO code : stock.getCodes()) {
-                    promoCodeService.delById(code.getId());
+                    promoCodeService.setActive(code.getId(), false);
+                    code.setIsActive(false);
                 }
-                stock.setCodes(new ArrayList<>());
                 stock.setIsAlive(false);
                 save(stock);
             }
         }
     }
 
-    public StockDTO setActive(Long id, Boolean active) {
+    /**
+     * Установка активности акции
+     * @param id акции
+     * @param active требуемое состояние {@code true} активно, {@code false} неактивно. {@code null} неизвестно.
+     * @return представление акциив  БД. {@link StockDTO}
+     */
+    public StockDTO setActive(final Long id, final Boolean active) {
+        log.info("Setting stock: {} active: {}", id, active);
         StockDTO stock = findById(id);
         stock.setIsAlive(active);
         return save(stock);
+    }
+
+    public void deleteById(final Long id) {
+        log.info("Trying to delete Stock by id: {}", id);
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        } else {
+            throw new ApiStockNotFoundException(String.format("Stock with id %d doesn`t exists in DB", id));
+        }
     }
 }

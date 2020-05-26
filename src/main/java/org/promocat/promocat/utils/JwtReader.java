@@ -12,7 +12,6 @@ public class JwtReader {
 
     public JwtReader(String jwt) {
         JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(TokenService.JWT_KEY.getBytes())).build();
-        //TODO: секретный ключ для шифрования JWT
         jwtBody = jwtParser.parseClaimsJws(jwt).getBody();
     }
 

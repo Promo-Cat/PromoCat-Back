@@ -49,7 +49,7 @@ public class AdminController {
     })
     @RequestMapping(path = "/admin/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdminDTO> addAdmin(@Valid @RequestBody TelephoneDTO telephoneDTO) {
-        return ResponseEntity.ok(adminService.add(telephoneDTO));
+        return ResponseEntity.ok(adminService.add(telephoneDTO.getTelephone()));
     }
 
     @ApiOperation(value = "Get admins.",

@@ -51,6 +51,8 @@ public class TokenService {
 
     /**
      * Возращает роль, соответствующую типу аккаунта, который зашифрован в JWT токене.
+     * Лучше не трогать...
+     *
      * @param token токен
      * @return список ролей
      */
@@ -108,10 +110,11 @@ public class TokenService {
         return token;
     }
 
-    // TODO Javadoc
     /**
-     * @param accountDTO
-     * @return
+     * Метод, который генерирует токен для аккаунта.
+     *
+     * @param accountDTO ДТО аккаунта
+     * @return токен
      */
     private String generateToken(AbstractAccountDTO accountDTO) {
         Map<String, Object> tokenData = new HashMap<>();

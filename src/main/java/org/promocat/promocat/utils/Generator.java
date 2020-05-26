@@ -6,9 +6,12 @@ import java.util.Random;
  * Created by Danil Lyskin at 14:22 16.05.2020
  */
 public class Generator {
-    private static final String ALPHABETIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String NUMBERS    = "0123456789";
-    private static final Random RND        = new Random(System.currentTimeMillis());
+
+    // TODO перенести все в utils
+
+    public static final String ALPHABETIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String NUMBERS    = "0123456789";
+    private static final Random RND       = new Random(System.currentTimeMillis());
 
     private static void fill(StringBuilder code, String charset) {
         code.append(charset.charAt(RND.nextInt(charset.length())));

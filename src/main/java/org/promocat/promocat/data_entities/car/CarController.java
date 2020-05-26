@@ -53,7 +53,6 @@ public class CarController {
     })
     @RequestMapping(path = "/api/user/car", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CarDTO> addCar(@Valid @RequestBody CarDTO car) {
-        log.info("Trying to add car to user: {}", car.getUserId());
         return ResponseEntity.ok(service.save(car));
     }
 
@@ -75,7 +74,6 @@ public class CarController {
     public ResponseEntity<CarDTO> getCarByNumberAndRegion(
             @RequestParam("number") String number,
             @RequestParam("region") String region) {
-        log.info("Admin trying to find car with number: {}, region: {}", number, region);
         return ResponseEntity.ok(service.findByNumberAndRegion(number, region));
     }
 
@@ -92,7 +90,6 @@ public class CarController {
     })
     @RequestMapping(path = "admin/car/id", method = RequestMethod.GET)
     public ResponseEntity<CarDTO> getCarById(@RequestParam("id") Long id) {
-        log.info("Admin trying to find car with id: {}", id);
         return ResponseEntity.ok(service.findByID(id));
     }
 }

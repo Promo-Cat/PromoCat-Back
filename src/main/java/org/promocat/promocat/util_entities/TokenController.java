@@ -61,16 +61,16 @@ public class TokenController {
     public ResponseEntity<TokenDTO> getToken(
             @RequestParam("authorizationKey") String authorizationKey,
             @RequestParam("code") String code) {
-        // TODO: Получать account type из LoginAttempt
         LoginAttemptDTO loginAttempt = new LoginAttemptDTO(authorizationKey, code);
         Optional<? extends AbstractAccount> accountRecord = loginAttemptService.checkLoginAttemptCode(loginAttempt);
         if (accountRecord.isPresent()) {
             AbstractAccount account = accountRecord.get();
             try {
-                log.info(String.format("User with telephone: %s and auth key: %s got token",
-                        account.getTelephone(), loginAttempt.getAuthorizationKey()));
+                log.info("Account with telephone: {} and auth key: {} got token",
+                        account.getTelephone(), loginAttempt.getAuthorizationKey());
                 return new ResponseEntity<>(new TokenDTO(tokenService.getToken(account.getTelephone(), account.getAccountType())), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
+                // TODO нормальный эксепшен
                 throw new UsernameNotFoundException(e.getMessage());
             }
         } else {
@@ -96,10 +96,10 @@ public class TokenController {
         //noinspection rawtypes
         AbstractAccountRepository repository = accountRepositoryManager.getRepository(accountType);
         if (repository.getByToken(token).isPresent()) {
-            log.info(String.format("Token valid: %s", token));
+            log.info("Token valid: {}", token);
             return ResponseEntity.ok("{}");
         } else {
-            log.warn(String.format("Token invalid: %s", token));
+            log.warn("Token invalid: {}", token);
             return new ResponseEntity<>("{}",HttpStatus.NOT_FOUND);
         }
     }

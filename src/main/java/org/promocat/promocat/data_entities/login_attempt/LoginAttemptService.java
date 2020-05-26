@@ -54,28 +54,29 @@ public class LoginAttemptService {
     }
 
     /**
-     * Создаёт попытку авторизации
+     * Создаёт запись в бд о попытке авторизации
      *
-     * @param user экзепляр объекта юзера, который авторизуется
+     * @param account экзепляр объекта аккаунта, который авторизуется
      * @return Экземпляр объекта попытки входа, сохранённого в бд
      */
-    public LoginAttempt create(AbstractAccount user) {
+    public LoginAttempt create(AbstractAccount account) {
         AccountType accountType = null;
-        if (user instanceof User) {
+        if (account instanceof User) {
             accountType = AccountType.USER;
-        } else if (user instanceof Company) {
+        } else if (account instanceof Company) {
             accountType = AccountType.COMPANY;
-        } else if (user instanceof Admin) {
+        } else if (account instanceof Admin) {
             accountType = AccountType.ADMIN;
         } else {
-            log.error("Undefined type of account");
+            log.error("User account type undefined. Users telephone: {}", account.getTelephone());
         }
         LoginAttempt res = new LoginAttempt(accountType);
 
-        res.setTelephone(user.getTelephone());
+        res.setTelephone(account.getTelephone());
         if (doCall) {
-            Optional<String> code = doCallAndGetCode(user.getTelephone());
+            Optional<String> code = doCallAndGetCode(account.getTelephone());
             if (code.isEmpty()) {
+                log.error("SMSC problems, code is empty");
                 throw new SMSCException("Something wrong with smsc");
             }
             res.setPhoneCode(code.get().substring(2));
@@ -105,12 +106,15 @@ public class LoginAttemptService {
     }
 
     /**
-     * @param account
-     * @return
+     * Производит процедуру авторизации и возвращает authorization key, который соответствует данной попытке авторизации.
+     * Authorization key используется для идентификации попытки входа во время процедуры получения токена.
+     *
+     * @param account Аккаунт, который производит авторизацию
+     * @return ДТО authorization key (ради JSON)
      */
     public AuthorizationKeyDTO login(AbstractAccount account) {
         LoginAttempt loginAttemptRecord = create(account);
-        log.info("User with telephone logined: " + account.getTelephone());
+        log.info("Account with telephone: {} logged in", account.getTelephone());
         return new AuthorizationKeyDTO(loginAttemptRecord.getAuthorizationKey());
     }
 
@@ -124,25 +128,50 @@ public class LoginAttemptService {
         LoginAttempt loginAttempt = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorizationKey());
         if (loginAttempt.getPhoneCode().equals(attempt.getCode())) {
             delete(loginAttempt);
+            log.info("Login success with auth-key: {} and code: {}", attempt.getAuthorizationKey(), attempt.getCode());
             return accountRepositoryManager.getRepository(loginAttempt.getAccountType()).getByTelephone(loginAttempt.getTelephone());
         }
         return Optional.empty();
     }
 
-    public void delete(LoginAttempt attemptDTO) {
-        log.info("Trying to delete LoginAttempt with authorization key {}", attemptDTO.getAuthorizationKey());
-        loginAttemptRepository.delete(attemptDTO);
+    /**
+     * Удаляет запись о попытке авторизации из БД.
+     *
+     * @param attempt объект попытки входа из бд
+     */
+    public void delete(LoginAttempt attempt) {
+        log.info("Trying to delete LoginAttempt with authorization key: {}", attempt.getAuthorizationKey());
+        loginAttemptRepository.delete(attempt);
     }
 
+
+    /**
+     * Возвращает попытку входа для аккаунта с конкретным типом аккаунта и телефоном (логином)
+     *
+     * @param accountType тип аккаунта
+     * @param telephone   телефон (логин аккаунта)
+     * @return Optional от попытки входа
+     */
     public Optional<LoginAttempt> get(AccountType accountType, String telephone) {
+        log.info("Trying to get LoginAttempt with telephone: {}", telephone);
         return loginAttemptRepository.getByAccountTypeAndTelephone(accountType, telephone);
     }
 
+
+    /**
+     * Удаляет существующую для аккаунта, с заданным типом аккаунта и телефоном, попытку входа.
+     * Если такой записи в БД не существуюет - ничего не происходит.
+     *
+     * @param accountType тип аккаунта
+     * @param telephone   телефон (логин аккаунта)
+     */
     public void deleteIfExists(AccountType accountType, String telephone) {
         Optional<LoginAttempt> loginAttempt = get(accountType, telephone);
         if (loginAttempt.isPresent()) {
             log.info("Found another login attempt for account with number {}. Deleting it...", telephone);
             loginAttemptRepository.delete(loginAttempt.get());
+        } else {
+            log.warn("Login attempt with account type {} and telephone {} doesn`t found.", accountType.getType(), telephone);
         }
     }
 

@@ -29,7 +29,12 @@ public class CityService {
         this.cityMapper = cityMapper;
     }
 
-    public CityDTO addCity(String[] cityFields) {
+    /**
+     * Добавление города в базу данных.
+     * @param cityFields массив строк с описаием города. (подробнее https://github.com/hflabs/city/blob/master/city.csv)
+     * @return объектное представление города в БД {@link CityDTO}.
+     */
+    private CityDTO addCity(String[] cityFields) {
         City city = new City();
         city.setAddress(cityFields[0]);
         city.setPostalCode(cityFields[1]);
@@ -45,38 +50,72 @@ public class CityService {
         return cityMapper.toDto(cityRepository.save(city));
     }
 
+    /**
+     * Добавление городов в базу данных.
+     * @param cities массив городов с описание каждого города
+     *               (подробнее https://github.com/hflabs/city/blob/master/city.csv)
+     * @return список всех добавленыых городов {@link List<CityDTO>}.
+     */
     public List<CityDTO> addCities(List<String[]> cities) {
+        log.info("Adding cities");
         return cities.stream().map(this::addCity).collect(Collectors.toList());
     }
 
+    /**
+     * Проверка наличия городов бд.
+     * @return {@code true} если количество равно {@code 0}, иначе {@code false}.
+     */
     public boolean needToLoad() {
         return cityRepository.count() == 0;
     }
 
+    /**
+     * Подгружает города из csv файла.
+     * @param file путь до csv файла
+     * @return кол-во добавленных городов
+     */
     public int loadFromFile(Path file) {
         try {
             return addCities(CSVCityReader.readFromStreamReader(new FileReader(file.toFile()))).size();
         } catch (FileNotFoundException e) {
-            log.error("Файл {} не найден", file.toAbsolutePath().toString(), e);
+            log.error("File {} not found", file.toAbsolutePath().toString(), e);
         } catch (IOException e) {
-            log.error("Ошибка I/O", e);
+            log.error("I/O Error", e);
         }
         return 0;
     }
 
+    /**
+     * Получение списка активных городов.
+     * @return список активных городов {@link List<CityDTO>}.
+     */
     public List<CityDTO> getActiveCities() {
         Optional<List<City>> city = cityRepository.findByActiveTrue();
+        log.info("Getting active cities");
         return city.map(cities -> cities.stream().map(cityMapper::toDto).collect(Collectors.toList())).orElse(new ArrayList<>());
     }
 
+    /**
+     * Получение информации о городе по названию города.
+     * @param city название города.
+     * @return объектное представление города в БД. {@link CityDTO}
+     * @throws ApiCityNotFoundException если такого города нет в БД.
+     */
     public CityDTO findByCity(String city) {
         Optional<City> cty = cityRepository.findByCity(city);
+        log.info("Trying to find full info about city: {}", city);
         return cityMapper.toDto(cty.orElseThrow(() -> new ApiCityNotFoundException("No such city in db.")));
     }
 
+    /**
+     * Устанавливает город в активное состояние.
+     * @param city название города.
+     * @return объектное представление города в БД. {@link CityDTO}.
+     */
     public CityDTO setActive(String city) {
         CityDTO dto = findByCity(city);
         dto.setActive(true);
+        log.info("City: {} activated", city);
         return cityMapper.toDto(cityRepository.save(cityMapper.toEntity(dto)));
     }
 }
