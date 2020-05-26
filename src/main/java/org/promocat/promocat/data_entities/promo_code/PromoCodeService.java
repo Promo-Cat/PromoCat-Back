@@ -82,7 +82,7 @@ public class PromoCodeService {
             System.out.printf("An exception occurs %s", e.getMessage());
         }
         try {
-            emailSender.send("src/main/resources" + fileName);
+            emailSender.send("src/main/resources" + fileName, stockId, cnt);
             log.info("File {} was send", fileName);
         } catch (MessagingException e) {
             e.printStackTrace();

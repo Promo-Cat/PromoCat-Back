@@ -22,13 +22,13 @@ public class EmailSender {
         this.javaMailSender = javaMailSender;
     }
 
-    public void send(String file) throws MessagingException {
+    public void send(String file, Long stockId, Long cnt) throws MessagingException {
         MimeMessage msg = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(msg, true);
 
         helper.setTo("lyskin-2013@mail.ru");
-        helper.setSubject("PromoCodes");
-        helper.setText("");;
+        helper.setSubject("Промокоды для акции c id: " + stockId);
+        helper.setText("Количество запрошенных промокодов: " + cnt);
         helper.addAttachment("promo-code.txt", Paths.get(file).toFile());
         javaMailSender.send(msg);
     }
