@@ -3,7 +3,7 @@ package org.promocat.promocat.data_entities.promo_code;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.promocat.promocat.data_entities.generator.Generator;
+import org.promocat.promocat.utils.Generator;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeNotFoundException;
@@ -124,6 +124,7 @@ public class PromoCodeService {
         for (PromoCodeDTO code : codes) {
             save(code);
         }
+        stock.setCodes(codes);
         return stock;
     }
 
