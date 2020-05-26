@@ -13,18 +13,22 @@ public class Generator {
     public static final String NUMBERS    = "0123456789";
     private static final Random RND       = new Random(System.currentTimeMillis());
 
-    private static void fill(StringBuilder code, int cnt, String charset, String postfix) {
-        for (int i = 0; i < cnt; i++) {
-            code.append(charset.charAt(RND.nextInt(charset.length())));
-        }
-        code.append(postfix);
+    private static void fill(StringBuilder code, String charset) {
+        code.append(charset.charAt(RND.nextInt(charset.length())));
     }
 
-    public static String generate() {
+    public static String generate(final String config) {
         StringBuilder code = new StringBuilder();
-        fill(code, 4, ALPHABETIC, "-");
-        fill(code, 3, ALPHABETIC, "-");
-        fill(code, 5, NUMBERS, "");
+        for (int i = 0; i < config.length(); i++) {
+            char c = config.charAt(i);
+            if (c == '#') {
+                fill(code, ALPHABETIC);
+            } else if (c == '%') {
+                fill(code, NUMBERS);
+            } else {
+                code.append(config.charAt(i));
+            }
+        }
         return code.toString();
     }
 }

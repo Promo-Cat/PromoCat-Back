@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
  * Created by Danil Lyskin at 20:44 05.05.2020
@@ -46,4 +47,12 @@ public class PromoCodeDTO extends AbstractDTO {
             dataType = "Boolean"
     )
     private Boolean isActive;
+
+    @ApiModelProperty(
+            value = "active_date",
+            dataType = "LocalDateTime",
+            required = true
+    )
+    @NotNull(message = "Дата активации промокода не может быть пустым.")
+    private LocalDateTime activeDate;
 }
