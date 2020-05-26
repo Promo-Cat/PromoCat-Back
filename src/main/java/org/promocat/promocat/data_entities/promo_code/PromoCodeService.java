@@ -71,6 +71,7 @@ public class PromoCodeService {
             }
             codes.add(new PromoCodeDTO(code, stockId, false, LocalDateTime.now()));
         }
+        //TODO generate in /tmp
         String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + ".txt";
         try (FileWriter writer = new FileWriter(new File("src/main/resources" + fileName))) {
             for (PromoCodeDTO code : codes) {
