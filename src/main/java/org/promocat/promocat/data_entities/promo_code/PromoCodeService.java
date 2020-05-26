@@ -115,12 +115,13 @@ public class PromoCodeService {
             log.info("File {} was send", fileName);
         } catch (MessagingException e) {
             e.printStackTrace();
-        }
-        File file = new File("src/main/resources/" + fileName);
-        if (file.delete()) {
-            log.info("Delete file {} with PromoCodes", fileName);
-        } else {
-            log.info("File {} not found", fileName);
+        } finally {
+            File file = new File("src/main/resources/" + fileName);
+            if (file.delete()) {
+                log.info("Delete file {} with PromoCodes", fileName);
+            } else {
+                log.info("File {} not found", fileName);
+            }
         }
         return codes;
     }
