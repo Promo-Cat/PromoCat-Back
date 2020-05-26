@@ -2,6 +2,8 @@ package org.promocat.promocat.data_entities.promo_code;
 // Created by Roman Devyatilov (Fr1m3n) in 20:24 05.05.2020
 
 
+import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.GeneratorConfig;
 import org.promocat.promocat.utils.Generator;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
@@ -24,6 +26,7 @@ import java.util.Optional;
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
  */
 @Service
+@Slf4j
 public class PromoCodeService {
 
     private final PromoCodeMapper mapper;
@@ -62,23 +65,32 @@ public class PromoCodeService {
     private List<PromoCodeDTO> generate(Long cnt, Long stockId) {
         List<PromoCodeDTO> codes = new ArrayList<>();
         while (codes.size() != cnt) {
-            String code = Generator.generate();
+            String code = Generator.generate(GeneratorConfig.CODE);
             if (repository.existsByPromoCode(code)) {
                 continue;
             }
             codes.add(new PromoCodeDTO(code, stockId, false, LocalDateTime.now()));
         }
-        try (FileWriter writer = new FileWriter(new File("src/main/resources/promo-code.txt"))) {
+        String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + ".txt";
+        try (FileWriter writer = new FileWriter(new File("tmp/" + fileName))) {
             for (PromoCodeDTO code : codes) {
                 writer.write(code.getPromoCode() + "\n");
             }
+            log.info("File {} with PromoCodes was generated", fileName);
         } catch (IOException e) {
             System.out.printf("An exception occurs %s", e.getMessage());
         }
         try {
-            emailSender.send();
+            emailSender.send("tmp/" + fileName);
+            log.info("File {} was send", fileName);
         } catch (MessagingException e) {
             e.printStackTrace();
+        }
+        File file = new File("/tmp" + fileName);
+        if (file.delete()) {
+            log.info("Delete file {} with PromoCodes", fileName);
+        } else {
+            log.info("File {} not found", fileName);
         }
         return codes;
     }
