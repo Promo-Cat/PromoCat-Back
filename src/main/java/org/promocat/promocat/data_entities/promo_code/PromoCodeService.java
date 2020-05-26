@@ -3,6 +3,7 @@ package org.promocat.promocat.data_entities.promo_code;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.GeneratorConfig;
 import org.promocat.promocat.utils.Generator;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
@@ -16,6 +17,7 @@ import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
+@Slf4j
 public class PromoCodeService {
 
     private final PromoCodeMapper mapper;
@@ -92,23 +95,33 @@ public class PromoCodeService {
         log.info("Generating {} promo-codes to stock: {} .....", cnt, stockId);
         List<PromoCodeDTO> codes = new ArrayList<>();
         while (codes.size() != cnt) {
-            String code = Generator.generate();
+            String code = Generator.generate(GeneratorConfig.CODE);
             if (repository.existsByPromoCode(code)) {
                 continue;
             }
-            codes.add(new PromoCodeDTO(code, stockId, false));
+            codes.add(new PromoCodeDTO(code, stockId, false, LocalDateTime.now()));
         }
-        try (FileWriter writer = new FileWriter(new File("src/main/resources/promo-code.txt"))) {
+        //TODO generate in /tmp
+        String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + ".txt";
+        try (FileWriter writer = new FileWriter(new File("src/main/resources" + fileName))) {
             for (PromoCodeDTO code : codes) {
                 writer.write(code.getPromoCode() + "\n");
             }
+            log.info("File {} with PromoCodes was generated", fileName);
         } catch (IOException e) {
             System.out.printf("An exception occurs %s", e.getMessage());
         }
         try {
-            emailSender.send();
+            emailSender.send("src/main/resources" + fileName, stockId, cnt);
+            log.info("File {} was send", fileName);
         } catch (MessagingException e) {
             e.printStackTrace();
+        }
+        File file = new File("src/main/resources" + fileName);
+        if (file.delete()) {
+            log.info("Delete file {} with PromoCodes", fileName);
+        } else {
+            log.info("File {} not found", fileName);
         }
         return codes;
     }
