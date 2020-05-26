@@ -72,7 +72,7 @@ public class PromoCodeService {
             codes.add(new PromoCodeDTO(code, stockId, false, LocalDateTime.now()));
         }
         String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + ".txt";
-        try (FileWriter writer = new FileWriter(new File("tmp/" + fileName))) {
+        try (FileWriter writer = new FileWriter(new File("src/main/resources" + fileName))) {
             for (PromoCodeDTO code : codes) {
                 writer.write(code.getPromoCode() + "\n");
             }
@@ -81,12 +81,12 @@ public class PromoCodeService {
             System.out.printf("An exception occurs %s", e.getMessage());
         }
         try {
-            emailSender.send("tmp/" + fileName);
+            emailSender.send("src/main/resources" + fileName);
             log.info("File {} was send", fileName);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        File file = new File("/tmp" + fileName);
+        File file = new File("src/main/resources" + fileName);
         if (file.delete()) {
             log.info("Delete file {} with PromoCodes", fileName);
         } else {
