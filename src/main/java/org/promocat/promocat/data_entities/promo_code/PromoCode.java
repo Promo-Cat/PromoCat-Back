@@ -7,13 +7,10 @@ import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.stock.Stock;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -29,6 +26,7 @@ public class PromoCode extends AbstractEntity {
     private String promoCode;
     private Stock stock;
     private Boolean isActive;
+    private LocalDateTime activeDate;
 
     /**
      * Промокод.
@@ -55,4 +53,13 @@ public class PromoCode extends AbstractEntity {
     public Boolean getIsActive() {
         return isActive;
     }
+
+    /**
+     * Дата активации промокода.
+     */
+     @NotNull(message = "Дата активации промокода не может быть пустой.")
+     @Column(name = "active_date")
+     public LocalDateTime getActiveDate() {
+         return activeDate;
+     }
 }

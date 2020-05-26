@@ -15,6 +15,7 @@ import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -65,7 +66,7 @@ public class PromoCodeService {
             if (repository.existsByPromoCode(code)) {
                 continue;
             }
-            codes.add(new PromoCodeDTO(code, stockId, false));
+            codes.add(new PromoCodeDTO(code, stockId, false, LocalDateTime.now()));
         }
         try (FileWriter writer = new FileWriter(new File("src/main/resources/promo-code.txt"))) {
             for (PromoCodeDTO code : codes) {
