@@ -27,7 +27,6 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-@Slf4j
 public class PromoCodeService {
 
     private final PromoCodeMapper mapper;
@@ -103,7 +102,7 @@ public class PromoCodeService {
         }
         //TODO generate in /tmp
         String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + ".txt";
-        try (FileWriter writer = new FileWriter(new File("src/main/resources" + fileName))) {
+        try (FileWriter writer = new FileWriter(new File("src/main/resources/" + fileName))) {
             for (PromoCodeDTO code : codes) {
                 writer.write(code.getPromoCode() + "\n");
             }
@@ -112,12 +111,12 @@ public class PromoCodeService {
             System.out.printf("An exception occurs %s", e.getMessage());
         }
         try {
-            emailSender.send("src/main/resources" + fileName, stockId, cnt);
+            emailSender.send("src/main/resources/" + fileName, stockId, cnt);
             log.info("File {} was send", fileName);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        File file = new File("src/main/resources" + fileName);
+        File file = new File("src/main/resources/" + fileName);
         if (file.delete()) {
             log.info("Delete file {} with PromoCodes", fileName);
         } else {
