@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
+import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
@@ -30,11 +31,15 @@ public class UserController {
 
     private final UserService userService;
     private final PromoCodeService promoCodeService;
+    private final PromoCodeActivationService promoCodeActivationService;
 
     @Autowired
-    public UserController(final UserService userService, final PromoCodeService promoCodeService) {
+    public UserController(final UserService userService,
+                          final PromoCodeService promoCodeService,
+                          final PromoCodeActivationService promoCodeActivationService) {
         this.userService = userService;
         this.promoCodeService = promoCodeService;
+        this.promoCodeActivationService = promoCodeActivationService;
     }
 
     @ApiOperation(value = "Registering user",
@@ -104,7 +109,7 @@ public class UserController {
         promoCodeDTO.setIsActive(true);
         UserDTO user = userService.findById(id);
         user.setPromoCodeDTOId(promoCodeDTO.getId());
-
+        promoCodeActivationService.create(user, promoCodeDTO);
         promoCodeService.save(promoCodeDTO);
         userService.save(user);
         return ResponseEntity.ok(user);
