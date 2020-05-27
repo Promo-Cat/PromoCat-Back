@@ -31,6 +31,4 @@ public class CityDTO extends AbstractDTO {
     private String longitude;
     private String population;
     private Boolean active;
-    @JsonIgnore
-    private Long stockCityId;
 }

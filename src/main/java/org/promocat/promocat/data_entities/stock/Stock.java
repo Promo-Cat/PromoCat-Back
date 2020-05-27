@@ -6,13 +6,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.constraints.StockDurationConstraint;
 import org.promocat.promocat.data_entities.AbstractEntity;
-import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.movement.Movement;
-import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
+import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -39,7 +44,7 @@ public class Stock extends AbstractEntity {
     // TODO List -> Set
     private List<PromoCode> codes;
     private Set<Movement> movements;
-    private Set<StockCity> stockCities;
+    private Set<StockCity> cities;
     
     /**
      * Название акции.
@@ -115,8 +120,8 @@ public class Stock extends AbstractEntity {
      * TODO
      */
     @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    public Set<StockCity> getStockCities() {
-        return stockCities;
+    public Set<StockCity> getCities() {
+        return cities;
     }
 }
 

@@ -32,7 +32,7 @@ public class StockCity extends AbstractEntity {
 
     private Stock stock;
     private Long numberOfPromoCodes;
-    private Set<City> cities;
+    private City city;
 
     /**
      * Акция.
@@ -52,10 +52,11 @@ public class StockCity extends AbstractEntity {
     }
 
     /**
-     * Города, в которых проходит данная акция.
+     * Город.
      */
-    @OneToMany(mappedBy = "stockCity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    public Set<City> getCities() {
-        return cities;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id")
+    public City getCity() {
+        return city;
     }
 }

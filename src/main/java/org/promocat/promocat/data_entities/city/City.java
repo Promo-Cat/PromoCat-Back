@@ -8,11 +8,7 @@ import org.promocat.promocat.data_entities.AbstractEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
 
 @Entity
 @Table(name = "city")
@@ -33,7 +29,6 @@ public class City extends AbstractEntity {
     private String longitude;
     private String population;
     private Boolean active;
-    private StockCity stockCity;
 
     @Column(name = "address")
     public String getAddress() {
@@ -85,9 +80,4 @@ public class City extends AbstractEntity {
         return active;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stock_city_id")
-    public StockCity getStockCity() {
-        return stockCity;
-    }
 }
