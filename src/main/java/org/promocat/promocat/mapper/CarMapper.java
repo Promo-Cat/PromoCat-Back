@@ -3,6 +3,7 @@ package org.promocat.promocat.mapper;
 import org.modelmapper.ModelMapper;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.CarDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

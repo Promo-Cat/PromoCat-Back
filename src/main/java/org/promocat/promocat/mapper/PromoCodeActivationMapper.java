@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivation;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
