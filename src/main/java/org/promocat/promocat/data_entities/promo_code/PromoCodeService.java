@@ -19,6 +19,9 @@ import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +108,8 @@ public class PromoCodeService {
         }
         //TODO generate in /tmp
         String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + ".txt";
-        try (FileWriter writer = new FileWriter(new File("src/main/resources/" + fileName))) {
+        Path pathToFile = Paths.get("src", "main", "resources", fileName);
+        try (FileWriter writer = new FileWriter(new File(pathToFile.toString()))) {
             for (PromoCodeDTO code : codes) {
                 writer.write(code.getPromoCode() + "\n");
             }
@@ -114,12 +118,13 @@ public class PromoCodeService {
             System.out.printf("An exception occurs %s", e.getMessage());
         }
         try {
-            emailSender.send("src/main/resources/" + fileName, stockId, cnt);
+            emailSender.send(pathToFile.toString(), stockId, cnt);
             log.info("File {} was send", fileName);
         } catch (MessagingException e) {
+            // TODO log.error
             e.printStackTrace();
         } finally {
-            File file = new File("src/main/resources/" + fileName);
+            File file = new File(pathToFile.toString());
             if (file.delete()) {
                 log.info("Delete file {} with PromoCodes", fileName);
             } else {
@@ -137,6 +142,7 @@ public class PromoCodeService {
     public StockDTO savePromoCodes(StockDTO stock) {
         log.info("Saving {} promo-codes to stock: {}", stock.getCount(), stock.getId());
         List<PromoCodeDTO> codes = generate(stock.getCount(), stock.getId());
+        // TODO: DANIL SDELAY NORMALNO (не актуальные данные возвращаются) (возвращай то, что вернул репозиторий)
         for (PromoCodeDTO code : codes) {
             save(code);
         }

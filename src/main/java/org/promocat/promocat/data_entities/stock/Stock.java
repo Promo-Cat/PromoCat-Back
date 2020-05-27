@@ -8,6 +8,8 @@ import org.promocat.promocat.constraints.StockDurationConstraint;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.company.Company;
+import org.promocat.promocat.data_entities.movement.Movement;
+import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
 
 import javax.persistence.*;
@@ -15,6 +17,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -34,8 +37,11 @@ public class Stock extends AbstractEntity {
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
+    // TODO List -> Set
     private List<PromoCode> codes;
-
+    private Set<Movement> movements;
+    private Set<StockCity> stockCities;
+    
     /**
      * Название акции.
      */
@@ -105,6 +111,22 @@ public class Stock extends AbstractEntity {
     @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public List<PromoCode> getCodes() {
         return codes;
+    }
+
+    /**
+     * TODO
+     */
+    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public Set<Movement> getMovements() {
+        return movements;
+    }
+
+    /**
+     * TODO
+     */
+    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public Set<StockCity> getStockCities() {
+        return stockCities;
     }
 }
 

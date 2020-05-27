@@ -73,7 +73,8 @@ public class PromoCodeTest {
                 .andExpect(status().isOk()).andReturn();
         CityDTO city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
 
-        stock = new StockDTO("www", 10L, null, company.getId(), city.getId(), LocalDateTime.now(), 7L, null);
+        // TODO movement сейчас null, возможно надо пофиксить.
+        stock = new StockDTO("www", 10L, null, company.getId(), city.getId(), LocalDateTime.now(), 7L, null, null);
         this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(stock)))
                 .andExpect(status().isOk());
