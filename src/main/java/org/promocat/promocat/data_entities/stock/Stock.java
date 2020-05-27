@@ -33,7 +33,6 @@ public class Stock extends AbstractEntity {
     private String name;
     private Long count;
     private Boolean isAlive;
-    private City city;
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
@@ -68,15 +67,6 @@ public class Stock extends AbstractEntity {
         return isAlive;
     }
 
-    /**
-     * Город
-     */
-    @NotNull(message = "Город не может быть пустым.")
-    @ManyToOne
-    @JoinColumn(name = "city_id")
-    public City getCity() {
-        return city;
-    }
 
     /**
      * Время начала акции.
