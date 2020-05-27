@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.promocat.promocat.data_entities.movement.Movement;
 import org.promocat.promocat.data_entities.stock.StockRepository;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.MovementDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
