@@ -1,18 +1,22 @@
 package org.promocat.promocat.data_entities.promocode_activation;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
-import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
-@Table(name = "promocode_activation")
+@EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "promocode_activation")
 public class PromoCodeActivation extends AbstractEntity {
 
 

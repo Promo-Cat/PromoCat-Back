@@ -30,9 +30,12 @@ public class MovementService {
         this.movementMapper = movementMapper;
     }
 
-    public MovementDTO create(DistanceDTO distanceDTO, Long userId) {
+    public MovementDTO create(DistanceDTO distanceDTO, String telephone) {
         MovementDTO movementDTO = new MovementDTO();
-        UserDTO userDTO = userService.findById(userId);
+        UserDTO userDTO = userService.findByTelephone(telephone);
+        if (userDTO.getPromoCodeId() == null) {
+            return null;
+        }
         movementDTO.setUserId(userDTO.getId());
         movementDTO.setStockId(promoCodeRepository.findById(userDTO.getPromoCodeId()).orElseThrow().getStock().getId());
         movementDTO.setDate(LocalDateTime.now());

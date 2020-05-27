@@ -6,8 +6,11 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
+import org.promocat.promocat.dto.DistanceDTO;
+import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
@@ -32,14 +35,17 @@ public class UserController {
     private final UserService userService;
     private final PromoCodeService promoCodeService;
     private final PromoCodeActivationService promoCodeActivationService;
+    private final MovementService movementService;
 
     @Autowired
     public UserController(final UserService userService,
                           final PromoCodeService promoCodeService,
-                          final PromoCodeActivationService promoCodeActivationService) {
+                          final PromoCodeActivationService promoCodeActivationService,
+                          final MovementService movementService) {
         this.userService = userService;
         this.promoCodeService = promoCodeService;
         this.promoCodeActivationService = promoCodeActivationService;
+        this.movementService = movementService;
     }
 
     @ApiOperation(value = "Registering user",
@@ -113,6 +119,14 @@ public class UserController {
         // TODO: DANIL SDELAY NORMALNO
         user.setPromoCodeId(promoCodeService.save(promoCodeDTO).getId());
         return ResponseEntity.ok(userService.save(user));
+    }
+
+    @RequestMapping(value = "/api/user/move", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
+                                                @RequestHeader("token") String token) {
+        JwtReader jwtReader = new JwtReader(token);
+        String telephone = jwtReader.getValue("telephone");
+        return ResponseEntity.ok(movementService.create(distanceDTO, telephone));
     }
 
     // ------ Admin methods ------
