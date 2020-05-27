@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.stock.stock_city;
 
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.mapper.StockCityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 19:36 27.05.2020
  */
+@Slf4j
 @Service
 public class StockCityService {
 
