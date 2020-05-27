@@ -15,8 +15,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class MovementDTO extends AbstractDTO {
 
-    private User user;
-    private Stock stock;
+    private Long userId;
+    private Long stockId;
     private Date date;
     private Double distance;
 
