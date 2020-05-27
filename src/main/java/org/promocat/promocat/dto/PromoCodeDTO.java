@@ -55,4 +55,10 @@ public class PromoCodeDTO extends AbstractDTO {
     )
     @NotNull(message = "Дата активации промокода не может быть пустым.")
     private LocalDateTime activeDate;
+
+    @ApiModelProperty(
+            value = "Promo-code end status",
+            dataType = "LocalDateTime"
+    )
+    private LocalDateTime deactivateDate;
 }
