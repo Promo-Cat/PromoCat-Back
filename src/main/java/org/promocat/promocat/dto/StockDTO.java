@@ -8,11 +8,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.constraints.StockDurationConstraint;
+import org.promocat.promocat.data_entities.movement.Movement;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Danil Lyskin at 19:54 12.05.2020
@@ -86,10 +88,15 @@ public class StockDTO extends AbstractDTO {
     private Long duration;
 
     @ApiModelProperty(
-            value = "List of promo-codes",
-            dataType = "List",
+            value = "Set of promo-codes",
+            dataType = "Set",
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    // TODO List -> Set
     private List<PromoCodeDTO> codes;
+
+
+    // TODO docs
+    private Set<Movement> movements;
 }
