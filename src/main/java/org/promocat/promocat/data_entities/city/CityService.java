@@ -118,4 +118,14 @@ public class CityService {
         log.info("City: {} activated", city);
         return cityMapper.toDto(cityRepository.save(cityMapper.toEntity(dto)));
     }
+
+    /**
+     * TODO
+     * @param id
+     * @return
+     */
+    public boolean isActiveById(Long id) {
+        City city = cityRepository.findById(id).orElseThrow(() -> new ApiCityNotFoundException("No such city in db."));
+        return city.getActive().equals(Boolean.TRUE);
+    }
 }

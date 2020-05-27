@@ -1,7 +1,9 @@
 package org.promocat.promocat.data_entities.stock.stock_city;
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.exception.city.ApiCityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +22,21 @@ import javax.validation.Valid;
 public class StockCityController {
 
     private final StockCityService stockCityService;
+    private final CityService cityService;
 
     @Autowired
-    public StockCityController(final StockCityService stockCityService) {
+    public StockCityController(final StockCityService stockCityService, final CityService cityService) {
         this.stockCityService = stockCityService;
+        this.cityService = cityService;
     }
 
     @RequestMapping(value = "/api/stock/city", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockCityDTO> save(@Valid @RequestBody StockCityDTO stockCityDTO) {
-        return ResponseEntity.ok(stockCityService.save(stockCityDTO));
+        if (cityService.isActiveById(stockCityDTO.getCityId())) {
+            return ResponseEntity.ok(stockCityService.save(stockCityDTO));
+        } else {
+            // TODO City not active exception
+            throw new ApiCityNotFoundException("City is not active");
+        }
     }
 }
