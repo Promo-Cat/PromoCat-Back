@@ -40,11 +40,16 @@ public class PromoCodeActivationMapper extends AbstractMapper<PromoCodeActivatio
 
     @Override
     public void mapSpecificFields(PromoCodeActivation source, PromoCodeActivationDTO destination) {
-        destination.setId(getId(source));
+        destination.setUserId(getUserId(source));
+        destination.setPromoCodeId(getPromoCodeId(source));
     }
 
-    private Long getId(PromoCodeActivation source) {
-        return Objects.isNull(source) || Objects.isNull(source.getUser()) ? null : source.getId();
+    private Long getUserId(PromoCodeActivation source) {
+        return Objects.isNull(source) || Objects.isNull(source.getUser()) ? null : source.getUser().getId();
+    }
+
+    private Long getPromoCodeId(PromoCodeActivation source) {
+        return Objects.isNull(source) || Objects.isNull(source.getPromoCode()) ? null : source.getPromoCode().getId();
     }
 
     @Override
