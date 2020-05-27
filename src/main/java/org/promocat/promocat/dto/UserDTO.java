@@ -51,7 +51,8 @@ public class UserDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
             value = "Users cars",
-            dataType = "Set"
+            dataType = "Set",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<CarDTO> cars;
@@ -65,9 +66,21 @@ public class UserDTO extends AbstractAccountDTO {
     // TODO docs
     private Set<Movement> movements;
 
-    // TODO docs
+    @ApiModelProperty(
+            value = "Users total distance",
+            dataType = "Long",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long totalDistance;
 
+
+    @ApiModelProperty(
+            value = "Users total earnings",
+            dataType = "Long",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long totalEarnings;
 
     public UserDTO() {
