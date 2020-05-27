@@ -7,6 +7,7 @@ import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -23,8 +24,7 @@ public class Movement extends AbstractEntity {
     private Stock stock;
 
     @Column(name = "date")
-    @Temporal(TemporalType.DATE)
-    private Date date;
+    private LocalDateTime date;
 
     @Column(name = "distance")
     private Double distance;
