@@ -30,7 +30,7 @@ public class StockCityController {
         this.cityService = cityService;
     }
 
-    @RequestMapping(value = "/api/stock/city", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/company/stock/city", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockCityDTO> save(@Valid @RequestBody StockCityDTO stockCityDTO) {
         if (cityService.isActiveById(stockCityDTO.getCityId())) {
             return ResponseEntity.ok(stockCityService.save(stockCityDTO));
