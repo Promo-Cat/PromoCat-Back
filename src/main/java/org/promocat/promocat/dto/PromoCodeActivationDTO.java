@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.promocat.promocat.data_entities.stock.Stock;
-import org.promocat.promocat.data_entities.user.User;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
@@ -15,8 +13,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class PromoCodeActivationDTO extends AbstractDTO {
 
-    private UserDTO user;
-    private PromoCodeDTO promoCode;
-    private Date date;
+    private Long userId;
+    private Long promoCodeId;
+    private LocalDateTime date;
 
 }

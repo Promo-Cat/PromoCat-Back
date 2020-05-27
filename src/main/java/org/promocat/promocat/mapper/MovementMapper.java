@@ -45,7 +45,7 @@ public class MovementMapper extends AbstractMapper<Movement, MovementDTO> {
     }
 
     private Long getId(Movement source) {
-        return Objects.isNull(source) || Objects.isNull(source.getUser()) ? null : source.getStock().getId();
+        return Objects.isNull(source) || Objects.isNull(source.getUser()) ? null : source.getId();
     }
 
     @Override

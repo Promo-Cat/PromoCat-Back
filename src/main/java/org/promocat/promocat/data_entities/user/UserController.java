@@ -108,11 +108,11 @@ public class UserController {
         }
         promoCodeDTO.setIsActive(true);
         UserDTO user = userService.findById(id);
-        user.setPromoCodeDTOId(promoCodeDTO.getId());
+//        user.setPromoCodeDTOId(promoCodeDTO.getId());
         promoCodeActivationService.create(user, promoCodeDTO);
-        promoCodeService.save(promoCodeDTO);
-        userService.save(user);
-        return ResponseEntity.ok(user);
+        // TODO: DANIL SDELAY NORMALNO
+        user.setPromoCodeId(promoCodeService.save(promoCodeDTO).getId());
+        return ResponseEntity.ok(userService.save(user));
     }
 
     // ------ Admin methods ------

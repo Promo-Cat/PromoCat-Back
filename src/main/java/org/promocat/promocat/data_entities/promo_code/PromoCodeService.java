@@ -139,6 +139,7 @@ public class PromoCodeService {
     public StockDTO savePromoCodes(StockDTO stock) {
         log.info("Saving {} promo-codes to stock: {}", stock.getCount(), stock.getId());
         List<PromoCodeDTO> codes = generate(stock.getCount(), stock.getId());
+        // TODO: DANIL SDELAY NORMALNO (не актуальные данные возвращаются) (возвращай то, что вернул репозиторий)
         for (PromoCodeDTO code : codes) {
             save(code);
         }

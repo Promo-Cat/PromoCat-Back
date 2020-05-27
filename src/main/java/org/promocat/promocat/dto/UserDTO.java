@@ -59,7 +59,7 @@ public class UserDTO extends AbstractAccountDTO {
             value = "Id of current users promo-code",
             dataType = "Long"
     )
-    private Long promoCodeDTOId;
+    private Long promoCodeId;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);

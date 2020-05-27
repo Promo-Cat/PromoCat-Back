@@ -7,6 +7,8 @@ import org.promocat.promocat.mapper.PromoCodeActivationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class PromoCodeActivationService {
 
@@ -22,8 +24,9 @@ public class PromoCodeActivationService {
 
     public PromoCodeActivationDTO create(UserDTO user, PromoCodeDTO promoCode) {
         PromoCodeActivationDTO res = new PromoCodeActivationDTO();
-        res.setPromoCode(promoCode);
-        res.setUser(user);
+        res.setPromoCodeId(promoCode.getId());
+        res.setUserId(user.getId());
+        res.setDate(LocalDateTime.now());
         return promoCodeActivationMapper.toDto(promoCodeActivationRepository.save(promoCodeActivationMapper.toEntity(res)));
     }
 }
