@@ -34,28 +34,22 @@ public class StockMapper extends AbstractMapper<Stock, StockDTO>  {
     @PostConstruct
     public void setupMapper() {
         mapper.createTypeMap(Stock.class, StockDTO.class)
-                .addMappings(m -> { m.skip(StockDTO::setCompanyId); m.skip(StockDTO::setCityId); }).setPostConverter(toDtoConverter());
+                .addMappings(m -> { m.skip(StockDTO::setCompanyId); }).setPostConverter(toDtoConverter());
         mapper.createTypeMap(StockDTO.class, Stock.class)
-                .addMappings(m -> { m.skip(Stock::setCompany); m.skip(Stock::setCity); }).setPostConverter(toEntityConverter());
+                .addMappings(m -> { m.skip(Stock::setCompany); }).setPostConverter(toEntityConverter());
     }
 
     @Override
     public void mapSpecificFields(Stock source, StockDTO destination) {
         destination.setCompanyId(getCompanyId(source));
-        destination.setCityId(getCityId(source));
     }
 
     private Long getCompanyId(Stock source) {
         return Objects.isNull(source) || Objects.isNull(source.getCompany()) ? null : source.getCompany().getId();
     }
 
-    private Long getCityId(Stock source) {
-        return Objects.isNull(source) || Objects.isNull(source.getCity()) ? null : source.getCity().getId();
-    }
-
     @Override
     void mapSpecificFields(StockDTO source, Stock destination) {
         destination.setCompany(companyRepository.findById(source.getCompanyId()).orElse(null));
-        destination.setCity(cityRepository.findById(source.getCityId()).orElse(null));
     }
 }

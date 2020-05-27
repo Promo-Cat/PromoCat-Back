@@ -9,6 +9,7 @@ import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.movement.Movement;
+import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
 
 import javax.persistence.*;
@@ -32,14 +33,14 @@ public class Stock extends AbstractEntity {
     private String name;
     private Long count;
     private Boolean isAlive;
-    private City city;
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
     // TODO List -> Set
     private List<PromoCode> codes;
     private Set<Movement> movements;
-
+    private Set<StockCity> stockCities;
+    
     /**
      * Название акции.
      */
@@ -66,15 +67,6 @@ public class Stock extends AbstractEntity {
         return isAlive;
     }
 
-    /**
-     * Город
-     */
-    @NotNull(message = "Город не может быть пустым.")
-    @ManyToOne
-    @JoinColumn(name = "city_id")
-    public City getCity() {
-        return city;
-    }
 
     /**
      * Время начала акции.
@@ -117,6 +109,14 @@ public class Stock extends AbstractEntity {
     @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Movement> getMovements() {
         return movements;
+    }
+
+    /**
+     * TODO
+     */
+    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public Set<StockCity> getStockCities() {
+        return stockCities;
     }
 }
 

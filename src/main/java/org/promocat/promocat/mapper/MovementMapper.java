@@ -42,13 +42,17 @@ public class MovementMapper extends AbstractMapper<Movement, MovementDTO> {
 
     @Override
     public void mapSpecificFields(Movement source, MovementDTO destination) {
-        destination.setId(getId(source));
+        destination.setUserId(getUserId(source));
+        destination.setStockId(getStockId(source));
     }
 
-    private Long getId(Movement source) {
-        return Objects.isNull(source) || Objects.isNull(source.getUser()) ? null : source.getId();
+    private Long getUserId(Movement source) {
+        return Objects.isNull(source) || Objects.isNull(source.getUser()) ? null : source.getUser().getId();
     }
 
+    private Long getStockId(Movement source) {
+        return Objects.isNull(source) || Objects.isNull(source.getStock()) ? null : source.getStock().getId();
+    }
     @Override
     void mapSpecificFields(MovementDTO source, Movement destination) {
         destination.setUser(userRepository.findById(source.getUserId()).orElse(null));

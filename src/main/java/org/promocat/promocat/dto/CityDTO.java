@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+// TODO docs
 public class CityDTO extends AbstractDTO {
     private String address;
     private String postalCode;
@@ -29,4 +31,6 @@ public class CityDTO extends AbstractDTO {
     private String longitude;
     private String population;
     private Boolean active;
+    @JsonIgnore
+    private Long stockCityId;
 }

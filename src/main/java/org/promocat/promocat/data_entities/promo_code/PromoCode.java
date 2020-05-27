@@ -27,6 +27,7 @@ public class PromoCode extends AbstractEntity {
     private Stock stock;
     private Boolean isActive;
     private LocalDateTime activeDate;
+    private LocalDateTime deactivateDate;
 
     /**
      * Промокод.
@@ -61,5 +62,10 @@ public class PromoCode extends AbstractEntity {
      @Column(name = "active_date")
      public LocalDateTime getActiveDate() {
          return activeDate;
+     }
+
+     @Column(name = "deactivate_date")
+     public LocalDateTime getDeactivateDate() {
+         return deactivateDate;
      }
 }

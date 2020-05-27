@@ -11,6 +11,8 @@ import org.promocat.promocat.exception.promo_code.ApiPromoCodeNotFoundException;
 import org.promocat.promocat.mapper.PromoCodeMapper;
 import org.promocat.promocat.utils.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -30,6 +32,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
+@EnableScheduling
 public class PromoCodeService {
 
     private final PromoCodeMapper mapper;
@@ -101,7 +104,7 @@ public class PromoCodeService {
             if (repository.existsByPromoCode(code)) {
                 continue;
             }
-            codes.add(new PromoCodeDTO(code, stockId, false, LocalDateTime.now()));
+            codes.add(new PromoCodeDTO(code, stockId, false, LocalDateTime.now(), null));
         }
         //TODO generate in /tmp
         String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + ".txt";
@@ -158,6 +161,14 @@ public class PromoCodeService {
             PromoCodeDTO promoCode = mapper.toDto(res.get());
             promoCode.setIsActive(active);
             save(promoCode);
+        }
+    }
+
+    @Scheduled(cron = "59 59 23 3 * *")
+    public void checkAlive() {
+        List<PromoCode> codesTmp = repository.getByDeactivateDateLessThan(LocalDateTime.now());
+        for (PromoCode code : codesTmp) {
+            repository.deleteById(code.getId());
         }
     }
 }
