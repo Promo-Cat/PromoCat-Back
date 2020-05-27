@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.movement.Movement;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -50,7 +51,7 @@ public class UserDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
             value = "Users cars",
-            dataType = "Long"
+            dataType = "Set"
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<CarDTO> cars;
@@ -60,6 +61,9 @@ public class UserDTO extends AbstractAccountDTO {
             dataType = "Long"
     )
     private Long promoCodeDTOId;
+
+    // TODO docs
+    private Set<Movement> movements;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);

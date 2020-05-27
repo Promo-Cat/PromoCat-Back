@@ -8,6 +8,7 @@ import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.city.City;
+import org.promocat.promocat.data_entities.movement.Movement;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -30,6 +31,7 @@ public class User extends AbstractAccount {
     private City city;
     private Long balance = 0L;
     private Set<Car> cars;
+    private Set<Movement> movements;
     private Long promoCodeId;
 
     public User(String name, City city, Long balance, Long promoCodeId) {
@@ -74,6 +76,14 @@ public class User extends AbstractAccount {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Car> getCars() {
         return cars;
+    }
+
+    /**
+     * TODO
+     */
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public Set<Movement> getMovements() {
+        return movements;
     }
 
     /**

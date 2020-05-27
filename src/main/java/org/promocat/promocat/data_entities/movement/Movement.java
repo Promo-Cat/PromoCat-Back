@@ -27,13 +27,13 @@ public class Movement extends AbstractEntity {
     private LocalDateTime date;
     private Double distance;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     public User getUser() {
         return user;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id")
     public Stock getStock() {
         return stock;
