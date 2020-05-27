@@ -33,6 +33,8 @@ public class User extends AbstractAccount {
     private Set<Car> cars;
     private Set<Movement> movements;
     private Long promoCodeId;
+    private Long totalDistance;
+    private Long totalEarnings;
 
     public User(String name, City city, Long balance, Long promoCodeId) {
         this.name = name;
@@ -92,5 +94,21 @@ public class User extends AbstractAccount {
     @Column(name = "promo_code")
     public Long getPromoCodeId() {
         return promoCodeId;
+    }
+
+    /**
+     * Общее расстояние, которое проехал пользователь за все время.
+     */
+    @Column(name = "total_distance")
+    public Long getTotalDistance() {
+        return totalDistance;
+    }
+
+    /**
+     * Общий заработок пользователя за все время.
+     */
+    @Column(name = "total_earnings")
+    public Long getTotalEarnings() {
+        return totalEarnings;
     }
 }

@@ -65,6 +65,11 @@ public class UserDTO extends AbstractAccountDTO {
     // TODO docs
     private Set<Movement> movements;
 
+    // TODO docs
+    private Long totalDistance;
+
+    private Long totalEarnings;
+
     public UserDTO() {
         this.setAccountType(AccountType.USER);
     }
