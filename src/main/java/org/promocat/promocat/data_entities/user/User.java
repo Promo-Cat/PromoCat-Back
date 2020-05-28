@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
@@ -33,8 +34,8 @@ public class User extends AbstractAccount {
     private Set<Car> cars;
     private Set<Movement> movements;
     private Long promoCodeId;
-    private Long totalDistance;
-    private Long totalEarnings;
+    private Long totalDistance = 0L;
+    private Long totalEarnings = 0L;
 
     public User(String name, City city, Long balance, Long promoCodeId) {
         this.name = name;
@@ -97,18 +98,18 @@ public class User extends AbstractAccount {
     }
 
     /**
-     * Общее расстояние, которое проехал пользователь за все время.
-     */
-    @Column(name = "total_distance")
-    public Long getTotalDistance() {
-        return totalDistance;
-    }
-
-    /**
      * Общий заработок пользователя за все время.
      */
     @Column(name = "total_earnings")
     public Long getTotalEarnings() {
         return totalEarnings;
+    }
+
+    /**
+     * Общее расстояние, которое проехал пользователь за все время.
+     */
+    @Column(name = "total_distance")
+    public Long getTotalDistance() {
+        return totalDistance;
     }
 }
