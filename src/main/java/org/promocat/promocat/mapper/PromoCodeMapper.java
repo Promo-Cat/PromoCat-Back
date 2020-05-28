@@ -50,7 +50,7 @@ public class PromoCodeMapper extends AbstractMapper<PromoCode, PromoCodeDTO> {
     }
 
     private Long getCityId(PromoCode source) {
-        return Objects.isNull(source) || Objects.isNull(source.getStockCity()) ? null : source.getStockCity().getId();
+        return Objects.isNull(source) || Objects.isNull(source.getStockCity()) ? null : source.getStockCity().getCity().getId();
     }
 
     @Override
