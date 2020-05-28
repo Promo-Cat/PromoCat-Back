@@ -45,6 +45,8 @@ public class MovementService {
         MovementDTO movementDTO = new MovementDTO();
         UserDTO userDTO = userMapper.toDto(userRepository.getByTelephone(telephone)
                 .orElseThrow(() -> new ApiUserNotFoundException("No such user")));
+        userDTO.setTotalDistance(userDTO.getTotalDistance() + distanceDTO.getDistance());
+        userDTO = userMapper.toDto(userRepository.save(userMapper.toEntity(userDTO)));
         if (userDTO.getPromoCodeId() == null) {
             return null;
         }
