@@ -2,6 +2,11 @@ package org.promocat.promocat.data_entities.user;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.data_entities.movement.MovementService;
+import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
+import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.mapper.UserMapper;
@@ -9,6 +14,7 @@ import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,13 +26,18 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-
+    private final StockService stockService;
+    private final PromoCodeService promoCodeService;
+    private final MovementService movementService;
 
     @Autowired
     public UserService(final UserRepository userRepository,
-                       final UserMapper mapper) {
+                       final UserMapper mapper, final StockService stockService, final PromoCodeService promoCodeService, final MovementService movementService) {
         this.userRepository = userRepository;
         this.userMapper = mapper;
+        this.stockService = stockService;
+        this.promoCodeService = promoCodeService;
+        this.movementService = movementService;
     }
 
     /**
@@ -89,10 +100,18 @@ public class UserService {
             throw new ApiUserNotFoundException(String.format("User with id %d doesn`t found", id));
         }
     }
-    
+
     public UserDTO getByToken(String token) {
         JwtReader jwtReader = new JwtReader(token);
         String telephone = jwtReader.getValue("telephone");
         return userMapper.toDto(userRepository.getByTelephone(telephone).orElseThrow());
+    }
+
+    public StockDTO getUsersCurrentStock(final UserDTO user) {
+        return stockService.findById(promoCodeService.findById(user.getPromoCodeId()).getStockId());
+    }
+
+    public List<MovementDTO> getUserStatistics(final UserDTO user) {
+        return movementService.findByUserAndStock(user, getUsersCurrentStock(user));
     }
 }
