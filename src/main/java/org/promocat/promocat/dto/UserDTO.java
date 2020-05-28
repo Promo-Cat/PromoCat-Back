@@ -63,7 +63,7 @@ public class UserDTO extends AbstractAccountDTO {
     private Long promoCodeId;
 
     // TODO docs
-    private Set<Movement> movements;
+    private Set<MovementDTO> movements;
 
     @ApiModelProperty(
             value = "Users total distance",
