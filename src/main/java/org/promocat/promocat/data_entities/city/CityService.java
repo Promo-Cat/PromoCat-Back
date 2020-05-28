@@ -108,6 +108,18 @@ public class CityService {
     }
 
     /**
+     * Получение информации о городе по id города.
+     * @param id id города.
+     * @return объектное представление города в БД. {@link CityDTO}
+     * @throws ApiCityNotFoundException если такого города нет в БД.
+     */
+    public CityDTO findById(Long id) {
+        Optional<City> city = cityRepository.findById(id);
+        log.info("Trying to find city by id: {}", id);
+        return cityMapper.toDto(city.orElseThrow(() -> new ApiCityNotFoundException("No such city in db.")));
+    }
+
+    /**
      * Устанавливает город в активное состояние.
      * @param city название города.
      * @return объектное представление города в БД. {@link CityDTO}.

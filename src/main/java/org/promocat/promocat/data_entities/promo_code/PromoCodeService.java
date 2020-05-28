@@ -95,7 +95,7 @@ public class PromoCodeService {
     private void sendMail(Set<StockCityDTO> cities) {
         List<Path> files = new ArrayList<>();
         for (StockCityDTO city : cities) {
-            String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + "$" + city.getCityId() + ".txt";
+            String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + "$" + cityService.findById(city.getCityId()).getCity() + ".txt";
             Path pathToFile = Paths.get("src", "main", "resources", fileName);
             try (FileWriter writer = new FileWriter(new File(pathToFile.toString()))) {
                 for (PromoCodeDTO code : city.getPromoCodes()) {
