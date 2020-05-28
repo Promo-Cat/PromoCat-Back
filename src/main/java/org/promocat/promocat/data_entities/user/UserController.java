@@ -9,10 +9,7 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
-import org.promocat.promocat.dto.DistanceDTO;
-import org.promocat.promocat.dto.MovementDTO;
-import org.promocat.promocat.dto.PromoCodeDTO;
-import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeActiveException;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
@@ -132,6 +129,8 @@ public class UserController {
         JwtReader jwtReader = new JwtReader(token);
         String telephone = jwtReader.getValue("telephone");
         UserDTO user = userService.findByTelephone(telephone);
+        user.setTotalDistance(user.getTotalDistance() + distanceDTO.getDistance());
+        user = userService.save(user);
         MovementDTO movement = movementService.findByUserAndDate(user, distanceDTO.getDate());
 
         if (Objects.nonNull(movement)) {
@@ -198,6 +197,12 @@ public class UserController {
     @RequestMapping(value = "/admin/user/telephone", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {
         return ResponseEntity.ok(userService.findByTelephone(telephone));
+    }
+
+    @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
+    public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") String token) {
+        UserDTO userDTO = userService.getByToken(token);
+        return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
     }
 
 }
