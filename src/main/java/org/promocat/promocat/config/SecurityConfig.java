@@ -39,6 +39,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             new AntPathRequestMatcher("/admin/**")
     );
 
+    private static final RequestMatcher USER_URLS = new OrRequestMatcher(
+            new AntPathRequestMatcher("/api/user/**")
+    );
+
+    private static final RequestMatcher COMPANY_URLS = new OrRequestMatcher(
+            new AntPathRequestMatcher("/api/company/**")
+    );
+
 
     SecurityProvider provider;
 
@@ -74,6 +82,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .requestMatchers(ADMIN_URLS)
                 .hasAuthority("ROLE_" + AccountType.ADMIN.getType().toUpperCase())
+                .requestMatchers(USER_URLS)
+                .hasAuthority("ROLE_" + AccountType.USER.getType().toUpperCase())
+                .requestMatchers(COMPANY_URLS)
+                .hasAuthority("ROLE_" + AccountType.COMPANY.getType().toUpperCase())
                 .requestMatchers(PROTECTED_URLS)
                 .authenticated()
                 .and()
