@@ -55,8 +55,10 @@ public class StockCity extends AbstractEntity {
         return city;
     }
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "promo_codes")
+    /**
+     * Промокоды.
+     */
+    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<PromoCode> getPromoCodes() {
         return promoCodes;
     }
