@@ -9,7 +9,7 @@ import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.movement.Movement;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
-import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;

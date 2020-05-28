@@ -1,6 +1,5 @@
 package org.promocat.promocat.data_entities.stock.stock_city;
 
-import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

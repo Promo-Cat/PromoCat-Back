@@ -1,4 +1,4 @@
-package org.promocat.promocat.data_entities.stock.city_stock;
+package org.promocat.promocat.data_entities.stock.stock_city;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -58,7 +58,7 @@ public class StockCity extends AbstractEntity {
     /**
      * Промокоды.
      */
-    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "stockCity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<PromoCode> getPromoCodes() {
         return promoCodes;
     }

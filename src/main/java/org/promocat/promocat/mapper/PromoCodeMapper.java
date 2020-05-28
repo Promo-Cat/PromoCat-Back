@@ -36,7 +36,7 @@ public class PromoCodeMapper extends AbstractMapper<PromoCode, PromoCodeDTO> {
                 .addMappings(m -> m.skip(PromoCodeDTO::setCityId)).setPostConverter(toDtoConverter());
         mapper.createTypeMap(PromoCodeDTO.class, PromoCode.class)
                 .addMappings(m -> m.skip(PromoCode::setStock))
-                .addMappings(m -> m.skip(PromoCode::setCity)).setPostConverter(toEntityConverter());
+                .addMappings(m -> m.skip(PromoCode::setStockCity)).setPostConverter(toEntityConverter());
     }
 
     @Override
@@ -50,12 +50,12 @@ public class PromoCodeMapper extends AbstractMapper<PromoCode, PromoCodeDTO> {
     }
 
     private Long getCityId(PromoCode source) {
-        return Objects.isNull(source) || Objects.isNull(source.getCity()) ? null : source.getCity().getId();
+        return Objects.isNull(source) || Objects.isNull(source.getStockCity()) ? null : source.getStockCity().getId();
     }
 
     @Override
     void mapSpecificFields(PromoCodeDTO source, PromoCode destination) {
         destination.setStock(stockRepository.findById(source.getStockId()).orElse(null));
-        destination.setCity(stockCityRepository.findById(source.getCityId()).orElse(null));
+        destination.setStockCity(stockCityRepository.findById(source.getCityId()).orElse(null));
     }
 }
