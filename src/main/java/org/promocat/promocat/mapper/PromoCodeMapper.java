@@ -18,25 +18,21 @@ import java.util.Objects;
 public class PromoCodeMapper extends AbstractMapper<PromoCode, PromoCodeDTO> {
 
     private final ModelMapper mapper;
-    private final StockRepository stockRepository;
     private final StockCityRepository stockCityRepository;
 
     @Autowired
-    public PromoCodeMapper(final ModelMapper mapper, final StockRepository stockRepository, final StockCityRepository stockCityRepository) {
+    public PromoCodeMapper(final ModelMapper mapper, final StockCityRepository stockCityRepository) {
         super(PromoCode.class, PromoCodeDTO.class);
         this.mapper = mapper;
-        this.stockRepository = stockRepository;
         this.stockCityRepository = stockCityRepository;
     }
 
     @PostConstruct
     public void setupMapper() {
         mapper.createTypeMap(PromoCode.class, PromoCodeDTO.class)
-                .addMappings(m -> m.skip(PromoCodeDTO::setStockId))
                 .addMappings(m -> m.skip(PromoCodeDTO::setStockCityId))
                 .setPostConverter(toDtoConverter());
         mapper.createTypeMap(PromoCodeDTO.class, PromoCode.class)
-                .addMappings(m -> m.skip(PromoCode::setStock))
                 .addMappings(m -> m.skip(PromoCode::setStockCity))
                 .setPostConverter(toEntityConverter());
 
@@ -44,13 +40,9 @@ public class PromoCodeMapper extends AbstractMapper<PromoCode, PromoCodeDTO> {
 
     @Override
     public void mapSpecificFields(PromoCode source, PromoCodeDTO destination) {
-        destination.setStockId(getStockId(source));
         destination.setStockCityId(getStockCityId(source));
     }
 
-    private Long getStockId(PromoCode source) {
-        return Objects.isNull(source) || Objects.isNull(source.getStock()) ? null : source.getStock().getId();
-    }
 
     private Long getStockCityId(PromoCode source) {
         return Objects.isNull(source) || Objects.isNull(source.getStockCity()) ? null : source.getStockCity().getId();
@@ -58,7 +50,6 @@ public class PromoCodeMapper extends AbstractMapper<PromoCode, PromoCodeDTO> {
 
     @Override
     void mapSpecificFields(PromoCodeDTO source, PromoCode destination) {
-        destination.setStock(stockRepository.findById(source.getStockId()).orElse(null));
         destination.setStockCity(stockCityRepository.findById(source.getStockCityId()).orElse(null));
 
     }

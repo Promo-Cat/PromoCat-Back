@@ -32,7 +32,7 @@ public class StockCity extends AbstractEntity {
     /**
      * Акция.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_id")
     public Stock getStock() {
         return stock;
@@ -49,7 +49,7 @@ public class StockCity extends AbstractEntity {
     /**
      * Город.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "city_id")
     public City getCity() {
         return city;

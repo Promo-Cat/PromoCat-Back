@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 public class PromoCode extends AbstractEntity {
 
     private String promoCode;
-    private Stock stock;
     private Boolean isActive;
     private LocalDateTime activeDate;
     private LocalDateTime deactivateDate;
@@ -38,15 +37,6 @@ public class PromoCode extends AbstractEntity {
     @Column(name = "promo_code", unique = true)
     public String getPromoCode() {
         return promoCode;
-    }
-
-    /**
-     * Id акции.
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stock_id")
-    public Stock getStock() {
-        return stock;
     }
 
     /**

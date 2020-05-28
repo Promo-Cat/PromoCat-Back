@@ -33,14 +33,6 @@ public class PromoCodeDTO extends AbstractDTO {
     private String promoCode;
 
     @ApiModelProperty(
-            value = "Stock id",
-            dataType = "Long",
-            required = true
-    )
-    @NotNull(message = "Id акции не может быть пустым.")
-    private Long stockId;
-
-    @ApiModelProperty(
             value = "Promo-code status",
             dataType = "Boolean"
     )
