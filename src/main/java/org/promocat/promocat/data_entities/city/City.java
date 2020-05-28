@@ -16,7 +16,6 @@ import javax.persistence.Table;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-// TODO javadocs
 public class City extends AbstractEntity {
 
     private String address;
@@ -30,51 +29,81 @@ public class City extends AbstractEntity {
     private String population;
     private Boolean active;
 
+    /**
+     * Адрес города.
+     */
     @Column(name = "address")
     public String getAddress() {
         return address;
     }
 
+    /**
+     * Префикс почтового индекса.
+     */
     @Column(name = "postal_code")
     public String getPostalCode() {
         return postalCode;
     }
 
+    /**
+     * Страна.
+     */
     @Column(name = "country")
     public String getCountry() {
         return country;
     }
 
+    /**
+     * Регион.
+     */
     @Column(name = "region")
     public String getRegion() {
         return region;
     }
 
+    /**
+     * Название города.
+     */
     @Column(name = "city")
     public String getCity() {
         return city;
     }
 
+    /**
+     * Часовой пояс.
+     */
     @Column(name = "timezone")
     public String getTimezone() {
         return timezone;
     }
 
+    /**
+     * Широта.
+     */
     @Column(name = "geo_lat")
     public String getLatitude() {
         return latitude;
     }
 
+    /**
+     * Долгота.
+     */
     @Column(name = "geo_lon")
     public String getLongitude() {
         return longitude;
     }
 
+    /**
+     * Население.
+     */
     @Column(name = "population")
     public String getPopulation() {
         return population;
     }
 
+    /**
+     * Статус активности ли города.
+     */
     @Column(name = "active")
     public Boolean getActive() {
         return active;

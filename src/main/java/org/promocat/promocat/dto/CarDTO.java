@@ -12,8 +12,7 @@ import javax.validation.constraints.NotNull;
 
 @ApiModel(
         value = "Car",
-        description = "Object representation of users car.",
-        parent = AbstractDTO.class
+        description = "Object representation of users car."
 )
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data

@@ -32,7 +32,7 @@ public class CityController {
 
     @ApiOperation(value = "Get active cities.",
             notes = "Returning all active cities.",
-            response = StockDTO.class)
+            response = CityDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "City not found",
@@ -50,7 +50,7 @@ public class CityController {
 
     @ApiOperation(value = "Get information about city.",
             notes = "Returning information about city, which name specified in request.",
-            response = StockDTO.class)
+            response = CityDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "City not found",
@@ -66,7 +66,7 @@ public class CityController {
 
     @ApiOperation(value = "Activate city.",
             notes = "Activates city and returns information about city, which name specified in request.",
-            response = StockDTO.class)
+            response = CityDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "City not found",

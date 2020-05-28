@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
  */
 @ApiModel(
         value = "Admin",
-        description = "Object representation of admin.",
-        parent = AbstractDTO.class
+        description = "Object representation of admin."
 )
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data

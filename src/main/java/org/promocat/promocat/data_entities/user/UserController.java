@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -86,6 +87,7 @@ public class UserController {
     })
     @RequestMapping(path = "/api/user", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String jwtToken) {
+        // TODO вытащить в отдельный метод эту копипасту
         JwtReader jwtReader = new JwtReader(jwtToken);
         String telephone = jwtReader.getValue("telephone");
         return ResponseEntity.ok(userService.findByTelephone(telephone));
@@ -121,6 +123,7 @@ public class UserController {
         return ResponseEntity.ok(userService.save(user));
     }
 
+    // TODO docs
     @RequestMapping(value = "/api/user/move", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
                                                 @RequestHeader("token") String token) {
@@ -129,6 +132,13 @@ public class UserController {
         return ResponseEntity.ok(movementService.create(distanceDTO, telephone));
     }
 
+    // TODO docs
+    @RequestMapping(value = "/api/user/statistics", method = RequestMethod.GET)
+    public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") String jwtToken) {
+        JwtReader jwtReader = new JwtReader(jwtToken);
+        String telephone = jwtReader.getValue("telephone");
+        return ResponseEntity.ok(userService.getUserStatistics(userService.findByTelephone(telephone)));
+    }
     // ------ Admin methods ------
 
     @ApiOperation(value = "Get user by id",
