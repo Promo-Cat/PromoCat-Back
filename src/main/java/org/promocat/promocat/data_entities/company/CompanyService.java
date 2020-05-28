@@ -2,7 +2,6 @@ package org.promocat.promocat.data_entities.company;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.springframework.beans.factory.annotation.Autowired;

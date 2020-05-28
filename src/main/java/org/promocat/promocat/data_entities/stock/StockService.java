@@ -106,7 +106,7 @@ public class StockService {
      * Установка активности акции
      * @param id акции
      * @param active требуемое состояние {@code true} активно, {@code false} неактивно. {@code null} неизвестно.
-     * @return представление акциив  БД. {@link StockDTO}
+     * @return представление акции в БД. {@link StockDTO}
      */
     public StockDTO setActive(final Long id, final Boolean active) {
         log.info("Setting stock: {} active: {}", id, active);
@@ -115,6 +115,10 @@ public class StockService {
         return save(stock);
     }
 
+    /**
+     * Удаление акции
+     * @param id акции
+     */
     public void deleteById(final Long id) {
         log.info("Trying to delete Stock by id: {}", id);
         if (repository.existsById(id)) {
@@ -122,5 +126,19 @@ public class StockService {
         } else {
             throw new ApiStockNotFoundException(String.format("Stock with id %d doesn`t exists in DB", id));
         }
+    }
+
+    /**
+     * Деактивация акции
+     * @param id акции
+     * @return представление акции в БД. {@link StockDTO}
+     */
+    public StockDTO deactivateStock(Long id) {
+        log.info("Trying to deactivate stock with id: {}", id);
+        StockDTO stock = findById(id);
+        for (PromoCodeDTO code : stock.getCodes()) {
+            promoCodeService.setActive(code.getId(), false);
+        }
+        return setActive(id, false);
     }
 }

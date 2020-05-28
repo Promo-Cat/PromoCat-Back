@@ -77,6 +77,22 @@ public class StockController {
         return stock;
     }
 
+    @ApiOperation(value = "Deactivate stock.",
+            notes = "Returning stock with id specified in request",
+            response = StockDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(path = "admin/company/stock/deactivate", method = RequestMethod.POST)
+    public ResponseEntity<StockDTO> deactivateStock(@RequestParam("id") Long id) {
+        return ResponseEntity.ok(stockService.deactivateStock(id));
+    }
+
     @ApiOperation(value = "Get stock by promo-code",
             notes = "Returning stock with promo-code specified in request",
             response = StockDTO.class)
