@@ -78,7 +78,7 @@ public class PromoCode extends AbstractEntity {
      * Город где активен промокод.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city")
+    @JoinColumn(name = "city_id")
     public StockCity getCity() {
         return city;
     }
