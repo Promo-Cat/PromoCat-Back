@@ -60,4 +60,11 @@ public class PromoCodeDTO extends AbstractDTO {
             dataType = "LocalDateTime"
     )
     private LocalDateTime deactivateDate;
+
+    @ApiModelProperty(
+            value = "city of promoCode",
+            dataType = "Long",
+            required = true
+    )
+    private Long cityId;
 }
