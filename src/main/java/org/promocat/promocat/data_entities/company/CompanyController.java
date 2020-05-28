@@ -7,8 +7,8 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
@@ -29,10 +29,12 @@ import javax.validation.Valid;
 public class CompanyController {
 
     private final CompanyService service;
+    private final StockService stockService;
 
     @Autowired
-    public CompanyController(final CompanyService service) {
+    public CompanyController(final CompanyService service, final StockService stockService) {
         this.service = service;
+        this.stockService = stockService;
     }
 
     @ApiOperation(value = "Register company",
