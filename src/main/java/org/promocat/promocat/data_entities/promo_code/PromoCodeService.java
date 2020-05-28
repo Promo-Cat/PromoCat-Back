@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -149,12 +148,12 @@ public class PromoCodeService {
      * @return представление акции в БД. {@link StockDTO}
      */
     public StockDTO savePromoCodes(StockDTO stock) {
-        log.info("Saving {} promo-codes to stock: {}", stock.getCount(), stock.getId());
+        log.info("Saving promo-codes to stock: {}", stock.getId());
         Set<PromoCodeDTO> codes = new HashSet<>();
         for (StockCityDTO city : stock.getCities()) {
             Set<PromoCodeDTO> codesForCity = generate(stock.getId(), city);
             codes.addAll(codesForCity);
-            city.setPromoCodes(codesForCity.stream().map(this::save).collect(Collectors.toSet()));
+            city.setPromoCodes(codesForCity);
         }
         stock.setCodes(codes);
         sendMail(stock.getCities());
