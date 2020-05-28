@@ -15,6 +15,7 @@ import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeActiveException;
+import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -129,7 +131,16 @@ public class UserController {
                                                 @RequestHeader("token") String token) {
         JwtReader jwtReader = new JwtReader(token);
         String telephone = jwtReader.getValue("telephone");
-        return ResponseEntity.ok(movementService.create(distanceDTO, telephone));
+        UserDTO user = userService.findByTelephone(telephone);
+        MovementDTO movement = movementService.findByUserAndDate(user, distanceDTO.getDate());
+
+        if (Objects.nonNull(movement)) {
+            movement.setDistance(movement.getDistance() + distanceDTO.getDistance());
+            movement = movementService.save(movement);
+        } else {
+            movement = movementService.create(distanceDTO, user);
+        }
+        return ResponseEntity.ok(movement);
     }
 
     // TODO docs
