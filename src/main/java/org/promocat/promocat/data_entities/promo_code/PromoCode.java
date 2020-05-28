@@ -29,7 +29,7 @@ public class PromoCode extends AbstractEntity {
     private Boolean isActive;
     private LocalDateTime activeDate;
     private LocalDateTime deactivateDate;
-    private StockCity city;
+    private StockCity stockCity;
 
     /**
      * Промокод.
@@ -78,8 +78,8 @@ public class PromoCode extends AbstractEntity {
      * Город где активен промокод.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city")
-    public StockCity getCity() {
-        return city;
+    @JoinColumn(name = "stock_city_id")
+    public StockCity getStockCity() {
+        return stockCity;
     }
 }

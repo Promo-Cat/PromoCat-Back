@@ -29,13 +29,10 @@ import java.util.Set;
 public class Stock extends AbstractEntity {
 
     private String name;
-    private Long count;
     private Boolean isAlive;
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
-    // TODO List -> Set
-    private Set<PromoCode> codes;
     private Set<Movement> movements;
     private Set<StockCity> cities;
     
@@ -46,15 +43,6 @@ public class Stock extends AbstractEntity {
     @Column(name = "name")
     public String getName() {
         return name;
-    }
-
-    /**
-     * Количество промокодов.
-     */
-    @NotNull(message = "Количество промокодов не может быть нулем.")
-    @Column(name = "count")
-    public Long getCount() {
-        return count;
     }
 
     /**
@@ -91,14 +79,6 @@ public class Stock extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Company getCompany() {
         return company;
-    }
-
-    /**
-     * Промокоды
-     */
-    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    public Set<PromoCode> getCodes() {
-        return codes;
     }
 
     /**

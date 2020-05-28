@@ -32,7 +32,6 @@ public class PromoCodeDTO extends AbstractDTO {
     @NotBlank(message = "Промокод не может быть пустым.")
     private String promoCode;
 
-
     @ApiModelProperty(
             value = "Stock id",
             dataType = "Long",
@@ -62,9 +61,9 @@ public class PromoCodeDTO extends AbstractDTO {
     private LocalDateTime deactivateDate;
 
     @ApiModelProperty(
-            value = "city of promoCode",
+            value = "Stock and City of promoCode",
             dataType = "Long",
             required = true
     )
-    private Long cityId;
+    private Long stockCityId;
 }

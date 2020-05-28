@@ -136,7 +136,7 @@ public class PromoCodeService {
         while (codes.size() != city.getNumberOfPromoCodes()) {
             String code = Generator.generate(GeneratorConfig.CODE);
             if (!repository.existsByPromoCode(code)) {
-                PromoCodeDTO promoCode = new PromoCodeDTO(code, stockId, false, LocalDateTime.now(), null, city.getCityId());
+                PromoCodeDTO promoCode = new PromoCodeDTO(code, stockId, false, LocalDateTime.now(), null, city.getId());
                 codes.add(save(promoCode));
             }
         }
