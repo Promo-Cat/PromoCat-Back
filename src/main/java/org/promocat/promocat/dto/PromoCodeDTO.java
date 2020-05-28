@@ -16,8 +16,7 @@ import java.time.LocalDateTime;
  */
 @ApiModel(
         value = "Promo-code",
-        description = "Object representation of stocks promo-codes.",
-        parent = AbstractDTO.class
+        description = "Object representation of stocks promo-codes."
 )
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data

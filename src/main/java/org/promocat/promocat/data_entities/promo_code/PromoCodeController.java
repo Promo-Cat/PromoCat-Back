@@ -35,7 +35,7 @@ public class PromoCodeController {
 
     @ApiOperation(value = "Get promo-code by id.",
             notes = "Returning promo-code with id specified in request",
-            response = StockDTO.class)
+            response = PromoCodeDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Promo-code not found",
@@ -51,7 +51,7 @@ public class PromoCodeController {
 
     @ApiOperation(value = "Get promo-code",
             notes = "Returning promo-code with \"promo-code\" specified in request",
-            response = StockDTO.class)
+            response = PromoCodeDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Promo-code not found",

@@ -79,7 +79,7 @@ public class CompanyController {
 
     @ApiOperation(value = "Get company by id",
             notes = "Returning company, which id specified in params",
-            response = UserDTO.class)
+            response = CompanyDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Company not found",
@@ -95,7 +95,7 @@ public class CompanyController {
 
     @ApiOperation(value = "Get company by telephone",
             notes = "Returning company, which telephone specified in params",
-            response = UserDTO.class)
+            response = CompanyDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Company not found",
@@ -111,7 +111,7 @@ public class CompanyController {
 
     @ApiOperation(value = "Get company by organization name",
             notes = "Returning company, which organization name specified in params",
-            response = UserDTO.class)
+            response = CompanyDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Company not found",
@@ -127,7 +127,7 @@ public class CompanyController {
 
     @ApiOperation(value = "Get company by mail",
             notes = "Returning company, which mail specified in params",
-            response = UserDTO.class)
+            response = CompanyDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Company not found",

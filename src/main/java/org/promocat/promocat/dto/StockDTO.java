@@ -22,8 +22,7 @@ import java.util.Set;
 
 @ApiModel(
         value = "Stock",
-        description = "Object representation of companies stock.",
-        parent = AbstractDTO.class
+        description = "Object representation of companies stock."
 )
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
