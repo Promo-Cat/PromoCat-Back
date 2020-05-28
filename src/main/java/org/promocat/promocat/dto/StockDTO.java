@@ -13,7 +13,6 @@ import org.promocat.promocat.data_entities.movement.Movement;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -97,7 +96,7 @@ public class StockDTO extends AbstractDTO {
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     // TODO List -> Set
-    private List<PromoCodeDTO> codes;
+    private Set<PromoCodeDTO> codes;
 
 
     // TODO docs

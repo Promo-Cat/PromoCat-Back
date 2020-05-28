@@ -4,12 +4,14 @@ package org.promocat.promocat.data_entities.promo_code;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.GeneratorConfig;
-import org.promocat.promocat.utils.Generator;
+import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.dto.PromoCodeDTO;
+import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeNotFoundException;
 import org.promocat.promocat.mapper.PromoCodeMapper;
 import org.promocat.promocat.utils.EmailSender;
+import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,13 +21,11 @@ import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -37,13 +37,15 @@ public class PromoCodeService {
 
     private final PromoCodeMapper mapper;
     private final PromoCodeRepository repository;
+    private final CityService cityService;
     private final EmailSender emailSender;
 
     @Autowired
-    public PromoCodeService(final PromoCodeMapper mapper, final PromoCodeRepository repository, final EmailSender emailSender) {
+    public PromoCodeService(final PromoCodeMapper mapper, final PromoCodeRepository repository, final EmailSender emailSender, final CityService cityService) {
         this.mapper = mapper;
         this.repository = repository;
         this.emailSender = emailSender;
+        this.cityService = cityService;
     }
 
     /**
@@ -90,45 +92,52 @@ public class PromoCodeService {
         }
     }
 
+    private void sendMail(Set<StockCityDTO> cities) {
+        List<Path> files = new ArrayList<>();
+        for (StockCityDTO city : cities) {
+            String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + "$" + city.getCityId() + ".txt";
+            Path pathToFile = Paths.get("src", "main", "resources", fileName);
+            try (FileWriter writer = new FileWriter(new File(pathToFile.toString()))) {
+                for (PromoCodeDTO code : city.getPromoCodes()) {
+                    writer.write(code.getPromoCode() + "\n");
+                }
+                log.info("File {} with PromoCodes was generated", fileName);
+            } catch (IOException e) {
+                System.out.printf("An exception occurs %s", e.getMessage());
+            }
+            files.add(pathToFile);
+        }
+
+        try {
+            emailSender.send(files);
+            log.info("Files was send");
+        } catch (MessagingException e) {
+            log.error("Files wasn't send");
+        } finally {
+            for (Path path : files) {
+                File file = path.toFile();
+                if (file.delete()) {
+                    log.info("Delete file {} with PromoCodes", file.getName());
+                } else {
+                    log.info("File {} not found", file.getName());
+                }
+            }
+        }
+    }
+
     /**
      * Генерация промо-кодов для акции.
-     * @param cnt количество промокодов.
      * @param stockId айди акции.
      * @return Массив из сгенерированных промокодов. {@link List<PromoCodeDTO>}
      */
-    private List<PromoCodeDTO> generate(Long cnt, Long stockId) {
-        log.info("Generating {} promo-codes to stock: {} .....", cnt, stockId);
-        List<PromoCodeDTO> codes = new ArrayList<>();
-        while (codes.size() != cnt) {
+    private Set<PromoCodeDTO> generate(Long stockId, StockCityDTO city) {
+        log.info("Generating {} promo-codes to stock: {} .....", city.getNumberOfPromoCodes(), stockId);
+        Set<PromoCodeDTO> codes = new HashSet<>();
+        while (codes.size() != city.getNumberOfPromoCodes()) {
             String code = Generator.generate(GeneratorConfig.CODE);
-            if (repository.existsByPromoCode(code)) {
-                continue;
-            }
-            codes.add(new PromoCodeDTO(code, stockId, false, LocalDateTime.now(), null));
-        }
-        //TODO generate in /tmp
-        String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + ".txt";
-        Path pathToFile = Paths.get("src", "main", "resources", fileName);
-        try (FileWriter writer = new FileWriter(new File(pathToFile.toString()))) {
-            for (PromoCodeDTO code : codes) {
-                writer.write(code.getPromoCode() + "\n");
-            }
-            log.info("File {} with PromoCodes was generated", fileName);
-        } catch (IOException e) {
-            System.out.printf("An exception occurs %s", e.getMessage());
-        }
-        try {
-            emailSender.send(pathToFile.toString(), stockId, cnt);
-            log.info("File {} was send", fileName);
-        } catch (MessagingException e) {
-            // TODO log.error
-            e.printStackTrace();
-        } finally {
-            File file = new File(pathToFile.toString());
-            if (file.delete()) {
-                log.info("Delete file {} with PromoCodes", fileName);
-            } else {
-                log.info("File {} not found", fileName);
+            if (!repository.existsByPromoCode(code)) {
+                PromoCodeDTO promoCode = new PromoCodeDTO(code, stockId, false, LocalDateTime.now(), null, city.getCityId());
+                codes.add(save(promoCode));
             }
         }
         return codes;
@@ -141,17 +150,19 @@ public class PromoCodeService {
      */
     public StockDTO savePromoCodes(StockDTO stock) {
         log.info("Saving {} promo-codes to stock: {}", stock.getCount(), stock.getId());
-        List<PromoCodeDTO> codes = generate(stock.getCount(), stock.getId());
-        // TODO: DANIL SDELAY NORMALNO (не актуальные данные возвращаются) (возвращай то, что вернул репозиторий)
-        for (PromoCodeDTO code : codes) {
-            save(code);
+        Set<PromoCodeDTO> codes = new HashSet<>();
+        for (StockCityDTO city : stock.getCities()) {
+            Set<PromoCodeDTO> codesForCity = generate(stock.getId(), city);
+            codes.addAll(codesForCity);
+            city.setPromoCodes(codesForCity.stream().map(this::save).collect(Collectors.toSet()));
         }
         stock.setCodes(codes);
+        sendMail(stock.getCities());
         return stock;
     }
 
     /**
-     * Удаление промокода по его id.
+     * Изменение активности промокода по его id.
      * @param id промокода.
      */
     public void setActive(Long id, Boolean active) {

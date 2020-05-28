@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 18:35 27.05.2020
  */
@@ -17,4 +19,5 @@ public class StockCityDTO extends AbstractDTO {
     private Long stockId;
     private Long cityId;
     private Long numberOfPromoCodes;
+    private Set<PromoCodeDTO> promoCodes;
 }

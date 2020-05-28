@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.stock.Stock;
+import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -28,6 +29,7 @@ public class PromoCode extends AbstractEntity {
     private Boolean isActive;
     private LocalDateTime activeDate;
     private LocalDateTime deactivateDate;
+    private StockCity city;
 
     /**
      * Промокод.
@@ -64,8 +66,20 @@ public class PromoCode extends AbstractEntity {
          return activeDate;
      }
 
+    /**
+     * Дата деактивации промокода.
+     */
      @Column(name = "deactivate_date")
      public LocalDateTime getDeactivateDate() {
          return deactivateDate;
      }
+
+    /**
+     * Город где активен промокод.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city")
+    public StockCity getCity() {
+        return city;
+    }
 }
