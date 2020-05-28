@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.mapper.UserMapper;
+import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,5 +88,11 @@ public class UserService {
             log.warn("Attempt to delete user with id {}, who doesn`t exist in DB", id);
             throw new ApiUserNotFoundException(String.format("User with id %d doesn`t found", id));
         }
+    }
+    
+    public UserDTO getByToken(String token) {
+        JwtReader jwtReader = new JwtReader(token);
+        String telephone = jwtReader.getValue("telephone");
+        return userMapper.toDto(userRepository.getByTelephone(telephone).orElseThrow());
     }
 }
