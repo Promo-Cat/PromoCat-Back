@@ -11,6 +11,8 @@ import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.user.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -24,7 +26,7 @@ public class Movement extends AbstractEntity {
 
     private User user;
     private Stock stock;
-    private LocalDateTime date;
+    private LocalDate date;
     private Double distance;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,11 +41,13 @@ public class Movement extends AbstractEntity {
         return stock;
     }
 
+    @NotNull(message = "Дата не может быть пустой.")
     @Column(name = "date")
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
+    @NotNull(message = "Дистанция не может быть пустой.")
     @Column(name = "distance")
     public Double getDistance() {
         return distance;

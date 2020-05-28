@@ -99,5 +99,5 @@ public class StockDTO extends AbstractDTO {
 
 
     // TODO docs
-    private Set<Movement> movements;
+    private Set<MovementDTO> movements;
 }
