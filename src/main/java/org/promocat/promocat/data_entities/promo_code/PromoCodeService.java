@@ -149,14 +149,13 @@ public class PromoCodeService {
      * @return представление акции в БД. {@link StockDTO}
      */
     public StockDTO savePromoCodes(StockDTO stock) {
-        log.info("Saving {} promo-codes to stock: {}", stock.getCount(), stock.getId());
+        log.info("Saving promo-codes to stock: {}", stock.getId());
         Set<PromoCodeDTO> codes = new HashSet<>();
         for (StockCityDTO city : stock.getCities()) {
             Set<PromoCodeDTO> codesForCity = generate(stock.getId(), city);
             codes.addAll(codesForCity);
             city.setPromoCodes(codesForCity.stream().map(this::save).collect(Collectors.toSet()));
         }
-        stock.setCodes(codes);
         sendMail(stock.getCities());
         return stock;
     }
