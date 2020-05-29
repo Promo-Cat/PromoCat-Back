@@ -10,6 +10,7 @@ import org.promocat.promocat.dto.AdminDTO;
 import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.TelephoneDTO;
 import org.promocat.promocat.dto.TokenDTO;
+import org.promocat.promocat.exception.admin.ApiAdminNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -104,19 +105,14 @@ public class AdminTest {
     }
 
     @Transactional
-    @Test
+    @Test(expected = ApiAdminNotFoundException.class)
     public void getAdminByIncorrectTelephoneTest() throws Exception {
         TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
-        MvcResult result = this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(telephone))
                 .header("token", adminToken))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        AdminDTO admin = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
-        AdminDTO adminRes = adminService.getByTelephone("+7(222)232-22-22");
-        assertEquals(admin.getTelephone(), adminRes.getTelephone());
-        assertEquals(admin.getId(), adminRes.getId());
+                .andExpect(status().isOk());
+        adminService.getByTelephone("+7(222)232-22-22");
     }
 
     @Transactional
