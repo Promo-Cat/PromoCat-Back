@@ -88,7 +88,7 @@ public class CarController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "admin/car/id", method = RequestMethod.GET)
+    @RequestMapping(path = "/admin/car/id", method = RequestMethod.GET)
     public ResponseEntity<CarDTO> getCarById(@RequestParam("id") Long id) {
         return ResponseEntity.ok(service.findByID(id));
     }
