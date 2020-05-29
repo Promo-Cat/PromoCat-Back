@@ -4,13 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.movement.Movement;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -75,7 +83,8 @@ public class User extends AbstractAccount {
     /**
      * Автомобили пользователя.
      */
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({CascadeType.ALL})
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     public Set<Car> getCars() {
         return cars;
     }
@@ -83,7 +92,8 @@ public class User extends AbstractAccount {
     /**
      * TODO
      */
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({CascadeType.ALL})
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     public Set<Movement> getMovements() {
         return movements;
     }

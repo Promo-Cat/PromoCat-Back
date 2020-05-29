@@ -46,7 +46,7 @@ public class AdminService {
     public AdminDTO add(String telephone) {
         if (adminRepository.existsByTelephone(telephone)) {
             log.warn("Attempt to add another admin with same telephone {}", telephone);
-            // возвращает сущевствующего админа (лучше бы кинуть ексепшн)
+            // TODO возвращает сущевствующего админа (лучше бы кинуть ексепшн)
             return adminMapper.toDto(adminRepository.getByTelephone(telephone).orElse(new Admin()));
         }
         Admin record = new Admin();

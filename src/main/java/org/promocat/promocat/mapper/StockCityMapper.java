@@ -3,7 +3,7 @@ package org.promocat.promocat.mapper;
 import org.modelmapper.ModelMapper;
 import org.promocat.promocat.data_entities.city.CityRepository;
 import org.promocat.promocat.data_entities.stock.StockRepository;
-import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

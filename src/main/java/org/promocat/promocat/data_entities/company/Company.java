@@ -4,10 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.stock.Stock;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -67,7 +68,8 @@ public class Company extends AbstractAccount {
     /**
      * Набор акций, которые принадлежат компании.
      */
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({CascadeType.ALL})
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     public Set<Stock> getStocks() {
         return stocks;
     }

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -29,15 +30,18 @@ public class UserService {
     private final StockService stockService;
     private final PromoCodeService promoCodeService;
     private final MovementService movementService;
+    private final StockCityService stockCityService;
+
 
     @Autowired
     public UserService(final UserRepository userRepository,
-                       final UserMapper mapper, final StockService stockService, final PromoCodeService promoCodeService, final MovementService movementService) {
+                       final UserMapper mapper, final StockService stockService, final PromoCodeService promoCodeService, final MovementService movementService, final StockCityService stockCityService) {
         this.userRepository = userRepository;
         this.userMapper = mapper;
         this.stockService = stockService;
         this.promoCodeService = promoCodeService;
         this.movementService = movementService;
+        this.stockCityService = stockCityService;
     }
 
     /**
@@ -108,7 +112,9 @@ public class UserService {
     }
 
     public StockDTO getUsersCurrentStock(final UserDTO user) {
-        return stockService.findById(promoCodeService.findById(user.getPromoCodeId()).getStockId());
+        return stockService.findById(stockCityService
+                .findById(promoCodeService.findById(user.getPromoCodeId()).getStockCityId())
+                .getStockId());
     }
 
     public List<MovementDTO> getUserStatistics(final UserDTO user) {

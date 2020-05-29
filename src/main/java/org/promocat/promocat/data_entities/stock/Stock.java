@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import org.promocat.promocat.constraints.StockDurationConstraint;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.movement.Movement;
-import org.promocat.promocat.data_entities.promo_code.PromoCode;
-import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
+import org.hibernate.annotations.CascadeType;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -29,13 +30,10 @@ import java.util.Set;
 public class Stock extends AbstractEntity {
 
     private String name;
-    private Long count;
     private Boolean isAlive;
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
-    // TODO List -> Set
-    private Set<PromoCode> codes;
     private Set<Movement> movements;
     private Set<StockCity> cities;
     
@@ -46,15 +44,6 @@ public class Stock extends AbstractEntity {
     @Column(name = "name")
     public String getName() {
         return name;
-    }
-
-    /**
-     * Количество промокодов.
-     */
-    @NotNull(message = "Количество промокодов не может быть нулем.")
-    @Column(name = "count")
-    public Long getCount() {
-        return count;
     }
 
     /**
@@ -88,23 +77,17 @@ public class Stock extends AbstractEntity {
     /**
      * Id организации, которой принадлежит акция.
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY)
     public Company getCompany() {
         return company;
     }
 
     /**
-     * Промокоды
-     */
-    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    public Set<PromoCode> getCodes() {
-        return codes;
-    }
-
-    /**
      * TODO
      */
-    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({CascadeType.ALL})
+    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
     public Set<Movement> getMovements() {
         return movements;
     }
@@ -112,7 +95,8 @@ public class Stock extends AbstractEntity {
     /**
      * TODO
      */
-    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({CascadeType.ALL})
+    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
     public Set<StockCity> getCities() {
         return cities;
     }
