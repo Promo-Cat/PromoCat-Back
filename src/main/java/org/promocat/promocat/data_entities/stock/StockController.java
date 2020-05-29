@@ -74,7 +74,7 @@ public class StockController {
     public StockDTO generate(@RequestParam("id") Long id) {
         StockDTO stock = stockService.findById(id);
         if (Objects.isNull(stock.getIsAlive())) {
-            stockService.setActive(id, true);
+            stock = stockService.setActive(id, true);
             return promoCodeService.savePromoCodes(stock);
         }
         return stock;

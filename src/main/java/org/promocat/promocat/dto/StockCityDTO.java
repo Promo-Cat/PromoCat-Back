@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,5 +20,7 @@ public class StockCityDTO extends AbstractDTO {
     private Long stockId;
     private Long cityId;
     private Long numberOfPromoCodes;
+
+    @JsonIgnore
     private Set<PromoCodeDTO> promoCodes;
 }

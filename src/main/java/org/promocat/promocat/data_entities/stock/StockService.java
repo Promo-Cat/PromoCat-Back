@@ -44,7 +44,10 @@ public class StockService {
      */
     public StockDTO save(final StockDTO dto) {
         log.info("Saving stock with name: {}", dto.getName());
-        return mapper.toDto(repository.save(mapper.toEntity(dto)));
+        Stock stock = mapper.toEntity(dto);
+        stock = repository.save(stock);
+        StockDTO dto1 = mapper.toDto(stock);
+        return dto1;
     }
 
     /**
@@ -111,7 +114,7 @@ public class StockService {
     public StockDTO setActive(final Long id, final Boolean active) {
         log.info("Setting stock: {} active: {}", id, active);
         // TODO напоминалка максиму мб код говно
-        StockDTO stock = mapper.toDto(repository.getOne(id));
+        StockDTO stock = findById(id);
         stock.setIsAlive(active);
         return save(stock);
     }

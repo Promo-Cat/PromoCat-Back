@@ -54,7 +54,6 @@ public class Stock extends AbstractEntity {
         return isAlive;
     }
 
-
     /**
      * Время начала акции.
      */

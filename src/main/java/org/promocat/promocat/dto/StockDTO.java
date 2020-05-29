@@ -72,19 +72,6 @@ public class StockDTO extends AbstractDTO {
     @StockDurationConstraint
     private Long duration;
 
-
-    // TODO убрать
-    @Deprecated
-    @ApiModelProperty(
-            value = "Set of promo-codes",
-            dataType = "Set",
-            accessMode = ApiModelProperty.AccessMode.READ_ONLY
-    )
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    // TODO List -> Set
-    private Set<PromoCodeDTO> codes;
-
-
     // TODO docs
     private Set<MovementDTO> movements;
 }

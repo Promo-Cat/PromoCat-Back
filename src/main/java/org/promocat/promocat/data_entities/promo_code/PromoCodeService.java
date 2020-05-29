@@ -156,7 +156,6 @@ public class PromoCodeService {
             codes.addAll(codesForCity);
             city.setPromoCodes(codesForCity.stream().map(this::save).collect(Collectors.toSet()));
         }
-        stock.setCodes(codes);
         sendMail(stock.getCities());
         return stock;
     }
