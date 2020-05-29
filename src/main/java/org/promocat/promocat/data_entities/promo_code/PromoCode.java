@@ -5,8 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
-import org.promocat.promocat.data_entities.stock.Stock;
-import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;

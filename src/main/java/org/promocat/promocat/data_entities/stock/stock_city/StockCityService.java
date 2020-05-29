@@ -6,7 +6,6 @@ import org.promocat.promocat.mapper.StockCityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
 
 import java.util.Optional;
 
