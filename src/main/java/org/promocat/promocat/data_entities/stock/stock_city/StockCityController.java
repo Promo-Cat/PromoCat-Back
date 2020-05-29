@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -38,5 +39,11 @@ public class StockCityController {
             // TODO City not active exception
             throw new ApiCityNotFoundException("City is not active");
         }
+    }
+
+    // TODO fix endpoint
+    @RequestMapping(value = "/api/company/stockcity", method = RequestMethod.GET)
+    public ResponseEntity<StockCityDTO> findById(@RequestParam("id") Long id) {
+       return ResponseEntity.ok(stockCityService.findById(id));
     }
 }

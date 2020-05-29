@@ -1,12 +1,12 @@
 package org.promocat.promocat.data_entities.movement;
 
-import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
-import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.DistanceDTO;
 import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
-import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.mapper.MovementMapper;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
@@ -23,20 +23,21 @@ public class MovementService {
 
     private final MovementRepository movementRepository;
     // TODO make with promoCodeService
-    private final PromoCodeRepository promoCodeRepository;
+    private final PromoCodeService promoCodeService;
     private final MovementMapper movementMapper;
     private final UserMapper userMapper;
     private final StockMapper stockMapper;
+    private final StockCityService stockCityService;
 
     @Autowired
     public MovementService(final MovementRepository movementRepository,
-                           final PromoCodeRepository promoCodeRepository,
-                           final MovementMapper movementMapper, final UserMapper userMapper, final StockMapper stockMapper) {
+                           final PromoCodeService promoCodeService, final MovementMapper movementMapper, final UserMapper userMapper, final StockMapper stockMapper, final StockCityService stockCityService) {
         this.movementRepository = movementRepository;
-        this.promoCodeRepository = promoCodeRepository;
+        this.promoCodeService = promoCodeService;
         this.movementMapper = movementMapper;
         this.userMapper = userMapper;
         this.stockMapper = stockMapper;
+        this.stockCityService = stockCityService;
     }
 
     public MovementDTO save(MovementDTO movementDTO) {
@@ -46,7 +47,11 @@ public class MovementService {
     public MovementDTO create(DistanceDTO distanceDTO, UserDTO userDTO) {
         MovementDTO movementDTO = new MovementDTO();
         movementDTO.setUserId(userDTO.getId());
-        movementDTO.setStockId(promoCodeRepository.findById(userDTO.getPromoCodeId()).orElseThrow().getStock().getId());
+        // TODO pizda.
+//        StockCityDTO t = stockCityService.findById(promoCodeService.findById(userDTO.getPromoCodeId())
+//                .getStockCityId());
+        movementDTO.setStockId(stockCityService.findById(promoCodeService.findById(userDTO.getPromoCodeId())
+                .getStockCityId()).getStockId());
         movementDTO.setDate(distanceDTO.getDate());
         movementDTO.setDistance(distanceDTO.getDistance());
         return movementMapper.toDto(movementRepository.save(movementMapper.toEntity(movementDTO)));

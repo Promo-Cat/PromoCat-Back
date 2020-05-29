@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
@@ -29,11 +30,13 @@ public class StockController {
 
     private final StockService stockService;
     private final PromoCodeService promoCodeService;
+    private final StockCityService stockCityService;
 
     @Autowired
-    public StockController(final StockService stockService, final PromoCodeService promoCodeService) {
+    public StockController(final StockService stockService, final PromoCodeService promoCodeService, final StockCityService stockCityService) {
         this.stockService = stockService;
         this.promoCodeService = promoCodeService;
+        this.stockCityService = stockCityService;
     }
 
     @ApiOperation(value = "Create stock",
@@ -109,7 +112,8 @@ public class StockController {
     })
     @RequestMapping(path = "/api/company/promo-code/stock", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> getStockByPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
-        return ResponseEntity.ok(stockService.findById(promoCodeDTO.getStockId()));
+        return ResponseEntity.ok(stockService.findById(stockCityService.findById(promoCodeDTO.getStockCityId())
+                .getStockId()));
     }
 
     // ------ Admin methods ------

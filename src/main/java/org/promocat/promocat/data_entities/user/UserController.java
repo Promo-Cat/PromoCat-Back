@@ -139,6 +139,7 @@ public class UserController {
         } else {
             movement = movementService.create(distanceDTO, user);
         }
+        userService.earnMoney(user, distanceDTO.getDistance());
         return ResponseEntity.ok(movement);
     }
 

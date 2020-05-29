@@ -54,7 +54,7 @@ public class PromoCodeService {
      * @return представление промо-кода в БД. {@link PromoCodeDTO}
      */
     public PromoCodeDTO save(PromoCodeDTO dto) {
-        log.info("Trying to save promo-code: {} to stock id: {}", dto.getPromoCode(), dto.getStockId());
+        log.info("Trying to save promo-code: {} to stock id: {}", dto.getPromoCode(), dto.getStockCityId());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
@@ -136,7 +136,7 @@ public class PromoCodeService {
         while (codes.size() != city.getNumberOfPromoCodes()) {
             String code = Generator.generate(GeneratorConfig.CODE);
             if (!repository.existsByPromoCode(code)) {
-                PromoCodeDTO promoCode = new PromoCodeDTO(code, stockId, false, LocalDateTime.now(), null, city.getCityId());
+                PromoCodeDTO promoCode = new PromoCodeDTO(code, false, LocalDateTime.now(), null, city.getId());
                 codes.add(save(promoCode));
             }
         }

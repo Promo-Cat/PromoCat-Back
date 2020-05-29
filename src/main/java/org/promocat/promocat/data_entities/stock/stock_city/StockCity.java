@@ -1,14 +1,16 @@
-package org.promocat.promocat.data_entities.stock.city_stock;
+package org.promocat.promocat.data_entities.stock.stock_city;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import org.promocat.promocat.data_entities.stock.Stock;
-
+import org.hibernate.annotations.CascadeType;
 import javax.persistence.*;
 import java.util.Set;
 
@@ -32,6 +34,7 @@ public class StockCity extends AbstractEntity {
     /**
      * Акция.
      */
+    @Cascade({CascadeType.SAVE_UPDATE})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id")
     public Stock getStock() {
@@ -49,14 +52,15 @@ public class StockCity extends AbstractEntity {
     /**
      * Город.
      */
+    @Cascade({CascadeType.SAVE_UPDATE})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     public City getCity() {
         return city;
     }
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "promo_codes")
+    @Cascade({CascadeType.ALL})
+    @OneToMany(mappedBy = "stockCity", fetch = FetchType.LAZY)
     public Set<PromoCode> getPromoCodes() {
         return promoCodes;
     }

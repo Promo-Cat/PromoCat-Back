@@ -38,14 +38,6 @@ public class StockDTO extends AbstractDTO {
     private String name;
 
     @ApiModelProperty(
-            value = "Amount of posters",
-            dataType = "Long",
-            required = true
-    )
-    @NotNull(message = "Количество постеров не может быть пустым.")
-    private Long count;
-
-    @ApiModelProperty(
             value = "Stock activation status",
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
@@ -58,14 +50,6 @@ public class StockDTO extends AbstractDTO {
     )
     @NotNull(message = "Id компании не может быть пустым.")
     private Long companyId;
-
-//    @ApiModelProperty(
-//            value = "CityId",
-//            dataType = "Long",
-//            required = true
-//    )
-//    @NotNull(message = "Id города не может быть пустым.")
-//    private Long cityId;
 
     // TODO docs
     private Set<StockCityDTO> cities;
@@ -88,6 +72,9 @@ public class StockDTO extends AbstractDTO {
     @StockDurationConstraint
     private Long duration;
 
+
+    // TODO убрать
+    @Deprecated
     @ApiModelProperty(
             value = "Set of promo-codes",
             dataType = "Set",

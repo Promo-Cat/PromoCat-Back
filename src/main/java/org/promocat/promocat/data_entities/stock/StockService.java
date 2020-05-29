@@ -110,7 +110,8 @@ public class StockService {
      */
     public StockDTO setActive(final Long id, final Boolean active) {
         log.info("Setting stock: {} active: {}", id, active);
-        StockDTO stock = findById(id);
+        // TODO напоминалка максиму мб код говно
+        StockDTO stock = mapper.toDto(repository.getOne(id));
         stock.setIsAlive(active);
         return save(stock);
     }

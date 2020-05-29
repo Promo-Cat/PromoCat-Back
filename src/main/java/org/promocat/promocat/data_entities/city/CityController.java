@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.CityDTO;
-import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +46,22 @@ public class CityController {
     }
 
     // ------ Admin methods ------
+
+    @ApiOperation(value = "Get information about city.",
+            notes = "Returning information about city, which id specified in request.",
+            response = CityDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "City not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/city/id", method = RequestMethod.GET)
+    public ResponseEntity<CityDTO> getCityById(@RequestParam("id") Long id) {
+        return ResponseEntity.ok(service.findById(id));
+    }
 
     @ApiOperation(value = "Get information about city.",
             notes = "Returning information about city, which name specified in request.",

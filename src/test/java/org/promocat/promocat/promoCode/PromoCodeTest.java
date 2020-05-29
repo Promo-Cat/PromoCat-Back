@@ -18,7 +18,10 @@
 //import org.springframework.transaction.annotation.Transactional;
 //
 //import java.time.LocalDateTime;
+//import java.util.Set;
 //
+//import static org.junit.Assert.assertEquals;
+//import static org.junit.Assert.assertTrue;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 //
@@ -74,7 +77,16 @@
 //        CityDTO city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
 //
 //        // TODO movement сейчас null, возможно надо пофиксить.
-//        stock = new StockDTO("www", 10L, null, company.getId(), city.getId(), LocalDateTime.now(), 7L, null, null);
+//        StockCityDTO stockCity = new StockCityDTO();
+//        stockCity.setCityId(city.getId());
+//        stockCity.setNumberOfPromoCodes(10L);
+//        mockMvc.perform(post("/api/company/stock/city").header("token", token)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(new ObjectMapper().writeValueAsString(stockCity)))
+//                .andExpect(status().isOk());
+//        Set<StockCityDTO> set = Set.of(stockCity);
+//
+//        stock = new StockDTO("www", 10L, null, company.getId(), set, LocalDateTime.now(), 7L, null, null);
 //        this.mockMvc.perform(post("/api/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
 //                .content(mapper.writeValueAsString(stock)))
 //                .andExpect(status().isOk());
@@ -83,8 +95,21 @@
 //    @Transactional
 //    @Test
 //    public void testGenerateCodes() throws Exception {
-//        mockMvc.perform(post("/admin/company/stock/generate?id=1").header("token", adminToken))
-//                .andExpect(status().isOk());
+//        MvcResult result = mockMvc.perform(post("/admin/company/stock/generate?id=1").header("token", adminToken))
+//                .andExpect(status().isOk())
+//                .andReturn();
+//
+//        StockDTO stock = new ObjectMapper().readValue(result.getResponse().getContentAsString(), StockDTO.class);
+//        assertEquals(stock.getCities().size(), 1);
+//        assertTrue(stock.getIsAlive());
+//        for (StockCityDTO city : stock.getCities()) {
+//            assertEquals(city.getNumberOfPromoCodes(), Long.valueOf(city.getPromoCodes().size()));
+//            Set<PromoCodeDTO> set = city.getPromoCodes();
+//            for (PromoCodeDTO promoCodeDTO : set) {
+//                assertEquals(promoCodeDTO.getStockId(), stock.getId());
+//                assertTrue(promoCodeDTO.getIsActive());
+//            }
+//        }
 //    }
 //
 //}
