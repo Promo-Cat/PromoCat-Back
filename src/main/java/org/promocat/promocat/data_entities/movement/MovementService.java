@@ -54,7 +54,7 @@ public class MovementService {
                 .getStockCityId()).getStockId());
         movementDTO.setDate(distanceDTO.getDate());
         movementDTO.setDistance(distanceDTO.getDistance());
-        return movementMapper.toDto(movementRepository.save(movementMapper.toEntity(movementDTO)));
+        return save(movementDTO);
     }
 
     public List<MovementDTO> findByUserAndStock(final UserDTO user, final StockDTO stock) {

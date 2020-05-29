@@ -132,13 +132,15 @@ public class UserController {
         user.setTotalDistance(user.getTotalDistance() + distanceDTO.getDistance());
         user = userService.save(user);
         MovementDTO movement = movementService.findByUserAndDate(user, distanceDTO.getDate());
-
         if (Objects.nonNull(movement)) {
             movement.setDistance(movement.getDistance() + distanceDTO.getDistance());
             movement = movementService.save(movement);
         } else {
             movement = movementService.create(distanceDTO, user);
         }
+        // TODO хз хз mb luchshe mojno
+        user.getMovements().remove(movement);
+        user.getMovements().add(movement);
         userService.earnMoney(user, distanceDTO.getDistance());
         return ResponseEntity.ok(movement);
     }

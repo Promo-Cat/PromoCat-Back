@@ -1,6 +1,5 @@
 package org.promocat.promocat.data_entities.promocode_activation;
 
-import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
@@ -41,7 +40,7 @@ public class PromoCodeActivationService {
     public List<StockDTO> getStocksByUserId(Long id) {
         return promoCodeActivationRepository.getAllByUserId(id)
                 .stream()
-                .map(x -> stockMapper.toDto(x.getPromoCode().getStock()))
+                .map(x -> stockMapper.toDto(x.getPromoCode().getStockCity().getStock()))
                 .collect(Collectors.toList());
     }
 }
