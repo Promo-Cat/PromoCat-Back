@@ -149,7 +149,7 @@ public class PromoCodeService {
      * @return представление акции в БД. {@link StockDTO}
      */
     public StockDTO savePromoCodes(StockDTO stock) {
-        log.info("Saving {} promo-codes to stock: {}", stock.getCount(), stock.getId());
+        log.info("Saving promo-codes to stock: {}", stock.getId());
         Set<PromoCodeDTO> codes = new HashSet<>();
         for (StockCityDTO city : stock.getCities()) {
             Set<PromoCodeDTO> codesForCity = generate(stock.getId(), city);

@@ -105,6 +105,22 @@ public class AdminTest {
 
     @Transactional
     @Test
+    public void getAdminByIncorrectTelephoneTest() throws Exception {
+        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
+        MvcResult result = this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(telephone))
+                .header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        AdminDTO admin = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
+        AdminDTO adminRes = adminService.getByTelephone("+7(222)232-22-22");
+        assertEquals(admin.getTelephone(), adminRes.getTelephone());
+        assertEquals(admin.getId(), adminRes.getId());
+    }
+
+    @Transactional
+    @Test
     public void getAdminsTest() throws Exception {
         TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
         this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
