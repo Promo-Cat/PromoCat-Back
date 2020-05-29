@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.CityDTO;
 import org.promocat.promocat.dto.TokenDTO;
@@ -36,7 +37,12 @@ public class CityTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private CityService cityService;
+
     private String adminToken;
+
+    private CityDTO city;
 
     @Before
     public void init() throws Exception {
@@ -47,8 +53,10 @@ public class CityTest {
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
         adminToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-        this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
-                .andExpect(status().isOk());
+        MvcResult result = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        city = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CityDTO.class);
     }
 
     @Transactional
@@ -71,6 +79,12 @@ public class CityTest {
                 .andReturn();
         CityDTO city = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CityDTO.class);
         assertEquals(city.getId(), Long.valueOf(11));
+    }
+
+    @Transactional
+    @Test
+    public void getActiveByIdTest() {
+        assertEquals(city.getActive(), cityService.isActiveById(city.getId()));
     }
 
     @Transactional

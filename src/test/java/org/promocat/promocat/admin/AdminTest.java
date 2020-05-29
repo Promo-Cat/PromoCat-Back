@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.dto.AdminDTO;
 import org.promocat.promocat.dto.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.TelephoneDTO;
@@ -39,6 +40,9 @@ public class AdminTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private AdminService adminService;
+
     private String adminToken;
 
     @Before
@@ -66,6 +70,37 @@ public class AdminTest {
 
         AdminDTO admin = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
         assertEquals(admin.getTelephone(), "+7(222)222-22-22");
+    }
+
+//    @Transactional
+//    @Test
+//    public void addAdminWithExistedTelephoneTest() throws Exception {
+//        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
+//        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+//                .content(new ObjectMapper().writeValueAsString(telephone))
+//                .header("token", adminToken))
+//                .andExpect(status().isOk());
+//
+//        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+//                .content(new ObjectMapper().writeValueAsString(telephone))
+//                .header("token", adminToken))
+//                .andExpect(status().isOk());
+//    }
+
+    @Transactional
+    @Test
+    public void getAdminByTelephoneTest() throws Exception {
+        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
+        MvcResult result = this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(telephone))
+                .header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        AdminDTO admin = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
+        AdminDTO adminRes = adminService.getByTelephone("+7(222)222-22-22");
+        assertEquals(admin.getTelephone(), adminRes.getTelephone());
+        assertEquals(admin.getId(), adminRes.getId());
     }
 
     @Transactional
