@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.dto.AdminDTO;
 import org.promocat.promocat.dto.TelephoneDTO;
+import org.promocat.promocat.exception.admin.ApiAdminAlreadyExistsException;
 import org.promocat.promocat.exception.admin.ApiAdminNotFoundException;
 import org.promocat.promocat.mapper.AdminMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,8 @@ public class AdminService {
     public AdminDTO add(String telephone) {
         if (adminRepository.existsByTelephone(telephone)) {
             log.warn("Attempt to add another admin with same telephone {}", telephone);
-            // TODO возвращает сущевствующего админа (лучше бы кинуть ексепшн)
-            return adminMapper.toDto(adminRepository.getByTelephone(telephone).orElse(new Admin()));
+            throw new ApiAdminAlreadyExistsException(
+                    String.format("Attempt to add another admin with same telephone %s", telephone));
         }
         Admin record = new Admin();
         record.setAccountType(AccountType.ADMIN);

@@ -70,7 +70,7 @@ public class TokenController {
                         account.getTelephone(), loginAttempt.getAuthorizationKey());
                 return new ResponseEntity<>(new TokenDTO(tokenService.getToken(account.getTelephone(), account.getAccountType())), HttpStatus.OK);
             } catch (UsernameNotFoundException e) {
-                // TODO нормальный эксепшен
+                // TODO нормальный эксепшен, никогда не вылетит, начало Legacy положено!
                 throw new UsernameNotFoundException(e.getMessage());
             }
         } else {

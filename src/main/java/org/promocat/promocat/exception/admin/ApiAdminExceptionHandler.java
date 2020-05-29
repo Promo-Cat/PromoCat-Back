@@ -28,4 +28,16 @@ public class ApiAdminExceptionHandler {
         log.error("Admin not found: " + e.getMessage());
         return new ResponseEntity<>(apiException, notFound);
     }
+
+    @ExceptionHandler(value = {ApiAdminAlreadyExistsException.class})
+    public ResponseEntity<Object> handleExistingAdmin(ApiAdminAlreadyExistsException e) {
+        final HttpStatus notFound = HttpStatus.BAD_REQUEST;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                notFound,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.warn("Admin already exists: " + e.getMessage());
+        return new ResponseEntity<>(apiException, notFound);
+    }
 }

@@ -114,7 +114,6 @@ public class StockService {
      */
     public StockDTO setActive(final Long id, final Boolean active) {
         log.info("Setting stock: {} active: {}", id, active);
-        // TODO напоминалка максиму мб код говно
         StockDTO stock = findById(id);
         stock.setIsAlive(active);
         return save(stock);
