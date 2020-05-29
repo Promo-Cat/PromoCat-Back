@@ -4,6 +4,7 @@ package org.promocat.promocat.data_entities.stock;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.dto.PromoCodeDTO;
+import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.StockMapper;
@@ -44,10 +45,7 @@ public class StockService {
      */
     public StockDTO save(final StockDTO dto) {
         log.info("Saving stock with name: {}", dto.getName());
-        Stock stock = mapper.toEntity(dto);
-        stock = repository.save(stock);
-        StockDTO dto1 = mapper.toDto(stock);
-        return dto1;
+        return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
     /**
@@ -93,11 +91,14 @@ public class StockService {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
+
             for (StockDTO stock : stocks) {
-                for (PromoCodeDTO code : stock.getCodes()) {
-                    code.setIsActive(false);
-                    code.setDeactivateDate(LocalDateTime.now());
-                    promoCodeService.save(code);
+                for (StockCityDTO city : stock.getCities()) {
+                    for (PromoCodeDTO code : city.getPromoCodes()) {
+                        code.setIsActive(false);
+                        code.setDeactivateDate(LocalDateTime.now());
+                        promoCodeService.save(code);
+                    }
                 }
                 stock.setIsAlive(false);
                 save(stock);
@@ -140,8 +141,10 @@ public class StockService {
     public StockDTO deactivateStock(Long id) {
         log.info("Trying to deactivate stock with id: {}", id);
         StockDTO stock = findById(id);
-        for (PromoCodeDTO code : stock.getCodes()) {
-            promoCodeService.setActive(code.getId(), false);
+        for (StockCityDTO city : stock.getCities()) {
+            for (PromoCodeDTO code : city.getPromoCodes()) {
+                promoCodeService.setActive(code.getId(), false);
+            }
         }
         return setActive(id, false);
     }
