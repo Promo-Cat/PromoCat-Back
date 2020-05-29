@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import org.promocat.promocat.constraints.StockDurationConstraint;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.movement.Movement;
-import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import org.promocat.promocat.data_entities.stock.city_stock.StockCity;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -76,7 +77,8 @@ public class Stock extends AbstractEntity {
     /**
      * Id организации, которой принадлежит акция.
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY)
     public Company getCompany() {
         return company;
     }
@@ -84,7 +86,8 @@ public class Stock extends AbstractEntity {
     /**
      * TODO
      */
-    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({CascadeType.ALL})
+    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
     public Set<Movement> getMovements() {
         return movements;
     }
@@ -92,7 +95,8 @@ public class Stock extends AbstractEntity {
     /**
      * TODO
      */
-    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({CascadeType.ALL})
+    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
     public Set<StockCity> getCities() {
         return cities;
     }

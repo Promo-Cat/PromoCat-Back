@@ -51,9 +51,10 @@ public class MovementService {
         }
         movementDTO.setUserId(userDTO.getId());
         // TODO pizda.
-        StockCityDTO t = stockCityService.findById(promoCodeService.findById(userDTO.getPromoCodeId())
-                .getStockCityId());
-        movementDTO.setStockId(t.getStockId());
+//        StockCityDTO t = stockCityService.findById(promoCodeService.findById(userDTO.getPromoCodeId())
+//                .getStockCityId());
+        movementDTO.setStockId(stockCityService.findById(promoCodeService.findById(userDTO.getPromoCodeId())
+                .getStockCityId()).getStockId());
         movementDTO.setDate(distanceDTO.getDate());
         movementDTO.setDistance(distanceDTO.getDistance());
         return movementMapper.toDto(movementRepository.save(movementMapper.toEntity(movementDTO)));

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
@@ -32,7 +34,7 @@ public class StockCity extends AbstractEntity {
     /**
      * Акция.
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "stock_id")
     public Stock getStock() {
         return stock;
@@ -49,7 +51,8 @@ public class StockCity extends AbstractEntity {
     /**
      * Город.
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     public City getCity() {
         return city;
