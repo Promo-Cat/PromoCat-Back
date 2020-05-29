@@ -78,7 +78,7 @@ public class Stock extends AbstractEntity {
      * Id организации, которой принадлежит акция.
      */
     @Cascade({CascadeType.ALL})
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     public Company getCompany() {
         return company;
     }
@@ -87,7 +87,7 @@ public class Stock extends AbstractEntity {
      * TODO
      */
     @Cascade({CascadeType.ALL})
-    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "stock", fetch = FetchType.EAGER)
     public Set<Movement> getMovements() {
         return movements;
     }
@@ -96,7 +96,7 @@ public class Stock extends AbstractEntity {
      * TODO
      */
     @Cascade({CascadeType.ALL})
-    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "stock", fetch = FetchType.EAGER)
     public Set<StockCity> getCities() {
         return cities;
     }

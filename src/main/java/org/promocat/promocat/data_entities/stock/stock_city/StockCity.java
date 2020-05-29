@@ -34,7 +34,8 @@ public class StockCity extends AbstractEntity {
     /**
      * Акция.
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_id")
     public Stock getStock() {
         return stock;
@@ -52,13 +53,14 @@ public class StockCity extends AbstractEntity {
      * Город.
      */
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "city_id")
     public City getCity() {
         return city;
     }
 
-    @OneToMany(mappedBy = "stockCity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade({org.hibernate.annotations.CascadeType.ALL})
+    @OneToMany(mappedBy = "stockCity", fetch = FetchType.EAGER)
     public Set<PromoCode> getPromoCodes() {
         return promoCodes;
     }
