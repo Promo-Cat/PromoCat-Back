@@ -7,8 +7,6 @@ import java.util.Random;
  */
 public class Generator {
 
-    // TODO перенести все в utils
-
     public static final String ALPHABETIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final String NUMBERS    = "0123456789";
     private static final Random RND       = new Random(System.currentTimeMillis());

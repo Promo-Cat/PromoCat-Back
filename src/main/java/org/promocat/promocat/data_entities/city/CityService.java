@@ -74,7 +74,7 @@ public class CityService {
      * @param file путь до csv файла
      * @return кол-во добавленных городов
      */
-    public int loadFromFile(Path file) {
+    public int loadFromFile(final Path file) {
         try {
             return addCities(CSVCityReader.readFromStreamReader(new FileReader(file.toFile()))).size();
         } catch (FileNotFoundException e) {
@@ -101,7 +101,7 @@ public class CityService {
      * @return объектное представление города в БД. {@link CityDTO}
      * @throws ApiCityNotFoundException если такого города нет в БД.
      */
-    public CityDTO findByCity(String city) {
+    public CityDTO findByCity(final String city) {
         Optional<City> cty = cityRepository.findByCity(city);
         log.info("Trying to find full info about city: {}", city);
         return cityMapper.toDto(cty.orElseThrow(() -> new ApiCityNotFoundException("No such city in db.")));
@@ -113,7 +113,7 @@ public class CityService {
      * @return объектное представление города в БД. {@link CityDTO}
      * @throws ApiCityNotFoundException если такого города нет в БД.
      */
-    public CityDTO findById(Long id) {
+    public CityDTO findById(final Long id) {
         Optional<City> city = cityRepository.findById(id);
         log.info("Trying to find city by id: {}", id);
         return cityMapper.toDto(city.orElseThrow(() -> new ApiCityNotFoundException("No such city in db.")));
@@ -124,7 +124,7 @@ public class CityService {
      * @param city название города.
      * @return объектное представление города в БД. {@link CityDTO}.
      */
-    public CityDTO setActive(String city) {
+    public CityDTO setActive(final String city) {
         CityDTO dto = findByCity(city);
         dto.setActive(true);
         log.info("City: {} activated", city);
@@ -132,11 +132,11 @@ public class CityService {
     }
 
     /**
-     * TODO
-     * @param id
-     * @return
+     * Проверка активности города по его id.
+     * @param id города.
+     * @return {@code true} если активен, иначе {@code false}.
      */
-    public boolean isActiveById(Long id) {
+    public boolean isActiveById(final Long id) {
         City city = cityRepository.findById(id).orElseThrow(() -> new ApiCityNotFoundException("No such city in db."));
         return city.getActive().equals(Boolean.TRUE);
     }
