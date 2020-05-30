@@ -51,7 +51,13 @@ public class StockDTO extends AbstractDTO {
     @NotNull(message = "Id компании не может быть пустым.")
     private Long companyId;
 
-    // TODO docs
+    @ApiModelProperty(
+            value = "Cities where the stock takes place",
+            dataType = "List of StockCity entities",
+            required = true,
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<StockCityDTO> cities;
 
     @ApiModelProperty(
@@ -72,6 +78,12 @@ public class StockDTO extends AbstractDTO {
     @StockDurationConstraint
     private Long duration;
 
-    // TODO docs
+    @ApiModelProperty(
+            value = "Movement of users who take part in the stock",
+            dataType = "List of Movement entities",
+            required = true,
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<MovementDTO> movements;
 }

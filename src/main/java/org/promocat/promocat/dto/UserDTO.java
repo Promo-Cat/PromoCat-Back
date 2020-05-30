@@ -62,7 +62,13 @@ public class UserDTO extends AbstractAccountDTO {
     )
     private Long promoCodeId;
 
-    // TODO docs
+    @ApiModelProperty(
+            value = "Users movement",
+            dataType = "List of Movement entities",
+            required = true,
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<MovementDTO> movements;
 
     @ApiModelProperty(

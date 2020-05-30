@@ -1,6 +1,8 @@
 package org.promocat.promocat.data_entities.stock.stock_city;
 
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.exception.city.ApiCityNotActiveException;
@@ -19,9 +21,9 @@ import javax.validation.Valid;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 19:36 27.05.2020
  */
-// TODO docs
 @Slf4j
 @RestController
+@Api(tags = {SpringFoxConfig.STOCK_CITY})
 public class StockCityController {
 
     private final StockCityService stockCityService;
