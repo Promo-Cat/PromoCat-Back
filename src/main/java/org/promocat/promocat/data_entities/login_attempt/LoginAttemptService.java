@@ -46,7 +46,6 @@ public class LoginAttemptService {
     private final AccountRepositoryManager accountRepositoryManager;
     @Value("${auth.doCall}")
     private boolean doCall;
-    // TODO: организовать параметры запроса к smsc адекватно, а не в строке
     @Value("${auth.testCode}")
     private String testCode;
 

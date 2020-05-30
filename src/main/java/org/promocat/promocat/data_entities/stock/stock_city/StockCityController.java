@@ -19,6 +19,7 @@ import javax.validation.Valid;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 19:36 27.05.2020
  */
+// TODO docs
 @Slf4j
 @RestController
 public class StockCityController {
