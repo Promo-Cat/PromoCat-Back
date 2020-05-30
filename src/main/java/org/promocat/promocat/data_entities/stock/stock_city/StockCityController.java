@@ -3,6 +3,7 @@ package org.promocat.promocat.data_entities.stock.stock_city;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.exception.city.ApiCityNotActiveException;
 import org.promocat.promocat.exception.city.ApiCityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -36,8 +37,7 @@ public class StockCityController {
         if (cityService.isActiveById(stockCityDTO.getCityId())) {
             return ResponseEntity.ok(stockCityService.save(stockCityDTO));
         } else {
-            // TODO City not active exception
-            throw new ApiCityNotFoundException("City is not active");
+            throw new ApiCityNotActiveException(String.format("City %s is not active", stockCityDTO.getCityId()));
         }
     }
 

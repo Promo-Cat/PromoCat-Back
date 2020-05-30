@@ -18,7 +18,7 @@ import java.time.ZonedDateTime;
 @ControllerAdvice
 public class ApiCityExceptionHandler {
     @ExceptionHandler(value = {ApiCityNotFoundException.class})
-    public ResponseEntity<Object> handleNonexistentCar(ApiCityNotFoundException e) {
+    public ResponseEntity<Object> handleNonexistentCity(ApiCityNotFoundException e) {
         final HttpStatus notFound = HttpStatus.NOT_FOUND;
         ApiException apiException = new ApiException(
                 e.getMessage(),
@@ -26,6 +26,18 @@ public class ApiCityExceptionHandler {
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
         log.error("City not found: " + e.getMessage());
+        return new ResponseEntity<>(apiException, notFound);
+    }
+
+    @ExceptionHandler(value = {ApiCityNotActiveException.class})
+    public ResponseEntity<Object> handleNonactiveCity(ApiCityNotActiveException e) {
+        final HttpStatus notFound = HttpStatus.BAD_REQUEST;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                notFound,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("City not active: " + e.getMessage());
         return new ResponseEntity<>(apiException, notFound);
     }
 }
