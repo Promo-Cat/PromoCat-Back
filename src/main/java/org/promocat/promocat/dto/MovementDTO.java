@@ -56,4 +56,20 @@ public class MovementDTO extends AbstractDTO {
     @NotNull(message = "Дистанция не может быть пустой.")
     private Double distance;
 
+    @ApiModelProperty(
+            value = "Earnings",
+            dataType = "Double",
+            required = true
+    )
+    private Double earnings;
+
+    @ApiModelProperty(
+            value = "Panel",
+            dataType = "Double",
+            required = true
+    )
+    private Double panel;
+
+
+
 }
