@@ -12,13 +12,18 @@ import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivat
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeActiveException;
-import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -122,7 +127,20 @@ public class UserController {
         return ResponseEntity.ok(userService.save(user));
     }
 
-    // TODO docs
+    @ApiOperation(value = "Add user movement",
+            notes = "Adds users movement",
+            response = MovementDTO.class)
+    @ApiResponses({
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(value = "/api/user/move", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
                                                 @RequestHeader("token") String token) {
@@ -145,13 +163,24 @@ public class UserController {
         return ResponseEntity.ok(movement);
     }
 
-    // TODO docs
+    @ApiOperation(value = "Get user statistics",
+            notes = "Gets user statistics for all days of participation in the stock. Returns List of Movements.",
+            response = List.class)
+    @ApiResponses({
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(value = "/api/user/statistics", method = RequestMethod.GET)
     public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") String jwtToken) {
         JwtReader jwtReader = new JwtReader(jwtToken);
         String telephone = jwtReader.getValue("telephone");
         return ResponseEntity.ok(userService.getUserStatistics(userService.findByTelephone(telephone)));
     }
+
     // ------ Admin methods ------
 
     @ApiOperation(value = "Get user by id",

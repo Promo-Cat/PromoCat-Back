@@ -90,7 +90,7 @@ public class User extends AbstractAccount {
     }
 
     /**
-     * TODO
+     * Передвижения пользователя участвующего в акции.
      */
     @Cascade({CascadeType.ALL})
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

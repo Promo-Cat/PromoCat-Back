@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -28,21 +30,22 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class LoginAttemptService {
-
     public static final int AUTHORIZATION_KEY_LENGTH = 16;
-    private static final String SMSC_URL = "https://smsc.ru/sys/send.php?login=promocatcompany&psw=promocattest123&mes=code&call=1&fmt=3&phones=";
+    private static final String SMSC_URL = "https://smsc.ru/sys/send.php?";
+    // TODO протестить
+    private final List<Map.Entry<String, String>> SMSC_URI_PARAMETERS = List.of(
+            Map.entry("login", "promocatcompany"),
+            Map.entry("psw", "promocattest123"),
+            Map.entry("mes", "code"),
+            Map.entry("call", "1"),
+            Map.entry("fmt", "3"),
+            Map.entry("phones", "")
+    );
+
     private final LoginAttemptRepository loginAttemptRepository;
     private final AccountRepositoryManager accountRepositoryManager;
     @Value("${auth.doCall}")
     private boolean doCall;
-    //    private static final Map<String, String> SMSC_URI_PARAMETERS = Map.of(
-//            "login", "promocatcompany",
-//            "psw", "promocattest123",
-//            "mes", "code",
-//            "call", "1",
-//            "fmt", "3"
-//    );
-// TODO: организовать параметры запроса к smsc адекватно, а не в строке
     @Value("${auth.testCode}")
     private String testCode;
 
@@ -95,7 +98,14 @@ public class LoginAttemptService {
      */
     private Optional<String> doCallAndGetCode(String telephone) {
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<SMSCResponseDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + telephone,
+        StringBuilder urlParams = new StringBuilder();
+        SMSC_URI_PARAMETERS.forEach(el -> {
+            urlParams.append(el.getKey()).append("=").append(el.getValue());
+            if (!el.getValue().isEmpty()) {
+                urlParams.append("&");
+            }
+        });
+        ResponseEntity<SMSCResponseDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + urlParams.toString() + telephone,
                 SMSCResponseDTO.class);
         SMSCResponseDTO responseDTO = smscResponse.getBody();
         if (Objects.requireNonNull(responseDTO).getCode() != null) {
@@ -143,7 +153,6 @@ public class LoginAttemptService {
         log.info("Trying to delete LoginAttempt with authorization key: {}", attempt.getAuthorizationKey());
         loginAttemptRepository.delete(attempt);
     }
-
 
     /**
      * Возвращает попытку входа для аккаунта с конкретным типом аккаунта и телефоном (логином)

@@ -83,7 +83,7 @@ public class Stock extends AbstractEntity {
     }
 
     /**
-     * TODO
+     * Передвижения пользователей участвующих в акции.
      */
     @Cascade({CascadeType.ALL})
     @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
@@ -92,7 +92,7 @@ public class Stock extends AbstractEntity {
     }
 
     /**
-     * TODO
+     * Города, в которых запущена акция.
      */
     @Cascade({CascadeType.ALL})
     @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)

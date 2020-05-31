@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.stock.stock_city;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.mapper.StockCityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,8 +35,7 @@ public class StockCityService {
         if (stockCity.isPresent()) {
             return stockCityMapper.toDto(stockCity.get());
         } else {
-            // TODO exception
-            throw new UsernameNotFoundException("TODO");
+            throw new ApiStockCityNotFoundException("TODO");
         }
     }
 }

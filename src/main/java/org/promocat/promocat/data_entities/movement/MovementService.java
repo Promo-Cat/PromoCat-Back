@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class MovementService {
 
     private final MovementRepository movementRepository;
-    // TODO make with promoCodeService
     private final PromoCodeService promoCodeService;
     private final MovementMapper movementMapper;
     private final UserMapper userMapper;
@@ -47,9 +46,6 @@ public class MovementService {
     public MovementDTO create(DistanceDTO distanceDTO, UserDTO userDTO) {
         MovementDTO movementDTO = new MovementDTO();
         movementDTO.setUserId(userDTO.getId());
-        // TODO pizda.
-//        StockCityDTO t = stockCityService.findById(promoCodeService.findById(userDTO.getPromoCodeId())
-//                .getStockCityId());
         movementDTO.setStockId(stockCityService.findById(promoCodeService.findById(userDTO.getPromoCodeId())
                 .getStockCityId()).getStockId());
         movementDTO.setDate(distanceDTO.getDate());
