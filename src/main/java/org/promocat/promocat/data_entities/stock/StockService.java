@@ -6,6 +6,7 @@ import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.PromoCodeDTO;
+import org.promocat.promocat.dto.PromoCodesInCityDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -155,7 +157,7 @@ public class StockService {
     }
 
     /**
-     * Получение количества промо-кодов в конкретном городе.
+     * Получение количества промокодов в конкретном городе.
      * @param stockId акции
      * @param cityId города
      * @return количество промо-кодов
@@ -165,12 +167,23 @@ public class StockService {
     }
 
     /**
-     * Получить общее количество промокодов во всех городах.
+     * Получение общего количества промокодов во всех городах.
      * @param stockId акции
      * @return общее количество промокодов
      */
     public Long getTotalAmountOfPromoCodes(final Long stockId) {
         StockDTO dto = findById(stockId);
         return dto.getCities().stream().mapToLong(StockCityDTO::getNumberOfPromoCodes).sum();
+    }
+
+    /**
+     * Получение количество промокодов для каждого города.
+     * @param stockId акции
+     * @return {@link List<PromoCodesInCityDTO>} лист POJO.
+     */
+    public List<PromoCodesInCityDTO> getAmountOfPromoCodesForEachCity(final Long stockId) {
+        StockDTO dto = findById(stockId);
+        return dto.getCities().stream().map((t) -> new PromoCodesInCityDTO(t.getCityId(), t.getNumberOfPromoCodes()))
+                .collect(Collectors.toList());
     }
 }
