@@ -73,20 +73,20 @@ public class UserDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
             value = "Users total distance",
-            dataType = "Long",
+            dataType = "Double",
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long totalDistance;
+    private Double totalDistance;
 
 
     @ApiModelProperty(
             value = "Users total earnings",
-            dataType = "Long",
+            dataType = "Double",
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long totalEarnings;
+    private Double totalEarnings;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);
