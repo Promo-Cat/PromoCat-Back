@@ -21,7 +21,7 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
 //            nativeQuery = true
 //    )
     @Query(
-            "select new org.promocat.promocat.dto.UserStockEarningStatistic(sum(m.earnings), sum(m.panel))" +
+            "select new org.promocat.promocat.dto.UserStockEarningStatistic(sum(m.distance), sum(m.earnings), sum(m.panel))" +
                     "from Movement m " +
                     "where m.stock.id=?1 and m.user.id=?2"
     )
