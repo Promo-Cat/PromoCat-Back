@@ -163,4 +163,14 @@ public class StockService {
     public Long getAmountOfPromoCodesInCity(final Long stockId, final Long cityId) {
         return stockCityService.findByStockAndCity(findById(stockId), cityService.findById(cityId)).getNumberOfPromoCodes();
     }
+
+    /**
+     * Получить общее количество промокодов во всех городах.
+     * @param stockId акции
+     * @return общее количество промокодов
+     */
+    public Long getTotalAmountOfPromoCodes(final Long stockId) {
+        StockDTO dto = findById(stockId);
+        return dto.getCities().stream().mapToLong(StockCityDTO::getNumberOfPromoCodes).sum();
+    }
 }
