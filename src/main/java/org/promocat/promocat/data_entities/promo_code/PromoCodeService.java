@@ -150,11 +150,13 @@ public class PromoCodeService {
      */
     public StockDTO savePromoCodes(StockDTO stock) {
         log.info("Saving promo-codes to stock: {}", stock.getId());
-        for (StockCityDTO city : stock.getCities()) {
-            Set<PromoCodeDTO> codesForCity = generate(stock.getId(), city);
-            city.setPromoCodes(codesForCity.stream().map(this::save).collect(Collectors.toSet()));
+        if (Objects.nonNull(stock.getCities())) {
+            for (StockCityDTO city : stock.getCities()) {
+                Set<PromoCodeDTO> codesForCity = generate(stock.getId(), city);
+                city.setPromoCodes(codesForCity.stream().map(this::save).collect(Collectors.toSet()));
+            }
+            sendMail(stock.getCities());
         }
-        sendMail(stock.getCities());
         return stock;
     }
 

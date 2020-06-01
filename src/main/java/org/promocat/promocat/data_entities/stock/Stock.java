@@ -78,6 +78,7 @@ public class Stock extends AbstractEntity {
      */
     @Cascade({CascadeType.ALL})
     @ManyToOne(fetch = FetchType.LAZY)
+    //TODO check not null
     public Company getCompany() {
         return company;
     }

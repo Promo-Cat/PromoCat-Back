@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
-import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -91,29 +90,9 @@ public class StockController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "admin/company/stock/deactivate", method = RequestMethod.POST)
+    @RequestMapping(path = "/admin/company/stock/deactivate", method = RequestMethod.POST)
     public ResponseEntity<StockDTO> deactivateStock(@RequestParam("id") Long id) {
         return ResponseEntity.ok(stockService.deactivateStock(id));
-    }
-
-    @ApiOperation(value = "Get stock by promo-code",
-            notes = "Returning stock with promo-code specified in request",
-            response = StockDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(path = "/api/company/promo-code/stock", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<StockDTO> getStockByPromoCode(@Valid @RequestBody PromoCodeDTO promoCodeDTO) {
-        return ResponseEntity.ok(stockService.findById(stockCityService.findById(promoCodeDTO.getStockCityId())
-                .getStockId()));
     }
 
     // ------ Admin methods ------

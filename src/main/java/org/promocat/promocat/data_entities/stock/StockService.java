@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -140,9 +141,11 @@ public class StockService {
     public StockDTO deactivateStock(Long id) {
         log.info("Trying to deactivate stock with id: {}", id);
         StockDTO stock = findById(id);
-        for (StockCityDTO city : stock.getCities()) {
-            for (PromoCodeDTO code : city.getPromoCodes()) {
-                promoCodeService.setActive(code.getId(), false);
+        if (Objects.nonNull(stock.getCities())) {
+            for (StockCityDTO city : stock.getCities()) {
+                for (PromoCodeDTO code : city.getPromoCodes()) {
+                    promoCodeService.setActive(code.getId(), false);
+                }
             }
         }
         return setActive(id, false);
