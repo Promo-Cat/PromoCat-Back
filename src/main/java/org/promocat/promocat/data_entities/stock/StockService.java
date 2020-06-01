@@ -2,8 +2,11 @@ package org.promocat.promocat.data_entities.stock;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.PromoCodeDTO;
+import org.promocat.promocat.dto.PromoCodesInCityDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -31,12 +35,16 @@ public class StockService {
     private final StockMapper mapper;
     private final StockRepository repository;
     private final PromoCodeService promoCodeService;
+    private final StockCityService stockCityService;
+    private final CityService cityService;
 
     @Autowired
-    public StockService(final StockMapper mapper, final StockRepository repository, final PromoCodeService promoCodeService) {
+    public StockService(final StockMapper mapper, final StockRepository repository, final PromoCodeService promoCodeService, final StockCityService stockCityService, final CityService cityService) {
         this.mapper = mapper;
         this.repository = repository;
         this.promoCodeService = promoCodeService;
+        this.stockCityService = stockCityService;
+        this.cityService = cityService;
     }
 
     /**
@@ -149,5 +157,36 @@ public class StockService {
             }
         }
         return setActive(id, false);
+    }
+
+    /**
+     * Получение количества промокодов в конкретном городе.
+     * @param stockId акции
+     * @param cityId города
+     * @return количество промо-кодов
+     */
+    public Long getAmountOfPromoCodesInCity(final Long stockId, final Long cityId) {
+        return stockCityService.findByStockAndCity(findById(stockId), cityService.findById(cityId)).getNumberOfPromoCodes();
+    }
+
+    /**
+     * Получение общего количества промокодов во всех городах.
+     * @param stockId акции
+     * @return общее количество промокодов
+     */
+    public Long getTotalAmountOfPromoCodes(final Long stockId) {
+        StockDTO dto = findById(stockId);
+        return dto.getCities().stream().mapToLong(StockCityDTO::getNumberOfPromoCodes).sum();
+    }
+
+    /**
+     * Получение количество промокодов для каждого города.
+     * @param stockId акции
+     * @return {@link List<PromoCodesInCityDTO>} лист POJO.
+     */
+    public List<PromoCodesInCityDTO> getAmountOfPromoCodesForEachCity(final Long stockId) {
+        StockDTO dto = findById(stockId);
+        return dto.getCities().stream().map((t) -> new PromoCodesInCityDTO(t.getCityId(), t.getNumberOfPromoCodes()))
+                .collect(Collectors.toList());
     }
 }

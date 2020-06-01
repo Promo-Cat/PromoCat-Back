@@ -1,8 +1,11 @@
 package org.promocat.promocat.data_entities.stock.stock_city;
 
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.exception.city.ApiCityNotActiveException;
 import org.promocat.promocat.exception.city.ApiCityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,6 +23,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
+@Api(tags = {SpringFoxConfig.STOCK_CITY})
 public class StockCityController {
 
     private final StockCityService stockCityService;
@@ -36,8 +40,7 @@ public class StockCityController {
         if (cityService.isActiveById(stockCityDTO.getCityId())) {
             return ResponseEntity.ok(stockCityService.save(stockCityDTO));
         } else {
-            // TODO City not active exception
-            throw new ApiCityNotFoundException("City is not active");
+            throw new ApiCityNotActiveException(String.format("City %s is not active", stockCityDTO.getCityId()));
         }
     }
 

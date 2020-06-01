@@ -31,6 +31,8 @@ public class Movement extends AbstractEntity {
     private Stock stock;
     private LocalDate date;
     private Double distance;
+    private Double earnings;
+    private Double panel;
 
     @Cascade({CascadeType.SAVE_UPDATE})
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,5 +58,17 @@ public class Movement extends AbstractEntity {
     @Column(name = "distance")
     public Double getDistance() {
         return distance;
+    }
+
+    @NotNull(message = "Заработок не может быть пустым.")
+    @Column(name = "earnings")
+    public Double getEarnings() {
+        return earnings;
+    }
+
+    @NotNull(message = "Комиссия не может быть пустой.")
+    @Column(name = "panel")
+    public Double getPanel() {
+        return panel;
     }
 }
