@@ -35,7 +35,10 @@ public class StockCityService {
     }
 
     public StockCityDTO save(final StockCityDTO dto) {
-        return stockCityMapper.toDto(stockCityRepository.save(stockCityMapper.toEntity(dto)));
+        StockCity stockCity = stockCityMapper.toEntity(dto);
+        StockCity stockCity1 = stockCityRepository.save(stockCity);
+        StockCityDTO stockCityDTO = stockCityMapper.toDto(stockCity1);
+        return stockCityDTO;
     }
 
     public StockCityDTO findById(final Long id) {
