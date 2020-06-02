@@ -7,15 +7,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Commit;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -28,9 +33,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Danil Lyskin at 14:34 20.05.2020
  */
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
+@Commit
 @AutoConfigureMockMvc
 public class StockTest {
 
@@ -39,6 +45,9 @@ public class StockTest {
 
     @Autowired
     private StockService stockService;
+
+    @Autowired
+    private StockCityService stockCityService;
 
     private CompanyDTO company;
     private String token;
@@ -71,11 +80,11 @@ public class StockTest {
         token = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
 
         key = this.mockMvc.perform(get("/auth/admin/login?telephone=+7(999)243-26-99"))
-                        .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
         tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
-                        + mapper.readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
-                        + "&code=1337")).andExpect(status().isOk())
-                        .andReturn();
+                + mapper.readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
+                + "&code=1337")).andExpect(status().isOk())
+                .andReturn();
         adminToken = mapper.readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
         MvcResult cityR = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
                 .andExpect(status().isOk())
@@ -92,8 +101,8 @@ public class StockTest {
         stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/company/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(stock)))
-                    .andExpect(status().is4xxClientError());
+                .content(mapper.writeValueAsString(stock)))
+                .andExpect(status().is4xxClientError());
     }
 
     @Transactional
@@ -267,7 +276,7 @@ public class StockTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
+    @Commit
     @Test
     public void testGenerateCodes() throws Exception {
         StockDTO stock = new StockDTO();
@@ -292,14 +301,22 @@ public class StockTest {
                 .andReturn();
 
         stockCity = new ObjectMapper().readValue(cityR.getResponse().getContentAsString(), StockCityDTO.class);
+        stockCity = stockCityService.findById(stockCity.getId());
         System.out.println(stockCity.getCityId());
         System.out.println(stockCity.getStockId());
         System.out.println(stockCity.getNumberOfPromoCodes());
+        System.out.println(stockCity.getId());
 
         this.mockMvc.perform(post("/admin/company/stock/generate?id=" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
+        MvcResult result = mockMvc.perform(get("/api/company")
+                .header("token", token)).andReturn();
+
+        CompanyDTO cmp = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
+
         stock = stockService.findById(stock.getId());
+
         assertEquals(stock.getCities().size(), 1);
         for (StockCityDTO stockCityDTO : stock.getCities()) {
             assertEquals(stockCityDTO.getCityId(), city.getId());

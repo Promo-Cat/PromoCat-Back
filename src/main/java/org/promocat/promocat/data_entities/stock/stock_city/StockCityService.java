@@ -44,6 +44,7 @@ public class StockCityService {
     public StockCityDTO findById(final Long id) {
         Optional<StockCity> stockCity = stockCityRepository.findById(id);
         if (stockCity.isPresent()) {
+            stockCityRepository.flush();
             return stockCityMapper.toDto(stockCity.get());
         } else {
             // TODO exception

@@ -7,8 +7,11 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.PromoCodeActivationStatisticDTO;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
@@ -19,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -30,11 +35,15 @@ public class CompanyController {
 
     private final CompanyService service;
     private final StockService stockService;
+    private final PromoCodeActivationService promoCodeActivationService;
 
     @Autowired
-    public CompanyController(final CompanyService service, final StockService stockService) {
+    public CompanyController(final CompanyService service,
+                             final StockService stockService,
+                             final PromoCodeActivationService promoCodeActivationService) {
         this.service = service;
         this.stockService = stockService;
+        this.promoCodeActivationService = promoCodeActivationService;
     }
 
     @ApiOperation(value = "Register company",
@@ -77,6 +86,60 @@ public class CompanyController {
         }
         return ResponseEntity.ok(service.findByTelephone(telephone));
     }
+
+    // TODO docs
+    @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/summary", method = RequestMethod.GET)
+    public ResponseEntity<Long> getSummaryPromoCodeActivation(@PathVariable("stockId") Long stockId,
+                                                              @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token).orElseThrow();
+        StockDTO stockDTO = stockService.findById(stockId);
+        if (Objects.isNull(stockDTO)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (!service.isOwner(companyDTO.getId(), stockId)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } else {
+            return ResponseEntity.ok(promoCodeActivationService.getSummaryCountByStock(stockId));
+        }
+    }
+
+    // TODO docs
+    // TODO check stock (exists and company is owner) in other method
+    @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}", method = RequestMethod.GET)
+    public ResponseEntity<Long> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
+                                                             @PathVariable("cityId") Long cityId,
+                                                             @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token).orElseThrow();
+        StockDTO stockDTO = stockService.findById(stockId);
+        if (Objects.isNull(stockDTO)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (!service.isOwner(companyDTO.getId(), stockId)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } else {
+            return ResponseEntity.ok(promoCodeActivationService.getCountByCityAndStock(cityId, stockId));
+        }
+    }
+
+    // TODO docs
+    // TODO check stock (exists and company is owner) in other method
+    @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/byCity", method = RequestMethod.GET)
+    public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
+                                                                                              @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token).orElseThrow();
+        StockDTO stockDTO = stockService.findById(stockId);
+        if (Objects.isNull(stockDTO)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (!service.isOwner(companyDTO.getId(), stockId)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } else {
+            return ResponseEntity.ok(promoCodeActivationService.getCountForEveryCityByStock(stockId));
+        }
+    }
+
+
+
     // ------ Admin methods ------
 
     @ApiOperation(value = "Get company by id",
@@ -142,4 +205,5 @@ public class CompanyController {
     public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") String mail) {
         return ResponseEntity.ok(service.findByMail(mail));
     }
+
 }

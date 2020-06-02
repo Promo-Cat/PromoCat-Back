@@ -3,7 +3,7 @@ package org.promocat.promocat.data_entities.movement;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.UserDTO;
-import org.promocat.promocat.dto.UserStockEarningStatistic;
+import org.promocat.promocat.dto.UserStockEarningStatisticDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -26,7 +26,7 @@ public class MovementController {
     }
 
     @RequestMapping(value = "/api/user/earnings", method = RequestMethod.GET)
-    public ResponseEntity<UserStockEarningStatistic> getUserEarningsStatistic(@RequestHeader("token") String token) {
+    public ResponseEntity<UserStockEarningStatisticDTO> getUserEarningsStatistic(@RequestHeader("token") String token) {
         // TODO: проверки и тд (Роме)
         UserDTO userDTO = userService.getByToken(token);
 

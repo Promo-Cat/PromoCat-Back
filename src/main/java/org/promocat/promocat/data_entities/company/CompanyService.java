@@ -1,7 +1,9 @@
 package org.promocat.promocat.data_entities.company;
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,15 @@ import java.util.Optional;
 public class CompanyService {
     private final CompanyMapper mapper;
     private final CompanyRepository repository;
+    private final StockService stockService;
 
     @Autowired
-    public CompanyService(final CompanyMapper mapper, final CompanyRepository repository) {
+    public CompanyService(final CompanyMapper mapper,
+                          final CompanyRepository repository,
+                          final StockService stockService) {
         this.mapper = mapper;
         this.repository = repository;
+        this.stockService = stockService;
     }
 
     /**
@@ -100,5 +106,15 @@ public class CompanyService {
             log.warn("No company with org mail: {}", mail);
             throw new ApiCompanyNotFoundException(String.format("No company with such mail: %s in db.", mail));
         }
+    }
+
+    public Optional<CompanyDTO> findByToken(final String token) {
+        return Optional.of(mapper.toDto(repository.findByToken(token).orElseThrow()));
+    }
+
+    public boolean isOwner(Long companyId, Long stockId) {
+        CompanyDTO companyDTO = findById(companyId);
+        StockDTO stockDTO = stockService.findById(stockId);
+        return companyDTO.getId().equals(stockDTO.getCompanyId());
     }
 }
