@@ -92,11 +92,7 @@ public class CompanyController {
     @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/summary", method = RequestMethod.GET)
     public ResponseEntity<Long> getSummaryPromoCodeActivation(@PathVariable("stockId") Long stockId,
                                                               @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token).orElseThrow();
-        StockDTO stockDTO = stockService.findById(stockId);
-        if (Objects.isNull(stockDTO)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        CompanyDTO companyDTO = service.findByToken(token);
         if (!service.isOwner(companyDTO.getId(), stockId)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } else {
@@ -110,11 +106,7 @@ public class CompanyController {
     public ResponseEntity<Long> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
                                                              @PathVariable("cityId") Long cityId,
                                                              @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token).orElseThrow();
-        StockDTO stockDTO = stockService.findById(stockId);
-        if (Objects.isNull(stockDTO)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        CompanyDTO companyDTO = service.findByToken(token);
         if (!service.isOwner(companyDTO.getId(), stockId)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } else {
@@ -127,11 +119,7 @@ public class CompanyController {
     @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/byCity", method = RequestMethod.GET)
     public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
                                                                                               @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token).orElseThrow();
-        StockDTO stockDTO = stockService.findById(stockId);
-        if (Objects.isNull(stockDTO)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        CompanyDTO companyDTO = service.findByToken(token);
         if (!service.isOwner(companyDTO.getId(), stockId)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } else {
@@ -144,7 +132,7 @@ public class CompanyController {
     public ResponseEntity<Long> getAmountOfPromoCodesInCity(@PathVariable("stockId") Long stockId,
                                                             @PathVariable("cityId") Long cityId,
                                                             @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token).orElseThrow();
+        CompanyDTO companyDTO = service.findByToken(token);
         if (!service.isOwner(companyDTO.getId(), stockId)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } else {
@@ -156,7 +144,7 @@ public class CompanyController {
     @RequestMapping(path = "/company/stock/{stockId}/statistic/total", method = RequestMethod.GET)
     public ResponseEntity<Long> getTotalAmountOfPromoCodes(@PathVariable("stockId") Long stockId,
                                                             @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token).orElseThrow();
+        CompanyDTO companyDTO = service.findByToken(token);
         if (!service.isOwner(companyDTO.getId(), stockId)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } else {
@@ -168,7 +156,7 @@ public class CompanyController {
     @RequestMapping(path = "/company/stock/{stockId}/statistic/forEachCity", method = RequestMethod.GET)
     public ResponseEntity<List<PromoCodesInCityDTO>> getAmountOfPromoCodesForEachCity(@PathVariable("stockId") Long stockId,
                                                                                       @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token).orElseThrow();
+        CompanyDTO companyDTO = service.findByToken(token);
         if (!service.isOwner(companyDTO.getId(), stockId)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } else {
