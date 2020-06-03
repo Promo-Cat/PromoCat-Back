@@ -16,7 +16,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,15 +25,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Created by Danil Lyskin at 17:04 29.05.2020
  */
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -59,10 +59,9 @@ public class AdminTest {
         adminToken = new ObjectMapper().readValue(result.getResponse().getContentAsString(), TokenDTO.class).getToken();
     }
 
-    @Transactional
     @Test
     public void addAdminTest() throws Exception {
-        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
+        TelephoneDTO telephone = new TelephoneDTO("+7(222)333-22-22");
         MvcResult result = this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(telephone))
                 .header("token", adminToken))
@@ -70,25 +69,24 @@ public class AdminTest {
                 .andReturn();
 
         AdminDTO admin = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
-        assertEquals(admin.getTelephone(), "+7(222)222-22-22");
+        assertEquals(admin.getTelephone(), "+7(222)333-22-22");
     }
 
-//    @Transactional
-//    @Test
-//    public void addAdminWithExistedTelephoneTest() throws Exception {
-//        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
-//        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(telephone))
-//                .header("token", adminToken))
-//                .andExpect(status().isOk());
-//
-//        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(telephone))
-//                .header("token", adminToken))
-//                .andExpect(status().isOk());
-//    }
-
     @Transactional
+    @Test
+    public void addAdminWithExistedTelephoneTest() throws Exception {
+        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
+        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(telephone))
+                .header("token", adminToken))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(telephone))
+                .header("token", adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
     @Test
     public void getAdminByTelephoneTest() throws Exception {
         TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
@@ -104,21 +102,14 @@ public class AdminTest {
         assertEquals(admin.getId(), adminRes.getId());
     }
 
-    @Transactional
     @Test(expected = ApiAdminNotFoundException.class)
-    public void getAdminByIncorrectTelephoneTest() throws Exception {
-        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
-        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(telephone))
-                .header("token", adminToken))
-                .andExpect(status().isOk());
-        adminService.getByTelephone("+7(222)232-22-22");
+    public void getAdminByIncorrectTelephoneTest() {
+        adminService.getByTelephone("+7(666)222-22-22");
     }
 
-    @Transactional
     @Test
     public void getAdminsTest() throws Exception {
-        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
+        TelephoneDTO telephone = new TelephoneDTO("+7(222)334-22-22");
         this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(telephone))
                 .header("token", adminToken))
@@ -128,13 +119,12 @@ public class AdminTest {
                 .andExpect(status().isOk())
                 .andReturn();
         List<AdminDTO> admins = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<List<AdminDTO>>(){});
-        assertEquals(admins.size(), 2);
+        assertEquals(admins.size(), 4);
     }
 
-    @Transactional
     @Test
     public void deleteAdminTest() throws Exception {
-        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
+        TelephoneDTO telephone = new TelephoneDTO("+7(222)622-22-22");
         MvcResult result = this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(telephone))
                 .header("token", adminToken))
@@ -150,13 +140,12 @@ public class AdminTest {
                 .andExpect(status().isOk())
                 .andReturn();
         List<AdminDTO> admins = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
-        assertEquals(admins.size(), 1);
+        assertEquals(admins.size(), 4);
     }
 
-    @Transactional
     @Test
     public void deleteAdminWithoutCorrectIdTest() throws Exception {
-        this.mockMvc.perform(delete("/admin/?id=" + 3).header("token", adminToken))
+        this.mockMvc.perform(delete("/admin/?id=" + 222).header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 }

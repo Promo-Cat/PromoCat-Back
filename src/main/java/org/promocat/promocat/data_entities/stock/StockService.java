@@ -18,10 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -188,5 +185,14 @@ public class StockService {
         StockDTO dto = findById(stockId);
         return dto.getCities().stream().map((t) -> new PromoCodesInCityDTO(t.getCityId(), t.getNumberOfPromoCodes()))
                 .collect(Collectors.toList());
+    }
+
+    public Set<PromoCodeDTO> getCodes(final Long id) {
+        StockDTO dto = findById(id);
+        Set<PromoCodeDTO> res = new HashSet<>();
+        for (StockCityDTO city : dto.getCities()) {
+            res.addAll(city.getPromoCodes());
+        }
+        return res;
     }
 }
