@@ -40,12 +40,24 @@ public class MovementService {
         this.stockCityService = stockCityService;
     }
 
-    public MovementDTO save(MovementDTO movementDTO) {
+    /**
+     * Сохранение/обновление передвижений пользователя внутри акции.
+     * @param movementDTO передвижение. {@link MovementDTO}
+     * @return Представление передвижения сохраненное в БД. {@link MovementDTO}
+     */
+    public MovementDTO save(final MovementDTO movementDTO) {
         movementDTO.setPanel(movementDTO.getEarnings() * PANEL_PERCENT);
         return movementMapper.toDto(movementRepository.save(movementMapper.toEntity(movementDTO)));
     }
 
-    public MovementDTO create(DistanceDTO distanceDTO, Double earnedMoney, UserDTO userDTO) {
+    /**
+     * Создание объекта передвижения.
+     * @param distanceDTO проеханное расстояние. {@link DistanceDTO}
+     * @param earnedMoney количество заработанных денег.
+     * @param userDTO объектное представление пользователя. {@link UserDTO}
+     * @return Представление передвижения сохраненное в БД. {@link MovementDTO}
+     */
+    public MovementDTO create(final DistanceDTO distanceDTO, final Double earnedMoney, final UserDTO userDTO) {
         MovementDTO movementDTO = new MovementDTO();
         movementDTO.setUserId(userDTO.getId());
         movementDTO.setStockId(stockCityService.findById(promoCodeService.findById(userDTO.getPromoCodeId())
@@ -68,7 +80,7 @@ public class MovementService {
         return movement.map(movementMapper::toDto).orElse(null);
     }
 
-    public UserStockEarningStatisticDTO getUserEarningStatistic(UserDTO userDTO, Long stockId) {
+    public UserStockEarningStatisticDTO getUserEarningStatistic(final UserDTO userDTO, final Long stockId) {
         User user = userMapper.toEntity(userDTO);
         return Optional.ofNullable(movementRepository.getUserStatistic(user.getId(), stockId)).orElse(new UserStockEarningStatisticDTO(0.0, 0.0, 0.0));
     }
