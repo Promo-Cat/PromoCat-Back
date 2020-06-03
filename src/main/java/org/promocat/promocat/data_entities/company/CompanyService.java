@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -106,6 +107,15 @@ public class CompanyService {
             log.warn("No company with org mail: {}", mail);
             throw new ApiCompanyNotFoundException(String.format("No company with such mail: %s in db.", mail));
         }
+    }
+
+    /**
+     *
+     * @param dto
+     * @return
+     */
+    public Set<StockDTO> getAllStocks(final CompanyDTO dto) {
+        return dto.getStocks();
     }
 
     public CompanyDTO findByToken(final String token) {
