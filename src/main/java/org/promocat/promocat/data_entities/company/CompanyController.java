@@ -7,12 +7,10 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
-import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.PromoCodeActivationStatisticDTO;
-import org.promocat.promocat.dto.PromoCodesInCityDTO;
-import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -37,14 +34,17 @@ public class CompanyController {
     private final CompanyService service;
     private final StockService stockService;
     private final PromoCodeActivationService promoCodeActivationService;
+    private final MovementService movementService;
 
     @Autowired
     public CompanyController(final CompanyService service,
                              final StockService stockService,
-                             final PromoCodeActivationService promoCodeActivationService) {
+                             final PromoCodeActivationService promoCodeActivationService,
+                             final MovementService movementService) {
         this.service = service;
         this.stockService = stockService;
         this.promoCodeActivationService = promoCodeActivationService;
+        this.movementService = movementService;
     }
 
     @ApiOperation(value = "Register company",
@@ -162,6 +162,11 @@ public class CompanyController {
         } else {
             return ResponseEntity.ok(stockService.getAmountOfPromoCodesForEachCity(stockId));
         }
+    }
+
+    @RequestMapping(path = "/test", method = RequestMethod.GET)
+    public List<DistanceDTO> test() {
+        return movementService.getSummaryMovementsByStock(1L);
     }
     // ------ Admin methods ------
 

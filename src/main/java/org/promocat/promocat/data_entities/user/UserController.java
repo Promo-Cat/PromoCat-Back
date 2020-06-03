@@ -113,6 +113,7 @@ public class UserController {
     })
     @RequestMapping(value = "/api/user/promo-code", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> setPromoCode(@RequestParam("id") Long id, @RequestParam("promo-code") String promoCode) {
+        // TODO: 03.06.2020 get user from token, not from RequestParam("id")
         PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
         if (promoCodeDTO.getIsActive()) {
             log.error("Promo-code {} already active", promoCode);

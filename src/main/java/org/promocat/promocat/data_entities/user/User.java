@@ -11,14 +11,9 @@ import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.movement.Movement;
+import org.promocat.promocat.data_entities.promo_code.PromoCode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -40,15 +35,15 @@ public class User extends AbstractAccount {
     private Long balance = 0L;
     private Set<Car> cars;
     private Set<Movement> movements;
-    private Long promoCodeId;
+    private PromoCode promoCode;
     private Double totalDistance = 0.0;
     private Double totalEarnings = 0.0;
 
-    public User(String name, City city, Long balance, Long promoCodeId) {
+    public User(String name, City city, Long balance, PromoCode promoCode) {
         this.name = name;
         this.city = city;
         this.balance = balance;
-        this.promoCodeId = promoCodeId;
+        this.promoCode = promoCode;
         this.setAccountType(AccountType.USER);
     }
 
@@ -101,9 +96,11 @@ public class User extends AbstractAccount {
     /**
      * Действующий промокод.
      */
-    @Column(name = "promo_code")
-    public Long getPromoCodeId() {
-        return promoCodeId;
+//    @Cascade({CascadeType.ALL})
+    @OneToOne
+    @JoinColumn(name = "promo_code_id")
+    public PromoCode getPromoCode() {
+        return promoCode;
     }
 
     /**

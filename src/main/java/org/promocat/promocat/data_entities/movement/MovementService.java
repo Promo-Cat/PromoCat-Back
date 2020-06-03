@@ -72,4 +72,8 @@ public class MovementService {
         User user = userMapper.toEntity(userDTO);
         return Optional.ofNullable(movementRepository.getUserStatistic(user.getId(), stockId)).orElse(new UserStockEarningStatisticDTO(0.0, 0.0, 0.0));
     }
+
+    public List<DistanceDTO> getSummaryMovementsByStock(Long stockId) {
+        return movementRepository.getDistanceInAllCitiesByStock(stockId);
+    }
 }
