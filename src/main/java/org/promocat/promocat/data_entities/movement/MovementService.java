@@ -74,6 +74,15 @@ public class MovementService {
     }
 
     public List<DistanceDTO> getSummaryMovementsByStock(Long stockId) {
-        return movementRepository.getDistanceInAllCitiesByStock(stockId);
+        return movementRepository.getDistanceInAllCitiesSummaryByStock(stockId);
+    }
+
+    public List<DistanceWithCityDTO> getMovementsByStockForEveryCity(Long stockId) {
+        return movementRepository.getDistanceInCitiesByStock(stockId);
+    }
+
+    public List<DistanceWithCityDTO> getMovementsByStockAndCity(Long stockId, Long cityId) {
+        // TODO: 03.06.2020 check city and stock
+        return movementRepository.getDistanceInCityByStockAndCity(stockId, cityId);
     }
 }
