@@ -22,11 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-<<<<<<< HEAD
-=======
-import java.util.Objects;
 import java.util.Set;
->>>>>>> 07eae3165d10d4635c2c629fbbf189267d39bb4b
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
