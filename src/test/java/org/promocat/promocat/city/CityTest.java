@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,7 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Danil Lyskin at 18:11 29.05.2020
  */
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -59,7 +60,6 @@ public class CityTest {
         city = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CityDTO.class);
     }
 
-    @Transactional
     @Test
     public void getActivesTest() throws Exception {
         MvcResult result = this.mockMvc.perform(get("/auth/cities/active"))
@@ -71,7 +71,6 @@ public class CityTest {
         assertEquals(cities.get(0).getId(), Long.valueOf(11));
     }
 
-    @Transactional
     @Test
     public void getCityByNameTest() throws Exception {
         MvcResult result = this.mockMvc.perform(get("/admin/city?city=Змеиногорск").header("token", adminToken))
@@ -81,13 +80,11 @@ public class CityTest {
         assertEquals(city.getId(), Long.valueOf(11));
     }
 
-    @Transactional
     @Test
     public void getActiveByIdTest() {
         assertEquals(city.getActive(), cityService.isActiveById(city.getId()));
     }
 
-    @Transactional
     @Test
     public void getCityByIdTest() throws Exception {
         MvcResult result = this.mockMvc.perform(get("/admin/city/id?id=11").header("token", adminToken))
@@ -97,7 +94,6 @@ public class CityTest {
         assertEquals(city.getId(), Long.valueOf(11));
     }
 
-    @Transactional
     @Test
     public void getCityWithoutCorrectNameTest() throws Exception {
         this.mockMvc.perform(get("/admin/city?city=ККК").header("token", adminToken))

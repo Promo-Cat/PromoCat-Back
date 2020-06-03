@@ -13,10 +13,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -25,7 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Danil Lyskin at 14:43 20.05.2020
  */
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -35,11 +36,9 @@ public class CarTest {
     private MockMvc mockMvc;
 
     private UserDTO user;
-
     private String token;
     private String adminToken;
 
-    @Transactional
     @Before
     public void init() throws Exception {
         user = new UserDTO();
@@ -70,43 +69,39 @@ public class CarTest {
                 .andExpect(status().isOk());
     }
 
-    @Transactional
     @Test
     public void testSaveCarWithoutNumber() throws Exception {
         CarDTO car = new CarDTO();
         car.setRegion("26");
         car.setUserId(1L);
 
-        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCarWithoutRegion() throws Exception {
         CarDTO car = new CarDTO();
         car.setNumber("awfawfaf");
         car.setUserId(1L);
 
-        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCarWithoutUserId() throws Exception {
         CarDTO car = new CarDTO();
         car.setNumber("awfawfaf");
         car.setRegion("26");
 
-        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCarWithAllCorrect() throws Exception {
         CarDTO car = new CarDTO();
@@ -114,25 +109,28 @@ public class CarTest {
         car.setRegion("26");
         car.setUserId(user.getId());
 
-        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().isOk());
     }
 
-    @Transactional
-    @Test
-    public void testGetCarByNumberAndRegion() throws Exception {
+    private CarDTO save(String number) throws Exception {
         CarDTO car = new CarDTO();
-        car.setNumber("111");
+        car.setNumber(number);
         car.setRegion("26");
         car.setUserId(user.getId());
 
-        MvcResult result = this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().isOk())
                 .andReturn();
-        car = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
-        result = this.mockMvc.perform(get("/admin/car/number?number=111&region=26").header("token", adminToken))
+        return new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
+    }
+
+    @Test
+    public void testGetCarByNumberAndRegion() throws Exception {
+        CarDTO car = save("222");
+        MvcResult result = this.mockMvc.perform(get("/admin/car/number?number=222&region=26").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -142,64 +140,31 @@ public class CarTest {
         assertEquals(car.getId(), carRes.getId());
     }
 
-    @Transactional
     @Test
     public void testGetCarWithIncorrectNumber() throws Exception {
-        CarDTO car = new CarDTO();
-        car.setNumber("111");
-        car.setRegion("26");
-        car.setUserId(user.getId());
-
-        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(car)))
-                .andExpect(status().isOk());
-        this.mockMvc.perform(get("/admin/car/number?number=121&region=26").header("token", adminToken))
+        this.mockMvc.perform(get("/admin/car/number?number=12331&region=26").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testGetCarWithIncorrectRegion() throws Exception {
-        CarDTO car = new CarDTO();
-        car.setNumber("111");
-        car.setRegion("26");
-        car.setUserId(user.getId());
-
-        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(car)))
-                .andExpect(status().isOk());
+        save("111");
         this.mockMvc.perform(get("/admin/car/number?number=111&region=27").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testGetCarWithIncorrectRegionAndNumber() throws Exception {
-        CarDTO car = new CarDTO(user.getId(), "111", "26");
-
-        this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(car)))
-                .andExpect(status().isOk());
+        save("qwfqp");
         this.mockMvc.perform(get("/admin/car/number?number=121&region=27").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testGetCarById() throws Exception {
-        CarDTO car = new CarDTO();
-        car.setNumber("111");
-        car.setRegion("26");
-        car.setUserId(user.getId());
+        CarDTO car = save("rtyui");
 
-        MvcResult result = this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(car)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        car = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
-
-        result = this.mockMvc.perform(get("/admin/car/id?id=" + car.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/admin/car/id?id=" + car.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 

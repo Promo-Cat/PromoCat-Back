@@ -1,5 +1,6 @@
 package org.promocat.promocat.stock;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -7,26 +8,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.data_entities.stock.StockService;
-import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Commit;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by Danil Lyskin at 14:34 20.05.2020
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
 @SpringBootTest
 @ActiveProfiles("test")
 @Commit
@@ -42,12 +41,6 @@ public class StockTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private StockService stockService;
-
-    @Autowired
-    private StockCityService stockCityService;
 
     private CompanyDTO company;
     private String token;
@@ -67,7 +60,7 @@ public class StockTest {
         company.setInn("1111111111");
         company.setMail("wqfqw@mail.ru");
         company.setId(1L);
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(company)))
                 .andExpect(status().isOk());
         MvcResult key = this.mockMvc.perform(get("/auth/company/login?telephone=+7(999)243-26-49"))
@@ -92,7 +85,6 @@ public class StockTest {
         city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
     }
 
-    @Transactional
     @Test
     public void testSaveStockWithoutName() throws Exception {
         StockDTO stock = new StockDTO();
@@ -105,7 +97,6 @@ public class StockTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveStockWithoutCity() throws Exception {
         StockDTO stock = new StockDTO();
@@ -119,7 +110,6 @@ public class StockTest {
                 .andExpect(status().isOk());
     }
 
-    @Transactional
     @Test
     public void testSaveStockWithoutStartTime() throws Exception {
         StockDTO stock = new StockDTO();
@@ -132,7 +122,6 @@ public class StockTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveStockWithoutDuration() throws Exception {
         StockDTO stock = new StockDTO();
@@ -145,7 +134,6 @@ public class StockTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveStockWithoutCompanyId() throws Exception {
         StockDTO stock = new StockDTO();
@@ -158,7 +146,6 @@ public class StockTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveStockWithAllCorrect() throws Exception {
         StockDTO stock = new StockDTO();
@@ -172,41 +159,38 @@ public class StockTest {
                 .andExpect(status().isOk());
     }
 
-//    @Transactional
-//    @Test
-//    public void testDeactivateStock() throws Exception {
-//        StockDTO stock = new StockDTO();
-//        stock.setName("www");
-//        stock.setStartTime(LocalDateTime.now());
-//        stock.setDuration(7L);
-//        stock.setCompanyId(company.getId());
-//
-//        MvcResult result = this.mockMvc.perform(post("/api/company/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
-//                .content(mapper.writeValueAsString(stock)))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        stock = mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
-//        this.mockMvc.perform(post("/admin/company/stock/deactivate?id=" + stock.getId()).header("token", adminToken))
-//                .andExpect(status().isOk());
-//
-//        result = this.mockMvc.perform(get("/admin/stock/" + stock.getId()).header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        StockDTO stockRes = this.mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
-//        assertEquals(stock.getId(), stockRes.getId());
-//        assertFalse(stockRes.getIsAlive());
-//    }
+    @Test
+    public void testDeactivateStock() throws Exception {
+        StockDTO stock = new StockDTO();
+        stock.setName("www");
+        stock.setStartTime(LocalDateTime.now());
+        stock.setDuration(7L);
+        stock.setCompanyId(company.getId());
 
-    @Transactional
+        MvcResult result = this.mockMvc.perform(post("/api/company/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(stock)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        stock = mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
+        this.mockMvc.perform(post("/admin/company/stock/deactivate?id=" + stock.getId()).header("token", adminToken))
+                .andExpect(status().isOk());
+
+        result = this.mockMvc.perform(get("/admin/stock/" + stock.getId()).header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        StockDTO stockRes = this.mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
+        assertEquals(stock.getId(), stockRes.getId());
+        assertFalse(stockRes.getIsAlive());
+    }
+
     @Test
     public void testDeactivateWithIncorrectId() throws Exception {
         this.mockMvc.perform(post("/admin/company/stock/deactivate?id=100").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testGetStockById() throws Exception {
         StockDTO stock = new StockDTO();
@@ -229,7 +213,6 @@ public class StockTest {
         assertEquals(stock.getId(), stockRes.getId());
     }
 
-    @Transactional
     @Test
     public void testGetStockWithIncorrectId() throws Exception {
         StockDTO stock = new StockDTO();
@@ -247,7 +230,6 @@ public class StockTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testDeleteStockById() throws Exception {
         StockDTO stock = new StockDTO();
@@ -269,14 +251,12 @@ public class StockTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testDeleteWithIncorrectId() throws Exception {
         this.mockMvc.perform(delete("/admin/stock/222").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
-    @Commit
     @Test
     public void testGenerateCodes() throws Exception {
         StockDTO stock = new StockDTO();
@@ -295,37 +275,26 @@ public class StockTest {
         stockCity.setStockId(stock.getId());
         stockCity.setNumberOfPromoCodes(10L);
         stockCity.setCityId(city.getId());
+
         MvcResult cityR = this.mockMvc.perform(post("/api/company/stock/city").header("token", token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(stockCity)))
                 .andExpect(status().isOk())
                 .andReturn();
 
         stockCity = new ObjectMapper().readValue(cityR.getResponse().getContentAsString(), StockCityDTO.class);
-        stockCity = stockCityService.findById(stockCity.getId());
-        System.out.println(stockCity.getCityId());
-        System.out.println(stockCity.getStockId());
-        System.out.println(stockCity.getNumberOfPromoCodes());
-        System.out.println(stockCity.getId());
 
         this.mockMvc.perform(post("/admin/company/stock/generate?id=" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
-        MvcResult result = mockMvc.perform(get("/api/company")
-                .header("token", token)).andReturn();
-
-        CompanyDTO cmp = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
-
-        stock = stockService.findById(stock.getId());
-
-        assertEquals(stock.getCities().size(), 1);
-        for (StockCityDTO stockCityDTO : stock.getCities()) {
-            assertEquals(stockCityDTO.getCityId(), city.getId());
-            assertEquals(stockCityDTO.getNumberOfPromoCodes(), stockCity.getNumberOfPromoCodes());
-            assertEquals(stockCityDTO.getStockId(), stock.getId());
-            for (PromoCodeDTO promoCode : stockCityDTO.getPromoCodes()) {
-                assertEquals(promoCode.getStockCityId(), stockCityDTO.getId());
-                assertTrue(promoCode.getIsActive());
-            }
+        MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/id?id=" + stock.getId()).header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        Set<PromoCodeDTO> codes = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        assertEquals(Long.valueOf(codes.size()), stockCity.getNumberOfPromoCodes());
+        assertEquals(stockCity.getStockId(), stock.getId());
+        assertEquals(stockCity.getCityId(), city.getId());
+        for (PromoCodeDTO code : codes) {
+            assertFalse(code.getIsActive());
         }
     }
 }

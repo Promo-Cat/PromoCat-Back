@@ -5,11 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.promocat.promocat.constraints.StockDurationConstraint;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.movement.Movement;
-import org.hibernate.annotations.CascadeType;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
 import javax.persistence.*;

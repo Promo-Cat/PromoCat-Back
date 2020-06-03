@@ -9,9 +9,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,7 +19,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Danil Lyskin at 12:31 20.05.2020
  */
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -27,7 +28,6 @@ public class CompanyTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Transactional
     @Test
     public void testSaveCompanyWithoutOrganizationName() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -39,7 +39,6 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCompanyWithoutTelephone() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -51,7 +50,6 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCompanyWithIncorrectTelephone() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -64,7 +62,6 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCompanyWithoutInn() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -76,7 +73,6 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCompanyWithIncorrectInn1() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -89,7 +85,6 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCompanyWithIncorrectInn2() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -102,7 +97,6 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCompanyWithoutMail() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -114,7 +108,6 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCompanyWithIncorrectMail() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -127,7 +120,6 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
     @Test
     public void testSaveCompanyWithoutCity() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -140,20 +132,6 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Transactional
-    @Test
-    public void testSaveCompanyWithoutAccountType() throws Exception {
-        CompanyDTO company = new CompanyDTO();
-        company.setOrganizationName("HHH");
-        company.setInn("1111111111");
-        company.setTelephone("+7(222)222-22-22");
-        company.setMail("qwfqwf@mail.ru");
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().isOk());
-    }
-
-    @Transactional
     @Test
     public void testSaveCorrectCompany() throws Exception {
         CompanyDTO company = new CompanyDTO();

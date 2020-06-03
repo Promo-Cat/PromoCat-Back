@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockCityDTO;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Set;
+
 /**
  * Created by Danil Lyskin at 22:13 05.05.2020
  */
@@ -27,11 +30,13 @@ public class PromoCodeController {
 
     private final PromoCodeService promoCodeService;
     private final StockCityService stockCityService;
+    private final StockService stockService;
 
     @Autowired
-    public PromoCodeController(final PromoCodeService promoCodeService, final StockCityService stockCityService) {
+    public PromoCodeController(final PromoCodeService promoCodeService, final StockCityService stockCityService, final StockService stockService) {
         this.promoCodeService = promoCodeService;
         this.stockCityService = stockCityService;
+        this.stockService = stockService;
     }
 
     // ------ Admin methods ------
@@ -50,6 +55,11 @@ public class PromoCodeController {
     @RequestMapping(path = "/admin/promoCode/id", method = RequestMethod.GET)
     public ResponseEntity<PromoCodeDTO> getPromoCodeById(@RequestParam("id") Long id) {
         return ResponseEntity.ok(promoCodeService.findById(id));
+    }
+
+    @RequestMapping(path = "/admin/stock/promoCode/id", method = RequestMethod.GET)
+    public ResponseEntity<Set<PromoCodeDTO>> getPromoCodesByStockId(@RequestParam("id") Long id) {
+        return ResponseEntity.ok(stockService.getCodes(id));
     }
 
     @ApiOperation(value = "Get promo-code",
