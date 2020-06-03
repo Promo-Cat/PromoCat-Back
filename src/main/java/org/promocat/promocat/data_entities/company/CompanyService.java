@@ -112,12 +112,18 @@ public class CompanyService {
     /**
      * Получить все акции компании.
      * @param dto объектное представление компании.
-     * @return представление компании в БД {@link Set<StockDTO>}
+     * @return список акций компании {@link Set<StockDTO>}.
      */
     public Set<StockDTO> getAllStocks(final CompanyDTO dto) {
         return dto.getStocks();
     }
 
+    /**
+     * Поиск компании по token.
+     * @param token уникальный токин.
+     * @return представление компании в БД. {@link CompanyDTO}
+     * @throws ApiCompanyNotFoundException если такой компании не существует.
+     */
     public CompanyDTO findByToken(final String token) {
         return mapper.toDto(companyRepository
                 .findByToken(token)
@@ -126,6 +132,12 @@ public class CompanyService {
                 ));
     }
 
+    /**
+     * Проверка на принадлежность акции компании.
+     * @param companyId компании.
+     * @param stockId акции.
+     * @return {@code true} если акция принадлежит компании, {@code false} иначе.
+     */
     public boolean isOwner(Long companyId, Long stockId) {
         CompanyDTO companyDTO = findById(companyId);
         StockDTO stockDTO = stockService.findById(stockId);
