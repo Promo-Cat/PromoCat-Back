@@ -102,7 +102,7 @@ public class UserService {
      * Удаляет юзера по id из БД.
      * @param id id удаляемого юзера
      */
-    public void deleteById(Long id) {
+    public void deleteById(final Long id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             log.info("User with id {} deleted from DB", id);
@@ -117,7 +117,7 @@ public class UserService {
      * @param token уникальный токен.
      * @return Представление пользователя, сохраненное в БД. {@link UserDTO}
      */
-    public UserDTO findByToken(String token) {
+    public UserDTO findByToken(final String token) {
         JwtReader jwtReader = new JwtReader(token);
         String telephone = jwtReader.getValue("telephone");
         return userMapper.toDto(userRepository.getByTelephone(telephone)
@@ -126,7 +126,7 @@ public class UserService {
 
     /**
      * Получение акции, в которой участвует пользователь.
-     * @param user объектное представление пользователя
+     * @param user объектное представление пользователя.
      * @return Объектное представление акции. {@link StockDTO}
      */
     public StockDTO getUsersCurrentStock(final UserDTO user) {
@@ -135,11 +135,22 @@ public class UserService {
                 .getStockId());
     }
 
+    /**
+     * Все передвижения пользвателя на протяжении акции.
+     * @param user объектное представление пользователя.
+     * @return Список передвижений пользователя. {@link List<MovementDTO>}
+     */
     public List<MovementDTO> getUserStatistics(final UserDTO user) {
         return movementService.findByUserAndStock(user, getUsersCurrentStock(user));
     }
 
-    public double earnMoney(UserDTO user, Double distance) {
+    /**
+     * Заработок денег пользователем.
+     * @param user объектное представление пользователя.
+     * @param distance дистанция, которую проехал пользователь.
+     * @return Заработанное количество денег.
+     */
+    public double earnMoney(final UserDTO user, final Double distance) {
         Double earnedMoney = distanceToMoneyConverter.convert(distance);
         log.info("User with id {} earned {} money", user.getId(), earnedMoney);
         user.setTotalEarnings(user.getTotalEarnings() + earnedMoney);
