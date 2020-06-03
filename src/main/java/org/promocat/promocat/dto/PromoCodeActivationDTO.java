@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+// TODO docs
 public class PromoCodeActivationDTO extends AbstractDTO {
 
     private Long userId;

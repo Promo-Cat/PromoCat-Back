@@ -35,7 +35,13 @@ public class PromoCodeActivationService {
         this.stockMapper = stockMapper;
     }
 
-    public PromoCodeActivationDTO create(UserDTO user, PromoCodeDTO promoCode) {
+    /**
+     * Созданние активации промокода у пользователя.
+     * @param user объектное представление пользователя. {@link UserDTO}
+     * @param promoCode объектное представление промокода. {@link PromoCodeDTO}
+     * @return Сущность активированного промокода. {@link PromoCodeActivationDTO}
+     */
+    public PromoCodeActivationDTO create(final UserDTO user, final PromoCodeDTO promoCode) {
         PromoCodeActivationDTO res = new PromoCodeActivationDTO();
         res.setPromoCodeId(promoCode.getId());
         res.setUserId(user.getId());
@@ -43,22 +49,44 @@ public class PromoCodeActivationService {
         return promoCodeActivationMapper.toDto(promoCodeActivationRepository.save(promoCodeActivationMapper.toEntity(res)));
     }
 
-    public List<StockDTO> getStocksByUserId(Long id) {
+    /**
+     * Получение всех акций пользователя. История участия пользователя в акциях.
+     * @param id пользователя.
+     * @return Список акций пользователя. {@link List<StockDTO>}
+     */
+    public List<StockDTO> getStocksByUserId(final Long id) {
         return promoCodeActivationRepository.getAllByUserId(id)
                 .stream()
                 .map(x -> stockMapper.toDto(x.getPromoCode().getStockCity().getStock()))
                 .collect(Collectors.toList());
     }
 
-    public Long getCountByCityAndStock(Long cityId, Long stockId) {
+    /**
+     * Получение активированных промокодов в городе у акции.
+     * @param cityId уникальный идентификатор города.
+     * @param stockId уникальный идентификатор акции.
+     * @return Количество активированных промокодов в городе у акции.
+     */
+    public Long getCountByCityAndStock(final Long cityId, final Long stockId) {
         return promoCodeActivationRepository.countByCityAndStock(cityId, stockId);
     }
 
-    public Long getSummaryCountByStock(Long stockId) {
+    /**
+     * Получение суммарного количества активированных промокодов у акции.
+     * @param stockId уникальный идентификатор акции.
+     * @return Суммарное количество активированных промокодов у акции.
+     */
+    public Long getSummaryCountByStock(final Long stockId) {
         return promoCodeActivationRepository.countAllByStock(stockId);
     }
 
-    public List<PromoCodeActivationStatisticDTO> getCountForEveryCityByStock(Long stockId) {
+    /**
+     * Получение списка городов и количетсва активированных промокодов в них.
+     * @param stockId уникальный идентификатор акции.
+     * @return Список городов и количетсва активированных промокодов в них.
+     * {@link List<PromoCodeActivationStatisticDTO>}
+     */
+    public List<PromoCodeActivationStatisticDTO> getCountForEveryCityByStock(final Long stockId) {
         StockDTO stock = stockService.findById(stockId);
         return stock.getCities()
                 .stream()
