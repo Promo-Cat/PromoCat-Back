@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -233,7 +232,7 @@ public class StockTest {
     @Test
     public void testDeleteStockById() throws Exception {
         StockDTO stock = new StockDTO();
-        stock.setName("www");
+        stock.setName("w4567");
         stock.setStartTime(LocalDateTime.now());
         stock.setDuration(7L);
         stock.setCompanyId(company.getId());
