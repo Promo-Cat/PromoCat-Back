@@ -116,10 +116,7 @@ public class MovementService {
      * @return список передвижений. {@link List<DistanceDTO>}
      */
     public List<DistanceDTO> getSummaryMovementsByStock(final Long stockId) {
-        if (Objects.nonNull(stockService.findById(stockId))) {
-            return movementRepository.getDistanceInAllCitiesByStock(stockId);
-        } else {
-            throw new ApiStockNotFoundException(String.format("No stock with such id: %d", stockId));
-        }
+        StockDTO stock = stockService.findById(stockId);
+        return movementRepository.getDistanceInAllCitiesByStock(stock.getId());
     }
 }

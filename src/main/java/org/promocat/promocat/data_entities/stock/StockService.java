@@ -188,8 +188,13 @@ public class StockService {
                 .collect(Collectors.toList());
     }
 
-    public Set<PromoCodeDTO> getCodes(final Long id) {
-        StockDTO dto = findById(id);
+    /**
+     * Получение всех промокодов.
+     * @param stockId уникальный идентификатор акции.
+     * @return Список промокодов. {@link Set<PromoCodeDTO>}
+     */
+    public Set<PromoCodeDTO> getCodes(final Long stockId) {
+        StockDTO dto = findById(stockId);
         Set<PromoCodeDTO> res = new HashSet<>();
         for (StockCityDTO city : dto.getCities()) {
             res.addAll(city.getPromoCodes());
