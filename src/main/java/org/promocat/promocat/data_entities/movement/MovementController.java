@@ -28,7 +28,7 @@ public class MovementController {
     @RequestMapping(value = "/api/user/earnings", method = RequestMethod.GET)
     public ResponseEntity<UserStockEarningStatisticDTO> getUserEarningsStatistic(@RequestHeader("token") String token) {
         // TODO: проверки и тд (Роме)
-        UserDTO userDTO = userService.getByToken(token);
+        UserDTO userDTO = userService.findByToken(token);
 
         return ResponseEntity.ok(movementService.getUserEarningStatistic(userDTO, userService.getUsersCurrentStock(userDTO).getId()));
     }

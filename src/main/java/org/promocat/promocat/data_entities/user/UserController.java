@@ -9,7 +9,11 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.DistanceDTO;
+import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.PromoCodeDTO;
+import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeActiveException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -112,15 +116,15 @@ public class UserController {
                     response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/promo-code", method = RequestMethod.POST)
-    public ResponseEntity<UserDTO> setPromoCode(@RequestParam("id") Long id, @RequestParam("promo-code") String promoCode) {
-        // TODO: 03.06.2020 get user from token, not from RequestParam("id")
+    public ResponseEntity<UserDTO> setPromoCode(@RequestParam("promo-code") String promoCode,
+                                                @RequestHeader("token") String token) {
         PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
         if (promoCodeDTO.getIsActive()) {
             log.error("Promo-code {} already active", promoCode);
             throw new ApiPromoCodeActiveException(String.format("Promo-code: %s already active", promoCode));
         }
         promoCodeDTO.setIsActive(true);
-        UserDTO user = userService.findById(id);
+        UserDTO user = userService.findByToken(token);
 //        user.setPromoCodeDTOId(promoCodeDTO.getId());
         promoCodeActivationService.create(user, promoCodeDTO);
         // TODO: DANIL SDELAY NORMALNO
@@ -235,7 +239,7 @@ public class UserController {
 
     @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
     public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") String token) {
-        UserDTO userDTO = userService.getByToken(token);
+        UserDTO userDTO = userService.findByToken(token);
         return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
     }
 

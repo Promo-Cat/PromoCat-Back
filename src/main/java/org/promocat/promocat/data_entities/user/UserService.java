@@ -113,7 +113,7 @@ public class UserService {
         }
     }
 
-    public UserDTO getByToken(String token) {
+    public UserDTO findByToken(String token) {
         JwtReader jwtReader = new JwtReader(token);
         String telephone = jwtReader.getValue("telephone");
         return userMapper.toDto(userRepository.getByTelephone(telephone).orElseThrow());
