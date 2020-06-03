@@ -10,9 +10,7 @@ import org.promocat.promocat.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,8 +68,12 @@ public class MovementService {
         return movement.map(movementMapper::toDto).orElse(null);
     }
 
-    public UserStockEarningStatistic getUserEarningStatistic(UserDTO userDTO, Long stockId) {
+    public UserStockEarningStatisticDTO getUserEarningStatistic(UserDTO userDTO, Long stockId) {
         User user = userMapper.toEntity(userDTO);
-        return Optional.ofNullable(movementRepository.getUserStatistic(user.getId(), stockId)).orElse(new UserStockEarningStatistic(0.0, 0.0, 0.0));
+        return Optional.ofNullable(movementRepository.getUserStatistic(user.getId(), stockId)).orElse(new UserStockEarningStatisticDTO(0.0, 0.0, 0.0));
+    }
+
+    public List<DistanceDTO> getSummaryMovementsByStock(Long stockId) {
+        return movementRepository.getDistanceInAllCitiesByStock(stockId);
     }
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
+import org.promocat.promocat.data_entities.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -49,19 +50,19 @@ public class PromoCode extends AbstractEntity {
     /**
      * Дата активации промокода.
      */
-     @NotNull(message = "Дата активации промокода не может быть пустой.")
-     @Column(name = "active_date")
-     public LocalDateTime getActiveDate() {
-         return activeDate;
-     }
+    @NotNull(message = "Дата активации промокода не может быть пустой.")
+    @Column(name = "active_date")
+    public LocalDateTime getActiveDate() {
+        return activeDate;
+    }
 
     /**
      * Дата деактивации промокода.
      */
-     @Column(name = "deactivate_date")
-     public LocalDateTime getDeactivateDate() {
-         return deactivateDate;
-     }
+    @Column(name = "deactivate_date")
+    public LocalDateTime getDeactivateDate() {
+        return deactivateDate;
+    }
 
     /**
      * Город где активен промокод.

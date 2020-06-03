@@ -7,11 +7,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -33,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @SpringBootTest
 @ActiveProfiles("test")
+@Commit
 @AutoConfigureMockMvc
 public class StockTest {
 
@@ -70,11 +73,11 @@ public class StockTest {
         token = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
 
         key = this.mockMvc.perform(get("/auth/admin/login?telephone=+7(999)243-26-99"))
-                        .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
         tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
-                        + mapper.readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
-                        + "&code=1337")).andExpect(status().isOk())
-                        .andReturn();
+                + mapper.readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
+                + "&code=1337")).andExpect(status().isOk())
+                .andReturn();
         adminToken = mapper.readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
         MvcResult cityR = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
                 .andExpect(status().isOk())
@@ -90,8 +93,8 @@ public class StockTest {
         stock.setCompanyId(company.getId());
 
         this.mockMvc.perform(post("/api/company/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(stock)))
-                    .andExpect(status().is4xxClientError());
+                .content(mapper.writeValueAsString(stock)))
+                .andExpect(status().is4xxClientError());
     }
 
     @Test

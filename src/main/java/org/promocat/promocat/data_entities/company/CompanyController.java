@@ -7,8 +7,10 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.movement.MovementService;
+import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
-import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
@@ -19,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -30,11 +34,18 @@ public class CompanyController {
 
     private final CompanyService service;
     private final StockService stockService;
+    private final PromoCodeActivationService promoCodeActivationService;
+    private final MovementService movementService;
 
     @Autowired
-    public CompanyController(final CompanyService service, final StockService stockService) {
+    public CompanyController(final CompanyService service,
+                             final StockService stockService,
+                             final PromoCodeActivationService promoCodeActivationService,
+                             final MovementService movementService) {
         this.service = service;
         this.stockService = stockService;
+        this.promoCodeActivationService = promoCodeActivationService;
+        this.movementService = movementService;
     }
 
     @ApiOperation(value = "Register company",
@@ -76,6 +87,93 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         return ResponseEntity.ok(service.findByTelephone(telephone));
+    }
+
+    // TODO docs
+    @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/summary", method = RequestMethod.GET)
+    public ResponseEntity<Long> getSummaryPromoCodeActivation(@PathVariable("stockId") Long stockId,
+                                                              @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token);
+        if (service.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(promoCodeActivationService.getSummaryCountByStock(stockId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    // TODO docs
+    // TODO check stock (exists and company is owner) in other method
+    @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}", method = RequestMethod.GET)
+    public ResponseEntity<Long> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
+                                                             @PathVariable("cityId") Long cityId,
+                                                             @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token);
+        if (service.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(promoCodeActivationService.getCountByCityAndStock(cityId, stockId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    // TODO docs
+    // TODO check stock (exists and company is owner) in other method
+    @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/byCity", method = RequestMethod.GET)
+    public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
+                                                                                              @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token);
+        if (service.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(promoCodeActivationService.getCountForEveryCityByStock(stockId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    // TODO docs
+    @RequestMapping(path = "/company/stock/{stockId}/statistic/byCity/{cityId}", method = RequestMethod.GET)
+    public ResponseEntity<Long> getAmountOfPromoCodesInCity(@PathVariable("stockId") Long stockId,
+                                                            @PathVariable("cityId") Long cityId,
+                                                            @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token);
+        if (service.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(stockService.getAmountOfPromoCodesInCity(stockId, cityId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    // TODO docs
+    @RequestMapping(path = "/company/stock/{stockId}/statistic/total", method = RequestMethod.GET)
+    public ResponseEntity<Long> getTotalAmountOfPromoCodes(@PathVariable("stockId") Long stockId,
+                                                            @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token);
+        if (service.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(stockService.getTotalAmountOfPromoCodes(stockId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    // TODO docs
+    @RequestMapping(path = "/company/stock/{stockId}/statistic/forEachCity", method = RequestMethod.GET)
+    public ResponseEntity<List<PromoCodesInCityDTO>> getAmountOfPromoCodesForEachCity(@PathVariable("stockId") Long stockId,
+                                                                                      @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token);
+        if (service.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(stockService.getAmountOfPromoCodesForEachCity(stockId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @RequestMapping(path = "/test", method = RequestMethod.GET)
+    public List<DistanceDTO> test() {
+        return movementService.getSummaryMovementsByStock(1L);
+    }
+
+    // TODO docs
+    @RequestMapping(path = "/company/stock/history", method = RequestMethod.GET)
+    public ResponseEntity<Set<StockDTO>> getAllStocks(@RequestHeader("token") String token) {
+        return ResponseEntity.ok(service.getAllStocks(service.findByToken(token)));
     }
     // ------ Admin methods ------
 
@@ -142,4 +240,5 @@ public class CompanyController {
     public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") String mail) {
         return ResponseEntity.ok(service.findByMail(mail));
     }
+
 }

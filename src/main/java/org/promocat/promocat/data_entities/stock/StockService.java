@@ -64,6 +64,7 @@ public class StockService {
         Optional<Stock> stock = repository.findById(id);
         if (stock.isPresent()) {
             log.info("Found stock with id: {}", id);
+            repository.flush();
             return mapper.toDto(stock.get());
         } else {
             throw new ApiStockNotFoundException(String.format("No stock with such id: %d in db.", id));
