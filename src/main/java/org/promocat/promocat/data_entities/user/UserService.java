@@ -55,7 +55,7 @@ public class UserService {
     /**
      * Сохраняет пользователя в БД.
      * @param dto объектное представление пользователя, полученное с фронта.
-     * @return Представление пользователя, сохраненное в БД.
+     * @return Представление пользователя, сохраненное в БД. {@link UserDTO}
      */
     public UserDTO save(final UserDTO dto) {
         log.info("Saving user with telephone: {}", dto.getTelephone());
@@ -100,7 +100,6 @@ public class UserService {
 
     /**
      * Удаляет юзера по id из БД.
-     *
      * @param id id удаляемого юзера
      */
     public void deleteById(Long id) {
@@ -113,12 +112,23 @@ public class UserService {
         }
     }
 
+    /**
+     * Поиск пользователя по токену.
+     * @param token уникальный токен.
+     * @return Представление пользователя, сохраненное в БД. {@link UserDTO}
+     */
     public UserDTO findByToken(String token) {
         JwtReader jwtReader = new JwtReader(token);
         String telephone = jwtReader.getValue("telephone");
-        return userMapper.toDto(userRepository.getByTelephone(telephone).orElseThrow());
+        return userMapper.toDto(userRepository.getByTelephone(telephone)
+                .orElseThrow(() -> new ApiUserNotFoundException(String.format("User with %s token not found", token))));
     }
 
+    /**
+     * Получение акции, в которой участвует пользователь.
+     * @param user объектное представление пользователя
+     * @return Объектное представление акции. {@link StockDTO}
+     */
     public StockDTO getUsersCurrentStock(final UserDTO user) {
         return stockService.findById(stockCityService
                 .findById(promoCodeService.findById(user.getPromoCodeId()).getStockCityId())
