@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
@@ -19,4 +20,8 @@ public class DistanceWithCityDTO extends DistanceDTO{
         this.cityId = cityId;
     }
 
+    public DistanceWithCityDTO(@NotNull(message = "Дистанция не может быть пустой.") Double distance, Long cityId) {
+        super(distance);
+        this.cityId = cityId;
+    }
 }
