@@ -42,6 +42,7 @@ import java.util.Set;
 @Slf4j
 @RestController
 @Api(tags = {SpringFoxConfig.COMPANY})
+//TODO return 404 if not found, docs
 public class CompanyController {
 
     private final CompanyService companyService;
