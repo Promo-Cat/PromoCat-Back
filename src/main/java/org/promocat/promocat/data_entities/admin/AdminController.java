@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.AdminDTO;
-import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.TelephoneDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -54,7 +53,8 @@ public class AdminController {
 
     @ApiOperation(value = "Get admins.",
             notes = "Returns all admins.",
-            response = AdminDTO.class)
+            response = AdminDTO.class,
+            responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 406,
                     message = "Some DB problems",
@@ -67,7 +67,7 @@ public class AdminController {
 
     @ApiOperation(value = "Delete admin.",
             notes = "Deletes admin with id specified in request.",
-            response = AdminDTO.class)
+            response = String.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Admin not found",
