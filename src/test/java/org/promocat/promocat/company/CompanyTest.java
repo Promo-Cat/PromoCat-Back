@@ -301,6 +301,12 @@ public class CompanyTest {
     }
 
     @Test
+    public void testGetCompanyByAdminToken() throws Exception {
+        this.mockMvc.perform(get("/api/company").header("token", adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
     public void testCompanyAndIncorrectStock() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
