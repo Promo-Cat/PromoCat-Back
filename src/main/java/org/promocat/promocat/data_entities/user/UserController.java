@@ -77,7 +77,6 @@ public class UserController {
         return ResponseEntity.ok(userService.save(user));
     }
 
-
     @ApiOperation(value = "Get authorized user",
             notes = "Returning user, whose token is in header (get authorized user)",
             response = UserDTO.class,
@@ -94,11 +93,8 @@ public class UserController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/api/user", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String jwtToken) {
-        // TODO вытащить в отдельный метод эту копипасту
-        JwtReader jwtReader = new JwtReader(jwtToken);
-        String telephone = jwtReader.getValue("telephone");
-        return ResponseEntity.ok(userService.findByTelephone(telephone));
+    public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String token) {
+        return ResponseEntity.ok(userService.findByToken(token));
     }
 
     @ApiOperation(value = "Set user's promo-code",
@@ -125,9 +121,7 @@ public class UserController {
         }
         promoCodeDTO.setIsActive(true);
         UserDTO user = userService.findByToken(token);
-//        user.setPromoCodeDTOId(promoCodeDTO.getId());
         promoCodeActivationService.create(user, promoCodeDTO);
-        // TODO: DANIL SDELAY NORMALNO
         user.setPromoCodeId(promoCodeService.save(promoCodeDTO).getId());
         return ResponseEntity.ok(userService.save(user));
     }
@@ -149,9 +143,7 @@ public class UserController {
     @RequestMapping(value = "/api/user/move", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
                                                 @RequestHeader("token") String token) {
-        JwtReader jwtReader = new JwtReader(token);
-        String telephone = jwtReader.getValue("telephone");
-        UserDTO user = userService.findByTelephone(telephone);
+        UserDTO user = userService.findByToken(token);
         user.setTotalDistance(user.getTotalDistance() + distanceDTO.getDistance());
         user = userService.save(user);
         MovementDTO movement = movementService.findByUserAndDate(user, distanceDTO.getDate());
@@ -181,10 +173,8 @@ public class UserController {
                     response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/statistics", method = RequestMethod.GET)
-    public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") String jwtToken) {
-        JwtReader jwtReader = new JwtReader(jwtToken);
-        String telephone = jwtReader.getValue("telephone");
-        return ResponseEntity.ok(userService.getUserStatistics(userService.findByTelephone(telephone)));
+    public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") String token) {
+        return ResponseEntity.ok(userService.getUserStatistics(userService.findByToken(token)));
     }
 
     // ------ Admin methods ------
