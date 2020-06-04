@@ -27,4 +27,16 @@ public class ApiStockExceptionHandler {
         log.error("Stock not found: " + e.getMessage());
         return new ResponseEntity<>(apiException, notFound);
     }
+
+    @ExceptionHandler(value = {ApiStockActivationStatusException.class})
+    public ResponseEntity<Object> handleActivationStatus(ApiStockActivationStatusException e) {
+        final HttpStatus notFound = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                notFound,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Could not generate promo-codes to stock: " + e.getMessage());
+        return new ResponseEntity<>(apiException, notFound);
+    }
 }
