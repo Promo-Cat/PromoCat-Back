@@ -3,6 +3,7 @@ package org.promocat.promocat.data_entities.movement;
 import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.DistanceDTO;
+import org.promocat.promocat.dto.DistanceWithCityDTO;
 import org.promocat.promocat.dto.UserStockEarningStatisticDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,6 +35,21 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
                     "where m.stock.id=?1 " +
                     "group by m.date"
     )
-    List<DistanceDTO> getDistanceInAllCitiesByStock(Long stockId);
+    List<DistanceDTO> getDistanceInAllCitiesSummaryByStock(Long stockId);
 
+    @Query(
+            "select new org.promocat.promocat.dto.DistanceWithCityDTO(m.date, sum(m.distance), m.user.promoCode.stockCity.city.id) " +
+                    "from Movement m " +
+                    "where m.stock.id=?1 " +
+                    "group by m.date, m.user.promoCode.stockCity.city"
+    )
+    List<DistanceWithCityDTO> getDistanceInCitiesByStock(Long stockId);
+
+    @Query(
+            "select new org.promocat.promocat.dto.DistanceWithCityDTO(m.date, sum(m.distance), m.user.promoCode.stockCity.city.id) " +
+                    "from Movement m " +
+                    "where m.stock.id=?1 and m.user.promoCode.stockCity.city.id=?2 " +
+                    "group by m.date, m.user.promoCode.stockCity.city"
+    )
+    List<DistanceWithCityDTO> getDistanceInCityByStockAndCity(Long stockId, Long cityId);
 }

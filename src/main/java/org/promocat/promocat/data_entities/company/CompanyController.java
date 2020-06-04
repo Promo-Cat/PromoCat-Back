@@ -90,7 +90,7 @@ public class CompanyController {
     }
 
     // TODO docs
-    @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/summary", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/summary", method = RequestMethod.GET)
     public ResponseEntity<Long> getSummaryPromoCodeActivation(@PathVariable("stockId") Long stockId,
                                                               @RequestHeader("token") String token) {
         CompanyDTO companyDTO = service.findByToken(token);
@@ -103,7 +103,7 @@ public class CompanyController {
 
     // TODO docs
     // TODO check stock (exists and company is owner) in other method
-    @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}", method = RequestMethod.GET)
     public ResponseEntity<Long> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
                                                              @PathVariable("cityId") Long cityId,
                                                              @RequestHeader("token") String token) {
@@ -117,7 +117,7 @@ public class CompanyController {
 
     // TODO docs
     // TODO check stock (exists and company is owner) in other method
-    @RequestMapping(path = "/company/stock/{stockId}/promoCodeActivation/byCity", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/byCity", method = RequestMethod.GET)
     public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
                                                                                               @RequestHeader("token") String token) {
         CompanyDTO companyDTO = service.findByToken(token);
@@ -129,7 +129,7 @@ public class CompanyController {
     }
 
     // TODO docs
-    @RequestMapping(path = "/company/stock/{stockId}/statistic/byCity/{cityId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/company/stock/{stockId}/statistic/byCity/{cityId}", method = RequestMethod.GET)
     public ResponseEntity<Long> getAmountOfPromoCodesInCity(@PathVariable("stockId") Long stockId,
                                                             @PathVariable("cityId") Long cityId,
                                                             @RequestHeader("token") String token) {
@@ -142,9 +142,9 @@ public class CompanyController {
     }
 
     // TODO docs
-    @RequestMapping(path = "/company/stock/{stockId}/statistic/total", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/company/stock/{stockId}/statistic/total", method = RequestMethod.GET)
     public ResponseEntity<Long> getTotalAmountOfPromoCodes(@PathVariable("stockId") Long stockId,
-                                                            @RequestHeader("token") String token) {
+                                                           @RequestHeader("token") String token) {
         CompanyDTO companyDTO = service.findByToken(token);
         if (service.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(stockService.getTotalAmountOfPromoCodes(stockId));
@@ -154,7 +154,7 @@ public class CompanyController {
     }
 
     // TODO docs
-    @RequestMapping(path = "/company/stock/{stockId}/statistic/forEachCity", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/company/stock/{stockId}/statistic/forEachCity", method = RequestMethod.GET)
     public ResponseEntity<List<PromoCodesInCityDTO>> getAmountOfPromoCodesForEachCity(@PathVariable("stockId") Long stockId,
                                                                                       @RequestHeader("token") String token) {
         CompanyDTO companyDTO = service.findByToken(token);
@@ -165,13 +165,67 @@ public class CompanyController {
         }
     }
 
-    @RequestMapping(path = "/test", method = RequestMethod.GET)
-    public List<DistanceDTO> test() {
-        return movementService.getSummaryMovementsByStock(1L);
+    // TODO: 03.06.2020 docs
+
+    /**
+     * Возвращает пройденные км по всем городам за акицю
+     *
+     * @param stockId
+     * @param token
+     * @return
+     */
+    @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary", method = RequestMethod.GET)
+    public ResponseEntity<List<DistanceDTO>> getMovementsByStock(@PathVariable("stockId") Long stockId,
+                                                                 @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token);
+        if (service.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(movementService.getSummaryMovementsByStock(stockId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    /**
+     * Возвращает пройдённые киллометры для акции по всем городам по отдельности
+     *
+     * @param stockId
+     * @param token
+     * @return
+     */
+    @RequestMapping(path = "/api/company/stock/{stockId}/movements", method = RequestMethod.GET)
+    public ResponseEntity<List<DistanceWithCityDTO>> getMovementsByStockForEveryCity(@PathVariable("stockId") Long stockId,
+                                                                                     @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token);
+        if (service.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(movementService.getMovementsByStockForEveryCity(stockId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    /**
+     * Получает пройденные километры для акции и конкретного города
+     *
+     * @param stockId
+     * @param cityId
+     * @param token
+     * @return
+     */
+    @RequestMapping(path = "/api/company/stock/{stockId}/movements/byCity/{cityId}", method = RequestMethod.GET)
+    public ResponseEntity<List<DistanceWithCityDTO>> getMovementsByStockAndCity(@PathVariable("stockId") Long stockId,
+                                                                          @PathVariable("cityId") Long cityId,
+                                                                          @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = service.findByToken(token);
+        if (service.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(movementService.getMovementsByStockAndCity(stockId, cityId));
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     // TODO docs
-    @RequestMapping(path = "/company/stock/history", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/company/stock/history", method = RequestMethod.GET)
+
     public ResponseEntity<Set<StockDTO>> getAllStocks(@RequestHeader("token") String token) {
         return ResponseEntity.ok(service.getAllStocks(service.findByToken(token)));
     }

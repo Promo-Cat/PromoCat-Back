@@ -5,6 +5,7 @@ import lombok.Data;
 import java.util.Objects;
 
 @Data
+// TODO docs
 public class UserStockEarningStatisticDTO {
 
     private Double distance;
