@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -78,12 +79,6 @@ public class StockDTO extends AbstractDTO {
     @StockDurationConstraint
     private Long duration;
 
-    @ApiModelProperty(
-            value = "Movement of users who take part in the stock",
-            dataType = "List of Movement entities",
-            required = true,
-            accessMode = ApiModelProperty.AccessMode.READ_ONLY
-    )
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnore
     private Set<MovementDTO> movements;
 }

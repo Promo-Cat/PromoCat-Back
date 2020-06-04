@@ -10,6 +10,7 @@ import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -76,8 +77,8 @@ public class StockController {
             stock = stockService.setActive(id, true);
             return promoCodeService.savePromoCodes(stock);
         }
-        //TODO Exception
-        return stock;
+        throw new ApiStockActivationStatusException(String.format(
+                "Stock with id: %d is already %s", id, stock.getIsAlive() ? "activated" : "deactivated"));
     }
 
     @ApiOperation(value = "Deactivate stock.",

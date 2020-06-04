@@ -10,16 +10,27 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.DistanceDTO;
+import org.promocat.promocat.dto.DistanceWithCityDTO;
+import org.promocat.promocat.dto.PromoCodeActivationDTO;
+import org.promocat.promocat.dto.PromoCodeActivationStatisticDTO;
+import org.promocat.promocat.dto.PromoCodesInCityDTO;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -33,17 +44,17 @@ import java.util.Set;
 @Api(tags = {SpringFoxConfig.COMPANY})
 public class CompanyController {
 
-    private final CompanyService service;
+    private final CompanyService companyService;
     private final StockService stockService;
     private final PromoCodeActivationService promoCodeActivationService;
     private final MovementService movementService;
 
     @Autowired
-    public CompanyController(final CompanyService service,
+    public CompanyController(final CompanyService companyService,
                              final StockService stockService,
                              final PromoCodeActivationService promoCodeActivationService,
                              final MovementService movementService) {
-        this.service = service;
+        this.companyService = companyService;
         this.stockService = stockService;
         this.promoCodeActivationService = promoCodeActivationService;
         this.movementService = movementService;
@@ -65,8 +76,8 @@ public class CompanyController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/auth/register/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public CompanyDTO addCompany(@Valid @RequestBody CompanyDTO company) {
-        return service.save(company);
+    public ResponseEntity<CompanyDTO> addCompany(@Valid @RequestBody CompanyDTO company) {
+        return ResponseEntity.ok(companyService.save(company));
     }
 
     @ApiOperation(value = "Get company, who authorized with token from request header",
@@ -74,7 +85,8 @@ public class CompanyController {
             response = CompanyDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 403,
-                    message = "Not company`s token"),
+                    message = "Not company`s token",
+                    response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
                     response = ApiException.class)
@@ -87,145 +99,230 @@ public class CompanyController {
         if (accountType != AccountType.COMPANY) {
             throw new ApiForbiddenException("Account type is not a company.");
         }
-        return ResponseEntity.ok(service.findByTelephone(telephone));
+        return ResponseEntity.ok(companyService.findByTelephone(telephone));
     }
 
-    // TODO docs
+    @ApiOperation(value = "Get total number of activated promo-codes.",
+            notes = "Getting all activated promo-codes.",
+            response = Long.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/summary", method = RequestMethod.GET)
     public ResponseEntity<Long> getSummaryPromoCodeActivation(@PathVariable("stockId") Long stockId,
                                                               @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token);
-        if (service.isOwner(companyDTO.getId(), stockId)) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(promoCodeActivationService.getSummaryCountByStock(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
 
-    // TODO docs
+    @ApiOperation(value = "Get total number of activated promo-codes in city.",
+            notes = "Getting all activated promo-codes in a given city.",
+            response = Long.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}", method = RequestMethod.GET)
     public ResponseEntity<Long> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
                                                              @PathVariable("cityId") Long cityId,
                                                              @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token);
-        if (service.isOwner(companyDTO.getId(), stockId)) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(promoCodeActivationService.getCountByCityAndStock(cityId, stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
 
-    // TODO docs
+    @ApiOperation(value = "Get total number of activated promo-codes in all cities.",
+            notes = "Getting all activated promo-codes for each city individually.",
+            response = PromoCodeActivationDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/byCity", method = RequestMethod.GET)
     public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
                                                                                               @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token);
-        if (service.isOwner(companyDTO.getId(), stockId)) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(promoCodeActivationService.getCountForEveryCityByStock(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
 
-    // TODO docs
+    @ApiOperation(value = "Get total number of promo-codes in city.",
+            notes = "Getting all promo-codes in a given city.",
+            response = Long.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/statistic/byCity/{cityId}", method = RequestMethod.GET)
     public ResponseEntity<Long> getAmountOfPromoCodesInCity(@PathVariable("stockId") Long stockId,
                                                             @PathVariable("cityId") Long cityId,
                                                             @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token);
-        if (service.isOwner(companyDTO.getId(), stockId)) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(stockService.getAmountOfPromoCodesInCity(stockId, cityId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
 
-    // TODO docs
+    @ApiOperation(value = "Get total number of promo-codes.",
+            notes = "Getting all promo-codes.",
+            response = Long.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/statistic/total", method = RequestMethod.GET)
     public ResponseEntity<Long> getTotalAmountOfPromoCodes(@PathVariable("stockId") Long stockId,
                                                            @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token);
-        if (service.isOwner(companyDTO.getId(), stockId)) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(stockService.getTotalAmountOfPromoCodes(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
 
-    // TODO docs
-    @RequestMapping(path = "/api/company/stock/{stockId}/statistic/forEachCity", method = RequestMethod.GET)
+    @ApiOperation(value = "Get total number of promo-codes in all cities.",
+            notes = "Getting all promo-codes in all cities.",
+            response = PromoCodesInCityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(path = "/api/company/stock/{stockId}/statistic/byCity", method = RequestMethod.GET)
     public ResponseEntity<List<PromoCodesInCityDTO>> getAmountOfPromoCodesForEachCity(@PathVariable("stockId") Long stockId,
                                                                                       @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token);
-        if (service.isOwner(companyDTO.getId(), stockId)) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(stockService.getAmountOfPromoCodesForEachCity(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
 
-    // TODO: 03.06.2020 docs
-    /**
-     * Возвращает пройденные км по всем городам за акицю
-     *
-     * @param stockId
-     * @param token
-     * @return
-     */
-
+    @ApiOperation(value = "Get total mileage.",
+            notes = "Getting total mileage.",
+            response = DistanceDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary", method = RequestMethod.GET)
     public ResponseEntity<List<DistanceDTO>> getMovementsByStock(@PathVariable("stockId") Long stockId,
                                                                  @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token);
-        if (service.isOwner(companyDTO.getId(), stockId)) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(movementService.getSummaryMovementsByStock(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
 
-    /**
-     * Возвращает пройдённые киллометры для акции по всем городам по отдельности
-     *
-     * @param stockId
-     * @param token
-     * @return
-     */
+    @ApiOperation(value = "Get total mileage in all cities.",
+            notes = "Getting total mileage in all cities.",
+            response = DistanceWithCityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/movements", method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsByStockForEveryCity(@PathVariable("stockId") Long stockId,
                                                                                      @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token);
-        if (service.isOwner(companyDTO.getId(), stockId)) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(movementService.getMovementsByStockForEveryCity(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
 
-    /**
-     * Получает пройденные километры для акции и конкретного города
-     *
-     * @param stockId
-     * @param cityId
-     * @param token
-     * @return
-     */
+    @ApiOperation(value = "Get total mileage in city.",
+            notes = "Getting total mileage in given city.",
+            response = DistanceWithCityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/movements/byCity/{cityId}", method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsByStockAndCity(@PathVariable("stockId") Long stockId,
-                                                                          @PathVariable("cityId") Long cityId,
-                                                                          @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = service.findByToken(token);
-        if (service.isOwner(companyDTO.getId(), stockId)) {
+                                                                                @PathVariable("cityId") Long cityId,
+                                                                                @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(movementService.getMovementsByStockAndCity(stockId, cityId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
 
-    // TODO docs
+    @ApiOperation(value = "Get the history of stocks.",
+            notes = "Getting the history of all stocks owned by the company.",
+            response = StockDTO.class,
+            responseContainer = "Set")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/history", method = RequestMethod.GET)
     public ResponseEntity<Set<StockDTO>> getAllStocks(@RequestHeader("token") String token) {
-        return ResponseEntity.ok(service.getAllStocks(service.findByToken(token)));
+        return ResponseEntity.ok(companyService.getAllStocks(companyService.findByToken(token)));
     }
 
     // ------ Admin methods ------
@@ -243,7 +340,7 @@ public class CompanyController {
     })
     @RequestMapping(path = "/admin/company/id", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getById(@RequestParam("id") Long id) {
-        return ResponseEntity.ok(service.findById(id));
+        return ResponseEntity.ok(companyService.findById(id));
     }
 
     @ApiOperation(value = "Get company by telephone",
@@ -259,7 +356,7 @@ public class CompanyController {
     })
     @RequestMapping(path = "/admin/company/telephone", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByTelephone(@RequestParam("telephone") String telephone) {
-        return ResponseEntity.ok(service.findByTelephone(telephone));
+        return ResponseEntity.ok(companyService.findByTelephone(telephone));
     }
 
     @ApiOperation(value = "Get company by organization name",
@@ -275,7 +372,7 @@ public class CompanyController {
     })
     @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByOrganizationName(@RequestParam("organizationName") String organizationName) {
-        return ResponseEntity.ok(service.findByOrganizationName(organizationName));
+        return ResponseEntity.ok(companyService.findByOrganizationName(organizationName));
     }
 
     @ApiOperation(value = "Get company by mail",
@@ -291,7 +388,7 @@ public class CompanyController {
     })
     @RequestMapping(path = "/admin/company/mail", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") String mail) {
-        return ResponseEntity.ok(service.findByMail(mail));
+        return ResponseEntity.ok(companyService.findByMail(mail));
     }
 
 }
