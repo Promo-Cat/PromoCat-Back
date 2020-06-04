@@ -252,7 +252,7 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/company/stock/{stockId}/movements/forEachDay/summary", method = RequestMethod.GET)
     public ResponseEntity<List<DistanceDTO>> getMovementsByStock(@PathVariable("stockId") Long stockId,
                                                                  @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.findByToken(token);
@@ -275,7 +275,7 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/movements", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/company/stock/{stockId}/movements/forEachDay", method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsByStockForEveryCity(@PathVariable("stockId") Long stockId,
                                                                                      @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.findByToken(token);
@@ -298,7 +298,7 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/movements/byCity/{cityId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/company/stock/{stockId}/movements/forEachDay/byCity/{cityId}", method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsByStockAndCity(@PathVariable("stockId") Long stockId,
                                                                                 @PathVariable("cityId") Long cityId,
                                                                                 @RequestHeader("token") String token) {
@@ -326,6 +326,48 @@ public class CompanyController {
     public ResponseEntity<Set<StockDTO>> getAllStocks(@RequestHeader("token") String token) {
         return ResponseEntity.ok(companyService.getAllStocks(companyService.findByToken(token)));
     }
+
+    // TODO: 04.06.2020 ApiOperation
+    // Получает суммарные передвижения по всем городом за всё время акции
+    @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary", method = RequestMethod.GET)
+    public ResponseEntity<DistanceDTO> getMovementsSummaryByStock(@PathVariable("stockId") Long stockId,
+                                                                  @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(movementService.getSummaryMovementsByStock(stockId));
+        } else {
+            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
+        }
+    }
+
+    @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary/byCity/{cityId}", method = RequestMethod.GET)
+    public ResponseEntity<DistanceWithCityDTO> getMovementsSummaryByStockAndCity(@PathVariable("stockId") Long stockId,
+                                                                                 @PathVariable("cityId") Long cityId,
+                                                                                 @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
+            List<DistanceWithCityDTO> res = movementService.getMovementsByStockAndCity(stockId, cityId);
+            if (res.size() == 1) {
+                return ResponseEntity.ok(res.get(0));
+            } else {
+                return ResponseEntity.ok(new DistanceWithCityDTO(0.0, cityId));
+            }
+        } else {
+            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
+        }
+    }
+
+    @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary/byCity", method = RequestMethod.GET)
+    public ResponseEntity<List<DistanceWithCityDTO>> getMovementsSummaryByStockForEachCity(@PathVariable("stockId") Long stockId,
+                                                                                           @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(movementService.getMovementsByStockAndCity(stockId, null));
+        } else {
+            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
+        }
+    }
+
 
     // ------ Admin methods ------
 
