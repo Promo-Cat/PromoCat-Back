@@ -255,7 +255,7 @@ public class CompanyController {
                                                                  @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.findByToken(token);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
-            return ResponseEntity.ok(movementService.getSummaryMovementsByStock(stockId));
+            return ResponseEntity.ok(movementService.getSummaryMovementsByStockForEachDay(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
@@ -278,7 +278,7 @@ public class CompanyController {
                                                                                      @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.findByToken(token);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
-            return ResponseEntity.ok(movementService.getMovementsByStockForEveryCity(stockId));
+            return ResponseEntity.ok(movementService.getMovementsByStockForEveryCityForEachDay(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
@@ -302,7 +302,7 @@ public class CompanyController {
                                                                                 @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.findByToken(token);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
-            return ResponseEntity.ok(movementService.getMovementsByStockAndCity(stockId, cityId));
+            return ResponseEntity.ok(movementService.getMovementsByStockAndCityForEachDay(stockId, cityId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
