@@ -26,7 +26,8 @@ public class StockCityService {
     private final StockMapper stockMapper;
 
     @Autowired
-    public StockCityService(final StockCityRepository stockCityRepository, final StockCityMapper stockCityMapper, final CityMapper cityMapper, final StockMapper stockMapper) {
+    public StockCityService(final StockCityRepository stockCityRepository, final StockCityMapper stockCityMapper,
+                            final CityMapper cityMapper, final StockMapper stockMapper) {
         this.stockCityRepository = stockCityRepository;
         this.stockCityMapper = stockCityMapper;
         this.cityMapper = cityMapper;

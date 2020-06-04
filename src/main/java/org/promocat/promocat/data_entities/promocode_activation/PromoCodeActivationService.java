@@ -1,8 +1,6 @@
 package org.promocat.promocat.data_entities.promocode_activation;
 
-import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import org.promocat.promocat.data_entities.stock.StockService;
-import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.mapper.PromoCodeActivationMapper;
 import org.promocat.promocat.mapper.StockMapper;
@@ -10,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,7 +40,7 @@ public class PromoCodeActivationService {
         PromoCodeActivationDTO res = new PromoCodeActivationDTO();
         res.setPromoCodeId(promoCode.getId());
         res.setUserId(user.getId());
-        res.setDate(LocalDateTime.now());
+        res.setActivationDate(LocalDateTime.now());
         return promoCodeActivationMapper.toDto(promoCodeActivationRepository.save(promoCodeActivationMapper.toEntity(res)));
     }
 
