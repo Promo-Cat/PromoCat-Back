@@ -241,6 +241,7 @@ public class StockTest {
                 .andReturn();
 
         stock = mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
+
         this.mockMvc.perform(delete("/admin/stock/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 

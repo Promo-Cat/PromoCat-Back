@@ -76,6 +76,7 @@ public class StockController {
             stock = stockService.setActive(id, true);
             return promoCodeService.savePromoCodes(stock);
         }
+        //TODO Exception
         return stock;
     }
 
