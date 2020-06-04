@@ -257,10 +257,10 @@ public class StockTest {
 
         stockCity = new ObjectMapper().readValue(cityR.getResponse().getContentAsString(), StockCityDTO.class);
 
-        this.mockMvc.perform(post("/admin/company/stock/generate?id=" + stock.getId()).header("token", adminToken))
+        this.mockMvc.perform(post("/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
-        MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/id?id=" + stock.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         Set<PromoCodeDTO> codes = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
@@ -324,9 +324,9 @@ public class StockTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(stockCity)))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(post("/admin/company/stock/generate?id=" + stock.getId()).header("token", adminToken))
+        this.mockMvc.perform(post("/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
-        this.mockMvc.perform(post("/admin/company/stock/deactivate?id=" + stock.getId()).header("token", adminToken))
+        this.mockMvc.perform(post("/admin/company/stock/deactivate/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
         MvcResult result = this.mockMvc.perform(get("/admin/stock/" + stock.getId()).header("token", adminToken))
@@ -337,7 +337,7 @@ public class StockTest {
         assertEquals(stock.getId(), stockRes.getId());
         assertFalse(stockRes.getIsAlive());
 
-        result = this.mockMvc.perform(get("/admin/stock/promoCode/id?id=" + stock.getId()).header("token", adminToken))
+        result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         Set<PromoCodeDTO> codes = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});

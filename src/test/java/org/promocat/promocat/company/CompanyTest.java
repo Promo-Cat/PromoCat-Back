@@ -185,7 +185,7 @@ public class CompanyTest {
     @Test
     public void testGetCompanyById() throws Exception {
         CompanyDTO company = save("qwe", "33");
-        MvcResult result = this.mockMvc.perform(get("/admin/company/id?id=" + company.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/admin/company/" + company.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -200,7 +200,7 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyWithIncorrectId() throws Exception {
-        this.mockMvc.perform(get("/admin/company/id?id=555").header("token", adminToken))
+        this.mockMvc.perform(get("/admin/company/555").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -297,6 +297,12 @@ public class CompanyTest {
     @Test
     public void testGetCompanyWithIncorrectToken() throws Exception {
         this.mockMvc.perform(get("/api/company").header("token", "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlbl9jcmVhdGVfdGltZSI6MTU5MTI4NTU1MzY3OCwiYWNjb3VudF90eXBlIjoiQ09NUEFOWSIsInRva2VuX2V4cGlyYXRpb25fZGF0ZSI6MTYyMjgyMTU1MzY3OCwidGVsZXBob25lIjoiKzcoOTk5KTI0My0yNi00OSJ9.WqYvXKLsm-pgGpco_U9R-iD6yPOiyMXY6liFA8L0zFQ4YZnoZmpqcSYa3IWMudpiL2JF8aArydGXIIpPVjT_BA"))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetCompanyByAdminToken() throws Exception {
+        this.mockMvc.perform(get("/api/company").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
