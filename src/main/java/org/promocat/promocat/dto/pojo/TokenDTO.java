@@ -1,4 +1,4 @@
-package org.promocat.promocat.dto;
+package org.promocat.promocat.dto.pojo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -5,7 +5,9 @@ import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.*;
-import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
+import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
+import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.mapper.MovementMapper;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -114,22 +115,57 @@ public class MovementService {
 //        return movementRepository.getDistanceInAllCitiesSummaryByStock(stockId);
 //    }
 
-    public List<DistanceWithCityDTO> getMovementsByStockForEveryCity(Long stockId) {
+    public List<DistanceWithCityDTO> getMovementsByStockForEveryCityForEachDay(Long stockId) {
         return movementRepository.getDistanceInCitiesByStock(stockId);
     }
 
-    public List<DistanceWithCityDTO> getMovementsByStockAndCity(Long stockId, Long cityId) {
+    public List<DistanceWithCityDTO> getMovementsByStockAndCityForEachDay(Long stockId, Long cityId) {
         // TODO: 03.06.2020 check city and stock
         return movementRepository.getDistanceInCityByStockAndCity(stockId, cityId);
     }
 
     /**
-     * Суммарные передвижения всех пользователей внутри акции.
+     * Суммарные за каждый день передвижения всех пользователей внутри акции.
      * @param stockId уникальный идентификатор акции.
      * @return список передвижений. {@link List<DistanceDTO>}
      */
-    public List<DistanceDTO> getSummaryMovementsByStock(final Long stockId) {
+    public List<DistanceDTO> getSummaryMovementsByStockForEachDay(final Long stockId) {
         StockDTO stock = stockService.findById(stockId);
         return movementRepository.getDistanceInAllCitiesSummaryByStock(stock.getId());
     }
+
+    /**
+     * Суммарные за время акции передвижения юзеров по всем городам вместе.
+     * @param stockId уникальный идентификатор акции.
+     * @return {@link DistanceDTO} с date равным null
+     */
+    public DistanceDTO getSummaryMovementsByStock(final Long stockId) {
+        StockDTO stock = stockService.findById(stockId);
+        return movementRepository.getSummaryDistanceByStock(stock.getId());
+    }
+
+    /**
+     * Суммарные за время акции передвижения юзеров в конкретном городе.
+     * @param stockId
+     * @param cityId
+     * @return
+     */
+    public List<DistanceWithCityDTO> getMovementsByStockAndCity(final Long stockId,
+                                                  final Long cityId) {
+        StockDTO stock = stockService.findById(stockId);
+        // TODO: 04.06.2020 return single object, not List
+        return movementRepository.getSummaryDistanceByStockAndCity(stock.getId(), cityId);
+    }
+
+    /**
+     * Суммарные за время акции передвижения юзеров в каждом городе отдельно.
+     * @param stockId
+     * @return
+     */
+    public List<DistanceWithCityDTO> getMovementsByStockForEachCity(final Long stockId) {
+        StockDTO stock = stockService.findById(stockId);
+        return movementRepository.getSummaryDistanceByStockAndCity(stock.getId(), null);
+    }
+
+
 }

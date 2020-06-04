@@ -3,7 +3,7 @@ package org.promocat.promocat.data_entities.movement;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.UserDTO;
-import org.promocat.promocat.dto.UserStockEarningStatisticDTO;
+import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestHeader;

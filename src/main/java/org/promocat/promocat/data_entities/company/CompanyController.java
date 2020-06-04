@@ -11,10 +11,10 @@ import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.DistanceDTO;
-import org.promocat.promocat.dto.DistanceWithCityDTO;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
+import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
-import org.promocat.promocat.dto.PromoCodeActivationStatisticDTO;
+import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
 import org.promocat.promocat.dto.PromoCodesInCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
@@ -161,8 +161,9 @@ public class CompanyController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/byCity", method = RequestMethod.GET)
-    public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
-                                                                                              @RequestHeader("token") String token) {
+    public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(
+            @PathVariable("stockId") Long stockId,
+            @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.findByToken(token);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(promoCodeActivationService.getCountForEveryCityByStock(stockId));
@@ -256,7 +257,7 @@ public class CompanyController {
                                                                  @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.findByToken(token);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
-            return ResponseEntity.ok(movementService.getSummaryMovementsByStock(stockId));
+            return ResponseEntity.ok(movementService.getSummaryMovementsByStockForEachDay(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
@@ -279,7 +280,7 @@ public class CompanyController {
                                                                                      @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.findByToken(token);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
-            return ResponseEntity.ok(movementService.getMovementsByStockForEveryCity(stockId));
+            return ResponseEntity.ok(movementService.getMovementsByStockForEveryCityForEachDay(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
@@ -303,7 +304,7 @@ public class CompanyController {
                                                                                 @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.findByToken(token);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
-            return ResponseEntity.ok(movementService.getMovementsByStockAndCity(stockId, cityId));
+            return ResponseEntity.ok(movementService.getMovementsByStockAndCityForEachDay(stockId, cityId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
@@ -339,8 +340,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/id", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getById(@RequestParam("id") Long id) {
+    @RequestMapping(path = "/admin/company/{id}", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getById(@PathVariable("id") final Long id) {
         return ResponseEntity.ok(companyService.findById(id));
     }
 
@@ -356,7 +357,7 @@ public class CompanyController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/admin/company/telephone", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getByTelephone(@RequestParam("telephone") String telephone) {
+    public ResponseEntity<CompanyDTO> getByTelephone(@RequestParam("telephone") final String telephone) {
         return ResponseEntity.ok(companyService.findByTelephone(telephone));
     }
 
@@ -372,7 +373,8 @@ public class CompanyController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getByOrganizationName(@RequestParam("organizationName") String organizationName) {
+    public ResponseEntity<CompanyDTO> getByOrganizationName(
+            @RequestParam("organizationName") final String organizationName) {
         return ResponseEntity.ok(companyService.findByOrganizationName(organizationName));
     }
 
@@ -388,7 +390,7 @@ public class CompanyController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/admin/company/mail", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") String mail) {
+    public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") final String mail) {
         return ResponseEntity.ok(companyService.findByMail(mail));
     }
 

@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.promocode_activation;
 
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
 import org.promocat.promocat.mapper.PromoCodeActivationMapper;
 import org.promocat.promocat.mapper.StockMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,7 @@ public class PromoCodeActivationService {
      * Получение списка городов и количетсва активированных промокодов в них.
      * @param stockId уникальный идентификатор акции.
      * @return Список городов и количетсва активированных промокодов в них.
-     * {@link List<PromoCodeActivationStatisticDTO>}
+     * {@link List< PromoCodeActivationStatisticDTO >}
      */
     public List<PromoCodeActivationStatisticDTO> getCountForEveryCityByStock(final Long stockId) {
         StockDTO stock = stockService.findById(stockId);

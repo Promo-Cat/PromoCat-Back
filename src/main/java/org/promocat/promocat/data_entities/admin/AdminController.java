@@ -6,17 +6,17 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.AdminDTO;
-import org.promocat.promocat.dto.TelephoneDTO;
+import org.promocat.promocat.dto.pojo.TelephoneDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -76,8 +76,8 @@ public class AdminController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteAdmin(@RequestParam("id") Long id) {
+    @RequestMapping(path = "/admin/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteAdmin(@PathVariable("id") Long id) {
         adminService.delete(id);
         return ResponseEntity.ok("{}");
     }

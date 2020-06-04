@@ -9,7 +9,7 @@ import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptService;
 import org.promocat.promocat.dto.LoginAttemptDTO;
-import org.promocat.promocat.dto.TokenDTO;
+import org.promocat.promocat.dto.pojo.TokenDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.user.codes.ApiWrongCodeException;
 import org.promocat.promocat.utils.AccountRepositoryManager;

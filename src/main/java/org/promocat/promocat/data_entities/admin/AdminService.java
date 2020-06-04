@@ -3,7 +3,6 @@ package org.promocat.promocat.data_entities.admin;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.dto.AdminDTO;
-import org.promocat.promocat.dto.TelephoneDTO;
 import org.promocat.promocat.exception.admin.ApiAdminAlreadyExistsException;
 import org.promocat.promocat.exception.admin.ApiAdminNotFoundException;
 import org.promocat.promocat.mapper.AdminMapper;

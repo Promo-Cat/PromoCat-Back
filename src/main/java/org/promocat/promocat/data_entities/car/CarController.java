@@ -13,6 +13,7 @@ import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -88,8 +89,8 @@ public class CarController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/car/id", method = RequestMethod.GET)
-    public ResponseEntity<CarDTO> getCarById(@RequestParam("id") Long id) {
+    @RequestMapping(path = "/admin/car/{id}", method = RequestMethod.GET)
+    public ResponseEntity<CarDTO> getCarById(@PathVariable("id") final Long id) {
         return ResponseEntity.ok(service.findByID(id));
     }
 }
