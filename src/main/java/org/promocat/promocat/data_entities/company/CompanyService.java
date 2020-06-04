@@ -138,7 +138,7 @@ public class CompanyService {
      * @param stockId акции.
      * @return {@code true} если акция принадлежит компании, {@code false} иначе.
      */
-    public boolean isOwner(Long companyId, Long stockId) {
+    public boolean isOwner(final Long companyId, final Long stockId) {
         CompanyDTO companyDTO = findById(companyId);
         StockDTO stockDTO = stockService.findById(stockId);
         return companyDTO.getId().equals(stockDTO.getCompanyId());
