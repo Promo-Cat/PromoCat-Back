@@ -62,7 +62,7 @@ public class StockCityController {
 
     @ApiOperation(
             value = "Get stockCity by id.",
-            notes = "Gets stockCity by id specified in the path.",
+            notes = "Gets stockCity by id specified in request.",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             response = StockCityDTO.class)
     @ApiResponses(value = {
