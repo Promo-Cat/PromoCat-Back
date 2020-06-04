@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -161,8 +160,9 @@ public class CompanyController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/byCity", method = RequestMethod.GET)
-    public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
-                                                                                              @RequestHeader("token") String token) {
+    public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(
+            @PathVariable("stockId") Long stockId,
+            @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.findByToken(token);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(promoCodeActivationService.getCountForEveryCityByStock(stockId));
@@ -339,8 +339,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/id", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getById(@RequestParam("id") Long id) {
+    @RequestMapping(path = "/admin/company/{id}", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getById(@PathVariable("id") final Long id) {
         return ResponseEntity.ok(companyService.findById(id));
     }
 
@@ -355,8 +355,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/telephone", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getByTelephone(@RequestParam("telephone") String telephone) {
+    @RequestMapping(path = "/admin/company/{telephone}", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getByTelephone(@PathVariable("telephone") final String telephone) {
         return ResponseEntity.ok(companyService.findByTelephone(telephone));
     }
 
@@ -371,8 +371,9 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getByOrganizationName(@RequestParam("organizationName") String organizationName) {
+    @RequestMapping(path = "/admin/company/{organizationName}", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getByOrganizationName(
+            @PathVariable("organizationName") final String organizationName) {
         return ResponseEntity.ok(companyService.findByOrganizationName(organizationName));
     }
 
@@ -387,8 +388,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/mail", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") String mail) {
+    @RequestMapping(path = "/admin/company/{mail}", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getByMail(@PathVariable("mail") final String mail) {
         return ResponseEntity.ok(companyService.findByMail(mail));
     }
 
