@@ -16,8 +16,6 @@
 
     <properties>
         <java.version>11</java.version>
-    </properties>
-    <properties>
         <spring-security.version>4.0.1.RELEASE</spring-security.version>
     </properties>
 
