@@ -378,14 +378,14 @@ public class CompanyTest {
         this.mockMvc.perform(get("/api/company/stock/" + stock2.getId() + "/statistic/byCity").header("token", tokenCompany1))
                 .andExpect(status().is4xxClientError());
 
-        this.mockMvc.perform(get("/api/company/stock/"+ stock1.getId() + "/movements/summary").header("token", tokenCompany2))
+        this.mockMvc.perform(get("/api/company/stock/"+ stock1.getId() + "/movements/forEachDay/summary").header("token", tokenCompany2))
                 .andExpect(status().is4xxClientError());
-        this.mockMvc.perform(get("/api/company/stock/"+ stock2.getId() + "/movements/summary").header("token", tokenCompany1))
+        this.mockMvc.perform(get("/api/company/stock/"+ stock2.getId() + "/movements/forEachDay/summary").header("token", tokenCompany1))
                 .andExpect(status().is4xxClientError());
 
-        this.mockMvc.perform(get("/api/company/stock/"+ stock1.getId() + "/movements").header("token", tokenCompany2))
+        this.mockMvc.perform(get("/api/company/stock/"+ stock1.getId() + "/movements/forEachDay").header("token", tokenCompany2))
                 .andExpect(status().is4xxClientError());
-        this.mockMvc.perform(get("/api/company/stock/"+ stock2.getId() + "/movements").header("token", tokenCompany1))
+        this.mockMvc.perform(get("/api/company/stock/"+ stock2.getId() + "/movements/forEachDay").header("token", tokenCompany1))
                 .andExpect(status().is4xxClientError());
     }
 }
