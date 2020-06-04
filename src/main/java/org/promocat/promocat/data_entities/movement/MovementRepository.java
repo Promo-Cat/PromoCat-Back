@@ -52,4 +52,21 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
                     "group by m.date, m.user.promoCode.stockCity.city"
     )
     List<DistanceWithCityDTO> getDistanceInCityByStockAndCity(Long stockId, Long cityId);
+
+    @Query(
+            "select new org.promocat.promocat.dto.DistanceDTO(sum(m.distance)) " +
+                    "from Movement m " +
+                    "where m.stock.id=?1 " +
+                    "group by m.stock"
+    )
+    DistanceDTO getSummaryDistanceByStock(Long stockId);
+
+    @Query(
+            "select new org.promocat.promocat.dto.DistanceWithCityDTO(sum(m.distance), m.user.promoCode.stockCity.city.id) " +
+                    "from Movement m " +
+                    "where m.stock.id=?1 and (?2 is null or m.user.promoCode.stockCity.city.id=?2) " +
+                    "group by m.stock, m.user.promoCode.stockCity.city"
+    )
+    List<DistanceWithCityDTO> getSummaryDistanceByStockAndCity(Long stockId, Long cityId);
+
 }

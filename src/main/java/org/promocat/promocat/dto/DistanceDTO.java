@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class DistanceDTO {
             required = true
     )
     @NotNull(message = "Дата не может быть пустой.")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate date;
 
     @ApiModelProperty(
@@ -34,4 +36,8 @@ public class DistanceDTO {
     @NotNull(message = "Дистанция не может быть пустой.")
     private Double distance;
 
+    public DistanceDTO(@NotNull(message = "Дистанция не может быть пустой.") Double distance) {
+        this.date = null;
+        this.distance = distance;
+    }
 }
