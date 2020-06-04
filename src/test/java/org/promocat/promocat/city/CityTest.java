@@ -87,7 +87,7 @@ public class CityTest {
 
     @Test
     public void getCityByIdTest() throws Exception {
-        MvcResult result = this.mockMvc.perform(get("/admin/city/id?id=11").header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/admin/city/11").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         CityDTO city = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CityDTO.class);

@@ -185,7 +185,7 @@ public class CompanyTest {
     @Test
     public void testGetCompanyById() throws Exception {
         CompanyDTO company = save("qwe", "33");
-        MvcResult result = this.mockMvc.perform(get("/admin/company/id?id=" + company.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/admin/company/" + company.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -200,7 +200,7 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyWithIncorrectId() throws Exception {
-        this.mockMvc.perform(get("/admin/company/id?id=555").header("token", adminToken))
+        this.mockMvc.perform(get("/admin/company/555").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 

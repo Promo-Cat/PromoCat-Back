@@ -119,7 +119,7 @@ public class PromoCodeTest {
 
         promoCode = promoCodeService.save(promoCode);
 
-        MvcResult result = this.mockMvc.perform(get("/admin/promoCode/id?id=" + promoCode.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/admin/promoCode/" + promoCode.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         PromoCodeDTO that = mapper.readValue(result.getResponse().getContentAsString(), PromoCodeDTO.class);

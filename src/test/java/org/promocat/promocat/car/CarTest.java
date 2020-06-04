@@ -164,7 +164,7 @@ public class CarTest {
     public void testGetCarById() throws Exception {
         CarDTO car = save("rtyui");
 
-        MvcResult result = this.mockMvc.perform(get("/admin/car/id?id=" + car.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/admin/car/" + car.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 

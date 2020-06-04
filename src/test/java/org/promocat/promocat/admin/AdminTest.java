@@ -133,7 +133,7 @@ public class AdminTest {
 
         AdminDTO admin = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
 
-        this.mockMvc.perform(delete("/admin/?id=" + admin.getId()).header("token", adminToken))
+        this.mockMvc.perform(delete("/admin/" + admin.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
         result = this.mockMvc.perform(get("/admin/").header("token", adminToken))
