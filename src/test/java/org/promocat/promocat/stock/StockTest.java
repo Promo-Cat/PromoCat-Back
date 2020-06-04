@@ -295,4 +295,31 @@ public class StockTest {
             assertFalse(code.getIsActive());
         }
     }
+
+//    @Test
+//    public void testGenerateIncorrectStock() throws Exception {
+//        StockDTO stock = new StockDTO();
+//        stock.setName("www");
+//        stock.setStartTime(LocalDateTime.now());
+//        stock.setDuration(7L);
+//        stock.setCompanyId(company.getId());
+//
+//        MvcResult stockR = this.mockMvc.perform(post("/api/company/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
+//                .content(mapper.writeValueAsString(stock)))
+//                .andExpect(status().isOk())
+//                .andReturn();
+//        stock = mapper.readValue(stockR.getResponse().getContentAsString(), StockDTO.class);
+//
+//        StockCityDTO stockCity = new StockCityDTO();
+//        stockCity.setStockId(stock.getId());
+//        stockCity.setNumberOfPromoCodes(10L);
+//        stockCity.setCityId(city.getId());
+//
+//        this.mockMvc.perform(post("/api/company/stock/city").header("token", token)
+//                .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(stockCity)))
+//                .andExpect(status().isOk());
+//
+//        this.mockMvc.perform(post("/admin/company/stock/generate?id=" + stock.getId()).header("token", adminToken))
+//                .andExpect(status().is4xxClientError());
+//    }
 }
