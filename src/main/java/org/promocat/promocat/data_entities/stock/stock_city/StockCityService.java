@@ -18,7 +18,6 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-// TODO javadocs
 public class StockCityService {
 
     private final StockCityRepository stockCityRepository;
@@ -27,34 +26,50 @@ public class StockCityService {
     private final StockMapper stockMapper;
 
     @Autowired
-    public StockCityService(final StockCityRepository stockCityRepository, final StockCityMapper stockCityMapper, final CityMapper cityMapper, final StockMapper stockMapper) {
+    public StockCityService(final StockCityRepository stockCityRepository, final StockCityMapper stockCityMapper,
+                            final CityMapper cityMapper, final StockMapper stockMapper) {
         this.stockCityRepository = stockCityRepository;
         this.stockCityMapper = stockCityMapper;
         this.cityMapper = cityMapper;
         this.stockMapper = stockMapper;
     }
 
+    /**
+     * Сохранение промежуточной сущности связывающей акцию и город.
+     * @param dto объектное представление промежуточноой сущности. {@link StockCityDTO}
+     * @return Представление промежуточной сущности в БД. {@link StockCityDTO}
+     */
     public StockCityDTO save(final StockCityDTO dto) {
-        StockCity stockCity = stockCityMapper.toEntity(dto);
-        StockCity stockCity1 = stockCityRepository.save(stockCity);
-        StockCityDTO stockCityDTO = stockCityMapper.toDto(stockCity1);
-        return stockCityDTO;
+        return stockCityMapper.toDto(stockCityRepository.save(stockCityMapper.toEntity(dto)));
     }
 
+    /**
+     * Поиск промежуточной сущности связывающей акцию и город.
+     * @param id промежуточной сущности.
+     * @return Представление промежуточной сущности в БД. {@link StockCityDTO}
+     * @throws ApiStockCityNotFoundException если такой сущности нет.
+     */
     public StockCityDTO findById(final Long id) {
         Optional<StockCity> stockCity = stockCityRepository.findById(id);
         if (stockCity.isPresent()) {
             stockCityRepository.flush();
             return stockCityMapper.toDto(stockCity.get());
         } else {
-            // TODO exception
-            throw new ApiStockCityNotFoundException("TODO");
+            throw new ApiStockCityNotFoundException(String.format("No such stockCity: %d", id));
         }
     }
 
+    /**
+     * Поиск промежуточной сущности связывающей акцию и город.
+     * @param stock акция.
+     * @param city город.
+     * @return Представление промежуточной сущности в БД. {@link StockCityDTO}
+     * @throws ApiStockCityNotFoundException если такой сущности нет.
+     */
     public StockCityDTO findByStockAndCity(final StockDTO stock, final CityDTO city) {
-        // TODO exception
         return stockCityMapper.toDto(stockCityRepository.findByStockAndCity(
-                        stockMapper.toEntity(stock), cityMapper.toEntity(city)).orElseThrow());
+                        stockMapper.toEntity(stock), cityMapper.toEntity(city))
+                .orElseThrow(() -> new ApiStockCityNotFoundException(
+                        String.format("No such stockCity with stock: %d, city: %s", stock.getId(), city.getCity()))));
     }
 }

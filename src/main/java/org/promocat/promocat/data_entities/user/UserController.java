@@ -16,8 +16,8 @@ import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeActiveException;
+import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
-import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -94,6 +94,9 @@ public class UserController {
     })
     @RequestMapping(path = "/api/user", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String token) {
+        if (!userService.isUser(token)) {
+            throw new ApiForbiddenException("The token is not users.");
+        }
         return ResponseEntity.ok(userService.findByToken(token));
     }
 
@@ -114,6 +117,9 @@ public class UserController {
     @RequestMapping(value = "/api/user/promo-code", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> setPromoCode(@RequestParam("promo-code") String promoCode,
                                                 @RequestHeader("token") String token) {
+        if (!userService.isUser(token)) {
+            throw new ApiForbiddenException("The token is not users.");
+        }
         PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
         if (promoCodeDTO.getIsActive()) {
             log.error("Promo-code {} already active", promoCode);
@@ -143,6 +149,9 @@ public class UserController {
     @RequestMapping(value = "/api/user/move", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
                                                 @RequestHeader("token") String token) {
+        if (!userService.isUser(token)) {
+            throw new ApiForbiddenException("The token is not users.");
+        }
         UserDTO user = userService.findByToken(token);
         user.setTotalDistance(user.getTotalDistance() + distanceDTO.getDistance());
         user = userService.save(user);
@@ -163,7 +172,8 @@ public class UserController {
 
     @ApiOperation(value = "Get user statistics",
             notes = "Gets user statistics for all days of participation in the stock. Returns List of Movements.",
-            response = List.class)
+            response = MovementDTO.class,
+            responseContainer = "List")
     @ApiResponses({
             @ApiResponse(code = 404,
                     message = "User not found",
@@ -174,7 +184,11 @@ public class UserController {
     })
     @RequestMapping(value = "/api/user/statistics", method = RequestMethod.GET)
     public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") String token) {
-        return ResponseEntity.ok(userService.getUserStatistics(userService.findByToken(token)));
+        if (userService.isUser(token)) {
+            return ResponseEntity.ok(userService.getUserStatistics(userService.findByToken(token)));
+        } else {
+            throw new ApiForbiddenException("The token is not users.");
+        }
     }
 
     // ------ Admin methods ------
@@ -229,8 +243,8 @@ public class UserController {
 
     @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
     public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") String token) {
-        UserDTO userDTO = userService.findByToken(token);
-        return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
+            UserDTO userDTO = userService.findByToken(token);
+            return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
     }
 
 }
