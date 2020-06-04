@@ -34,6 +34,7 @@ public class StockCityService {
         this.stockMapper = stockMapper;
     }
 
+    // FIXME
     public StockCityDTO save(final StockCityDTO dto) {
         StockCity stockCity = stockCityMapper.toEntity(dto);
         StockCity stockCity1 = stockCityRepository.save(stockCity);

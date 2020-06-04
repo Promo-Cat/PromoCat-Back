@@ -57,6 +57,18 @@ public class PromoCodeController {
         return ResponseEntity.ok(promoCodeService.findById(id));
     }
 
+    @ApiOperation(value = "Get all promo-codes by stock id.",
+            notes = "Returning all promo-codes with stock id specified in request",
+            response = PromoCodeDTO.class,
+            responseContainer = "Set")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Promo-code not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/admin/stock/promoCode/id", method = RequestMethod.GET)
     public ResponseEntity<Set<PromoCodeDTO>> getPromoCodesByStockId(@RequestParam("id") Long id) {
         return ResponseEntity.ok(stockService.getCodes(id));
@@ -79,6 +91,18 @@ public class PromoCodeController {
     }
 
 
+    @ApiOperation(value = "Get stock-city by promo-code.",
+            notes = "Returning stock-city entity.",
+            response = StockCityDTO.class
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Promo-code not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/admin/promoCode/stockCity", method = RequestMethod.GET)
     public ResponseEntity<StockCityDTO> getStockCityByPromoCode(@RequestParam("promoCode") String promoCode) {
         PromoCodeDTO dto = promoCodeService.findByPromoCode(promoCode);

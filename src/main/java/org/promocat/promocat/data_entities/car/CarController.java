@@ -61,7 +61,7 @@ public class CarController {
 
     @ApiOperation(value = "Get car by number",
             notes = "Returning car, which number specified in params",
-            response = UserDTO.class)
+            response = CarDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Car not found",
@@ -79,7 +79,7 @@ public class CarController {
 
     @ApiOperation(value = "Get car by id",
             notes = "Returning car, which id specified in params",
-            response = UserDTO.class)
+            response = CarDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "Car not found",
