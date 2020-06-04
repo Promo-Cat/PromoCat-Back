@@ -122,7 +122,7 @@ public class StockController {
             response = String.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
-                    message = "User not found",
+                    message = "Stock not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
