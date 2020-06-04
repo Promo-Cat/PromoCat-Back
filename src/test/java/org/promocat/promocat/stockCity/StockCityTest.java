@@ -6,7 +6,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.CityDTO;
+import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
+import org.promocat.promocat.dto.pojo.TokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -116,4 +121,11 @@ public class StockCityTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(stockCity)))
                 .andExpect(status().is4xxClientError());
     }
+
+    @Test
+    public void testFindByIdStockCity() throws Exception {
+        this.mockMvc.perform(get("/api/company/stock_city/111").header("token", token))
+                .andExpect(status().is4xxClientError());
+    }
+
 }
