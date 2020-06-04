@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -355,8 +356,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/{telephone}", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getByTelephone(@PathVariable("telephone") final String telephone) {
+    @RequestMapping(path = "/admin/company/telephone", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getByTelephone(@RequestParam("telephone") final String telephone) {
         return ResponseEntity.ok(companyService.findByTelephone(telephone));
     }
 
@@ -371,9 +372,9 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/{organizationName}", method = RequestMethod.GET)
+    @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByOrganizationName(
-            @PathVariable("organizationName") final String organizationName) {
+            @RequestParam("organizationName") final String organizationName) {
         return ResponseEntity.ok(companyService.findByOrganizationName(organizationName));
     }
 
@@ -388,8 +389,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/{mail}", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getByMail(@PathVariable("mail") final String mail) {
+    @RequestMapping(path = "/admin/company/mail", method = RequestMethod.GET)
+    public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") final String mail) {
         return ResponseEntity.ok(companyService.findByMail(mail));
     }
 

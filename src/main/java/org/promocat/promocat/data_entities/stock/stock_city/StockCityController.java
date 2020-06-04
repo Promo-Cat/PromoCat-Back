@@ -1,19 +1,22 @@
 package org.promocat.promocat.data_entities.stock.stock_city;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.city.ApiCityNotActiveException;
-import org.promocat.promocat.exception.city.ApiCityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -35,6 +38,19 @@ public class StockCityController {
         this.cityService = cityService;
     }
 
+    @ApiOperation(
+            value = "Add city to stock.",
+            notes = "Adds city to stock.",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            response = StockCityDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 400,
+                    message = "City is not active",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(value = "/api/company/stock/city", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockCityDTO> save(@Valid @RequestBody StockCityDTO stockCityDTO) {
         if (cityService.isActiveById(stockCityDTO.getCityId())) {
@@ -44,9 +60,21 @@ public class StockCityController {
         }
     }
 
-    // TODO fix endpoint
-    @RequestMapping(value = "/api/company/stockcity", method = RequestMethod.GET)
-    public ResponseEntity<StockCityDTO> findById(@RequestParam("id") Long id) {
-       return ResponseEntity.ok(stockCityService.findById(id));
+    @ApiOperation(
+            value = "Get stockCity by id.",
+            notes = "Gets stockCity by id specified in the path.",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            response = StockCityDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "No such stockCity",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/company/stock_city/{id}", method = RequestMethod.GET)
+    public ResponseEntity<StockCityDTO> findById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(stockCityService.findById(id));
     }
 }
