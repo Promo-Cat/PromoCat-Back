@@ -164,13 +164,13 @@ public class CompanyTest {
                 .andExpect(status().isOk());
     }
 
-    private CompanyDTO save() throws Exception {
+    private CompanyDTO save(String name, String nums) throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setId(1L);
-        company.setOrganizationName("qqq");
-        company.setInn("1111111111");
-        company.setTelephone("+7(222)222-22-22");
-        company.setMail("qwfqwf@mail.ru");
+        company.setOrganizationName(name);
+        company.setInn("11111111" + nums);
+        company.setTelephone("+7(222)222-22-" + nums);
+        company.setMail(name + "@mail.ru");
         MvcResult result = this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().isOk())
@@ -180,7 +180,7 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyById() throws Exception {
-        CompanyDTO company = save();
+        CompanyDTO company = save("qwe", "33");
         MvcResult result = this.mockMvc.perform(get("/admin/company/id?id=" + company.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -202,7 +202,7 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyByTelephone() throws Exception {
-        CompanyDTO company = save();
+        CompanyDTO company = save("rfv", "44");
         MvcResult result = this.mockMvc.perform(get("/admin/company/telephone?telephone=" + company.getTelephone()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -224,7 +224,7 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyByOrganizationName() throws Exception {
-        CompanyDTO company = save();
+        CompanyDTO company = save("pkl", "12");
         MvcResult result = this.mockMvc.perform(get("/admin/company/organizationName?organizationName=" + company.getOrganizationName()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -246,7 +246,7 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyByMail() throws Exception {
-        CompanyDTO company = save();
+        CompanyDTO company = save("bnm", "56");
         MvcResult result = this.mockMvc.perform(get("/admin/company/mail?mail=" + company.getMail()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
