@@ -2,9 +2,9 @@ package org.promocat.promocat.data_entities.movement;
 
 import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.user.User;
-import org.promocat.promocat.dto.DistanceDTO;
-import org.promocat.promocat.dto.DistanceWithCityDTO;
-import org.promocat.promocat.dto.UserStockEarningStatisticDTO;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
+import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
+import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -23,14 +23,14 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
 //            nativeQuery = true
 //    )
     @Query(
-            "select new org.promocat.promocat.dto.UserStockEarningStatisticDTO(sum(m.distance), sum(m.earnings), sum(m.panel))" +
+            "select new org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO(sum(m.distance), sum(m.earnings), sum(m.panel))" +
                     "from Movement m " +
                     "where m.stock.id=?1 and m.user.id=?2"
     )
     UserStockEarningStatisticDTO getUserStatistic(Long stockId, Long userId);
 
     @Query(
-            "select new org.promocat.promocat.dto.DistanceDTO(m.date, sum(m.distance)) " +
+            "select new org.promocat.promocat.dto.pojo.DistanceDTO(m.date, sum(m.distance)) " +
                     "from Movement m " +
                     "where m.stock.id=?1 " +
                     "group by m.date"
@@ -38,7 +38,7 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     List<DistanceDTO> getDistanceInAllCitiesSummaryByStock(Long stockId);
 
     @Query(
-            "select new org.promocat.promocat.dto.DistanceWithCityDTO(m.date, sum(m.distance), m.user.promoCode.stockCity.city.id) " +
+            "select new org.promocat.promocat.dto.pojo.DistanceWithCityDTO(m.date, sum(m.distance), m.user.promoCode.stockCity.city.id) " +
                     "from Movement m " +
                     "where m.stock.id=?1 " +
                     "group by m.date, m.user.promoCode.stockCity.city"
@@ -46,7 +46,7 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     List<DistanceWithCityDTO> getDistanceInCitiesByStock(Long stockId);
 
     @Query(
-            "select new org.promocat.promocat.dto.DistanceWithCityDTO(m.date, sum(m.distance), m.user.promoCode.stockCity.city.id) " +
+            "select new org.promocat.promocat.dto.pojo.DistanceWithCityDTO(m.date, sum(m.distance), m.user.promoCode.stockCity.city.id) " +
                     "from Movement m " +
                     "where m.stock.id=?1 and m.user.promoCode.stockCity.city.id=?2 " +
                     "group by m.date, m.user.promoCode.stockCity.city"
@@ -54,7 +54,7 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     List<DistanceWithCityDTO> getDistanceInCityByStockAndCity(Long stockId, Long cityId);
 
     @Query(
-            "select new org.promocat.promocat.dto.DistanceDTO(sum(m.distance)) " +
+            "select new org.promocat.promocat.dto.pojo.DistanceDTO(sum(m.distance)) " +
                     "from Movement m " +
                     "where m.stock.id=?1 " +
                     "group by m.stock"
@@ -62,7 +62,7 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     DistanceDTO getSummaryDistanceByStock(Long stockId);
 
     @Query(
-            "select new org.promocat.promocat.dto.DistanceWithCityDTO(sum(m.distance), m.user.promoCode.stockCity.city.id) " +
+            "select new org.promocat.promocat.dto.pojo.DistanceWithCityDTO(sum(m.distance), m.user.promoCode.stockCity.city.id) " +
                     "from Movement m " +
                     "where m.stock.id=?1 and (?2 is null or m.user.promoCode.stockCity.city.id=?2) " +
                     "group by m.stock, m.user.promoCode.stockCity.city"

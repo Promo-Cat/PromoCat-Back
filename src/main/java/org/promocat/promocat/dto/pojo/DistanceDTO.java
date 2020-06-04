@@ -1,4 +1,4 @@
-package org.promocat.promocat.dto;
+package org.promocat.promocat.dto.pojo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;

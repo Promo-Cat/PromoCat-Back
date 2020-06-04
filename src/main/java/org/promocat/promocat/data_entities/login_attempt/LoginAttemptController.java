@@ -9,7 +9,7 @@ import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.admin.AdminService;
-import org.promocat.promocat.dto.AuthorizationKeyDTO;
+import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.login.ApiLoginAttemptNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;

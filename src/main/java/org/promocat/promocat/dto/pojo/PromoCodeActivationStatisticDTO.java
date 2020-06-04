@@ -1,4 +1,4 @@
-package org.promocat.promocat.dto;
+package org.promocat.promocat.dto.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

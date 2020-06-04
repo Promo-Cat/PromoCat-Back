@@ -9,7 +9,7 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
-import org.promocat.promocat.dto.DistanceDTO;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;

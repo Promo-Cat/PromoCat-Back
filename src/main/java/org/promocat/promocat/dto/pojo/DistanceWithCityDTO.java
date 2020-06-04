@@ -1,9 +1,9 @@
-package org.promocat.promocat.dto;
+package org.promocat.promocat.dto.pojo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class DistanceWithCityDTO extends DistanceDTO{
+public class DistanceWithCityDTO extends DistanceDTO {
 
     private Long cityId;
 
