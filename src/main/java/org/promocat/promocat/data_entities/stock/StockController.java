@@ -73,8 +73,8 @@ public class StockController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/stock/generate", method = RequestMethod.POST)
-    public ResponseEntity<StockDTO> generate(@RequestParam("id") Long id) {
+    @RequestMapping(path = "/admin/company/stock/generate/{id}", method = RequestMethod.POST)
+    public ResponseEntity<StockDTO> generate(@PathVariable("id") Long id) {
         StockDTO stock = stockService.findById(id);
         if (Objects.isNull(stock.getIsAlive())) {
             return ResponseEntity.ok(promoCodeService.savePromoCodes(stockService.setActive(id, true)));
@@ -94,8 +94,8 @@ public class StockController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/stock/deactivate", method = RequestMethod.POST)
-    public ResponseEntity<StockDTO> deactivateStock(@RequestParam("id") Long id) {
+    @RequestMapping(path = "/admin/company/stock/deactivate/{id}", method = RequestMethod.POST)
+    public ResponseEntity<StockDTO> deactivateStock(@PathVariable("id") Long id) {
         return ResponseEntity.ok(stockService.deactivateStock(id));
     }
 

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -76,8 +77,8 @@ public class AdminController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteAdmin(@RequestParam("id") Long id) {
+    @RequestMapping(path = "/admin/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteAdmin(@PathVariable("id") Long id) {
         adminService.delete(id);
         return ResponseEntity.ok("{}");
     }

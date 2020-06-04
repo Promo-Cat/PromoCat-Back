@@ -10,6 +10,7 @@ import org.promocat.promocat.dto.CityDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,8 +60,8 @@ public class CityController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/admin/city/id", method = RequestMethod.GET)
-    public ResponseEntity<CityDTO> getCityById(@RequestParam("id") Long id) {
+    @RequestMapping(value = "/admin/city/{id}", method = RequestMethod.GET)
+    public ResponseEntity<CityDTO> getCityById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
