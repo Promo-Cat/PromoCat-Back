@@ -31,7 +31,8 @@ public class CityController {
 
     @ApiOperation(value = "Get active cities.",
             notes = "Returning all active cities.",
-            response = CityDTO.class)
+            response = CityDTO.class,
+            responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "City not found",

@@ -15,11 +15,15 @@ import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -31,13 +35,11 @@ public class StockController {
 
     private final StockService stockService;
     private final PromoCodeService promoCodeService;
-    private final StockCityService stockCityService;
 
     @Autowired
-    public StockController(final StockService stockService, final PromoCodeService promoCodeService, final StockCityService stockCityService) {
+    public StockController(final StockService stockService, final PromoCodeService promoCodeService) {
         this.stockService = stockService;
         this.promoCodeService = promoCodeService;
-        this.stockCityService = stockCityService;
     }
 
     @ApiOperation(value = "Create stock",
@@ -56,8 +58,8 @@ public class StockController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public StockDTO addStock(@Valid @RequestBody StockDTO stock) {
-        return stockService.save(stock);
+    public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock) {
+        return ResponseEntity.ok(stockService.save(stock));
     }
 
     @ApiOperation(value = "Generate promo-codes to stock.",
@@ -72,10 +74,10 @@ public class StockController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/admin/company/stock/generate", method = RequestMethod.POST)
-    public StockDTO generate(@RequestParam("id") Long id) {
+    public ResponseEntity<StockDTO> generate(@RequestParam("id") Long id) {
         StockDTO stock = stockService.findById(id);
         if (Objects.isNull(stock.getIsAlive())) {
-            return promoCodeService.savePromoCodes(stockService.setActive(id, true));
+            return ResponseEntity.ok(promoCodeService.savePromoCodes(stockService.setActive(id, true)));
         }
         throw new ApiStockActivationStatusException(String.format(
                 "Stock with id: %d is already %s", id, stock.getIsAlive() ? "activated" : "deactivated"));
@@ -116,7 +118,8 @@ public class StockController {
     }
 
     @ApiOperation(value = "Delete stock by id",
-            notes = "Deleting stock, whose id specified in params")
+            notes = "Deleting stock, whose id specified in params",
+            response = String.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "User not found",

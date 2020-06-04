@@ -60,9 +60,8 @@ public class LoginAttemptController {
             @ApiResponse(code = 400,
                     message = "Validation error",
                     response = ApiValidationException.class),
-            @ApiResponse(
+            @ApiResponse(code = 500,
                     message = "SMSC error",
-                    code = 500,
                     response = ApiException.class),
             @ApiResponse(code = 415,
                     message = "Not acceptable media type",

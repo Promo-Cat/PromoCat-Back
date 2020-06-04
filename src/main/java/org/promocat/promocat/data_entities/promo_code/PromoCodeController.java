@@ -57,6 +57,7 @@ public class PromoCodeController {
         return ResponseEntity.ok(promoCodeService.findById(id));
     }
 
+    // TODO docs
     @RequestMapping(path = "/admin/stock/promoCode/id", method = RequestMethod.GET)
     public ResponseEntity<Set<PromoCodeDTO>> getPromoCodesByStockId(@RequestParam("id") Long id) {
         return ResponseEntity.ok(stockService.getCodes(id));
@@ -79,6 +80,7 @@ public class PromoCodeController {
     }
 
 
+    // TODO docs
     @RequestMapping(path = "/admin/promoCode/stockCity", method = RequestMethod.GET)
     public ResponseEntity<StockCityDTO> getStockCityByPromoCode(@RequestParam("promoCode") String promoCode) {
         PromoCodeDTO dto = promoCodeService.findByPromoCode(promoCode);
