@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -74,8 +75,7 @@ public class StockController {
     public StockDTO generate(@RequestParam("id") Long id) {
         StockDTO stock = stockService.findById(id);
         if (Objects.isNull(stock.getIsAlive())) {
-            stock = stockService.setActive(id, true);
-            return promoCodeService.savePromoCodes(stock);
+            return promoCodeService.savePromoCodes(stockService.setActive(id, true));
         }
         throw new ApiStockActivationStatusException(String.format(
                 "Stock with id: %d is already %s", id, stock.getIsAlive() ? "activated" : "deactivated"));
