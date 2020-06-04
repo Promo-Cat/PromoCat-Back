@@ -152,11 +152,12 @@ public class MovementService {
     public List<DistanceWithCityDTO> getMovementsByStockAndCity(final Long stockId,
                                                   final Long cityId) {
         StockDTO stock = stockService.findById(stockId);
+        // TODO: 04.06.2020 return single object, not List
         return movementRepository.getSummaryDistanceByStockAndCity(stock.getId(), cityId);
     }
 
     /**
-     *
+     * Суммарные за время акции передвижения юзеров в каждом городе отдельно.
      * @param stockId
      * @return
      */
