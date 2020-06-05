@@ -31,6 +31,8 @@ public class SpringFoxConfig {
     public static final String LOGIN = "Login";
     public static final String ADMIN = "Admin";
     public static final String STOCK_CITY = "Stock and city";
+    public static final String TOKEN = "Token";
+    public static final String MOVEMENT = "Movement";
 
     @Bean
     public Docket api() {
@@ -42,9 +44,9 @@ public class SpringFoxConfig {
                 .groupName("api")
                 .tags(new Tag(CAR, "Car controller"))
                 .tags(new Tag(USER, "User controller"))
-                .tags(new Tag(PROMO_CODE, "Promo-code controller"))
                 .tags(new Tag(STOCK, "Stock controller"))
                 .tags(new Tag(STOCK_CITY, "Stock and city controller"))
+                .tags(new Tag(MOVEMENT, "Movement controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
     }
@@ -54,14 +56,15 @@ public class SpringFoxConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .paths(PathSelectors.ant("/auth/**"))
-                .apis(RequestHandlerSelectors.basePackage("org.promocat.promocat.data_entities"))
+                .apis(RequestHandlerSelectors.basePackage("org.promocat.promocat.data_entities")
+                        .or(RequestHandlerSelectors.basePackage("org.promocat.promocat.util_entities")))
                 .build()
                 .groupName("auth")
                 .tags(new Tag(CITY, "City controller"))
                 .tags(new Tag(COMPANY, "Company controller"))
                 .tags(new Tag(LOGIN, "Login controller"))
                 .tags(new Tag(USER, "User controller"))
-                .tags(new Tag(STOCK_CITY, "Stock and city controller"))
+                .tags(new Tag(TOKEN, "Token controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
     }
@@ -81,7 +84,6 @@ public class SpringFoxConfig {
                 .tags(new Tag(PROMO_CODE, "Promo-code controller"))
                 .tags(new Tag(STOCK, "Stock controller"))
                 .tags(new Tag(ADMIN, "Admin controller"))
-                .tags(new Tag(STOCK_CITY, "Stock and city controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
     }

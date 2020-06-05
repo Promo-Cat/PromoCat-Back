@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,6 +30,7 @@ public class CityService {
 
     /**
      * Добавление города в базу данных.
+     *
      * @param cityFields массив строк с описаием города. (подробнее https://github.com/hflabs/city/blob/master/city.csv)
      * @return объектное представление города в БД {@link CityDTO}.
      */
@@ -52,6 +52,7 @@ public class CityService {
 
     /**
      * Добавление городов в базу данных.
+     *
      * @param cities массив городов с описание каждого города
      *               (подробнее https://github.com/hflabs/city/blob/master/city.csv)
      * @return список всех добавленыых городов {@link List<CityDTO>}.
@@ -63,6 +64,7 @@ public class CityService {
 
     /**
      * Проверка наличия городов бд.
+     *
      * @return {@code true} если количество равно {@code 0}, иначе {@code false}.
      */
     public boolean needToLoad() {
@@ -71,6 +73,7 @@ public class CityService {
 
     /**
      * Подгружает города из csv файла.
+     *
      * @param file путь до csv файла
      * @return кол-во добавленных городов
      */
@@ -87,16 +90,29 @@ public class CityService {
 
     /**
      * Получение списка активных городов.
-     * @return список активных городов {@link List<CityDTO>}.
+     *
+     * @return список активных городов. {@link CityDTO}
      */
     public List<CityDTO> getActiveCities() {
-        Optional<List<City>> city = cityRepository.findByActiveTrue();
+        List<City> cities = cityRepository.findByActiveTrue();
         log.info("Getting active cities");
-        return city.map(cities -> cities.stream().map(cityMapper::toDto).collect(Collectors.toList())).orElse(new ArrayList<>());
+        return cities.stream().map(cityMapper::toDto).collect(Collectors.toList());
+    }
+
+    /**
+     * Получение всех городов.
+     *
+     * @return Список всех городов. {@link CityDTO}
+     */
+    public List<CityDTO> getAllCities() {
+        List<City> cities = cityRepository.findAll();
+        log.info("Getting all cities");
+        return cities.stream().map(cityMapper::toDto).collect(Collectors.toList());
     }
 
     /**
      * Получение информации о городе по названию города.
+     *
      * @param city название города.
      * @return объектное представление города в БД. {@link CityDTO}
      * @throws ApiCityNotFoundException если такого города нет в БД.
@@ -109,6 +125,7 @@ public class CityService {
 
     /**
      * Получение информации о городе по id города.
+     *
      * @param id id города.
      * @return объектное представление города в БД. {@link CityDTO}
      * @throws ApiCityNotFoundException если такого города нет в БД.
@@ -121,6 +138,7 @@ public class CityService {
 
     /**
      * Устанавливает город в активное состояние.
+     *
      * @param city название города.
      * @return объектное представление города в БД. {@link CityDTO}.
      */
@@ -133,6 +151,7 @@ public class CityService {
 
     /**
      * Проверка активности города по его id.
+     *
      * @param id города.
      * @return {@code true} если активен, иначе {@code false}.
      */

@@ -11,12 +11,12 @@ import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.pojo.DistanceDTO;
-import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
-import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
 import org.promocat.promocat.dto.PromoCodesInCityDTO;
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
+import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
+import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -42,7 +42,6 @@ import java.util.Set;
 @Slf4j
 @RestController
 @Api(tags = {SpringFoxConfig.COMPANY})
-//TODO return 404 if not found, docs
 public class CompanyController {
 
     private final CompanyService companyService;
@@ -88,6 +87,9 @@ public class CompanyController {
             @ApiResponse(code = 403,
                     message = "Not company`s token",
                     response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
                     response = ApiException.class)
@@ -95,12 +97,11 @@ public class CompanyController {
     @RequestMapping(path = "/api/company", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getCompany(@RequestHeader("token") String token) {
         JwtReader jwtReader = new JwtReader(token);
-        String telephone = jwtReader.getValue("telephone");
         AccountType accountType = AccountType.of(jwtReader.getValue("account_type"));
         if (accountType != AccountType.COMPANY) {
             throw new ApiForbiddenException("Account type is not a company.");
         }
-        return ResponseEntity.ok(companyService.findByTelephone(telephone));
+        return ResponseEntity.ok(companyService.findByToken(token));
     }
 
     @ApiOperation(value = "Get total number of activated promo-codes.",
@@ -109,6 +110,12 @@ public class CompanyController {
     @ApiResponses(value = {
             @ApiResponse(code = 403,
                     message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
@@ -131,6 +138,12 @@ public class CompanyController {
     @ApiResponses(value = {
             @ApiResponse(code = 403,
                     message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
@@ -156,6 +169,12 @@ public class CompanyController {
             @ApiResponse(code = 403,
                     message = "Stock is not owned by this company.",
                     response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
                     response = ApiException.class)
@@ -178,6 +197,12 @@ public class CompanyController {
     @ApiResponses(value = {
             @ApiResponse(code = 403,
                     message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
@@ -202,6 +227,12 @@ public class CompanyController {
             @ApiResponse(code = 403,
                     message = "Stock is not owned by this company.",
                     response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
                     response = ApiException.class)
@@ -225,6 +256,12 @@ public class CompanyController {
             @ApiResponse(code = 403,
                     message = "Stock is not owned by this company.",
                     response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
                     response = ApiException.class)
@@ -240,13 +277,19 @@ public class CompanyController {
         }
     }
 
-    @ApiOperation(value = "Get total mileage.",
+    @ApiOperation(value = "Get total mileage for each day.",
             notes = "Getting total mileage.",
             response = DistanceDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 403,
                     message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
@@ -263,13 +306,19 @@ public class CompanyController {
         }
     }
 
-    @ApiOperation(value = "Get total mileage in all cities.",
+    @ApiOperation(value = "Get total mileage in all cities for each day.",
             notes = "Getting total mileage in all cities.",
             response = DistanceWithCityDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 403,
                     message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
@@ -286,13 +335,22 @@ public class CompanyController {
         }
     }
 
-    @ApiOperation(value = "Get total mileage in city.",
+    @ApiOperation(value = "Get total mileage in city for each day.",
             notes = "Getting total mileage in given city.",
             response = DistanceWithCityDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 403,
                     message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "City not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
@@ -315,8 +373,8 @@ public class CompanyController {
             response = StockDTO.class,
             responseContainer = "Set")
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
+            @ApiResponse(code = 404,
+                    message = "Company not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
@@ -327,8 +385,24 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.getAllStocks(companyService.findByToken(token)));
     }
 
-    // TODO: 04.06.2020 ApiOperation
-    // Получает суммарные передвижения по всем городом за всё время акции
+    @ApiOperation(value = "Get total mileage in all cities for all time.",
+            notes = "Getting total mileage in all cities.",
+            response = DistanceWithCityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary", method = RequestMethod.GET)
     public ResponseEntity<DistanceDTO> getMovementsSummaryByStock(@PathVariable("stockId") Long stockId,
                                                                   @RequestHeader("token") String token) {
@@ -340,6 +414,27 @@ public class CompanyController {
         }
     }
 
+    @ApiOperation(value = "Get total mileage in city for all time.",
+            notes = "Getting total mileage in given city.",
+            response = DistanceWithCityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "City not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary/byCity/{cityId}", method = RequestMethod.GET)
     public ResponseEntity<DistanceWithCityDTO> getMovementsSummaryByStockAndCity(@PathVariable("stockId") Long stockId,
                                                                                  @PathVariable("cityId") Long cityId,
@@ -357,6 +452,24 @@ public class CompanyController {
         }
     }
 
+    @ApiOperation(value = "Get total mileage for each city for all time.",
+            notes = "Getting total mileage for each city for all time.",
+            response = DistanceWithCityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary/byCity", method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsSummaryByStockForEachCity(@PathVariable("stockId") Long stockId,
                                                                                            @RequestHeader("token") String token) {

@@ -28,6 +28,13 @@ public class LoginAttempt extends AbstractEntity {
     private String authorizationKey;
     private String phoneCode;
     private String telephone;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "account_type", nullable = false)
+    private AccountType accountType;
+
+    public LoginAttempt(AccountType accountType) {
+        this.accountType = accountType;
+    }
 
     /**
      * Ключ авторизации, который соответствует попытке входа.
@@ -51,14 +58,6 @@ public class LoginAttempt extends AbstractEntity {
     @Column(name = "telephone", nullable = false)
     public String getTelephone() {
         return telephone;
-    }
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "account_type", nullable = false)
-    private AccountType accountType;
-
-    public LoginAttempt(AccountType accountType) {
-        this.accountType = accountType;
     }
 
 }

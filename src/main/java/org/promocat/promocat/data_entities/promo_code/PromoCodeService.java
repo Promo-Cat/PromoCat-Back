@@ -24,7 +24,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -50,16 +55,18 @@ public class PromoCodeService {
 
     /**
      * Сохранение промокода в БД.
+     *
      * @param dto объектное представление промо-кода.
      * @return представление промо-кода в БД. {@link PromoCodeDTO}
      */
-    public PromoCodeDTO save(PromoCodeDTO dto) {
-        log.info("Trying to save promo-code: {} to stock id: {}", dto.getPromoCode(), dto.getStockCityId());
+    public PromoCodeDTO save(final PromoCodeDTO dto) {
+        log.info("Trying to save promo-code: {} to stockCity id: {}", dto.getPromoCode(), dto.getStockCityId());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
     /**
      * Поиск промо-кода по id.
+     *
      * @param id промокода.
      * @return представление промо-кода в БД. {@link PromoCodeDTO}
      * @throws ApiPromoCodeNotFoundException если такого промо-кода не существует.
@@ -77,6 +84,7 @@ public class PromoCodeService {
 
     /**
      * Поиск промо-кода по самому промо-коду.
+     *
      * @param promoCode промокод.
      * @return представление промо-кода в БД. {@link PromoCodeDTO}
      * @throws ApiPromoCodeNotFoundException если такого промо-кода не существует.
@@ -127,6 +135,7 @@ public class PromoCodeService {
 
     /**
      * Генерация промо-кодов для акции.
+     *
      * @param stockId айди акции.
      * @return Массив из сгенерированных промокодов. {@link List<PromoCodeDTO>}
      */
@@ -145,6 +154,7 @@ public class PromoCodeService {
 
     /**
      * Сохранение промокодов к ациии.
+     *
      * @param stock объектное представление акции.
      * @return представление акции в БД. {@link StockDTO}
      */
@@ -162,6 +172,7 @@ public class PromoCodeService {
 
     /**
      * Изменение активности промокода по его id.
+     *
      * @param id промокода.
      */
     public void setActive(Long id, Boolean active) {

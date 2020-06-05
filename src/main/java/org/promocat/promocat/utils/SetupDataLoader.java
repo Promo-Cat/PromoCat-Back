@@ -1,7 +1,6 @@
 package org.promocat.promocat.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.File;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.admin.Admin;
 import org.promocat.promocat.data_entities.admin.AdminRepository;
@@ -12,7 +11,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
