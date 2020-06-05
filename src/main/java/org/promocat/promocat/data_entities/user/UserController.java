@@ -241,6 +241,18 @@ public class UserController {
         return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
 
+    @ApiOperation(value = "Get the history of stocks.",
+            notes = "Getting the history of all stocks in which the user participated.",
+            response = StockDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
     public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") String token) {
             UserDTO userDTO = userService.findByToken(token);

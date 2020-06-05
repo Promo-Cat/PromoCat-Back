@@ -44,7 +44,6 @@ public class SpringFoxConfig {
                 .groupName("api")
                 .tags(new Tag(CAR, "Car controller"))
                 .tags(new Tag(USER, "User controller"))
-                .tags(new Tag(PROMO_CODE, "Promo-code controller"))
                 .tags(new Tag(STOCK, "Stock controller"))
                 .tags(new Tag(STOCK_CITY, "Stock and city controller"))
                 .tags(new Tag(MOVEMENT, "Movement controller"))

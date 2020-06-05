@@ -373,9 +373,6 @@ public class CompanyController {
             response = StockDTO.class,
             responseContainer = "Set")
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
             @ApiResponse(code = 404,
                     message = "Company not found",
                     response = ApiException.class),
