@@ -83,7 +83,7 @@ public class MovementService {
      *
      * @param user  объектное представление пользователя. {@link UserDTO}
      * @param stock объектное представление акции. {@link StockDTO}
-     * @return Список передвижений. {@link List<MovementDTO>}
+     * @return Список передвижений. {@link MovementDTO}
      */
     public List<MovementDTO> findByUserAndStock(final UserDTO user, final StockDTO stock) {
         return (movementRepository.findByUserAndStock(userMapper.toEntity(user), stockMapper.toEntity(stock)))
@@ -131,7 +131,7 @@ public class MovementService {
      * Суммарные за каждый день передвижения всех пользователей внутри акции.
      *
      * @param stockId уникальный идентификатор акции.
-     * @return список передвижений. {@link List<DistanceDTO>}
+     * @return список передвижений. {@link DistanceDTO}
      */
     public List<DistanceDTO> getSummaryMovementsByStockForEachDay(final Long stockId) {
         StockDTO stock = stockService.findById(stockId);

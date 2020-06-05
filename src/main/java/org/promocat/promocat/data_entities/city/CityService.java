@@ -55,7 +55,7 @@ public class CityService {
      *
      * @param cities массив городов с описание каждого города
      *               (подробнее https://github.com/hflabs/city/blob/master/city.csv)
-     * @return список всех добавленыых городов {@link List<CityDTO>}.
+     * @return список всех добавленыых городов {@link CityDTO}.
      */
     public List<CityDTO> addCities(List<String[]> cities) {
         log.info("Adding cities");

@@ -83,7 +83,7 @@ public class StockService {
      *
      * @param time стартовая дата.
      * @param days длительность акции
-     * @return список прросроченных акций. {@link List<StockDTO>}
+     * @return список прросроченных акций. {@link StockDTO}
      */
     private List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
         log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
@@ -194,7 +194,7 @@ public class StockService {
      * Получение количество промокодов для каждого города.
      *
      * @param stockId акции
-     * @return {@link List<PromoCodesInCityDTO>} лист POJO.
+     * @return Список {@link PromoCodesInCityDTO}.
      */
     public List<PromoCodesInCityDTO> getAmountOfPromoCodesForEachCity(final Long stockId) {
         StockDTO dto = findById(stockId);

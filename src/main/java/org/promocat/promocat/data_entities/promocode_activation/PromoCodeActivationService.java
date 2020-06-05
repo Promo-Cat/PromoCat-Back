@@ -53,7 +53,7 @@ public class PromoCodeActivationService {
      * Получение всех акций пользователя. История участия пользователя в акциях.
      *
      * @param id пользователя.
-     * @return Список акций пользователя. {@link List<StockDTO>}
+     * @return Список акций пользователя. {@link StockDTO}
      */
     public List<StockDTO> getStocksByUserId(final Long id) {
         return promoCodeActivationRepository.getAllByUserId(id)
@@ -88,7 +88,7 @@ public class PromoCodeActivationService {
      *
      * @param stockId уникальный идентификатор акции.
      * @return Список городов и количетсва активированных промокодов в них.
-     * {@link List<PromoCodeActivationStatisticDTO>}
+     * {@link PromoCodeActivationStatisticDTO}
      */
     public List<PromoCodeActivationStatisticDTO> getCountForEveryCityByStock(final Long stockId) {
         StockDTO stock = stockService.findById(stockId);

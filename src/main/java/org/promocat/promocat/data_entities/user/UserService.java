@@ -144,7 +144,7 @@ public class UserService {
      * Все передвижения пользвателя на протяжении акции.
      *
      * @param user объектное представление пользователя.
-     * @return Список передвижений пользователя. {@link List<MovementDTO>}
+     * @return Список передвижений пользователя. {@link MovementDTO}
      */
     public List<MovementDTO> getUserStatistics(final UserDTO user) {
         return movementService.findByUserAndStock(user, getUsersCurrentStock(user));

@@ -137,7 +137,7 @@ public class PromoCodeService {
      * Генерация промо-кодов для акции.
      *
      * @param stockId айди акции.
-     * @return Массив из сгенерированных промокодов. {@link List<PromoCodeDTO>}
+     * @return Массив из сгенерированных промокодов. {@link PromoCodeDTO}
      */
     private Set<PromoCodeDTO> generate(Long stockId, StockCityDTO city) {
         log.info("Generating {} promo-codes to stock: {} .....", city.getNumberOfPromoCodes(), stockId);
