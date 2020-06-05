@@ -6,7 +6,6 @@ import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
-import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.PromoCodeActivationMapper;
 import org.promocat.promocat.mapper.StockMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,11 +80,7 @@ public class PromoCodeActivationService {
      * @return Суммарное количество активированных промокодов у акции.
      */
     public Long getSummaryCountByStock(final Long stockId) {
-        if (Objects.nonNull(stockService.findById(stockId))) {
-            return promoCodeActivationRepository.countAllByStock(stockId);
-        } else {
-            throw new ApiStockNotFoundException(String.format("No such stock %d", stockId));
-        }
+        return promoCodeActivationRepository.countAllByStock(stockId);
     }
 
     /**
