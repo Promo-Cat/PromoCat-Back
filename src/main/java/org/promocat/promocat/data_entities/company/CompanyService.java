@@ -118,7 +118,7 @@ public class CompanyService {
      * Получить все акции компании.
      *
      * @param dto объектное представление компании.
-     * @return список акций компании {@link Set<StockDTO>}.
+     * @return список акций компании {@link StockDTO}.
      */
     public Set<StockDTO> getAllStocks(final CompanyDTO dto) {
         return dto.getStocks();
