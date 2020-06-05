@@ -1,5 +1,7 @@
 package org.promocat.promocat.utils;
 
+import org.promocat.promocat.dto.UserDTO;
+
 /**
  * Интерфейс, который переводит км в деньги
  */

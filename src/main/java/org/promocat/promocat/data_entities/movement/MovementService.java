@@ -55,7 +55,8 @@ public class MovementService {
      * @return Представление передвижения сохраненное в БД. {@link MovementDTO}
      */
     public MovementDTO save(final MovementDTO movementDTO) {
-        movementDTO.setPanel(movementDTO.getEarnings() * PANEL_PERCENT);
+        Double panel = movementMapper.toEntity(movementDTO).getUser().getPromoCode().getStockCity().getStock().getPanel() / 100.0;
+        movementDTO.setPanel(movementDTO.getEarnings() * panel);
         return movementMapper.toDto(movementRepository.save(movementMapper.toEntity(movementDTO)));
     }
 
