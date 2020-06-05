@@ -42,7 +42,6 @@ import java.util.Set;
 @Slf4j
 @RestController
 @Api(tags = {SpringFoxConfig.COMPANY})
-//TODO return 404 if not found, docs
 public class CompanyController {
 
     private final CompanyService companyService;
@@ -97,14 +96,12 @@ public class CompanyController {
     })
     @RequestMapping(path = "/api/company", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getCompany(@RequestHeader("token") String token) {
-        // TODO find by token, not telephone
         JwtReader jwtReader = new JwtReader(token);
-        String telephone = jwtReader.getValue("telephone");
         AccountType accountType = AccountType.of(jwtReader.getValue("account_type"));
         if (accountType != AccountType.COMPANY) {
             throw new ApiForbiddenException("Account type is not a company.");
         }
-        return ResponseEntity.ok(companyService.findByTelephone(telephone));
+        return ResponseEntity.ok(companyService.findByToken(token));
     }
 
     @ApiOperation(value = "Get total number of activated promo-codes.",
