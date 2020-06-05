@@ -166,6 +166,6 @@ public class UserService {
      */
     public boolean isUser(final String token) {
         JwtReader jwtReader = new JwtReader(token);
-        return AccountType.of(jwtReader.getValue("ACCOUNT_TYPE")) == AccountType.USER;
+        return AccountType.of(jwtReader.getValue("account_type")) == AccountType.USER;
     }
 }

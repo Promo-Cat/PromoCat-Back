@@ -85,14 +85,11 @@ public class UserController {
             @ApiResponse(code = 404,
                     message = "User not found",
                     response = ApiException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/user", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "/api/user", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String token) {
         if (!userService.isUser(token)) {
             throw new ApiForbiddenException("The token is not users.");

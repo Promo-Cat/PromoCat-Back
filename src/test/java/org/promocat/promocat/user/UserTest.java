@@ -1,12 +1,15 @@
 package org.promocat.promocat.user;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
-import org.promocat.promocat.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +20,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -132,5 +139,147 @@ public class UserTest {
 
         this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", adminToken))
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetUserByTelephone() throws Exception {
+        UserDTO user = save("67");
+        MvcResult result = this.mockMvc.perform(get("/admin/user/telephone?telephone=" + user.getTelephone()).header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+        assertEquals(user.getId(), that.getId());
+        assertEquals(user.getTelephone(), that.getTelephone());
+        assertEquals(user.getCityId(), that.getCityId());
+        assertEquals(user.getName(), that.getName());
+        assertEquals(user.getAccountType(), that.getAccountType());
+    }
+
+    @Test
+    public void testGetUserByToken() throws Exception {
+        UserDTO user = save("11");
+
+        MvcResult keyR = this.mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
+                .andExpect(status().isOk())
+                .andReturn();
+        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey=" +
+                new ObjectMapper().readValue(keyR.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey() + "&code=1337"))
+                .andExpect(status().isOk())
+                .andReturn();
+        MvcResult result = this.mockMvc.perform(get("/api/user")
+                .header("token", new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+        assertEquals(user.getId(), that.getId());
+        assertEquals(user.getTelephone(), that.getTelephone());
+        assertEquals(user.getCityId(), that.getCityId());
+        assertEquals(user.getName(), that.getName());
+        assertEquals(user.getAccountType(), that.getAccountType());
+    }
+
+    @Test
+    public void testGetUserWithIncorrectToken() throws Exception {
+        this.mockMvc.perform(get("/api/user").header("token", "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlbl9jcmVhdGVfdGltZSI6MTU5MTI4NTU1MzY3OCwiYWNjb3VudF90eXBlIjoiQ09NUEFOWSIsInRva2VuX2V4cGlyYXRpb25fZGF0ZSI6MTYyMjgyMTU1MzY3OCwidGVsZXBob25lIjoiKzcoOTk5KTI0My0yNi00OSJ9.WqYvXKLsm-pgGpco_U9R-iD6yPOiyMXY6liFA8L0zFQ4YZnoZmpqcSYa3IWMudpiL2JF8aArydGXIIpPVjT_BA"))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testSetPromoCodeWithIncorrectToken() throws Exception {
+        this.mockMvc.perform(post("/api/user/promo-code?promo-code=A").header("token", adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testSetPromoCode() throws Exception {
+        UserDTO user = save("49");
+
+        MvcResult keyR = this.mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
+                .andExpect(status().isOk())
+                .andReturn();
+        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey=" +
+                new ObjectMapper().readValue(keyR.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey() + "&code=1337"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        CompanyDTO company = new CompanyDTO();
+        company.setOrganizationName("I");
+        company.setTelephone("+7(999)243-26-49");
+        company.setInn("1111111111");
+        company.setMail("wqfqw@mail.ru");
+        company.setId(1L);
+        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(company)))
+                .andExpect(status().isOk());
+        MvcResult key = this.mockMvc.perform(get("/auth/company/login?telephone=+7(999)243-26-49"))
+                .andExpect(status().isOk())
+                .andReturn();
+        tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
+                + mapper.readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
+                + "&code=1337")).andExpect(status().isOk())
+                .andReturn();
+        String token = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
+
+        MvcResult cityR = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        CityDTO city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
+
+        StockDTO stock = new StockDTO();
+        stock.setName("www");
+        stock.setStartTime(LocalDateTime.now());
+        stock.setDuration(7L);
+        stock.setCompanyId(company.getId());
+
+        MvcResult stockR = this.mockMvc.perform(post("/api/company/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(stock)))
+                .andExpect(status().isOk())
+                .andReturn();
+        stock = mapper.readValue(stockR.getResponse().getContentAsString(), StockDTO.class);
+
+        StockCityDTO stockCity = new StockCityDTO();
+        stockCity.setStockId(stock.getId());
+        stockCity.setNumberOfPromoCodes(10L);
+        stockCity.setCityId(city.getId());
+
+        this.mockMvc.perform(post("/api/company/stock/city").header("token", token)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(stockCity)))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(post("/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+
+        String[] codes = new String[code.size()];
+
+        int ind = 0;
+        for (Object o : code.toArray()) {
+            codes[ind++] = ((PromoCodeDTO) o).getPromoCode();
+        }
+        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[0]).header("token", adminToken))
+                .andExpect(status().is4xxClientError());
+
+        result = this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[0]).header("token", userToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+        assertEquals(that.getId(), user.getId());
+        assertNotNull(that.getPromoCodeId());
+
+        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[0]).header("token", userToken))
+                .andExpect(status().is4xxClientError());
+
+        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[1]).header("token", userToken))
+                .andExpect(status().isOk());
     }
 }

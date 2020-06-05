@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -203,6 +204,7 @@ public class StockTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    @Transactional
     @Test
     public void testDeleteStockById() throws Exception {
         StockDTO stock = new StockDTO();
