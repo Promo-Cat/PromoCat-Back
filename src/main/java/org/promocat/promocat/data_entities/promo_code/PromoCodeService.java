@@ -59,8 +59,8 @@ public class PromoCodeService {
      * @param dto объектное представление промо-кода.
      * @return представление промо-кода в БД. {@link PromoCodeDTO}
      */
-    public PromoCodeDTO save(PromoCodeDTO dto) {
-        log.info("Trying to save promo-code: {} to stock id: {}", dto.getPromoCode(), dto.getStockCityId());
+    public PromoCodeDTO save(final PromoCodeDTO dto) {
+        log.info("Trying to save promo-code: {} to stockCity id: {}", dto.getPromoCode(), dto.getStockCityId());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 

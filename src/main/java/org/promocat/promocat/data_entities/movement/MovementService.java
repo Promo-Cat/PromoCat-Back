@@ -118,10 +118,6 @@ public class MovementService {
                 .orElse(new UserStockEarningStatisticDTO(0.0, 0.0, 0.0));
     }
 
-//    public List<DistanceDTO> getSummaryMovementsByStock(Long stockId) {
-//        return movementRepository.getDistanceInAllCitiesSummaryByStock(stockId);
-//    }
-
     public List<DistanceWithCityDTO> getMovementsByStockForEveryCityForEachDay(Long stockId) {
         return movementRepository.getDistanceInCitiesByStock(stockId);
     }
@@ -166,17 +162,4 @@ public class MovementService {
         // TODO: 04.06.2020 return single object, not List
         return movementRepository.getSummaryDistanceByStockAndCity(stock.getId(), cityId);
     }
-
-    /**
-     * Суммарные за время акции передвижения юзеров в каждом городе отдельно.
-     *
-     * @param stockId
-     * @return
-     */
-    public List<DistanceWithCityDTO> getMovementsByStockForEachCity(final Long stockId) {
-        StockDTO stock = stockService.findById(stockId);
-        return movementRepository.getSummaryDistanceByStockAndCity(stock.getId(), null);
-    }
-
-
 }
