@@ -225,7 +225,7 @@ public class StockService {
      * Получение всех промокодов.
      *
      * @param stockId уникальный идентификатор акции.
-     * @return Список промокодов. {@link Set<PromoCodeDTO>}
+     * @return Список промокодов. {@link PromoCodeDTO}
      */
     public Set<PromoCodeDTO> getCodes(final Long stockId) {
         StockDTO dto = findById(stockId);
