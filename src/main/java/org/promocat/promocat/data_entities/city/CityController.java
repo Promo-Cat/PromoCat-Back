@@ -47,6 +47,15 @@ public class CityController {
         return ResponseEntity.ok(cityService.getActiveCities());
     }
 
+    @ApiOperation(value = "Get all cities.",
+            notes = "Returning all cities.",
+            response = CityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(value = "/auth/cities", method = RequestMethod.GET)
     public ResponseEntity<List<CityDTO>> getAllCities() {
         return ResponseEntity.ok(cityService.getAllCities());

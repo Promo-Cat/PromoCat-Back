@@ -64,7 +64,6 @@ public class SpringFoxConfig {
                 .tags(new Tag(COMPANY, "Company controller"))
                 .tags(new Tag(LOGIN, "Login controller"))
                 .tags(new Tag(USER, "User controller"))
-                .tags(new Tag(STOCK_CITY, "Stock and city controller"))
                 .tags(new Tag(TOKEN, "Token controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
@@ -85,7 +84,6 @@ public class SpringFoxConfig {
                 .tags(new Tag(PROMO_CODE, "Promo-code controller"))
                 .tags(new Tag(STOCK, "Stock controller"))
                 .tags(new Tag(ADMIN, "Admin controller"))
-                .tags(new Tag(STOCK_CITY, "Stock and city controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
     }
