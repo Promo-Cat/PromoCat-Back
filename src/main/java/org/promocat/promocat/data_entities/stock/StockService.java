@@ -18,7 +18,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +51,7 @@ public class StockService {
 
     /**
      * Сохранеие акции.
+     *
      * @param dto объектное представление акции.
      * @return представление акции в БД. {@link StockDTO}
      */
@@ -56,6 +62,7 @@ public class StockService {
 
     /**
      * Поиск акции по id.
+     *
      * @param id акции.
      * @return представление акции в БД. {@link StockDTO}
      * @throws ApiStockNotFoundException если акция не найдена.
@@ -73,6 +80,7 @@ public class StockService {
 
     /**
      * Получение просроченных акций.
+     *
      * @param time стартовая дата.
      * @param days длительность акции
      * @return список прросроченных акций. {@link List<StockDTO>}
@@ -115,7 +123,8 @@ public class StockService {
 
     /**
      * Установка активности акции
-     * @param id акции
+     *
+     * @param id     акции
      * @param active требуемое состояние {@code true} активно, {@code false} неактивно. {@code null} неизвестно.
      * @return представление акции в БД. {@link StockDTO}
      */
@@ -128,6 +137,7 @@ public class StockService {
 
     /**
      * Удаление акции
+     *
      * @param id акции
      */
     public void deleteById(final Long id) {
@@ -141,6 +151,7 @@ public class StockService {
 
     /**
      * Деактивация акции
+     *
      * @param id акции
      * @return представление акции в БД. {@link StockDTO}
      */
@@ -159,8 +170,9 @@ public class StockService {
 
     /**
      * Получение количества промокодов в конкретном городе.
+     *
      * @param stockId акции
-     * @param cityId города
+     * @param cityId  города
      * @return количество промо-кодов
      */
     public Long getAmountOfPromoCodesInCity(final Long stockId, final Long cityId) {
@@ -169,6 +181,7 @@ public class StockService {
 
     /**
      * Получение общего количества промокодов во всех городах.
+     *
      * @param stockId акции
      * @return общее количество промокодов
      */
@@ -179,6 +192,7 @@ public class StockService {
 
     /**
      * Получение количество промокодов для каждого города.
+     *
      * @param stockId акции
      * @return {@link List<PromoCodesInCityDTO>} лист POJO.
      */
@@ -190,6 +204,7 @@ public class StockService {
 
     /**
      * Получение всех промокодов.
+     *
      * @param stockId уникальный идентификатор акции.
      * @return Список промокодов. {@link Set<PromoCodeDTO>}
      */

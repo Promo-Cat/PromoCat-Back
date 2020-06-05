@@ -16,9 +16,10 @@ import java.util.Optional;
 @Repository
 public interface MovementRepository extends JpaRepository<Movement, Long> {
     List<Movement> findByUserAndStock(User user, Stock stock);
+
     Optional<Movement> findByUserAndDate(User user, LocalDate date);
 
-//    @Query(
+    //    @Query(
 //            value = "select sum(m.earnings) as earnings, sum(m.panel) as panel, (m.earnings - m.panel) as income from movement m where stock_id=?1 and user_id=?2 group by m.date",
 //            nativeQuery = true
 //    )

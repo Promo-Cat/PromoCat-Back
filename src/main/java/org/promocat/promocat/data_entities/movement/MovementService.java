@@ -4,7 +4,9 @@ import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.User;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
@@ -48,6 +50,7 @@ public class MovementService {
 
     /**
      * Сохранение/обновление передвижений пользователя внутри акции.
+     *
      * @param movementDTO передвижение. {@link MovementDTO}
      * @return Представление передвижения сохраненное в БД. {@link MovementDTO}
      */
@@ -58,9 +61,10 @@ public class MovementService {
 
     /**
      * Создание объекта передвижения.
-     * @param distance проеханное расстояние. {@link DistanceDTO}
+     *
+     * @param distance    проеханное расстояние. {@link DistanceDTO}
      * @param earnedMoney количество заработанных денег.
-     * @param user объектное представление пользователя. {@link UserDTO}
+     * @param user        объектное представление пользователя. {@link UserDTO}
      * @return Представление передвижения сохраненное в БД. {@link MovementDTO}
      */
     public MovementDTO create(final DistanceDTO distance, final Double earnedMoney, final UserDTO user) {
@@ -76,7 +80,8 @@ public class MovementService {
 
     /**
      * Все передвижения пользователя внутри акции.
-     * @param user объектное представление пользователя. {@link UserDTO}
+     *
+     * @param user  объектное представление пользователя. {@link UserDTO}
      * @param stock объектное представление акции. {@link StockDTO}
      * @return Список передвижений. {@link List<MovementDTO>}
      */
@@ -89,6 +94,7 @@ public class MovementService {
 
     /**
      * Передвижения пользователя за заданную дату.
+     *
      * @param user объектное представление пользователя. {@link UserDTO}
      * @param date объектное представление акции. {@link LocalDate}
      * @return Передвижение. {@link MovementDTO}
@@ -100,6 +106,7 @@ public class MovementService {
 
     /**
      * Заработок пользователя.
+     *
      * @param userDTO объектное представление пользователя. {@link UserDTO}
      * @param stockId уникальный идентификатор акции.
      * @return заработок пользователя
@@ -122,6 +129,7 @@ public class MovementService {
 
     /**
      * Суммарные за каждый день передвижения всех пользователей внутри акции.
+     *
      * @param stockId уникальный идентификатор акции.
      * @return список передвижений. {@link List<DistanceDTO>}
      */
@@ -132,6 +140,7 @@ public class MovementService {
 
     /**
      * Суммарные за время акции передвижения юзеров по всем городам вместе.
+     *
      * @param stockId уникальный идентификатор акции.
      * @return {@link DistanceDTO} с date равным null
      */
@@ -142,16 +151,15 @@ public class MovementService {
 
     /**
      * Суммарные за время акции передвижения юзеров в конкретном городе.
+     *
      * @param stockId
      * @param cityId
      * @return
      */
     public List<DistanceWithCityDTO> getMovementsByStockAndCity(final Long stockId,
-                                                  final Long cityId) {
+                                                                final Long cityId) {
         StockDTO stock = stockService.findById(stockId);
         // TODO: 04.06.2020 return single object, not List
         return movementRepository.getSummaryDistanceByStockAndCity(stock.getId(), cityId);
     }
-
-
 }

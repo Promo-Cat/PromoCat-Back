@@ -2,7 +2,6 @@ package org.promocat.promocat.exception.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.exception.ApiException;
-import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

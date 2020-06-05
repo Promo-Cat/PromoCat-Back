@@ -9,11 +9,11 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
-import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeActiveException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
@@ -85,6 +85,9 @@ public class UserController {
             @ApiResponse(code = 404,
                     message = "User not found",
                     response = ApiException.class),
+            @ApiResponse(code = 403,
+                    message = "Non-user token",
+                    response = ApiException.class),
             @ApiResponse(code = 415,
                     message = "Not acceptable media type",
                     response = ApiException.class),
@@ -92,7 +95,7 @@ public class UserController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/user", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "/api/user", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String token) {
         if (!userService.isUser(token)) {
             throw new ApiForbiddenException("The token is not users.");
@@ -106,6 +109,9 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 404,
                     message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 403,
+                    message = "Non-user token",
                     response = ApiException.class),
             @ApiResponse(code = 404,
                     message = "Promo-code not found",
@@ -138,6 +144,9 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code = 404,
                     message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 403,
+                    message = "Non-user token",
                     response = ApiException.class),
             @ApiResponse(code = 415,
                     message = "Not acceptable media type",
@@ -178,6 +187,9 @@ public class UserController {
             @ApiResponse(code = 404,
                     message = "User not found",
                     response = ApiException.class),
+            @ApiResponse(code = 403,
+                    message = "Non-user token",
+                    response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
                     response = ApiException.class)
@@ -189,6 +201,30 @@ public class UserController {
         } else {
             throw new ApiForbiddenException("The token is not users.");
         }
+    }
+
+    @ApiOperation(value = "Get the history of stocks.",
+            notes = "Getting the history of all stocks in which the user participated.",
+            response = StockDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 403,
+                    message = "Non-user token",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
+    public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") String token) {
+        if (!userService.isUser(token)) {
+            throw new ApiForbiddenException("The token is not users.");
+        }
+        UserDTO userDTO = userService.findByToken(token);
+        return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
     }
 
     // ------ Admin methods ------
@@ -240,11 +276,4 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {
         return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
-
-    @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
-    public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") String token) {
-            UserDTO userDTO = userService.findByToken(token);
-            return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
-    }
-
 }
