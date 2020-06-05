@@ -11,12 +11,12 @@ import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.pojo.DistanceDTO;
-import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
-import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
 import org.promocat.promocat.dto.PromoCodesInCityDTO;
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
+import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
+import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -88,12 +88,16 @@ public class CompanyController {
             @ApiResponse(code = 403,
                     message = "Not company`s token",
                     response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
                     response = ApiException.class)
     })
     @RequestMapping(path = "/api/company", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getCompany(@RequestHeader("token") String token) {
+        // TODO find by token, not telephone
         JwtReader jwtReader = new JwtReader(token);
         String telephone = jwtReader.getValue("telephone");
         AccountType accountType = AccountType.of(jwtReader.getValue("account_type"));
@@ -109,6 +113,12 @@ public class CompanyController {
     @ApiResponses(value = {
             @ApiResponse(code = 403,
                     message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",

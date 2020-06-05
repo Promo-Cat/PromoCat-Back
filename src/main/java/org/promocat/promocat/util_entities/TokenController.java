@@ -1,10 +1,12 @@
 package org.promocat.promocat.util_entities;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptService;
@@ -28,6 +30,7 @@ import java.util.Optional;
 
 @RestController
 @Slf4j
+@Api(tags = {SpringFoxConfig.TOKEN})
 public class TokenController {
 
     private final LoginAttemptService loginAttemptService;

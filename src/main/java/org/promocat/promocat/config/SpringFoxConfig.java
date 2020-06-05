@@ -3,6 +3,7 @@ package org.promocat.promocat.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -31,6 +32,7 @@ public class SpringFoxConfig {
     public static final String LOGIN = "Login";
     public static final String ADMIN = "Admin";
     public static final String STOCK_CITY = "Stock and city";
+    public static final String TOKEN = "Token";
 
     @Bean
     public Docket api() {
@@ -54,7 +56,8 @@ public class SpringFoxConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .paths(PathSelectors.ant("/auth/**"))
-                .apis(RequestHandlerSelectors.basePackage("org.promocat.promocat.data_entities"))
+                .apis(RequestHandlerSelectors.basePackage("org.promocat.promocat.data_entities")
+                        .or(RequestHandlerSelectors.basePackage("org.promocat.promocat.util_entities")))
                 .build()
                 .groupName("auth")
                 .tags(new Tag(CITY, "City controller"))
@@ -62,6 +65,7 @@ public class SpringFoxConfig {
                 .tags(new Tag(LOGIN, "Login controller"))
                 .tags(new Tag(USER, "User controller"))
                 .tags(new Tag(STOCK_CITY, "Stock and city controller"))
+                .tags(new Tag(TOKEN, "Token controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
     }
