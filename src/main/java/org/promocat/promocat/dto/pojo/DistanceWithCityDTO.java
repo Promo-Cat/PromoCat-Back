@@ -3,7 +3,6 @@ package org.promocat.promocat.dto.pojo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.promocat.promocat.dto.pojo.DistanceDTO;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;

@@ -6,13 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.promocat.promocat.data_entities.stock.Stock;
-import org.promocat.promocat.data_entities.user.User;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @ApiModel(
         value = "Movement",

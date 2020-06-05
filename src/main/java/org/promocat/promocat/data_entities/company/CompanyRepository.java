@@ -12,8 +12,11 @@ import java.util.Optional;
 public interface CompanyRepository extends AbstractAccountRepository<Company> {
 
     Optional<Company> findByToken(String token);
+
     Optional<Company> findByTelephone(String telephone);
+
     Optional<Company> findByOrganizationName(String organizationName);
+
     Optional<Company> findByMail(String mail);
 }
 

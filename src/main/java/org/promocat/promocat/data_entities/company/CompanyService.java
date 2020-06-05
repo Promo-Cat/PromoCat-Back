@@ -33,6 +33,7 @@ public class CompanyService {
 
     /**
      * Сохранение компании в БД.
+     *
      * @param dto объектное представление компании.
      * @return представление комании в БД. {@link CompanyDTO}
      */
@@ -43,6 +44,7 @@ public class CompanyService {
 
     /**
      * Поиск компании по {@code id}.
+     *
      * @param id компании.
      * @return представление компании в БД. {@link CompanyDTO}
      * @throws ApiCompanyNotFoundException если такой компании не существует.
@@ -60,6 +62,7 @@ public class CompanyService {
 
     /**
      * Поиск компании по номеру телефона.
+     *
      * @param telephone номер телефона.
      * @return представление компании в БД. {@link CompanyDTO}
      * @throws ApiCompanyNotFoundException если такой компании не существует.
@@ -77,6 +80,7 @@ public class CompanyService {
 
     /**
      * Поиск компании по имени организации.
+     *
      * @param organizationName имя организации.
      * @return представление компании в БД. {@link CompanyDTO}
      * @throws ApiCompanyNotFoundException если такой компании не существует.
@@ -94,6 +98,7 @@ public class CompanyService {
 
     /**
      * Поиск компании по почте.
+     *
      * @param mail почта компании.
      * @return представление компании в БД. {@link CompanyDTO}
      * @throws ApiCompanyNotFoundException если такой компании не существует.
@@ -111,6 +116,7 @@ public class CompanyService {
 
     /**
      * Получить все акции компании.
+     *
      * @param dto объектное представление компании.
      * @return список акций компании {@link Set<StockDTO>}.
      */
@@ -120,6 +126,7 @@ public class CompanyService {
 
     /**
      * Поиск компании по token.
+     *
      * @param token уникальный токин.
      * @return представление компании в БД. {@link CompanyDTO}
      * @throws ApiCompanyNotFoundException если такой компании не существует.
@@ -134,8 +141,9 @@ public class CompanyService {
 
     /**
      * Проверка на принадлежность акции компании.
+     *
      * @param companyId компании.
-     * @param stockId акции.
+     * @param stockId   акции.
      * @return {@code true} если акция принадлежит компании, {@code false} иначе.
      */
     public boolean isOwner(final Long companyId, final Long stockId) {

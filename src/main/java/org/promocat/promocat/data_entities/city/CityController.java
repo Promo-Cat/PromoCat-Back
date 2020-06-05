@@ -23,11 +23,11 @@ import java.util.List;
 @Slf4j
 public class CityController {
 
-    private final CityService service;
+    private final CityService cityService;
 
     @Autowired
-    public CityController(final CityService service) {
-        this.service = service;
+    public CityController(final CityService cityService) {
+        this.cityService = cityService;
     }
 
     @ApiOperation(value = "Get active cities.",
@@ -44,7 +44,12 @@ public class CityController {
     })
     @RequestMapping(value = "/auth/cities/active", method = RequestMethod.GET)
     public ResponseEntity<List<CityDTO>> getActiveCities() {
-        return ResponseEntity.ok(service.getActiveCities());
+        return ResponseEntity.ok(cityService.getActiveCities());
+    }
+
+    @RequestMapping(value = "/auth/cities", method = RequestMethod.GET)
+    public ResponseEntity<List<CityDTO>> getAllCities() {
+        return ResponseEntity.ok(cityService.getAllCities());
     }
 
     // ------ Admin methods ------
@@ -62,7 +67,7 @@ public class CityController {
     })
     @RequestMapping(value = "/admin/city/{id}", method = RequestMethod.GET)
     public ResponseEntity<CityDTO> getCityById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(service.findById(id));
+        return ResponseEntity.ok(cityService.findById(id));
     }
 
     @ApiOperation(value = "Get information about city.",
@@ -78,7 +83,7 @@ public class CityController {
     })
     @RequestMapping(value = "/admin/city", method = RequestMethod.GET)
     public ResponseEntity<CityDTO> getCity(@RequestParam("city") String city) {
-        return ResponseEntity.ok(service.findByCity(city));
+        return ResponseEntity.ok(cityService.findByCity(city));
     }
 
     @ApiOperation(value = "Activate city.",
@@ -94,6 +99,6 @@ public class CityController {
     })
     @RequestMapping(value = "/admin/city/active", method = RequestMethod.PUT)
     public ResponseEntity<CityDTO> activateCity(@RequestParam("city") String city) {
-        return ResponseEntity.ok(service.setActive(city));
+        return ResponseEntity.ok(cityService.setActive(city));
     }
 }

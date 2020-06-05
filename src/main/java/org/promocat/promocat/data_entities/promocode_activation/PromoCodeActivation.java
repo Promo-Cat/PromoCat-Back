@@ -8,7 +8,11 @@ import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import org.promocat.promocat.data_entities.user.User;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity

@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
-import org.promocat.promocat.data_entities.movement.Movement;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

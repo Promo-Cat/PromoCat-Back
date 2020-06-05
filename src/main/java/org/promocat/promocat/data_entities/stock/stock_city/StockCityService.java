@@ -36,6 +36,7 @@ public class StockCityService {
 
     /**
      * Сохранение промежуточной сущности связывающей акцию и город.
+     *
      * @param dto объектное представление промежуточноой сущности. {@link StockCityDTO}
      * @return Представление промежуточной сущности в БД. {@link StockCityDTO}
      */
@@ -45,6 +46,7 @@ public class StockCityService {
 
     /**
      * Поиск промежуточной сущности связывающей акцию и город.
+     *
      * @param id промежуточной сущности.
      * @return Представление промежуточной сущности в БД. {@link StockCityDTO}
      * @throws ApiStockCityNotFoundException если такой сущности нет.
@@ -61,14 +63,15 @@ public class StockCityService {
 
     /**
      * Поиск промежуточной сущности связывающей акцию и город.
+     *
      * @param stock акция.
-     * @param city город.
+     * @param city  город.
      * @return Представление промежуточной сущности в БД. {@link StockCityDTO}
      * @throws ApiStockCityNotFoundException если такой сущности нет.
      */
     public StockCityDTO findByStockAndCity(final StockDTO stock, final CityDTO city) {
         return stockCityMapper.toDto(stockCityRepository.findByStockAndCity(
-                        stockMapper.toEntity(stock), cityMapper.toEntity(city))
+                stockMapper.toEntity(stock), cityMapper.toEntity(city))
                 .orElseThrow(() -> new ApiStockCityNotFoundException(
                         String.format("No such stockCity with stock: %d, city: %s", stock.getId(), city.getCity()))));
     }

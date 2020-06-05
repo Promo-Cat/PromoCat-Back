@@ -10,5 +10,6 @@ import java.util.Optional;
  */
 public interface LoginAttemptRepository extends JpaRepository<LoginAttempt, Long> {
     LoginAttempt getByAuthorizationKey(String authorizationKey);
+
     Optional<LoginAttempt> getByAccountTypeAndTelephone(AccountType accountType, String telephone);
 }

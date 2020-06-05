@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.constraints.StockDurationConstraint;
-import org.promocat.promocat.data_entities.movement.Movement;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

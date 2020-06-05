@@ -6,6 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CityRepository extends JpaRepository<City, Long> {
-    Optional<List<City>> findByActiveTrue();
+    List<City> findByActiveTrue();
     Optional<City> findByCity(String city);
 }

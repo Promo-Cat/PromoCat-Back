@@ -28,6 +28,7 @@ public class CarService {
 
     /**
      * Сохранение автомобиля в БД.
+     *
      * @param dto объектное представление автомобиля.
      * @return представление автомобиля, хранящееся в БД {@link CarDTO}.
      */
@@ -38,6 +39,7 @@ public class CarService {
 
     /**
      * Поиск автомобиля по {@code id}.
+     *
      * @param id автомобиля.
      * @return представление автомобиля, хранящееся в БД {@link CarDTO}.
      * @throws ApiCarNotFoundException если не найден автомобиль в БД.
@@ -55,6 +57,7 @@ public class CarService {
 
     /**
      * Поиск автомобиля по гос. номеру.
+     *
      * @param number номер автомобиля.
      * @param region регион автомобиля.
      * @return представление автомобиля, хранящееся в БД. {@link CarDTO}
