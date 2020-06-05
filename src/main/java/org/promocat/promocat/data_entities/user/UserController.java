@@ -247,7 +247,7 @@ public class UserController {
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 404,
-                    message = "Company not found",
+                    message = "User not found",
                     response = ApiException.class),
             @ApiResponse(code = 406,
                     message = "Some DB problems",
