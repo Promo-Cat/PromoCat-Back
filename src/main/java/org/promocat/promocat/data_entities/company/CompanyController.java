@@ -280,7 +280,7 @@ public class CompanyController {
         }
     }
 
-    @ApiOperation(value = "Get total mileage.",
+    @ApiOperation(value = "Get total mileage for each day.",
             notes = "Getting total mileage.",
             response = DistanceDTO.class,
             responseContainer = "List")
@@ -309,7 +309,7 @@ public class CompanyController {
         }
     }
 
-    @ApiOperation(value = "Get total mileage in all cities.",
+    @ApiOperation(value = "Get total mileage in all cities for each day.",
             notes = "Getting total mileage in all cities.",
             response = DistanceWithCityDTO.class,
             responseContainer = "List")
@@ -338,7 +338,7 @@ public class CompanyController {
         }
     }
 
-    @ApiOperation(value = "Get total mileage in city.",
+    @ApiOperation(value = "Get total mileage in city for each day.",
             notes = "Getting total mileage in given city.",
             response = DistanceWithCityDTO.class,
             responseContainer = "List")
@@ -391,8 +391,24 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.getAllStocks(companyService.findByToken(token)));
     }
 
-    // TODO: 04.06.2020 ApiOperation
-    // Получает суммарные передвижения по всем городом за всё время акции
+    @ApiOperation(value = "Get total mileage in all cities for all time.",
+            notes = "Getting total mileage in all cities.",
+            response = DistanceWithCityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary", method = RequestMethod.GET)
     public ResponseEntity<DistanceDTO> getMovementsSummaryByStock(@PathVariable("stockId") Long stockId,
                                                                   @RequestHeader("token") String token) {
@@ -404,6 +420,27 @@ public class CompanyController {
         }
     }
 
+    @ApiOperation(value = "Get total mileage in city for all time.",
+            notes = "Getting total mileage in given city.",
+            response = DistanceWithCityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "City not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary/byCity/{cityId}", method = RequestMethod.GET)
     public ResponseEntity<DistanceWithCityDTO> getMovementsSummaryByStockAndCity(@PathVariable("stockId") Long stockId,
                                                                                  @PathVariable("cityId") Long cityId,
@@ -421,6 +458,24 @@ public class CompanyController {
         }
     }
 
+    @ApiOperation(value = "Get total mileage for each city for all time.",
+            notes = "Getting total mileage for each city for all time.",
+            response = DistanceWithCityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 403,
+                    message = "Stock is not owned by this company.",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary/byCity", method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsSummaryByStockForEachCity(@PathVariable("stockId") Long stockId,
                                                                                            @RequestHeader("token") String token) {
