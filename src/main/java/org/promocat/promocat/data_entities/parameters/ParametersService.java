@@ -13,8 +13,8 @@ public class ParametersService {
     /**
      * Стандартное значение комисси для инициализации таблицы с параметрами
      */
-    @Value("${panel.default}")
-    private Double DEFAULT_PANEL_VALUE;
+    // TODO: 05.06.2020 Сделать через инициализатор. @Value подгружается после загрузки контекста.
+    private static final Double DEFAULT_PANEL_VALUE = 0.1;
 
     private final ParametersRepository parametersRepository;
 
@@ -43,7 +43,7 @@ public class ParametersService {
 
     /**
      * Проверяет наличие записи параметров в бд, при отсутствии таковой - создаёт.
-     * @return true, если запись была только создана, false - если запись была изначально
+     * @return true - если запись была только создана, false - если запись была изначально
      */
     private boolean initializeParameters() {
         if (parametersRepository.existsById(1L)) {

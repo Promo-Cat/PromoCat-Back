@@ -3,6 +3,7 @@ package org.promocat.promocat.data_entities.stock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.city.CityService;
+import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.PromoCodeDTO;
@@ -39,14 +40,21 @@ public class StockService {
     private final PromoCodeService promoCodeService;
     private final StockCityService stockCityService;
     private final CityService cityService;
+    private final ParametersService parametersService;
 
     @Autowired
-    public StockService(final StockMapper mapper, final StockRepository repository, final PromoCodeService promoCodeService, final StockCityService stockCityService, final CityService cityService) {
+    public StockService(final StockMapper mapper,
+                        final StockRepository repository,
+                        final PromoCodeService promoCodeService,
+                        final StockCityService stockCityService,
+                        final CityService cityService,
+                        final ParametersService parametersService) {
         this.mapper = mapper;
         this.repository = repository;
         this.promoCodeService = promoCodeService;
         this.stockCityService = stockCityService;
         this.cityService = cityService;
+        this.parametersService = parametersService;
     }
 
     /**
@@ -58,6 +66,17 @@ public class StockService {
     public StockDTO save(final StockDTO dto) {
         log.info("Saving stock with name: {}", dto.getName());
         return mapper.toDto(repository.save(mapper.toEntity(dto)));
+    }
+
+    /**
+     * Создание акции (создаёт НОВУЮ акцию).
+     *
+     * @param dto объектное представление акции.
+     * @return представление акции в БД. {@link StockDTO}
+     */
+    public StockDTO create(final StockDTO dto) {
+        dto.setPanel(parametersService.getPanel());
+        return save(dto);
     }
 
     /**

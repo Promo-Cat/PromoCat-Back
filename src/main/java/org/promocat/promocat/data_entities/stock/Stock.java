@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.stock;
 
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.movement.Movement;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
+import  org.promocat.promocat.data_entities.parameters.Parameters;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,6 +43,16 @@ public class Stock extends AbstractEntity {
     private Long duration;
     private Set<Movement> movements;
     private Set<StockCity> cities;
+    private Double panel;
+
+    /**
+     * Значение комиссии для конкретной акции.
+     * Берётся из {@link Parameters} в момент создания акции.
+     */
+    @Column(name = "panel")
+    public Double getPanel() {
+        return panel;
+    }
 
     /**
      * Название акции.

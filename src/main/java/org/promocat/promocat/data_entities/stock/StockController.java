@@ -57,7 +57,7 @@ public class StockController {
     })
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock) {
-        return ResponseEntity.ok(stockService.save(stock));
+        return ResponseEntity.ok(stockService.create(stock));
     }
 
     @ApiOperation(value = "Generate promo-codes to stock.",

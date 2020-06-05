@@ -78,6 +78,9 @@ public class StockDTO extends AbstractDTO {
     @StockDurationConstraint
     private Long duration;
 
+    // TODO: 05.06.2020 DOCS
+    private Double panel;
+
     @JsonIgnore
     private Set<MovementDTO> movements;
 }

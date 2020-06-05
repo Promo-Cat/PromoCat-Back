@@ -19,7 +19,6 @@ public class Parameters extends AbstractEntity {
     /**
      * Комиссия
      */
-    @Positive
     private Double panel;
 
     @Column(name = "panel")
