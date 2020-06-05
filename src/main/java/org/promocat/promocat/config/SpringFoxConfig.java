@@ -32,6 +32,7 @@ public class SpringFoxConfig {
     public static final String ADMIN = "Admin";
     public static final String STOCK_CITY = "Stock and city";
     public static final String TOKEN = "Token";
+    public static final String MOVEMENT = "Movement";
 
     @Bean
     public Docket api() {
@@ -46,6 +47,7 @@ public class SpringFoxConfig {
                 .tags(new Tag(PROMO_CODE, "Promo-code controller"))
                 .tags(new Tag(STOCK, "Stock controller"))
                 .tags(new Tag(STOCK_CITY, "Stock and city controller"))
+                .tags(new Tag(MOVEMENT, "Movement controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
     }
