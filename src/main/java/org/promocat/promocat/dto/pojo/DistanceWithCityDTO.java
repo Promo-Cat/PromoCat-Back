@@ -14,7 +14,7 @@ import java.time.LocalDate;
         description = "Distance in city."
 )
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of = {}, callSuper = true)
 @NoArgsConstructor
 public class DistanceWithCityDTO extends DistanceDTO {
 
