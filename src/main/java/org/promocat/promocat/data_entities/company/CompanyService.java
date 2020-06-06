@@ -1,11 +1,13 @@
 package org.promocat.promocat.data_entities.company;
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.mapper.CompanyMapper;
+import org.promocat.promocat.util_entities.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +23,17 @@ public class CompanyService {
     private final CompanyMapper mapper;
     private final CompanyRepository companyRepository;
     private final StockService stockService;
+    private final TokenService tokenService;
 
     @Autowired
     public CompanyService(final CompanyMapper mapper,
                           final CompanyRepository companyRepository,
-                          final StockService stockService) {
+                          final StockService stockService,
+                          final TokenService tokenService) {
         this.mapper = mapper;
         this.companyRepository = companyRepository;
         this.stockService = stockService;
+        this.tokenService = tokenService;
     }
 
     /**
@@ -151,4 +156,24 @@ public class CompanyService {
         StockDTO stockDTO = stockService.findById(stockId);
         return companyDTO.getId().equals(stockDTO.getCompanyId());
     }
+
+    /**
+     * Возвращает DTO компании.
+     * Получает {@link AccountType} из {@code token} и в зависимости от типа аккаунта получает либо из токена компании, либо по {@code companyId}.
+     * @param token JWS-токен в котором хранятся данные о пользователе
+     * @param companyId nullable id компании
+     * @return DTO компании
+     */
+    public CompanyDTO getCompanyForStatistics(String token, Long companyId) {
+        AccountType accountType = tokenService.getAccountType(token);
+        if (accountType == AccountType.COMPANY) {
+            return findByToken(token);
+        } else if (accountType == AccountType.ADMIN) {
+            return findById(companyId);
+        } else {
+            log.error("Non correct account type {}", accountType.getType());
+            return null;
+        }
+    }
+
 }

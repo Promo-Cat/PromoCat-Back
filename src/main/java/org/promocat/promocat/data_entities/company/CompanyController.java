@@ -121,10 +121,12 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/summary", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/promoCodeActivation/summary",
+            "/admin/statistic/company/stock/{stockId}/promoCodeActivation/summary" }, method = RequestMethod.GET)
     public ResponseEntity<Long> getSummaryPromoCodeActivation(@PathVariable("stockId") Long stockId,
+                                                              @RequestParam(value = "companyId", required = false) Long companyId,
                                                               @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(promoCodeActivationService.getSummaryCountByStock(stockId));
         } else {
@@ -149,11 +151,13 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}",
+            "/admin/statistic/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}" }, method = RequestMethod.GET)
     public ResponseEntity<Long> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
                                                              @PathVariable("cityId") Long cityId,
+                                                             @RequestParam(value = "companyId", required = false) Long companyId,
                                                              @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(promoCodeActivationService.getCountByCityAndStock(cityId, stockId));
         } else {
@@ -179,11 +183,13 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/promoCodeActivation/byCity", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/promoCodeActivation/byCity",
+            "/admin/statistic/company/stock/{stockId}/promoCodeActivation/byCity" }, method = RequestMethod.GET)
     public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(
             @PathVariable("stockId") Long stockId,
+            @RequestParam(value = "companyId", required = false) Long companyId,
             @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(promoCodeActivationService.getCountForEveryCityByStock(stockId));
         } else {
@@ -208,11 +214,13 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/statistic/byCity/{cityId}", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/statistic/byCity/{cityId}",
+            "/admin/statistic/company/stock/{stockId}/byCity/{cityId}" }, method = RequestMethod.GET)
     public ResponseEntity<Long> getAmountOfPromoCodesInCity(@PathVariable("stockId") Long stockId,
                                                             @PathVariable("cityId") Long cityId,
+                                                            @RequestParam(value = "companyId", required = false) Long companyId,
                                                             @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(stockService.getAmountOfPromoCodesInCity(stockId, cityId));
         } else {
@@ -237,10 +245,12 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/statistic/total", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/statistic/total",
+            "/admin/statistic/company/stock/{stockId}/total" }, method = RequestMethod.GET)
     public ResponseEntity<Long> getTotalAmountOfPromoCodes(@PathVariable("stockId") Long stockId,
+                                                           @RequestParam(value = "companyId", required = false) Long companyId,
                                                            @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(stockService.getTotalAmountOfPromoCodes(stockId));
         } else {
@@ -266,10 +276,12 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/statistic/byCity", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/statistic/byCity",
+            "/admin/statistic/company/stock/{stockId}/byCity" }, method = RequestMethod.GET)
     public ResponseEntity<List<PromoCodesInCityDTO>> getAmountOfPromoCodesForEachCity(@PathVariable("stockId") Long stockId,
+                                                                                      @RequestParam(value = "companyId", required = false) Long companyId,
                                                                                       @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(stockService.getAmountOfPromoCodesForEachCity(stockId));
         } else {
@@ -295,10 +307,12 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/movements/forEachDay/summary", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/forEachDay/summary",
+            "/admin/statistic/company/stock/{stockId}/movements/forEachDay/summary" }, method = RequestMethod.GET)
     public ResponseEntity<List<DistanceDTO>> getMovementsByStock(@PathVariable("stockId") Long stockId,
+                                                                 @RequestParam(value = "companyId", required = false) Long companyId,
                                                                  @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(movementService.getSummaryMovementsByStockForEachDay(stockId));
         } else {
@@ -324,10 +338,12 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/movements/forEachDay", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/forEachDay",
+            "/admin/statistic/company/stock/{stockId}/movements/forEachDay" }, method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsByStockForEveryCity(@PathVariable("stockId") Long stockId,
+                                                                                     @RequestParam(value = "companyId", required = false) Long companyId,
                                                                                      @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(movementService.getMovementsByStockForEveryCityForEachDay(stockId));
         } else {
@@ -356,11 +372,13 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/movements/forEachDay/byCity/{cityId}", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/forEachDay/byCity/{cityId}",
+            "/admin/statistic/company/stock/{stockId}/movements/forEachDay/byCity/{cityId}" }, method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsByStockAndCity(@PathVariable("stockId") Long stockId,
                                                                                 @PathVariable("cityId") Long cityId,
+                                                                                @RequestParam(value = "companyId", required = false) Long companyId,
                                                                                 @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(movementService.getMovementsByStockAndCityForEachDay(stockId, cityId));
         } else {
@@ -380,9 +398,13 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/history", method = RequestMethod.GET)
-    public ResponseEntity<Set<StockDTO>> getAllStocks(@RequestHeader("token") String token) {
-        return ResponseEntity.ok(companyService.getAllStocks(companyService.findByToken(token)));
+    @RequestMapping(path = { "/api/company/stock/history",
+            "/admin/statistic/company/stock/history" }, method = RequestMethod.GET)
+    public ResponseEntity<Set<StockDTO>> getAllStocks(
+            @RequestParam(value = "companyId", required = false) Long companyId,
+            @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
+        return ResponseEntity.ok(companyService.getAllStocks(companyDTO));
     }
 
     @ApiOperation(value = "Get total mileage in all cities for all time.",
@@ -403,10 +425,12 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/summary",
+            "/admin/statistic/company/stock/{stockId}/movements/summary" }, method = RequestMethod.GET)
     public ResponseEntity<DistanceDTO> getMovementsSummaryByStock(@PathVariable("stockId") Long stockId,
+                                                                  @RequestParam(value = "companyId", required = false) Long companyId,
                                                                   @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(movementService.getSummaryMovementsByStock(stockId));
         } else {
@@ -435,11 +459,13 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary/byCity/{cityId}", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/summary/byCity/{cityId}",
+            "/admin/statistic/company/stock/{stockId}/movements/summary/byCity/{cityId}" }, method = RequestMethod.GET)
     public ResponseEntity<DistanceWithCityDTO> getMovementsSummaryByStockAndCity(@PathVariable("stockId") Long stockId,
                                                                                  @PathVariable("cityId") Long cityId,
+                                                                                 @RequestParam(value = "companyId", required = false) Long companyId,
                                                                                  @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             List<DistanceWithCityDTO> res = movementService.getMovementsByStockAndCity(stockId, cityId);
             if (res.size() == 1) {
@@ -470,10 +496,12 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/api/company/stock/{stockId}/movements/summary/byCity", method = RequestMethod.GET)
+    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/summary/byCity",
+    "/admin/statistic/company/stock/{stockId}/movements/summary/byCity"}, method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsSummaryByStockForEachCity(@PathVariable("stockId") Long stockId,
+                                                                                           @RequestParam(value = "companyId", required = false) Long companyId,
                                                                                            @RequestHeader("token") String token) {
-        CompanyDTO companyDTO = companyService.findByToken(token);
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(movementService.getMovementsByStockAndCity(stockId, null));
         } else {

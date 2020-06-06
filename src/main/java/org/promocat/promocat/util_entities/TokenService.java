@@ -74,8 +74,7 @@ public class TokenService {
      * @throws UsernameNotFoundException если токен не найден в БД
      */
     public Optional<UserDetails> findByToken(String token) throws UsernameNotFoundException {
-        JwtReader reader = new JwtReader(token);
-        AccountType accountType = AccountType.of(reader.getValue("account_type"));
+        AccountType accountType = getAccountType(token);
 
         Optional<? extends AbstractAccount> userRecord = accountRepositoryManager.getRepository(accountType).getByToken(token);
         if (userRecord.isPresent()) {
@@ -133,6 +132,11 @@ public class TokenService {
     @Value("${jwt.key}")
     public void setJwtKey(String jwtKey) {
         JWT_KEY = jwtKey;
+    }
+
+    public AccountType getAccountType(String token) {
+        JwtReader reader = new JwtReader(token);
+        return AccountType.of(reader.getValue("account_type"));
     }
 
 }
