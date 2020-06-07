@@ -134,6 +134,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.kenglxn.qrgen</groupId>
+            <artifactId>javase</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>2.3</version>
@@ -193,6 +199,10 @@
             <id>jcenter-snapshots</id>
             <name>jcenter</name>
             <url>https://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 </project>

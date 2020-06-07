@@ -1,5 +1,13 @@
 package org.promocat.promocat.utils;
 
+import net.glxn.qrgen.javase.QRCode;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -28,5 +36,20 @@ public class Generator {
             }
         }
         return code.toString();
+    }
+
+    public static BufferedImage generateQRCodeImage(final String barcodeText) {
+        ByteArrayOutputStream stream = QRCode
+                .from(barcodeText)
+                .withSize(250, 250)
+                .stream();
+        ByteArrayInputStream bis = new ByteArrayInputStream(stream.toByteArray());
+
+        try {
+            return ImageIO.read(bis);
+        } catch (IOException e) {
+            // TODO exception
+            throw new UsernameNotFoundException("TODO");
+        }
     }
 }

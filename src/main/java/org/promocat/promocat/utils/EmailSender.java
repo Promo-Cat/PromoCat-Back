@@ -35,7 +35,7 @@ public class EmailSender {
         MimeMessage msg = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(msg, true);
         helper.setFrom("devru@promocatcompany.com");
-        helper.setTo("lyskin-2013@mail.ru");
+        helper.setTo("ivandota228@gmail.com");
         helper.setSubject("Промокоды");
         helper.setText("");
         for (Path file : files) {

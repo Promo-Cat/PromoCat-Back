@@ -17,10 +17,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -31,6 +34,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -101,28 +106,56 @@ public class PromoCodeService {
     }
 
     private void sendMail(Set<StockCityDTO> cities) {
-        List<Path> files = new ArrayList<>();
+        List<Path> images = new ArrayList<>();
+        List<Path> archives = new ArrayList<>();
+
         for (StockCityDTO city : cities) {
-            String fileName = Generator.generate(GeneratorConfig.FILE_NAME) + "$" + cityService.findById(city.getCityId()).getCity() + ".txt";
-            Path pathToFile = Paths.get("src", "main", "resources", fileName);
-            try (FileWriter writer = new FileWriter(new File(pathToFile.toString()))) {
-                for (PromoCodeDTO code : city.getPromoCodes()) {
-                    writer.write(code.getPromoCode() + "\n");
+            List<Path> imagesInCity = new ArrayList<>();
+            String zipName = Generator.generate(GeneratorConfig.FILE_NAME) + "$" +
+                    cityService.findById(city.getCityId()).getCity() + ".zip";
+            Path pathToZip = Paths.get("src", "main", "resources", zipName);
+            for (PromoCodeDTO code : city.getPromoCodes()) {
+                String imageName = code.getPromoCode() + "$" +
+                        cityService.findById(city.getCityId()).getCity() + ".png";
+                Path pathToImage = Paths.get("src", "main", "resources", imageName);
+                try {
+                    ImageIO.write(Generator.generateQRCodeImage(code.getPromoCode()),
+                            "png", new File(pathToImage.toString()));
+                    log.info("QR code {} with promo-codes was generated", pathToImage.toString());
+                } catch (IOException e) {
+                    log.error("An exception occurs {}", e.getMessage());
                 }
-                log.info("File {} with PromoCodes was generated", fileName);
-            } catch (IOException e) {
-                System.out.printf("An exception occurs %s", e.getMessage());
+                imagesInCity.add(pathToImage);
             }
-            files.add(pathToFile);
+            images.addAll(imagesInCity);
+            try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(pathToZip.toString()))) {
+                for (Path filePath : imagesInCity) {
+                    File fileToZip = new File(filePath.toString());
+                    zipOut.putNextEntry(new ZipEntry(fileToZip.getName()));
+                    Files.copy(fileToZip.toPath(), zipOut);
+                }
+            } catch (IOException e) {
+                log.error("An exception occurs {}", e.getMessage());
+            }
+            archives.add(pathToZip);
         }
 
         try {
-            emailSender.send(files);
+            emailSender.send(archives);
             log.info("Files was send");
         } catch (MessagingException e) {
             log.error("Files wasn't send");
         } finally {
-            for (Path path : files) {
+            for (Path path : images) {
+                File file = path.toFile();
+                if (file.delete()) {
+                    log.info("Delete file {} with PromoCodes", file.getName());
+                } else {
+                    log.info("File {} not found", file.getName());
+                }
+            }
+            // TODO не удаляется архив
+            for (Path path : archives) {
                 File file = path.toFile();
                 if (file.delete()) {
                     log.info("Delete file {} with PromoCodes", file.getName());
