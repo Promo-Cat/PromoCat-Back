@@ -82,6 +82,7 @@ public class TokenService {
             SecurityUser user = new SecurityUser(user1.getTelephone(), user1.getAccountType());
             return Optional.of(user);
         } else {
+            // TODO exception
             throw new UsernameNotFoundException("Token is not found in db.");
         }
     }
@@ -101,6 +102,7 @@ public class TokenService {
         try {
             account = (AbstractAccount) repository.getByTelephone(telephone).orElseThrow();
         } catch (NoSuchElementException e) {
+            // TODO exception
             throw new UsernameNotFoundException("User with number " + telephone + " doesn`t presented in database");
         }
         String token = generateToken(abstractAccountMapper.toDto(account));
