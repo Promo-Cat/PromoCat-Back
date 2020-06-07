@@ -17,6 +17,7 @@ import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
 import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
+import org.promocat.promocat.dto.pojo.StockCostDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -504,6 +505,19 @@ public class CompanyController {
         CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(movementService.getMovementsByStockAndCity(stockId, null));
+        } else {
+            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
+        }
+    }
+
+    @RequestMapping(path = { "/api/company/stock/{stockId}/cost",
+            "/admin/statistic/company/stock/{stockId}/cost"} , method = RequestMethod.GET)
+    public ResponseEntity<StockCostDTO> getStockCost(@PathVariable("stockId") Long stockId,
+                                                     @RequestParam(value = "companyId", required = false) Long companyId,
+                                                     @RequestHeader("token") String token) {
+        CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
+        if (companyService.isOwner(companyDTO.getId(), stockId)) {
+            return ResponseEntity.ok(movementService.getSummaryEarningsStatisticByStock(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }

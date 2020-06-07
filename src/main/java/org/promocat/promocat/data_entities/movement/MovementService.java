@@ -9,10 +9,12 @@ import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
+import org.promocat.promocat.dto.pojo.StockCostDTO;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.mapper.MovementMapper;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
+import org.promocat.promocat.utils.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,10 +37,11 @@ public class MovementService {
     private final StockMapper stockMapper;
     private final StockCityService stockCityService;
     private final StockService stockService;
+    private final PaymentService paymentService;
 
     @Autowired
     public MovementService(final MovementRepository movementRepository,
-                           final PromoCodeService promoCodeService, final MovementMapper movementMapper, final UserMapper userMapper, final StockMapper stockMapper, final StockCityService stockCityService, final StockService stockService) {
+                           final PromoCodeService promoCodeService, final MovementMapper movementMapper, final UserMapper userMapper, final StockMapper stockMapper, final StockCityService stockCityService, final StockService stockService, PaymentService paymentService) {
         this.movementRepository = movementRepository;
         this.promoCodeService = promoCodeService;
         this.movementMapper = movementMapper;
@@ -46,6 +49,7 @@ public class MovementService {
         this.stockMapper = stockMapper;
         this.stockCityService = stockCityService;
         this.stockService = stockService;
+        this.paymentService = paymentService;
     }
 
     /**
@@ -162,5 +166,15 @@ public class MovementService {
         StockDTO stock = stockService.findById(stockId);
         // TODO: 04.06.2020 return single object, not List
         return movementRepository.getSummaryDistanceByStockAndCity(stock.getId(), cityId);
+    }
+
+    public StockCostDTO getSummaryEarningsStatisticByStock(final Long stockId) {
+        StockDTO stock = stockService.findById(stockId);
+        UserStockEarningStatisticDTO earnings = movementRepository.getSummaryEarningByStock(stock.getId());
+        StockCostDTO stockCostDTO = new StockCostDTO();
+        stockCostDTO.setDriversPayment(earnings.getSummary());
+        stockCostDTO.setPrepayment(paymentService.getPrepayment(stock));
+        // TODO: 06.06.2020  тесты
+        return stockCostDTO;
     }
 }

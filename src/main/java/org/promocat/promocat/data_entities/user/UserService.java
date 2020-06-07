@@ -12,7 +12,7 @@ import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.mapper.UserMapper;
-import org.promocat.promocat.utils.DistanceToMoneyConverter;
+import org.promocat.promocat.utils.PaymentService;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class UserService {
     private final PromoCodeService promoCodeService;
     private final MovementService movementService;
     private final StockCityService stockCityService;
-    private final DistanceToMoneyConverter distanceToMoneyConverter;
+    private final PaymentService paymentService;
 
 
     @Autowired
@@ -43,14 +43,14 @@ public class UserService {
                        final PromoCodeService promoCodeService,
                        final MovementService movementService,
                        final StockCityService stockCityService,
-                       final DistanceToMoneyConverter distanceToMoneyConverter) {
+                       final PaymentService paymentService) {
         this.userRepository = userRepository;
         this.userMapper = mapper;
         this.stockService = stockService;
         this.promoCodeService = promoCodeService;
         this.movementService = movementService;
         this.stockCityService = stockCityService;
-        this.distanceToMoneyConverter = distanceToMoneyConverter;
+        this.paymentService = paymentService;
     }
 
     /**
@@ -158,7 +158,7 @@ public class UserService {
      * @return Заработанное количество денег.
      */
     public double earnMoney(final UserDTO user, final Double distance) {
-        Double earnedMoney = distanceToMoneyConverter.convert(distance);
+        Double earnedMoney = paymentService.distanceToMoney(distance);
         log.info("User with id {} earned {} money", user.getId(), earnedMoney);
         user.setTotalEarnings(user.getTotalEarnings() + earnedMoney);
         save(user);

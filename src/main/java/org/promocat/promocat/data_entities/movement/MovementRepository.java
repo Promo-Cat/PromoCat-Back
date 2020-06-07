@@ -70,4 +70,12 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     )
     List<DistanceWithCityDTO> getSummaryDistanceByStockAndCity(Long stockId, Long cityId);
 
+    @Query(
+            "select new org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO(sum(m.distance), sum(m.earnings), sum(m.panel)) " +
+                    "from Movement m " +
+                    "where m.stock.id=?1 " +
+                    "group by m.stock"
+    )
+    UserStockEarningStatisticDTO getSummaryEarningByStock(Long stockId);
+
 }
