@@ -266,7 +266,7 @@ public class UserTest {
         MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        Set<PromoCodeDTO> code = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
 
         String[] codes = new String[code.size()];
 
@@ -333,32 +333,26 @@ public class UserTest {
         this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[0]).header("token", userToken))
                 .andExpect(status().isOk());
 
-        MvcResult userR = this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", adminToken))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        UserDTO that = new ObjectMapper().readValue(userR.getResponse().getContentAsString(), UserDTO.class);
-
-        MvcResult movementR = this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE).content(new ObjectMapper().writeValueAsString(distance))
+        MvcResult movementR = this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(distance))
                 .header("token", userToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        MovementDTO movement = new ObjectMapper().readValue(movementR.getResponse().getContentAsString(), MovementDTO.class);
+        MovementDTO movement = mapper.readValue(movementR.getResponse().getContentAsString(), MovementDTO.class);
 
         assertEquals(movement.getStockId(), stock.getId());
         assertEquals(movement.getUserId(), user.getId());
         assertEquals(movement.getDistance(), distance.getDistance());
         assertEquals(movement.getDate(), distance.getDate());
 
-        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE).content(new ObjectMapper().writeValueAsString(distance))
+        movementR = this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(distance))
                 .header("token", userToken))
-                .andExpect(status().isOk());
-
-        userR = this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
+        movement = mapper.readValue(movementR.getResponse().getContentAsString(), MovementDTO.class);
 
-        that = new ObjectMapper().readValue(userR.getResponse().getContentAsString(), UserDTO.class);
-        assertEquals(that.getMovements().size(), 2);
+        assertEquals(movement.getDistance(), Double.valueOf(24.0));
+        assertEquals(movement.getStockId(), stock.getId());
+        assertEquals(movement.getUserId(), user.getId());
+        assertEquals(movement.getDate(), distance.getDate());
     }
 }
