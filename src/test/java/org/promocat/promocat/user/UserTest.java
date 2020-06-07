@@ -23,10 +23,10 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -303,7 +303,7 @@ public class UserTest {
 
     @Test
     public void testMoveUser() throws Exception {
-        UserDTO user = save("91");
+        UserDTO user = save("37");
         DistanceDTO distance = new DistanceDTO();
         distance.setDate(LocalDate.now());
         distance.setDistance(12.0);
@@ -354,5 +354,108 @@ public class UserTest {
         assertEquals(movement.getStockId(), stock.getId());
         assertEquals(movement.getUserId(), user.getId());
         assertEquals(movement.getDate(), distance.getDate());
+    }
+
+    @Test
+    public void testGetStatisticsWitIncorrectToken() throws Exception {
+        this.mockMvc.perform(get("/api/user/statistics").header("token", adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetStatistics() throws Exception {
+        UserDTO user = save("72");
+        DistanceDTO distance1 = new DistanceDTO();
+        distance1.setDate(LocalDate.now());
+        distance1.setDistance(12.0);
+
+        DistanceDTO distance2 = new DistanceDTO();
+        distance2.setDate(LocalDate.now().plusDays(1));
+        distance2.setDistance(12.0);
+
+        MvcResult keyR = this.mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
+                .andExpect(status().isOk())
+                .andReturn();
+        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey=" +
+                new ObjectMapper().readValue(keyR.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey() + "&code=1337"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
+
+        StockDTO stock = generate();
+
+        MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        String[] codes = new String[code.size()];
+
+        int ind = 0;
+        for (Object o : code.toArray()) {
+            codes[ind++] = ((PromoCodeDTO) o).getPromoCode();
+        }
+
+        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[0]).header("token", userToken))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(distance1))
+                .header("token", userToken))
+                .andExpect(status().isOk());
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(distance2))
+                .header("token", userToken))
+                .andExpect(status().isOk());
+
+        result = this.mockMvc.perform(get("/api/user/statistics").header("token", userToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<MovementDTO> movements = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        assertEquals(movements.size(), 2);
+    }
+
+    @Test
+    public void testGetUserStocksWithIncorrectToken() throws Exception {
+        this.mockMvc.perform(get("/api/user/stocks").header("token", adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetUserStocks() throws Exception {
+        UserDTO user = save("91");
+        DistanceDTO distance = new DistanceDTO();
+        distance.setDate(LocalDate.now());
+        distance.setDistance(12.0);
+
+        MvcResult keyR = this.mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
+                .andExpect(status().isOk())
+                .andReturn();
+        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey=" +
+                new ObjectMapper().readValue(keyR.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey() + "&code=1337"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
+
+        StockDTO stock = generate();
+
+        MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        String[] codes = new String[code.size()];
+
+        int ind = 0;
+        for (Object o : code.toArray()) {
+            codes[ind++] = ((PromoCodeDTO) o).getPromoCode();
+        }
+
+        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[0]).header("token", userToken))
+                .andExpect(status().isOk());
+
+        result = this.mockMvc.perform(get("/api/user/stocks").header("token", userToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<StockDTO> stocks = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        assertEquals(stocks.size(), 1);
     }
 }
