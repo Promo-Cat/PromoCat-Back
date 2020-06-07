@@ -12,7 +12,7 @@ import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivat
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
-import org.promocat.promocat.dto.PromoCodesInCityDTO;
+import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;

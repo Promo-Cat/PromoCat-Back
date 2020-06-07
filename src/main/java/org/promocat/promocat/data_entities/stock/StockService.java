@@ -7,7 +7,7 @@ import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.PromoCodeDTO;
-import org.promocat.promocat.dto.PromoCodesInCityDTO;
+import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
