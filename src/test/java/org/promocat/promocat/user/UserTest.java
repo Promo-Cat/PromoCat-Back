@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +21,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -42,9 +44,13 @@ public class UserTest {
     private MockMvc mockMvc;
 
     private String adminToken;
+    private ObjectMapper mapper;
 
     @Before
     public void init() throws Exception {
+        mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         MvcResult key = this.mockMvc.perform(get("/auth/admin/login?telephone=+7(999)243-26-99"))
                 .andExpect(status().isOk()).andReturn();
         MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
@@ -192,22 +198,7 @@ public class UserTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @Test
-    public void testSetPromoCode() throws Exception {
-        UserDTO user = save("49");
-
-        MvcResult keyR = this.mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
-                .andExpect(status().isOk())
-                .andReturn();
-        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey=" +
-                new ObjectMapper().readValue(keyR.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey() + "&code=1337"))
-                .andExpect(status().isOk())
-                .andReturn();
-        String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
+    private StockDTO generate() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setOrganizationName("I");
         company.setTelephone("+7(999)243-26-49");
@@ -220,7 +211,7 @@ public class UserTest {
         MvcResult key = this.mockMvc.perform(get("/auth/company/login?telephone=+7(999)243-26-49"))
                 .andExpect(status().isOk())
                 .andReturn();
-        tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
+        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
                 + mapper.readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
@@ -255,10 +246,27 @@ public class UserTest {
         this.mockMvc.perform(post("/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
+        return stock;
+    }
+
+    @Test
+    public void testSetPromoCode() throws Exception {
+        UserDTO user = save("49");
+
+        MvcResult keyR = this.mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
+                .andExpect(status().isOk())
+                .andReturn();
+        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey=" +
+                new ObjectMapper().readValue(keyR.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey() + "&code=1337"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
+        StockDTO stock = generate();
+
         MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        Set<PromoCodeDTO> code = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
 
         String[] codes = new String[code.size()];
 
@@ -281,5 +289,76 @@ public class UserTest {
 
         this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[1]).header("token", userToken))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testMoveUserWithIncorrectToken() throws Exception {
+        DistanceDTO distance = new DistanceDTO();
+        distance.setDate(LocalDate.now());
+        distance.setDistance(12.0);
+        this.mockMvc.perform(post("/api/user/move").header("token", "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlbl9jcmVhdGVfdGltZSI6MTU5MTI4NTU1MzY3OCwiYWNjb3VudF90eXBlIjoiQ09NUEFOWSIsInRva2VuX2V4cGlyYXRpb25fZGF0ZSI6MTYyMjgyMTU1MzY3OCwidGVsZXBob25lIjoiKzcoOTk5KTI0My0yNi00OSJ9.WqYvXKLsm-pgGpco_U9R-iD6yPOiyMXY6liFA8L0zFQ4YZnoZmpqcSYa3IWMudpiL2JF8aArydGXIIpPVjT_BA")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(new ObjectMapper().writeValueAsString(distance)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testMoveUser() throws Exception {
+        UserDTO user = save("91");
+        DistanceDTO distance = new DistanceDTO();
+        distance.setDate(LocalDate.now());
+        distance.setDistance(12.0);
+
+        MvcResult keyR = this.mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
+                .andExpect(status().isOk())
+                .andReturn();
+        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey=" +
+                new ObjectMapper().readValue(keyR.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey() + "&code=1337"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
+
+        StockDTO stock = generate();
+
+        MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        String[] codes = new String[code.size()];
+
+        int ind = 0;
+        for (Object o : code.toArray()) {
+            codes[ind++] = ((PromoCodeDTO) o).getPromoCode();
+        }
+
+        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[0]).header("token", userToken))
+                .andExpect(status().isOk());
+
+        MvcResult userR = this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO that = new ObjectMapper().readValue(userR.getResponse().getContentAsString(), UserDTO.class);
+
+        MvcResult movementR = this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE).content(new ObjectMapper().writeValueAsString(distance))
+                .header("token", userToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        MovementDTO movement = new ObjectMapper().readValue(movementR.getResponse().getContentAsString(), MovementDTO.class);
+
+        assertEquals(movement.getStockId(), stock.getId());
+        assertEquals(movement.getUserId(), user.getId());
+        assertEquals(movement.getDistance(), distance.getDistance());
+        assertEquals(movement.getDate(), distance.getDate());
+
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE).content(new ObjectMapper().writeValueAsString(distance))
+                .header("token", userToken))
+                .andExpect(status().isOk());
+
+        userR = this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        that = new ObjectMapper().readValue(userR.getResponse().getContentAsString(), UserDTO.class);
+        assertEquals(that.getMovements().size(), 2);
     }
 }
