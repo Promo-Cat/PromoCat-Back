@@ -110,4 +110,21 @@ public class CityController {
     public ResponseEntity<CityDTO> activateCity(@RequestParam("city") String city) {
         return ResponseEntity.ok(cityService.setActive(city));
     }
+
+    @ApiOperation(value = "Activate city by id.",
+            notes = "Activates city and returns information about city, which name specified in request.",
+            response = CityDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "City not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/city/active/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<CityDTO> activateCityById(@PathVariable("id") Long id) {
+        CityDTO city = cityService.findById(id);
+        return ResponseEntity.ok(cityService.setActive(city.getCity()));
+    }
 }
