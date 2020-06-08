@@ -67,5 +67,4 @@ public class MovementDTO extends AbstractDTO {
     private Double panel;
 
 
-
 }

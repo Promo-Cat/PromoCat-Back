@@ -6,7 +6,6 @@ import io.jsonwebtoken.security.Keys;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
-import org.promocat.promocat.data_entities.login_attempt.LoginAttemptService;
 import org.promocat.promocat.dto.AbstractAccountDTO;
 import org.promocat.promocat.exception.login.token.ApiTokenNotFoundException;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;

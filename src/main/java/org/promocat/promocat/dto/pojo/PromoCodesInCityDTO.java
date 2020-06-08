@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  * @author Grankin Maxim (maximgran@gmail.com) at 18:47 01.06.2020
  */
 @ApiModel(
-        value =  "Promo-codes in particular city",
+        value = "Promo-codes in particular city",
         description = "DTO with cityId and number of promo-codes in this city"
 )
 @Data

@@ -35,9 +35,15 @@ public class UserMapper extends AbstractMapper<User, UserDTO> {
     @PostConstruct
     public void setupMapper() {
         mapper.createTypeMap(User.class, UserDTO.class)
-                .addMappings(m -> { m.skip(UserDTO::setCityId); m.skip(UserDTO::setPromoCodeId); }).setPostConverter(toDtoConverter());
+                .addMappings(m -> {
+                    m.skip(UserDTO::setCityId);
+                    m.skip(UserDTO::setPromoCodeId);
+                }).setPostConverter(toDtoConverter());
         mapper.createTypeMap(UserDTO.class, User.class)
-                .addMappings(m -> { m.skip(User::setCity); m.skip(User::setPromoCode); }).setPostConverter(toEntityConverter());
+                .addMappings(m -> {
+                    m.skip(User::setCity);
+                    m.skip(User::setPromoCode);
+                }).setPostConverter(toEntityConverter());
     }
 
     private Long getCityId(User source) {

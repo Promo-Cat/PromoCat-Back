@@ -7,7 +7,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.CityDTO;
+import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.PromoCodeDTO;
+import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
@@ -26,8 +32,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -72,7 +82,7 @@ public class UserTest {
     }
 
     @Test
-    public void testSaveUserWithoutTelephone() throws Exception{
+    public void testSaveUserWithoutTelephone() throws Exception {
         UserDTO user = new UserDTO();
         user.setName("I");
         user.setCityId(2L);
@@ -266,7 +276,8 @@ public class UserTest {
         MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
 
         String[] codes = new String[code.size()];
 
@@ -322,7 +333,8 @@ public class UserTest {
         MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         String[] codes = new String[code.size()];
 
         int ind = 0;
@@ -387,7 +399,8 @@ public class UserTest {
         MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         String[] codes = new String[code.size()];
 
         int ind = 0;
@@ -409,7 +422,8 @@ public class UserTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<MovementDTO> movements = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        List<MovementDTO> movements = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         assertEquals(movements.size(), 2);
     }
 
@@ -440,7 +454,8 @@ public class UserTest {
         MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         String[] codes = new String[code.size()];
 
         int ind = 0;
@@ -455,7 +470,8 @@ public class UserTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<StockDTO> stocks = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        List<StockDTO> stocks = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         assertEquals(stocks.size(), 1);
     }
 }

@@ -1,12 +1,14 @@
 package org.promocat.promocat.data_entities.parameters;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.Positive;
 
 @Entity
 @Table(name = "parameters")

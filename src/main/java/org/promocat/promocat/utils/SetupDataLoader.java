@@ -42,6 +42,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     /**
      * После инициализации будет выполнен непосредственно ЭТОТ метод.
+     *
      * @param event (перевод от Английского) событие
      */
     @Override

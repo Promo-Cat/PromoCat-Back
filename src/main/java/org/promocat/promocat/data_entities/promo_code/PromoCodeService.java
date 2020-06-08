@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -107,8 +106,10 @@ public class PromoCodeService {
     }
 
     // TODO структурировать данный метод, разбить на меньшие. Лучше вынетси его в отдельный метод, тут он совсем не к месту.
+
     /**
      * Отправка почтового письма с промокодами внутри.
+     *
      * @param cities {@link Set} сущностей {@link StockCityDTO}.
      */
     private void sendMail(final Set<StockCityDTO> cities) {

@@ -160,7 +160,8 @@ public class CompanyService {
     /**
      * Возвращает DTO компании.
      * Получает {@link AccountType} из {@code token} и в зависимости от типа аккаунта получает либо из токена компании, либо по {@code companyId}.
-     * @param token JWS-токен в котором хранятся данные о пользователе
+     *
+     * @param token     JWS-токен в котором хранятся данные о пользователе
      * @param companyId nullable id компании
      * @return DTO компании
      */
