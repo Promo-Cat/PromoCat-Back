@@ -97,9 +97,6 @@ public class UserController {
     })
     @RequestMapping(path = "/api/user", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String token) {
-        if (!userService.isUser(token)) {
-            throw new ApiForbiddenException("Wrong token.");
-        }
         return ResponseEntity.ok(userService.findByToken(token));
     }
 
@@ -123,9 +120,6 @@ public class UserController {
     @RequestMapping(value = "/api/user/promo-code", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> setPromoCode(@RequestParam("promo-code") String promoCode,
                                                 @RequestHeader("token") String token) {
-        if (!userService.isUser(token)) {
-            throw new ApiForbiddenException("Wrong token.");
-        }
         PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
         if (promoCodeDTO.getIsActive()) {
             log.error("Promo-code {} already active", promoCode);
@@ -158,9 +152,6 @@ public class UserController {
     @RequestMapping(value = "/api/user/move", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
                                                 @RequestHeader("token") String token) {
-        if (!userService.isUser(token)) {
-            throw new ApiForbiddenException("Wrong token.");
-        }
         UserDTO user = userService.findByToken(token);
         user.setTotalDistance(user.getTotalDistance() + distanceDTO.getDistance());
         user = userService.save(user);
@@ -196,11 +187,7 @@ public class UserController {
     })
     @RequestMapping(value = "/api/user/statistics", method = RequestMethod.GET)
     public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") String token) {
-        if (userService.isUser(token)) {
-            return ResponseEntity.ok(userService.getUserStatistics(userService.findByToken(token)));
-        } else {
-            throw new ApiForbiddenException("Wrong token.");
-        }
+        return ResponseEntity.ok(userService.getUserStatistics(userService.findByToken(token)));
     }
 
     @ApiOperation(value = "Get the history of stocks.",
@@ -220,9 +207,6 @@ public class UserController {
     })
     @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
     public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") String token) {
-        if (!userService.isUser(token)) {
-            throw new ApiForbiddenException("Wrong token.");
-        }
         UserDTO userDTO = userService.findByToken(token);
         return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
     }

@@ -164,15 +164,4 @@ public class UserService {
         save(user);
         return earnedMoney;
     }
-
-    /**
-     * Проверка является ли данный токен пользовательским.
-     *
-     * @param token уникальный токен.
-     * @return {@code true} если токен пользовательский, иначе {@code false}.
-     */
-    public boolean isUser(final String token) {
-        JwtReader jwtReader = new JwtReader(token);
-        return AccountType.of(jwtReader.getValue("account_type")) == AccountType.USER;
-    }
 }
