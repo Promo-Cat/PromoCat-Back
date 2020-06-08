@@ -8,6 +8,8 @@ import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptService;
 import org.promocat.promocat.dto.AbstractAccountDTO;
+import org.promocat.promocat.exception.login.token.ApiTokenNotFoundException;
+import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.mapper.AbstractAccountMapper;
 import org.promocat.promocat.security.SecurityUser;
 import org.promocat.promocat.utils.AccountRepositoryManager;
@@ -37,15 +39,12 @@ public class TokenService {
 
     private final AccountRepositoryManager accountRepositoryManager;
     private final AbstractAccountMapper abstractAccountMapper;
-    private final LoginAttemptService loginAttemptService;
 
     @Autowired
     public TokenService(final AccountRepositoryManager accountRepositoryManager,
-                        final AbstractAccountMapper abstractAccountMapper,
-                        final LoginAttemptService loginAttemptService) {
+                        final AbstractAccountMapper abstractAccountMapper) {
         this.accountRepositoryManager = accountRepositoryManager;
         this.abstractAccountMapper = abstractAccountMapper;
-        this.loginAttemptService = loginAttemptService;
     }
 
 
@@ -82,8 +81,7 @@ public class TokenService {
             SecurityUser user = new SecurityUser(user1.getTelephone(), user1.getAccountType());
             return Optional.of(user);
         } else {
-            // TODO exception
-            throw new UsernameNotFoundException("Token is not found in db.");
+            throw new ApiTokenNotFoundException("Token not found in db.");
         }
     }
 
@@ -102,8 +100,8 @@ public class TokenService {
         try {
             account = (AbstractAccount) repository.getByTelephone(telephone).orElseThrow();
         } catch (NoSuchElementException e) {
-            // TODO exception
-            throw new UsernameNotFoundException("User with number " + telephone + " doesn`t presented in database");
+            throw new ApiUserNotFoundException(String.format("User with number %s doesn`t presented in database",
+                    telephone));
         }
         String token = generateToken(abstractAccountMapper.toDto(account));
         account.setToken(token);

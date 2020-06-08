@@ -18,7 +18,7 @@ import java.time.ZonedDateTime;
 public class ApiWrongCodeHandler {
 
     @ExceptionHandler(value = {ApiWrongCodeException.class})
-    public ResponseEntity<Object> handleNonexistentUser(ApiWrongCodeException e) {
+    public ResponseEntity<Object> handleWrongCode(ApiWrongCodeException e) {
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         ApiException apiException = new ApiException(
                 e.getMessage(),
