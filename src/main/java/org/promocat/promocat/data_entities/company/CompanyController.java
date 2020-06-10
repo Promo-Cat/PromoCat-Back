@@ -135,6 +135,8 @@ public class CompanyController {
         }
     }
 
+
+    //TODO если город не активный выдает 0 промокодов(отличие с одним из следующих)
     @ApiOperation(value = "Get total number of activated promo-codes in city.",
             notes = "Getting all activated promo-codes in a given city.",
             response = Long.class)
@@ -258,7 +260,7 @@ public class CompanyController {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
-
+    //TODO если город не активный, то выдает 404
     @ApiOperation(value = "Get total number of promo-codes in all cities.",
             notes = "Getting all promo-codes in all cities.",
             response = PromoCodesInCityDTO.class,

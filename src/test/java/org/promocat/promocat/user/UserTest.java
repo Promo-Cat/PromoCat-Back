@@ -17,6 +17,7 @@ import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
+import org.promocat.promocat.exception.login.token.ApiTokenNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -197,7 +198,7 @@ public class UserTest {
         assertEquals(user.getAccountType(), that.getAccountType());
     }
 
-    @Test
+    @Test(expected = ApiTokenNotFoundException.class)
     public void testGetUserWithIncorrectToken() throws Exception {
         this.mockMvc.perform(get("/api/user").header("token", "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlbl9jcmVhdGVfdGltZSI6MTU5MTI4NTU1MzY3OCwiYWNjb3VudF90eXBlIjoiQ09NUEFOWSIsInRva2VuX2V4cGlyYXRpb25fZGF0ZSI6MTYyMjgyMTU1MzY3OCwidGVsZXBob25lIjoiKzcoOTk5KTI0My0yNi00OSJ9.WqYvXKLsm-pgGpco_U9R-iD6yPOiyMXY6liFA8L0zFQ4YZnoZmpqcSYa3IWMudpiL2JF8aArydGXIIpPVjT_BA"))
                 .andExpect(status().is4xxClientError());
@@ -303,7 +304,7 @@ public class UserTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
+    @Test(expected = ApiTokenNotFoundException.class)
     public void testMoveUserWithIncorrectToken() throws Exception {
         DistanceDTO distance = new DistanceDTO();
         distance.setDate(LocalDate.now());

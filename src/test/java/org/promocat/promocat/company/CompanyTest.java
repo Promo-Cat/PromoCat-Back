@@ -11,6 +11,7 @@ import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
+import org.promocat.promocat.exception.login.token.ApiTokenNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -301,7 +302,7 @@ public class CompanyTest {
         assertEquals(that.getAccountType(), company.getAccountType());
     }
 
-    @Test
+    @Test(expected = ApiTokenNotFoundException.class)
     public void testGetCompanyWithIncorrectToken() throws Exception {
         this.mockMvc.perform(get("/api/company").header("token", "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlbl9jcmVhdGVfdGltZSI6MTU5MTI4NTU1MzY3OCwiYWNjb3VudF90eXBlIjoiQ09NUEFOWSIsInRva2VuX2V4cGlyYXRpb25fZGF0ZSI6MTYyMjgyMTU1MzY3OCwidGVsZXBob25lIjoiKzcoOTk5KTI0My0yNi00OSJ9.WqYvXKLsm-pgGpco_U9R-iD6yPOiyMXY6liFA8L0zFQ4YZnoZmpqcSYa3IWMudpiL2JF8aArydGXIIpPVjT_BA"))
                 .andExpect(status().is4xxClientError());
@@ -521,8 +522,9 @@ public class CompanyTest {
         assertEquals(count, Long.valueOf(4));
     }
 
+    //TODO запросы в самом конце
     @Test
-    public void testGetPromoCodeActivationByCity() throws Exception {
+    public void testGetPromoCodes() throws Exception {
         UserDTO user = new UserDTO();
         user.setName("I");
         user.setCityId(2L);
@@ -613,10 +615,7 @@ public class CompanyTest {
         this.mockMvc.perform(get("/api/company/stock/" + (stock.getId() + 1) + "/statistic/byCity/11").header("token", companyToken))
                 .andExpect(status().is4xxClientError());
 
-        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/statistic/byCity/12").header("token", companyToken))
-                .andExpect(status().isOk())
-                .andReturn();
-        counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
-        assertEquals(counts, Long.valueOf(0));
+        this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/statistic/byCity/12").header("token", companyToken))
+                .andExpect(status().is4xxClientError());
     }
 }
