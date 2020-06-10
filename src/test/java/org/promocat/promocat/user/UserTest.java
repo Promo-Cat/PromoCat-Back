@@ -51,6 +51,7 @@ public class UserTest {
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         MvcResult key = this.mockMvc.perform(get("/auth/admin/login?telephone=+7(999)243-26-99"))
                 .andExpect(status().isOk()).andReturn();
         MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
