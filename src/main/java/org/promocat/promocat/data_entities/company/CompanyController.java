@@ -12,11 +12,11 @@ import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivat
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
-import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
 import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
+import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.dto.pojo.StockCostDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
@@ -122,8 +122,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/promoCodeActivation/summary",
-            "/admin/statistic/company/stock/{stockId}/promoCodeActivation/summary" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/promoCodeActivation/summary",
+            "/admin/statistic/company/stock/{stockId}/promoCodeActivation/summary"}, method = RequestMethod.GET)
     public ResponseEntity<Long> getSummaryPromoCodeActivation(@PathVariable("stockId") Long stockId,
                                                               @RequestParam(value = "companyId", required = false) Long companyId,
                                                               @RequestHeader("token") String token) {
@@ -152,8 +152,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}",
-            "/admin/statistic/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}",
+            "/admin/statistic/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}"}, method = RequestMethod.GET)
     public ResponseEntity<Long> getPromoCodeActivationByCity(@PathVariable("stockId") Long stockId,
                                                              @PathVariable("cityId") Long cityId,
                                                              @RequestParam(value = "companyId", required = false) Long companyId,
@@ -184,8 +184,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/promoCodeActivation/byCity",
-            "/admin/statistic/company/stock/{stockId}/promoCodeActivation/byCity" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/promoCodeActivation/byCity",
+            "/admin/statistic/company/stock/{stockId}/promoCodeActivation/byCity"}, method = RequestMethod.GET)
     public ResponseEntity<List<PromoCodeActivationStatisticDTO>> getPromoCodeActivationByCity(
             @PathVariable("stockId") Long stockId,
             @RequestParam(value = "companyId", required = false) Long companyId,
@@ -215,8 +215,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/statistic/byCity/{cityId}",
-            "/admin/statistic/company/stock/{stockId}/byCity/{cityId}" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/statistic/byCity/{cityId}",
+            "/admin/statistic/company/stock/{stockId}/byCity/{cityId}"}, method = RequestMethod.GET)
     public ResponseEntity<Long> getAmountOfPromoCodesInCity(@PathVariable("stockId") Long stockId,
                                                             @PathVariable("cityId") Long cityId,
                                                             @RequestParam(value = "companyId", required = false) Long companyId,
@@ -246,8 +246,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/statistic/total",
-            "/admin/statistic/company/stock/{stockId}/total" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/statistic/total",
+            "/admin/statistic/company/stock/{stockId}/total"}, method = RequestMethod.GET)
     public ResponseEntity<Long> getTotalAmountOfPromoCodes(@PathVariable("stockId") Long stockId,
                                                            @RequestParam(value = "companyId", required = false) Long companyId,
                                                            @RequestHeader("token") String token) {
@@ -277,8 +277,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/statistic/byCity",
-            "/admin/statistic/company/stock/{stockId}/byCity" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/statistic/byCity",
+            "/admin/statistic/company/stock/{stockId}/byCity"}, method = RequestMethod.GET)
     public ResponseEntity<List<PromoCodesInCityDTO>> getAmountOfPromoCodesForEachCity(@PathVariable("stockId") Long stockId,
                                                                                       @RequestParam(value = "companyId", required = false) Long companyId,
                                                                                       @RequestHeader("token") String token) {
@@ -308,8 +308,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/forEachDay/summary",
-            "/admin/statistic/company/stock/{stockId}/movements/forEachDay/summary" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/movements/forEachDay/summary",
+            "/admin/statistic/company/stock/{stockId}/movements/forEachDay/summary"}, method = RequestMethod.GET)
     public ResponseEntity<List<DistanceDTO>> getMovementsByStock(@PathVariable("stockId") Long stockId,
                                                                  @RequestParam(value = "companyId", required = false) Long companyId,
                                                                  @RequestHeader("token") String token) {
@@ -339,8 +339,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/forEachDay",
-            "/admin/statistic/company/stock/{stockId}/movements/forEachDay" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/movements/forEachDay",
+            "/admin/statistic/company/stock/{stockId}/movements/forEachDay"}, method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsByStockForEveryCity(@PathVariable("stockId") Long stockId,
                                                                                      @RequestParam(value = "companyId", required = false) Long companyId,
                                                                                      @RequestHeader("token") String token) {
@@ -373,8 +373,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/forEachDay/byCity/{cityId}",
-            "/admin/statistic/company/stock/{stockId}/movements/forEachDay/byCity/{cityId}" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/movements/forEachDay/byCity/{cityId}",
+            "/admin/statistic/company/stock/{stockId}/movements/forEachDay/byCity/{cityId}"}, method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsByStockAndCity(@PathVariable("stockId") Long stockId,
                                                                                 @PathVariable("cityId") Long cityId,
                                                                                 @RequestParam(value = "companyId", required = false) Long companyId,
@@ -399,8 +399,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/history",
-            "/admin/statistic/company/stock/history" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/history",
+            "/admin/statistic/company/stock/history"}, method = RequestMethod.GET)
     public ResponseEntity<Set<StockDTO>> getAllStocks(
             @RequestParam(value = "companyId", required = false) Long companyId,
             @RequestHeader("token") String token) {
@@ -426,8 +426,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/summary",
-            "/admin/statistic/company/stock/{stockId}/movements/summary" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/movements/summary",
+            "/admin/statistic/company/stock/{stockId}/movements/summary"}, method = RequestMethod.GET)
     public ResponseEntity<DistanceDTO> getMovementsSummaryByStock(@PathVariable("stockId") Long stockId,
                                                                   @RequestParam(value = "companyId", required = false) Long companyId,
                                                                   @RequestHeader("token") String token) {
@@ -460,8 +460,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/summary/byCity/{cityId}",
-            "/admin/statistic/company/stock/{stockId}/movements/summary/byCity/{cityId}" }, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/movements/summary/byCity/{cityId}",
+            "/admin/statistic/company/stock/{stockId}/movements/summary/byCity/{cityId}"}, method = RequestMethod.GET)
     public ResponseEntity<DistanceWithCityDTO> getMovementsSummaryByStockAndCity(@PathVariable("stockId") Long stockId,
                                                                                  @PathVariable("cityId") Long cityId,
                                                                                  @RequestParam(value = "companyId", required = false) Long companyId,
@@ -497,8 +497,8 @@ public class CompanyController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company/stock/{stockId}/movements/summary/byCity",
-    "/admin/statistic/company/stock/{stockId}/movements/summary/byCity"}, method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/movements/summary/byCity",
+            "/admin/statistic/company/stock/{stockId}/movements/summary/byCity"}, method = RequestMethod.GET)
     public ResponseEntity<List<DistanceWithCityDTO>> getMovementsSummaryByStockForEachCity(@PathVariable("stockId") Long stockId,
                                                                                            @RequestParam(value = "companyId", required = false) Long companyId,
                                                                                            @RequestHeader("token") String token) {
@@ -510,8 +510,8 @@ public class CompanyController {
         }
     }
 
-    @RequestMapping(path = { "/api/company/stock/{stockId}/cost",
-            "/admin/statistic/company/stock/{stockId}/cost"} , method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{stockId}/cost",
+            "/admin/statistic/company/stock/{stockId}/cost"}, method = RequestMethod.GET)
     public ResponseEntity<StockCostDTO> getStockCost(@PathVariable("stockId") Long stockId,
                                                      @RequestParam(value = "companyId", required = false) Long companyId,
                                                      @RequestHeader("token") String token) {

@@ -25,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -118,7 +120,8 @@ public class AdminTest {
         MvcResult result = this.mockMvc.perform(get("/admin/").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        List<AdminDTO> admins = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<List<AdminDTO>>(){});
+        List<AdminDTO> admins = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<List<AdminDTO>>() {
+        });
         assertEquals(admins.size(), 4);
     }
 
@@ -139,7 +142,8 @@ public class AdminTest {
         result = this.mockMvc.perform(get("/admin/").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        List<AdminDTO> admins = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        List<AdminDTO> admins = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         assertEquals(admins.size(), 4);
     }
 

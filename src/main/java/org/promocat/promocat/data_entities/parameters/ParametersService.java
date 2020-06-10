@@ -2,8 +2,6 @@ package org.promocat.promocat.data_entities.parameters;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +27,7 @@ public class ParametersService {
     /**
      * Возвращает значение комиссии из бд.
      * Если в бд изначально не было записи параметров - создаст и проинициализирует дефолтными значениями.
+     *
      * @return значение комиссии (0 - 100)
      */
     public Double getPanel() {
@@ -43,6 +42,7 @@ public class ParametersService {
 
     /**
      * Проверяет наличие записи параметров в бд, при отсутствии таковой - создаёт.
+     *
      * @return true - если запись была только создана, false - если запись была изначально
      */
     private boolean initializeParameters() {
@@ -59,6 +59,7 @@ public class ParametersService {
 
     /**
      * Возвращает запись параметров из БД
+     *
      * @return запись, которая хранит в себе параметры приложения
      */
     private Parameters getParameters() {

@@ -1,8 +1,6 @@
 package org.promocat.promocat.utils;
 
-import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.dto.StockDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component

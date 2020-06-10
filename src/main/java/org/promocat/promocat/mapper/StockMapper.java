@@ -15,7 +15,7 @@ import java.util.Objects;
  * @author Grankin Maxim (maximgran@gmail.com) at 12:17 14.05.2020
  */
 @Component
-public class StockMapper extends AbstractMapper<Stock, StockDTO>  {
+public class StockMapper extends AbstractMapper<Stock, StockDTO> {
 
     private final ModelMapper mapper;
     private final CompanyRepository companyRepository;
@@ -23,8 +23,8 @@ public class StockMapper extends AbstractMapper<Stock, StockDTO>  {
 
     @Autowired
     public StockMapper(final ModelMapper mapper,
-                final CompanyRepository companyRepository,
-                final CityRepository cityRepository) {
+                       final CompanyRepository companyRepository,
+                       final CityRepository cityRepository) {
         super(Stock.class, StockDTO.class);
         this.mapper = mapper;
         this.companyRepository = companyRepository;
@@ -34,9 +34,13 @@ public class StockMapper extends AbstractMapper<Stock, StockDTO>  {
     @PostConstruct
     public void setupMapper() {
         mapper.createTypeMap(Stock.class, StockDTO.class)
-                .addMappings(m -> { m.skip(StockDTO::setCompanyId); }).setPostConverter(toDtoConverter());
+                .addMappings(m -> {
+                    m.skip(StockDTO::setCompanyId);
+                }).setPostConverter(toDtoConverter());
         mapper.createTypeMap(StockDTO.class, Stock.class)
-                .addMappings(m -> { m.skip(Stock::setCompany); }).setPostConverter(toEntityConverter());
+                .addMappings(m -> {
+                    m.skip(Stock::setCompany);
+                }).setPostConverter(toEntityConverter());
     }
 
     @Override

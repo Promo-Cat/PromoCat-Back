@@ -1,7 +1,7 @@
 package org.promocat.promocat.utils;
 
 import net.glxn.qrgen.javase.QRCode;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -16,8 +16,8 @@ import java.util.Random;
 public class Generator {
 
     public static final String ALPHABETIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final String NUMBERS    = "0123456789";
-    private static final Random RND       = new Random(System.currentTimeMillis());
+    public static final String NUMBERS = "0123456789";
+    private static final Random RND = new Random(System.currentTimeMillis());
 
     private static void fill(StringBuilder code, String charset) {
         code.append(charset.charAt(RND.nextInt(charset.length())));
@@ -38,6 +38,13 @@ public class Generator {
         return code.toString();
     }
 
+    /**
+     * Генерация QR кода.
+     *
+     * @param barcodeText текст, который будет закодирован в QR код.
+     * @return QR код в виде картинки. {@link BufferedImage}
+     * @throws ApiServerErrorException если возникли какие-то проблемы при записи.
+     */
     public static BufferedImage generateQRCodeImage(final String barcodeText) {
         ByteArrayOutputStream stream = QRCode
                 .from(barcodeText)
@@ -48,8 +55,7 @@ public class Generator {
         try {
             return ImageIO.read(bis);
         } catch (IOException e) {
-            // TODO exception
-            throw new UsernameNotFoundException("TODO");
+            throw new ApiServerErrorException("Generating QR code problem");
         }
     }
 }

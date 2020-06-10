@@ -15,7 +15,7 @@ import java.util.Map;
 @Component
 public class AccountRepositoryManagerImpl implements AccountRepositoryManager {
 
-    private final Map<AccountType, AbstractAccountRepository<? extends AbstractAccount> > map = new EnumMap<>(AccountType.class);
+    private final Map<AccountType, AbstractAccountRepository<? extends AbstractAccount>> map = new EnumMap<>(AccountType.class);
 
     @Autowired
     public AccountRepositoryManagerImpl(final UserRepository userRepository,

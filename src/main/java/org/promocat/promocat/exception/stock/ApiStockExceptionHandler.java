@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 @ControllerAdvice
 public class ApiStockExceptionHandler {
     @ExceptionHandler(value = {ApiStockNotFoundException.class})
-    public ResponseEntity<Object> handleNonexistentCar(ApiStockNotFoundException e) {
+    public ResponseEntity<Object> handleNonexistentStock(ApiStockNotFoundException e) {
         final HttpStatus notFound = HttpStatus.NOT_FOUND;
         ApiException apiException = new ApiException(
                 e.getMessage(),

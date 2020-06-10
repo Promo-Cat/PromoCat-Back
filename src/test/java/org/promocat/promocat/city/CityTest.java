@@ -6,8 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.data_entities.city.CityService;
-import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.CityDTO;
+import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -66,7 +66,8 @@ public class CityTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<CityDTO> cities = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        List<CityDTO> cities = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         assertEquals(cities.size(), 1);
         assertEquals(cities.get(0).getId(), Long.valueOf(11));
     }

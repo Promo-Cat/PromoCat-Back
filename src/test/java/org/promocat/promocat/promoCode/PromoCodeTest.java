@@ -7,7 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.CityDTO;
+import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.PromoCodeDTO;
+import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +27,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**

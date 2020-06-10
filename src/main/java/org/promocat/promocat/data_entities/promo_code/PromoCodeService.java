@@ -9,6 +9,7 @@ import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeNotFoundException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.PromoCodeMapper;
 import org.promocat.promocat.utils.EmailSender;
 import org.promocat.promocat.utils.Generator;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -105,29 +105,46 @@ public class PromoCodeService {
         }
     }
 
-    private void sendMail(Set<StockCityDTO> cities) {
+    // TODO структурировать данный метод, разбить на меньшие. Лучше вынетси его в отдельный метод, тут он совсем не к месту.
+
+    /**
+     * Отправка почтового письма с промокодами внутри.
+     *
+     * @param cities {@link Set} сущностей {@link StockCityDTO}.
+     */
+    private void sendMail(final Set<StockCityDTO> cities) {
         List<Path> images = new ArrayList<>();
         List<Path> archives = new ArrayList<>();
 
         for (StockCityDTO city : cities) {
             List<Path> imagesInCity = new ArrayList<>();
+
             String zipName = Generator.generate(GeneratorConfig.FILE_NAME) + "$" +
                     cityService.findById(city.getCityId()).getCity() + ".zip";
+
             Path pathToZip = Paths.get("src", "main", "resources", zipName);
+
             for (PromoCodeDTO code : city.getPromoCodes()) {
+
                 String imageName = code.getPromoCode() + "$" +
                         cityService.findById(city.getCityId()).getCity() + ".png";
+
                 Path pathToImage = Paths.get("src", "main", "resources", imageName);
+
                 try {
                     ImageIO.write(Generator.generateQRCodeImage(code.getPromoCode()),
                             "png", new File(pathToImage.toString()));
-                    log.info("QR code {} with promo-codes was generated", pathToImage.toString());
+                    log.info("QR code {} with promo-code {} was generated", pathToImage.toString(),
+                            code.getPromoCode());
                 } catch (IOException e) {
                     log.error("An exception occurs {}", e.getMessage());
+                    throw new ApiServerErrorException("Problems with generating promo-code");
                 }
                 imagesInCity.add(pathToImage);
             }
+
             images.addAll(imagesInCity);
+
             try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(pathToZip.toString()))) {
                 for (Path filePath : imagesInCity) {
                     File fileToZip = new File(filePath.toString());
@@ -136,7 +153,9 @@ public class PromoCodeService {
                 }
             } catch (IOException e) {
                 log.error("An exception occurs {}", e.getMessage());
+                throw new ApiServerErrorException("Problems with generating zip");
             }
+
             archives.add(pathToZip);
         }
 
@@ -149,21 +168,22 @@ public class PromoCodeService {
             for (Path path : images) {
                 File file = path.toFile();
                 if (file.delete()) {
-                    log.info("Delete file {} with PromoCodes", file.getName());
+                    log.info("Delete QR {}", file.getName());
                 } else {
-                    log.info("File {} not found", file.getName());
+                    log.warn("QR {} not found", file.getName());
                 }
             }
-            // TODO не удаляется архив
+
             for (Path path : archives) {
                 File file = path.toFile();
                 if (file.delete()) {
-                    log.info("Delete file {} with PromoCodes", file.getName());
+                    log.info("Delete zip {} with QRs", file.getName());
                 } else {
-                    log.info("File {} not found", file.getName());
+                    log.warn("Zip {} not found", file.getName());
                 }
             }
         }
+
     }
 
     /**
@@ -218,6 +238,7 @@ public class PromoCodeService {
         }
     }
 
+    // TODO javadocs
     @Scheduled(cron = "59 59 23 3 * *")
     public void checkAlive() {
         List<PromoCode> codesTmp = repository.getByDeactivateDateLessThan(LocalDateTime.now());
