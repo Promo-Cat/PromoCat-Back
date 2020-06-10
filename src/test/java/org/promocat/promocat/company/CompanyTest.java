@@ -586,5 +586,37 @@ public class CompanyTest {
 
         assertEquals(active.getCityId(), Long.valueOf(11));
         assertEquals(active.getNumberOfPromoCodes(), Long.valueOf(4));
+
+        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/promoCodeActivation/byCity/11").header("token", companyToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Long counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
+        assertEquals(counts, Long.valueOf(4));
+
+        this.mockMvc.perform(get("/api/company/stock/" + (stock.getId() + 1) + "/promoCodeActivation/byCity/11").header("token", companyToken))
+                .andExpect(status().is4xxClientError());
+
+        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/promoCodeActivation/byCity/12").header("token", companyToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
+        assertEquals(counts, Long.valueOf(0));
+
+        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/statistic/byCity/11").header("token", companyToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
+        assertEquals(counts, Long.valueOf(10));
+
+        this.mockMvc.perform(get("/api/company/stock/" + (stock.getId() + 1) + "/statistic/byCity/11").header("token", companyToken))
+                .andExpect(status().is4xxClientError());
+
+        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/statistic/byCity/12").header("token", companyToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
+        assertEquals(counts, Long.valueOf(0));
     }
 }
