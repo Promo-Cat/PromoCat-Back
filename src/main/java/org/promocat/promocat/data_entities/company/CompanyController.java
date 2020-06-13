@@ -19,6 +19,7 @@ import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.dto.pojo.StockCostDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
@@ -79,7 +80,12 @@ public class CompanyController {
     })
     @RequestMapping(path = "/auth/register/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CompanyDTO> addCompany(@Valid @RequestBody CompanyDTO company) {
-        return ResponseEntity.ok(companyService.save(company));
+        if (companyService.getAllCompanyByInnAndVerified(company.getInn(), true).isEmpty()) {
+            return ResponseEntity.ok(companyService.save(company));
+        } else {
+            // TODO: 13.06.2020 MAKS EXCEPTION (попытка добавить компанию с существующим ИНН у верифицированной компании)
+            throw new ApiCompanyNotFoundException(String.format("There is another verified company with inn %s", company.getInn()));
+        }
     }
 
     @ApiOperation(value = "Get company, who authorized with token from request header",
