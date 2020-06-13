@@ -43,6 +43,7 @@ import java.util.Set;
 @Slf4j
 @RestController
 @Api(tags = {SpringFoxConfig.COMPANY})
+// TODO задокуметировать companyId у всех методов статистики. Сейчас не понятно кто передает companyId
 public class CompanyController {
 
     private final CompanyService companyService;

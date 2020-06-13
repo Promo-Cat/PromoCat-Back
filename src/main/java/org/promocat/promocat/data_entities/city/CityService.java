@@ -41,6 +41,13 @@ public class CityService {
         city.setCountry(cityFields[2]);
         city.setRegion(cityFields[5]);
         city.setCity(cityFields[9]);
+        if (city.getCity().isBlank()) {
+            /*
+             * Существует ситуация, когда город является отдельной федеральной единицей.
+             * Тогда в таблице город пустой, а регион отображает название города.
+             */
+            city.setCity(city.getRegion());
+        }
         city.setTimezone(cityFields[19]);
         city.setLatitude(cityFields[20]);
         city.setLongitude(cityFields[21]);
