@@ -6,14 +6,18 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.CarDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,13 +33,16 @@ import javax.validation.Valid;
 @Api(tags = {SpringFoxConfig.CAR})
 public class CarController {
 
-    private final CarService service;
+    private final CarService carService;
+    private final UserService userService;
 
     @Autowired
-    public CarController(final CarService service) {
-        this.service = service;
+    public CarController(final CarService carService, final UserService userService) {
+        this.carService = carService;
+        this.userService = userService;
     }
 
+    // TODO check user exists
     @ApiOperation(value = "Add car",
             notes = "Adds stock for company with id specified in request.",
             response = CarDTO.class,
@@ -53,9 +60,20 @@ public class CarController {
     })
     @RequestMapping(path = "/api/user/car", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CarDTO> addCar(@Valid @RequestBody CarDTO car) {
-        return ResponseEntity.ok(service.save(car));
+        return ResponseEntity.ok(carService.save(car));
     }
 
+    @RequestMapping(path = "/api/user/car/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteCarById(@RequestHeader("token") final String token,
+                                                @PathVariable("id") final Long id) {
+        UserDTO user = userService.findByToken(token);
+        if (carService.isOwnerOfCar(user.getId(), id)) {
+            carService.deleteById(id);
+        } else {
+            throw new ApiForbiddenException(String.format("The car: %d is not owned by this user.", user.getId()));
+        }
+        return ResponseEntity.ok("{}");
+    }
 
     // ------ Admin methods ------
 
@@ -74,7 +92,7 @@ public class CarController {
     public ResponseEntity<CarDTO> getCarByNumberAndRegion(
             @RequestParam("number") String number,
             @RequestParam("region") String region) {
-        return ResponseEntity.ok(service.findByNumberAndRegion(number, region));
+        return ResponseEntity.ok(carService.findByNumberAndRegion(number, region));
     }
 
     @ApiOperation(value = "Get car by id",
@@ -90,6 +108,6 @@ public class CarController {
     })
     @RequestMapping(path = "/admin/car/{id}", method = RequestMethod.GET)
     public ResponseEntity<CarDTO> getCarById(@PathVariable("id") final Long id) {
-        return ResponseEntity.ok(service.findByID(id));
+        return ResponseEntity.ok(carService.findById(id));
     }
 }

@@ -586,17 +586,17 @@ public class CompanyTest {
         List<PromoCodeActivationStatisticDTO> activeCodes = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
         PromoCodeActivationStatisticDTO active = activeCodes.get(0);
 
-        assertEquals(active.getCityId(), Long.valueOf(11));
+        assertEquals(active.getCityId(), Long.valueOf(10));
         assertEquals(active.getNumberOfPromoCodes(), Long.valueOf(4));
 
-        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/promoCodeActivation/byCity/11").header("token", companyToken))
+        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/promoCodeActivation/byCity/10").header("token", companyToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
         Long counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
         assertEquals(counts, Long.valueOf(4));
 
-        this.mockMvc.perform(get("/api/company/stock/" + (stock.getId() + 1) + "/promoCodeActivation/byCity/11").header("token", companyToken))
+        this.mockMvc.perform(get("/api/company/stock/" + (stock.getId() + 1) + "/promoCodeActivation/byCity/10").header("token", companyToken))
                 .andExpect(status().is4xxClientError());
 
         result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/promoCodeActivation/byCity/12").header("token", companyToken))
@@ -606,13 +606,13 @@ public class CompanyTest {
         counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
         assertEquals(counts, Long.valueOf(0));
 
-        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/statistic/byCity/11").header("token", companyToken))
+        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/statistic/byCity/10").header("token", companyToken))
                 .andExpect(status().isOk())
                 .andReturn();
         counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
         assertEquals(counts, Long.valueOf(10));
 
-        this.mockMvc.perform(get("/api/company/stock/" + (stock.getId() + 1) + "/statistic/byCity/11").header("token", companyToken))
+        this.mockMvc.perform(get("/api/company/stock/" + (stock.getId() + 1) + "/statistic/byCity/10").header("token", companyToken))
                 .andExpect(status().is4xxClientError());
 
         this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/statistic/byCity/12").header("token", companyToken))
