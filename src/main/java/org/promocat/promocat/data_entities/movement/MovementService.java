@@ -26,10 +26,6 @@ import java.util.stream.Collectors;
 @Service
 public class MovementService {
 
-    // Процент комиссии PromoCat
-    // TODO мб перенести в конвертор
-    private static final Double PANEL_PERCENT = 0.1;
-
     private final MovementRepository movementRepository;
     private final PromoCodeService promoCodeService;
     private final MovementMapper movementMapper;

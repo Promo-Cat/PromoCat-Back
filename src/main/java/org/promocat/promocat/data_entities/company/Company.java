@@ -34,6 +34,7 @@ public class Company extends AbstractAccount {
     private String inn;
     private String mail;
     private Set<Stock> stocks;
+    private Boolean verified;
 
     /**
      * Имя организации.
@@ -68,9 +69,15 @@ public class Company extends AbstractAccount {
     /**
      * Набор акций, которые принадлежат компании.
      */
-    @Cascade({CascadeType.ALL})
+    @Cascade({CascadeType.REMOVE, CascadeType.SAVE_UPDATE})
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     public Set<Stock> getStocks() {
         return stocks;
     }
+
+    /**
+     *
+     */
+    @Column(name = "verified")
+    public Boolean isVerified() { return verified; }
 }

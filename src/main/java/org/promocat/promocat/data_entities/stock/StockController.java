@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
@@ -33,11 +34,15 @@ public class StockController {
 
     private final StockService stockService;
     private final PromoCodeService promoCodeService;
+    private final CompanyService companyService;
 
     @Autowired
-    public StockController(final StockService stockService, final PromoCodeService promoCodeService) {
+    public StockController(final StockService stockService,
+                           final PromoCodeService promoCodeService,
+                           final CompanyService companyService) {
         this.stockService = stockService;
         this.promoCodeService = promoCodeService;
+        this.companyService = companyService;
     }
 
     @ApiOperation(value = "Create stock",
@@ -60,6 +65,8 @@ public class StockController {
         return ResponseEntity.ok(stockService.create(stock));
     }
 
+    // ------ Admin methods ------
+
     @ApiOperation(value = "Generate promo-codes to stock.",
             notes = "Returning stock with id specified in request",
             response = StockDTO.class)
@@ -75,6 +82,7 @@ public class StockController {
     public ResponseEntity<StockDTO> generate(@PathVariable("id") Long id) {
         StockDTO stock = stockService.findById(id);
         if (Objects.isNull(stock.getIsAlive())) {
+            companyService.verify(stock.getCompanyId());
             return ResponseEntity.ok(promoCodeService.savePromoCodes(stockService.setActive(id, true)));
         }
         throw new ApiStockActivationStatusException(String.format(
@@ -97,7 +105,6 @@ public class StockController {
         return ResponseEntity.ok(stockService.deactivateStock(id));
     }
 
-    // ------ Admin methods ------
 
     @ApiOperation(value = "Get stock by id",
             notes = "Returning stock with id specified in request",

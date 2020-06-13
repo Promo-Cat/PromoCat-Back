@@ -3,6 +3,7 @@ package org.promocat.promocat.data_entities.company;
 import org.promocat.promocat.data_entities.AbstractAccountRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -18,6 +19,11 @@ public interface CompanyRepository extends AbstractAccountRepository<Company> {
     Optional<Company> findByOrganizationName(String organizationName);
 
     Optional<Company> findByMail(String mail);
+
+    List<Company> findAllByInn(String inn);
+
+    List<Company> findAllByInnAndVerified(String inn, boolean verified);
+
 }
 
 

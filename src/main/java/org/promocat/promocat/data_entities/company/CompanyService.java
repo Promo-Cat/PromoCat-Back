@@ -11,8 +11,10 @@ import org.promocat.promocat.util_entities.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -20,17 +22,17 @@ import java.util.Set;
 @Slf4j
 @Service
 public class CompanyService {
-    private final CompanyMapper mapper;
+    private final CompanyMapper companyMapper;
     private final CompanyRepository companyRepository;
     private final StockService stockService;
     private final TokenService tokenService;
 
     @Autowired
-    public CompanyService(final CompanyMapper mapper,
+    public CompanyService(final CompanyMapper companyMapper,
                           final CompanyRepository companyRepository,
                           final StockService stockService,
                           final TokenService tokenService) {
-        this.mapper = mapper;
+        this.companyMapper = companyMapper;
         this.companyRepository = companyRepository;
         this.stockService = stockService;
         this.tokenService = tokenService;
@@ -44,7 +46,7 @@ public class CompanyService {
      */
     public CompanyDTO save(final CompanyDTO dto) {
         log.info("Trying to save company with telephone: {}", dto.getTelephone());
-        return mapper.toDto(companyRepository.save(mapper.toEntity(dto)));
+        return companyMapper.toDto(companyRepository.save(companyMapper.toEntity(dto)));
     }
 
     /**
@@ -58,7 +60,7 @@ public class CompanyService {
         Optional<Company> company = companyRepository.findById(id);
         if (company.isPresent()) {
             log.info("Found company with id: {}", id);
-            return mapper.toDto(company.get());
+            return companyMapper.toDto(company.get());
         } else {
             log.warn("No company with id: {}", id);
             throw new ApiCompanyNotFoundException(String.format("No company with such id: %d in db.", id));
@@ -76,7 +78,7 @@ public class CompanyService {
         Optional<Company> company = companyRepository.findByTelephone(telephone);
         if (company.isPresent()) {
             log.info("Found company with telephone: {}", telephone);
-            return mapper.toDto(company.get());
+            return companyMapper.toDto(company.get());
         } else {
             log.warn("No company with telephone: {}", telephone);
             throw new ApiCompanyNotFoundException(String.format("No company with such telephone: %s in db.", telephone));
@@ -94,7 +96,7 @@ public class CompanyService {
         Optional<Company> company = companyRepository.findByOrganizationName(organizationName);
         if (company.isPresent()) {
             log.info("Found company with org name: {}", organizationName);
-            return mapper.toDto(company.get());
+            return companyMapper.toDto(company.get());
         } else {
             log.warn("No company with org name: {}", organizationName);
             throw new ApiCompanyNotFoundException(String.format("No company with such name: %s in db.", organizationName));
@@ -112,7 +114,7 @@ public class CompanyService {
         Optional<Company> company = companyRepository.findByMail(mail);
         if (company.isPresent()) {
             log.info("Found company with org mail: {}", mail);
-            return mapper.toDto(company.get());
+            return companyMapper.toDto(company.get());
         } else {
             log.warn("No company with org mail: {}", mail);
             throw new ApiCompanyNotFoundException(String.format("No company with such mail: %s in db.", mail));
@@ -137,7 +139,7 @@ public class CompanyService {
      * @throws ApiCompanyNotFoundException если такой компании не существует.
      */
     public CompanyDTO findByToken(final String token) {
-        return mapper.toDto(companyRepository
+        return companyMapper.toDto(companyRepository
                 .findByToken(token)
                 .orElseThrow(
                         () -> new ApiCompanyNotFoundException(String.format("Company with token %s doesn`t found", token))
@@ -177,4 +179,32 @@ public class CompanyService {
         }
     }
 
+    public List<CompanyDTO> getAllCompanyByInn(String inn) {
+        return companyRepository.findAllByInn(inn)
+                .stream()
+                .map(companyMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<CompanyDTO> getAllCompanyByInnAndVerified(String inn, boolean verified) {
+        return companyRepository.findAllByInnAndVerified(inn, true)
+                .stream()
+                .map(companyMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public CompanyDTO verify(Long id) {
+        CompanyDTO companyDTO = findById(id);
+        companyDTO.setVerified(true);
+        companyDTO = save(companyDTO);
+        getAllCompanyByInn(companyDTO.getInn())
+                .stream()
+                .peek(x -> log.info("Found company with id {} and inn {}", x.getId(), x.getInn()))
+                .filter(x -> !x.getId().equals(id))
+                .forEach(x -> {
+                    log.info("Deleting company with id {}",x.getId());
+                    companyRepository.deleteById(x.getId());
+                });
+        return companyDTO;
+    }
 }
