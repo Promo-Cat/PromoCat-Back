@@ -69,7 +69,7 @@ public class CityTest {
         List<CityDTO> cities = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
         });
         assertEquals(cities.size(), 1);
-        assertEquals(cities.get(0).getId(), Long.valueOf(11));
+        assertEquals(cities.get(0).getId(), Long.valueOf(10));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class CityTest {
                 .andExpect(status().isOk())
                 .andReturn();
         CityDTO city = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CityDTO.class);
-        assertEquals(city.getId(), Long.valueOf(11));
+        assertEquals(city.getId(), Long.valueOf(10));
     }
 
     @Test
