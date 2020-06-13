@@ -36,7 +36,7 @@ public class Car extends AbstractEntity {
     /**
      * Пользователь, у которого данный автомобиль.
      */
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @Cascade({CascadeType.SAVE_UPDATE})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     public User getUser() {
