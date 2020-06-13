@@ -14,6 +14,7 @@ import org.promocat.promocat.mapper.PromoCodeMapper;
 import org.promocat.promocat.utils.EmailSender;
 import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,9 @@ public class PromoCodeService {
     private final PromoCodeRepository repository;
     private final CityService cityService;
     private final EmailSender emailSender;
+
+    @Value("${data.codes.files}")
+    private String PATH;
 
     @Autowired
     public PromoCodeService(final PromoCodeMapper mapper, final PromoCodeRepository repository, final EmailSender emailSender, final CityService cityService) {
@@ -122,14 +126,14 @@ public class PromoCodeService {
             String zipName = Generator.generate(GeneratorConfig.FILE_NAME) + "$" +
                     cityService.findById(city.getCityId()).getCity() + ".zip";
 
-            Path pathToZip = Paths.get("src", "main", "resources", zipName);
+            Path pathToZip = Paths.get(PATH, zipName);
 
             for (PromoCodeDTO code : city.getPromoCodes()) {
 
                 String imageName = code.getPromoCode() + "$" +
                         cityService.findById(city.getCityId()).getCity() + ".png";
 
-                Path pathToImage = Paths.get("src", "main", "resources", imageName);
+                Path pathToImage = Paths.get(PATH, imageName);
 
                 try {
                     ImageIO.write(Generator.generateQRCodeImage(code.getPromoCode()),

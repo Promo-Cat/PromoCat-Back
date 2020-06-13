@@ -265,8 +265,7 @@ public class StockTest {
         MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        Set<PromoCodeDTO> codes = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-        });
+        Set<PromoCodeDTO> codes = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
         assertEquals(Long.valueOf(codes.size()), stockCity.getNumberOfPromoCodes());
         assertEquals(stockCity.getStockId(), stock.getId());
         assertEquals(stockCity.getCityId(), city.getId());

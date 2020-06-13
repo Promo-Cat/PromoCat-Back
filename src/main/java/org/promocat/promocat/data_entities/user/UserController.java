@@ -9,10 +9,9 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
-import org.promocat.promocat.dto.MovementDTO;
-import org.promocat.promocat.dto.PromoCodeDTO;
-import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeActiveException;
@@ -20,15 +19,10 @@ import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,16 +38,22 @@ public class UserController {
     private final PromoCodeService promoCodeService;
     private final PromoCodeActivationService promoCodeActivationService;
     private final MovementService movementService;
+    private final StockCityService stockCityService;
+    private final StockService stockService;
 
     @Autowired
     public UserController(final UserService userService,
                           final PromoCodeService promoCodeService,
                           final PromoCodeActivationService promoCodeActivationService,
-                          final MovementService movementService) {
+                          final MovementService movementService,
+                          final StockCityService stockCityService,
+                          final StockService stockService) {
         this.userService = userService;
         this.promoCodeService = promoCodeService;
         this.promoCodeActivationService = promoCodeActivationService;
         this.movementService = movementService;
+        this.stockCityService = stockCityService;
+        this.stockService = stockService;
     }
 
     @ApiOperation(value = "Registering user",
@@ -120,6 +120,12 @@ public class UserController {
     public ResponseEntity<UserDTO> setPromoCode(@RequestParam("promo-code") String promoCode,
                                                 @RequestHeader("token") String token) {
         PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
+        StockCityDTO stockCityDTO = stockCityService.findById(promoCodeDTO.getStockCityId());
+        StockDTO stockDTO = stockService.findById(stockCityDTO.getStockId());
+        if (stockDTO.getStartTime().isAfter(LocalDateTime.now())) {
+            log.error("Stock {} is not active", stockDTO.getId());
+            throw new ApiPromoCodeActiveException(String.format("Stock: %s is not active", stockDTO));
+        }
         if (promoCodeDTO.getIsActive()) {
             log.error("Promo-code {} already active", promoCode);
             throw new ApiPromoCodeActiveException(String.format("Promo-code: %s already active", promoCode));

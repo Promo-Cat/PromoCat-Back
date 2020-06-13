@@ -2,10 +2,12 @@ package org.promocat.promocat.data_entities.user;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.data_entities.car.CarService;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
+import org.promocat.promocat.dto.CarDTO;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -33,7 +35,6 @@ public class UserService {
     private final MovementService movementService;
     private final StockCityService stockCityService;
     private final PaymentService paymentService;
-
 
     @Autowired
     public UserService(final UserRepository userRepository,
@@ -110,7 +111,7 @@ public class UserService {
             log.info("User with id {} deleted from DB", id);
         } else {
             log.warn("Attempt to delete user with id {}, who doesn`t exist in DB", id);
-            throw new ApiUserNotFoundException(String.format("User with id %d doesn`t found", id));
+            throw new ApiUserNotFoundException(String.format("User with id %d not found", id));
         }
     }
 

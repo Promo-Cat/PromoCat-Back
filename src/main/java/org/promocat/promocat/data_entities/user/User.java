@@ -24,6 +24,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -40,8 +41,8 @@ public class User extends AbstractAccount {
     private String name;
     private City city;
     private Long balance = 0L;
-    private Set<Car> cars;
-    private Set<Movement> movements;
+    private Set<Car> cars = new HashSet<>();
+    private Set<Movement> movements = new HashSet<>();
     private PromoCode promoCode;
     private Double totalDistance = 0.0;
     private Double totalEarnings = 0.0;
@@ -85,8 +86,7 @@ public class User extends AbstractAccount {
     /**
      * Автомобили пользователя.
      */
-    @Cascade({CascadeType.ALL})
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public Set<Car> getCars() {
         return cars;
     }
@@ -94,8 +94,7 @@ public class User extends AbstractAccount {
     /**
      * Передвижения пользователя участвующего в акции.
      */
-    @Cascade({CascadeType.ALL})
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public Set<Movement> getMovements() {
         return movements;
     }
@@ -103,7 +102,6 @@ public class User extends AbstractAccount {
     /**
      * Действующий промокод.
      */
-//    @Cascade({CascadeType.ALL})
     @OneToOne
     @JoinColumn(name = "promo_code_id")
     public PromoCode getPromoCode() {
