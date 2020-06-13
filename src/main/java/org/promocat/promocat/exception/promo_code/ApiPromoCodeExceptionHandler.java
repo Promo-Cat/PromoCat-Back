@@ -37,7 +37,7 @@ public class ApiPromoCodeExceptionHandler {
                 notFound,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        log.error("Promo-code is active: " + e.getMessage());
+        log.error("Promo-code activation problem: " + e.getMessage());
         return new ResponseEntity<>(apiException, notFound);
     }
 }
