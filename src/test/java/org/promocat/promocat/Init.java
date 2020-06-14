@@ -213,10 +213,12 @@ public class Init {
         // ---------- create and save empty user and take its token ----------
         emptyUser = saveUser();
         emptyUserToken = takeUserToken(emptyUser);
+        emptyUser.setToken(emptyUserToken);
 
         // ---------- create and save empty company and take its token ----------
         emptyCompany = saveCompany();
         emptyCompanyToken = takeCompanyToken(emptyCompany);
+        emptyCompany.setToken(emptyCompanyToken);
 
         // ---------- create and save empty stock ----------
         emptyStock = saveStock(emptyCompany, emptyCompanyToken);
@@ -317,5 +319,9 @@ public class Init {
 
     public StockCityDTO getStockCityWithPromoCodes() {
         return stockCityWithPromoCodes;
+    }
+
+    public String getAdminToken() {
+        return adminToken;
     }
 }

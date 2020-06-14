@@ -83,6 +83,11 @@ public class UserTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    /**
+     * Сохранение пользователя без телефона.
+     *
+     * @throws Exception Пользователь не сохраняется, появляется ошибка 400.
+     */
     @Test
     public void testSaveUserWithoutTelephone() throws Exception {
         UserDTO user = new UserDTO();
@@ -130,9 +135,14 @@ public class UserTest {
         assertEquals(that.getTelephone(), user.getTelephone());
     }
 
+    /**
+     * Удаление несуществующего пользователя.
+     *
+     * @throws Exception никто не удаляется, появляется ошибка 404.
+     */
     @Test
-    public void testDeleteUserWithoutCorrectId() throws Exception {
-        this.mockMvc.perform(delete("/admin/user/1111").header("token", adminToken))
+    public void testDeleteUserWithoutIncorrectId() throws Exception {
+        this.mockMvc.perform(delete("/admin/user/1111").header("token", init.getAdminToken()))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -153,10 +163,18 @@ public class UserTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    /**
+     * Получение пользователя по номеру телефона.
+     *
+     * Администратор получает корректные данные о пользователе.
+     *
+     * @throws Exception возникли какие-то проблемы.
+     */
     @Test
     public void testGetUserByTelephone() throws Exception {
         UserDTO user = init.getEmptyUser();
-        MvcResult result = this.mockMvc.perform(get("/admin/user/telephone?telephone=" + user.getTelephone()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/admin/user/telephone?telephone=" + user.getTelephone())
+                .header("token", init.getAdminToken()))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -168,12 +186,19 @@ public class UserTest {
         assertEquals(user.getAccountType(), that.getAccountType());
     }
 
+    /**
+     * Получение пользователя по его токену.
+     *
+     * Пользователь должен быть успешно получен.
+     *
+     * @throws Exception возникли какие-то проблемы.
+     */
     @Test
     public void testGetUserByToken() throws Exception {
         UserDTO user = init.getEmptyUser();
 
         MvcResult result = this.mockMvc.perform(get("/api/user")
-                .header("token", init.getEmptyUserToken()))
+                .header("token", user.getToken()))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -191,9 +216,15 @@ public class UserTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    /**
+     * Установка промо-кода не пользователю.
+     *
+     * @throws Exception Промо-код не установлен, появляется ошибка 403.
+     */
     @Test
     public void testSetPromoCodeWithIncorrectToken() throws Exception {
-        this.mockMvc.perform(post("/api/user/promo-code?promo-code=A").header("token", adminToken))
+        this.mockMvc.perform(post("/api/user/promo-code?promo-code=A")
+                .header("token", init.getEmptyCompanyToken()))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -307,9 +338,14 @@ public class UserTest {
         assertEquals(movement.getDate(), distance.getDate());
     }
 
+    /**
+     * Получение пользовательской статистики не пользователем.
+     *
+     * @throws Exception Запросивший не получает данные, появляется ошибка 403.
+     */
     @Test
     public void testGetStatisticsWitIncorrectToken() throws Exception {
-        this.mockMvc.perform(get("/api/user/statistics").header("token", adminToken))
+        this.mockMvc.perform(get("/api/user/statistics").header("token", init.getEmptyCompanyToken()))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -366,9 +402,14 @@ public class UserTest {
 //        assertEquals(movements.size(), 2);
 //    }
 
+    /**
+     * Получение истории акций пользователя не пользователем.
+     *
+     * @throws Exception Запросивший не получает данные, появляется ошибка 403.
+     */
     @Test
     public void testGetUserStocksWithIncorrectToken() throws Exception {
-        this.mockMvc.perform(get("/api/user/stocks").header("token", adminToken))
+        this.mockMvc.perform(get("/api/user/stocks").header("token", init.getEmptyCompanyToken()))
                 .andExpect(status().is4xxClientError());
     }
 
