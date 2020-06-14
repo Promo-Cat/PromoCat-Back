@@ -344,11 +344,31 @@ public class UserTest {
      * @throws Exception Запросивший не получает данные, появляется ошибка 403.
      */
     @Test
-    public void testGetStatisticsWitIncorrectToken() throws Exception {
+    public void testGetStatisticsWithIncorrectToken() throws Exception {
         this.mockMvc.perform(get("/api/user/statistics").header("token", init.getEmptyCompanyToken()))
                 .andExpect(status().is4xxClientError());
     }
 
+    /**
+     * Получение пользователя с автомобилями.
+     *
+     * Пользователь должен быть успешно получен.
+     * У пользователя такое же количество автомобилей, как и было добавлено.
+     *
+     * @throws Exception возникли какие-то проблемы.
+     */
+    @Test
+    public void testGetUserWithCars() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/api/user").header("token", init.getUserWithCarsToken()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO actual = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+        UserDTO expected = init.getUserWithCars();
+
+        assertEquals(actual.getCars(), expected.getCars());
+    }
+    
 //    @Test
 //    public void testGetStatistics() throws Exception {
 //        UserDTO user = save("72");
