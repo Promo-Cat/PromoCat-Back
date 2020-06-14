@@ -5,7 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.promocat.promocat.config.GeneratorConfig;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.CarDTO;
+import org.promocat.promocat.dto.CityDTO;
+import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.PromoCodeDTO;
+import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
 import org.promocat.promocat.utils.Generator;
@@ -18,7 +24,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -37,8 +45,10 @@ public class Init {
     private UserDTO emptyUser;
     private UserDTO userWithPromoCode;
     private UserDTO userWithMovement;
+    private UserDTO userWithCars;
     private String emptyUserToken;
     private String userWithPromoCodeToken;
+    private String userWithCarsToken;
 
     private CompanyDTO emptyCompany;
     private CompanyDTO companyWithSomePromoCodes;
@@ -52,6 +62,7 @@ public class Init {
 
     /**
      * Save user with random telephone in Змеиногорск city.
+     *
      * @return UserDTO
      * @throws Exception
      */
@@ -68,8 +79,30 @@ public class Init {
         return new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
     }
 
+
+    /**
+     * Добавление автомобиля пользователю.
+     *
+     * @param user пользователь.
+     * @throws Exception возникли какие-то проблемы.
+     */
+    private void addCarsToUser(UserDTO user) throws Exception {
+
+        CarDTO car = new CarDTO();
+        car.setUserId(user.getId());
+        car.setNumber("x123xx");
+        car.setRegion("126");
+        MvcResult result = mockMvc.perform(post("/api/user/car").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(car))
+                .header("token", user.getToken()))
+                .andExpect(status().isOk())
+                .andReturn();
+        new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
+    }
+
     /**
      * Update user in db.
+     *
      * @param user
      * @throws Exception
      */
@@ -79,8 +112,18 @@ public class Init {
                 .andExpect(status().isOk());
     }
 
+    private UserDTO findUserByToken(String token) throws Exception {
+        MvcResult result = mockMvc.perform(get("/api/user").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("token", token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return mapper.readValue(result.getResponse().getContentAsString(), UserDTO.class);
+    }
+
     /**
      * Get request to take user's token.
+     *
      * @param user
      * @return String
      * @throws Exception
@@ -98,6 +141,7 @@ public class Init {
 
     /**
      * Save company with random Telephone, INN, Name, mail.
+     *
      * @return companyDTO
      * @throws Exception
      */
@@ -116,6 +160,7 @@ public class Init {
 
     /**
      * Update company in db.
+     *
      * @param company
      * @throws Exception
      */
@@ -127,6 +172,7 @@ public class Init {
 
     /**
      * Get request to take company's token.
+     *
      * @param company
      * @return String
      * @throws Exception
@@ -139,11 +185,12 @@ public class Init {
                 + mapper.readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
-         return new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
+        return new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
     }
 
     /**
      * Save stock with random Name, company and companyToken.
+     *
      * @param company
      * @param token
      * @return StockDTO
@@ -166,6 +213,7 @@ public class Init {
 
     /**
      * Save StockCity with stock and companyToken.
+     *
      * @param stock
      * @param token
      * @return
@@ -187,6 +235,7 @@ public class Init {
 
     /**
      * Initialization db.
+     *
      * @throws Exception
      */
     public void init() throws Exception {
@@ -214,6 +263,13 @@ public class Init {
         emptyUser = saveUser();
         emptyUserToken = takeUserToken(emptyUser);
         emptyUser.setToken(emptyUserToken);
+
+        // ---------- create and save user with cars and take its token ----------
+        userWithCars = saveUser();
+        userWithCarsToken = takeUserToken(userWithCars);
+        userWithCars.setToken(userWithCarsToken);
+        addCarsToUser(userWithCars);
+        userWithCars = findUserByToken(userWithCarsToken);
 
         // ---------- create and save empty company and take its token ----------
         emptyCompany = saveCompany();
@@ -261,7 +317,8 @@ public class Init {
         result = mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
-        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         String[] codes = new String[code.size()];
         int ind = 0;
         for (Object o : code.toArray()) {
@@ -328,5 +385,13 @@ public class Init {
 
     public String getAdminToken() {
         return adminToken;
+    }
+
+    public UserDTO getUserWithCars() {
+        return userWithCars;
+    }
+
+    public String getUserWithCarsToken() {
+        return userWithCarsToken;
     }
 }
