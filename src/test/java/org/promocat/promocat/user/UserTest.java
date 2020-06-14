@@ -3,6 +3,7 @@ package org.promocat.promocat.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -47,6 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @Slf4j
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserTest {
 
     @Autowired
@@ -75,6 +78,11 @@ public class UserTest {
     @BeforeClass
     public static void setUp() throws Exception {
 //        init.init();
+    }
+
+    @After
+    public void clearDb() {
+
     }
 
     @Test
@@ -122,14 +130,14 @@ public class UserTest {
 
     @Test
     public void testGetUserWithoutCorrectId() throws Exception {
-        this.mockMvc.perform(get("/admin/user/1111").header("token", adminToken))
+        this.mockMvc.perform(get("/admin/user/1111").header("token", init.getAdminToken()))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
     public void testGetUserById() throws Exception {
         UserDTO user = init.getEmptyUser();
-        MvcResult result = this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", init.getAdminToken()))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -157,20 +165,23 @@ public class UserTest {
         user.setName("I");
         user.setCityId(2L);
         user.setTelephone(Generator.generate(GeneratorConfig.TELEPHONE));
-        this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON_VALUE)
+        MvcResult mvcResult = this.mockMvc.perform(post("/auth/user/register")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().isOk())
+                .andReturn();
+        user = mapper.readValue(mvcResult.getResponse().getContentAsString(), UserDTO.class);
+        this.mockMvc.perform(delete("/admin/user/" + user.getId())
+                .header("token", init.getAdminToken()))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(delete("/admin/user/" + user.getId()).header("token", adminToken))
-                .andExpect(status().isOk());
-
-        this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", adminToken))
+        this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", init.getAdminToken()))
                 .andExpect(status().is4xxClientError());
     }
 
     /**
      * Получение пользователя по номеру телефона.
-     *
+     * <p>
      * Администратор получает корректные данные о пользователе.
      *
      * @throws Exception возникли какие-то проблемы.
@@ -193,7 +204,7 @@ public class UserTest {
 
     /**
      * Получение пользователя по его токену.
-     *
+     * <p>
      * Пользователь должен быть успешно получен.
      *
      * @throws Exception возникли какие-то проблемы.
@@ -261,7 +272,7 @@ public class UserTest {
             codes.add(promoCodeDTO.getPromoCode());
         }
 
-        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes.get(1)).header("token", adminToken))
+        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes.get(1)).header("token", init.getAdminToken()))
                 .andExpect(status().is4xxClientError());
 
         result = this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes.get(1)).header("token", userToken))
@@ -299,7 +310,8 @@ public class UserTest {
         user.setName("I");
         user.setCityId(2L);
         user.setTelephone(Generator.generate(GeneratorConfig.TELEPHONE));
-        MvcResult result = this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON_VALUE)
+        MvcResult result = this.mockMvc.perform(post("/auth/user/register")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -321,7 +333,6 @@ public class UserTest {
         Set<PromoCodeDTO> code = init.getStockCityWithPromoCodes().getPromoCodes();
         List<String> codes = code.stream()
                 .map(PromoCodeDTO::getPromoCode)
-                .peek(System.out::println)
                 .collect(Collectors.toList());
 
         this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes.get(3)).header("token", userToken))
@@ -365,7 +376,7 @@ public class UserTest {
 
     /**
      * Получение пользователя с автомобилями.
-     *
+     * <p>
      * Пользователь должен быть успешно получен.
      * У пользователя такое же количество автомобилей, как и было добавлено.
      *
@@ -382,7 +393,7 @@ public class UserTest {
 
         assertEquals(actual.getCars(), expected.getCars());
     }
-    
+
 //    @Test
 //    public void testGetStatistics() throws Exception {
 //        UserDTO user = save("72");

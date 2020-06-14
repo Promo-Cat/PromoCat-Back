@@ -16,13 +16,16 @@ import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
 import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by Danil Lyskin at 16:49 14.06.2020
  */
 @Component
+@Scope("singleton")
 public class Init {
 
     @Autowired
@@ -319,12 +323,11 @@ public class Init {
                 .andReturn();
         Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
         });
-        String[] codes = new String[code.size()];
-        int ind = 0;
-        for (Object o : code.toArray()) {
-            codes[ind++] = ((PromoCodeDTO) o).getPromoCode();
-        }
-        mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[0]).header("token", userToken))
+        List<String> codes = code.stream()
+                .map(PromoCodeDTO::getPromoCode)
+                .collect(Collectors.toList());
+
+        mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes.get(0)).header("token", userToken))
                 .andExpect(status().isOk());
 
         result = mockMvc.perform(get("/admin/user/" + user.getId()).header("token", adminToken))
