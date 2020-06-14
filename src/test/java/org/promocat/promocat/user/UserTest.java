@@ -1,6 +1,7 @@
 package org.promocat.promocat.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +25,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
+@Slf4j
 public class UserTest {
 
     @Autowired
@@ -50,9 +53,23 @@ public class UserTest {
     private String adminToken;
     private ObjectMapper mapper;
 
+    @Autowired
+    private Init init;
+
+    @PostConstruct
+    public void postConstruct() {
+        System.out.println(init);
+        try {
+            this.init.init();
+        } catch (Exception e) {
+            log.error("Can not init DB", e);
+        }
+    }
+
+
     @BeforeClass
     public static void setUp() throws Exception {
-        Init.init();
+//        init.init();
     }
 
     @Test
@@ -101,7 +118,7 @@ public class UserTest {
 
     @Test
     public void testGetUserById() throws Exception {
-        UserDTO user = Init.getEmptyUser();
+        UserDTO user = init.getEmptyUser();
         MvcResult result = this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -138,7 +155,7 @@ public class UserTest {
 
     @Test
     public void testGetUserByTelephone() throws Exception {
-        UserDTO user = Init.getEmptyUser();
+        UserDTO user = init.getEmptyUser();
         MvcResult result = this.mockMvc.perform(get("/admin/user/telephone?telephone=" + user.getTelephone()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -153,10 +170,10 @@ public class UserTest {
 
     @Test
     public void testGetUserByToken() throws Exception {
-        UserDTO user = Init.getEmptyUser();
+        UserDTO user = init.getEmptyUser();
 
         MvcResult result = this.mockMvc.perform(get("/api/user")
-                .header("token", Init.getEmptyUserToken()))
+                .header("token", init.getEmptyUserToken()))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -202,7 +219,7 @@ public class UserTest {
                 .andReturn();
         String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
 
-        Set<PromoCodeDTO> code = Init.getStockCityWithPromoCodes().getPromoCodes();
+        Set<PromoCodeDTO> code = init.getStockCityWithPromoCodes().getPromoCodes();
         List<String> codes = new ArrayList<>();
         for (PromoCodeDTO promoCodeDTO : code) {
             codes.add(promoCodeDTO.getPromoCode());
@@ -260,7 +277,7 @@ public class UserTest {
                 .andReturn();
         String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
 
-        Set<PromoCodeDTO> code = Init.getStockCityWithPromoCodes().getPromoCodes();
+        Set<PromoCodeDTO> code = init.getStockCityWithPromoCodes().getPromoCodes();
         List<String> codes = new ArrayList<>();
         for (PromoCodeDTO promoCodeDTO : code) {
             codes.add(promoCodeDTO.getPromoCode());

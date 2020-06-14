@@ -11,6 +11,7 @@ import org.promocat.promocat.dto.pojo.TokenDTO;
 import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -23,37 +24,38 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Danil Lyskin at 16:49 14.06.2020
  */
+@Component
 public class Init {
 
     @Autowired
-    private static MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-    private static ObjectMapper mapper;
-    private static String adminToken;
-    private static CityDTO city;
+    private ObjectMapper mapper;
+    private String adminToken;
+    private CityDTO city;
 
-    private static UserDTO emptyUser;
-    private static UserDTO userWithPromoCode;
-    private static UserDTO userWithMovement;
-    private static String emptyUserToken;
-    private static String userWithPromoCodeToken;
+    private UserDTO emptyUser;
+    private UserDTO userWithPromoCode;
+    private UserDTO userWithMovement;
+    private String emptyUserToken;
+    private String userWithPromoCodeToken;
 
-    private static CompanyDTO emptyCompany;
-    private static CompanyDTO companyWithSomePromoCodes;
-    private static String emptyCompanyToken;
-    private static String companyWithPromoCodesToken;
+    private CompanyDTO emptyCompany;
+    private CompanyDTO companyWithSomePromoCodes;
+    private String emptyCompanyToken;
+    private String companyWithPromoCodesToken;
 
-    private static StockDTO emptyStock;
-    private static StockDTO stockWithPromoCodes;
+    private StockDTO emptyStock;
+    private StockDTO stockWithPromoCodes;
 
-    private static StockCityDTO stockCityWithPromoCodes;
+    private StockCityDTO stockCityWithPromoCodes;
 
     /**
      * Save user with random telephone in Змеиногорск city.
      * @return UserDTO
      * @throws Exception
      */
-    private static UserDTO saveUser() throws Exception {
+    private UserDTO saveUser() throws Exception {
         UserDTO user = new UserDTO();
         user.setName("I");
         user.setCityId(10L);
@@ -71,7 +73,7 @@ public class Init {
      * @param user
      * @throws Exception
      */
-    private static void updateUser(UserDTO user) throws Exception {
+    private void updateUser(UserDTO user) throws Exception {
         mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(status().isOk());
@@ -83,7 +85,7 @@ public class Init {
      * @return String
      * @throws Exception
      */
-    private static String takeUserToken(UserDTO user) throws Exception {
+    private String takeUserToken(UserDTO user) throws Exception {
         MvcResult key = mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -99,10 +101,10 @@ public class Init {
      * @return companyDTO
      * @throws Exception
      */
-    private static CompanyDTO saveCompany() throws Exception {
+    private CompanyDTO saveCompany() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setOrganizationName(Generator.generate("########"));
-        company.setInn(Generator.generate("%%%%%%%%%%%"));
+        company.setInn(Generator.generate("%%%%%%%%%%"));
         company.setTelephone(Generator.generate(GeneratorConfig.TELEPHONE));
         company.setMail(Generator.generate("########") + "@mail.ru");
         MvcResult result = mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +119,7 @@ public class Init {
      * @param company
      * @throws Exception
      */
-    private static void updateCompany(CompanyDTO company) throws Exception {
+    private void updateCompany(CompanyDTO company) throws Exception {
         mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(company)))
                 .andExpect(status().isOk());
@@ -129,7 +131,7 @@ public class Init {
      * @return String
      * @throws Exception
      */
-    private static String takeCompanyToken(CompanyDTO company) throws Exception {
+    private String takeCompanyToken(CompanyDTO company) throws Exception {
         MvcResult key = mockMvc.perform(get("/auth/company/login?telephone=" + company.getTelephone()))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -147,7 +149,7 @@ public class Init {
      * @return StockDTO
      * @throws Exception
      */
-    private static StockDTO saveStock(CompanyDTO company, String token) throws Exception {
+    private StockDTO saveStock(CompanyDTO company, String token) throws Exception {
         StockDTO stock = new StockDTO();
         stock.setName(Generator.generate("######"));
         stock.setStartTime(LocalDateTime.now());
@@ -169,7 +171,7 @@ public class Init {
      * @return
      * @throws Exception
      */
-    private static StockCityDTO saveStockCity(StockDTO stock, String token) throws Exception {
+    private StockCityDTO saveStockCity(StockDTO stock, String token) throws Exception {
         StockCityDTO stockCity = new StockCityDTO();
         stockCity.setStockId(stock.getId());
         stockCity.setNumberOfPromoCodes(100L);
@@ -187,7 +189,7 @@ public class Init {
      * Initialization db.
      * @throws Exception
      */
-    public static void init() throws Exception {
+    public void init() throws Exception {
         // ---------- create mapper ----------
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -269,51 +271,51 @@ public class Init {
         userWithPromoCodeToken = takeUserToken(userWithPromoCode);
     }
 
-    public static UserDTO getEmptyUser() {
+    public UserDTO getEmptyUser() {
         return emptyUser;
     }
 
-    public static UserDTO getUserWithPromoCode() {
+    public UserDTO getUserWithPromoCode() {
         return userWithPromoCode;
     }
 
-    public static UserDTO getUserWithMovement() {
+    public UserDTO getUserWithMovement() {
         return userWithMovement;
     }
 
-    public static String getEmptyUserToken() {
+    public String getEmptyUserToken() {
         return emptyUserToken;
     }
 
-    public static String getUserWithPromoCodeToken() {
+    public String getUserWithPromoCodeToken() {
         return userWithPromoCodeToken;
     }
 
-    public static CompanyDTO getEmptyCompany() {
+    public CompanyDTO getEmptyCompany() {
         return emptyCompany;
     }
 
-    public static CompanyDTO getCompanyWithSomePromoCodes() {
+    public CompanyDTO getCompanyWithSomePromoCodes() {
         return companyWithSomePromoCodes;
     }
 
-    public static String getEmptyCompanyToken() {
+    public String getEmptyCompanyToken() {
         return emptyCompanyToken;
     }
 
-    public static String getCompanyWithPromoCodesToken() {
+    public String getCompanyWithPromoCodesToken() {
         return companyWithPromoCodesToken;
     }
 
-    public static StockDTO getEmptyStock() {
+    public StockDTO getEmptyStock() {
         return emptyStock;
     }
 
-    public static StockDTO getStockWithPromoCodes() {
+    public StockDTO getStockWithPromoCodes() {
         return stockWithPromoCodes;
     }
 
-    public static StockCityDTO getStockCityWithPromoCodes() {
+    public StockCityDTO getStockCityWithPromoCodes() {
         return stockCityWithPromoCodes;
     }
 }
