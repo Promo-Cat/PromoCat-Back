@@ -6,4 +6,5 @@ package org.promocat.promocat.config;
 public class GeneratorConfig {
     public static final String CODE = "####-###-%%%%%";
     public static final String FILE_NAME = "#######";
+    public static final String TELEPHONE = "+7(%%%)%%%-%%-%%";
 }
