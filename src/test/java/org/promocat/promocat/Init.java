@@ -244,10 +244,15 @@ public class Init {
                 .andReturn();
         stockWithPromoCodes = mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
 
-        result = mockMvc.perform(get("/api/company/stock_city/" + stockCity.getId()).header("token", companyToken))
+        result = mockMvc.perform(get("/api/company/stock_city/" + stockCity.getId()).header("token", companyWithPromoCodesToken))
                 .andExpect(status().isOk())
                 .andReturn();
         stockCityWithPromoCodes = new ObjectMapper().readValue(result.getResponse().getContentAsString(), StockCityDTO.class);
+
+        result = mockMvc.perform(get("/admin/stock/promoCode/" + stockWithPromoCodes.getId()).header("token", adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+        stockCityWithPromoCodes.setPromoCodes(Set.of(mapper.readValue(result.getResponse().getContentAsString(), PromoCodeDTO[].class)));
 
         // ---------- create and save user with promoCode and setPromoCode ----------
         UserDTO user = saveUser();

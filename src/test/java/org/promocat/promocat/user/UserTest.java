@@ -1,6 +1,7 @@
 package org.promocat.promocat.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,6 +31,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -64,6 +66,9 @@ public class UserTest {
         } catch (Exception e) {
             log.error("Can not init DB", e);
         }
+        this.mapper = new ObjectMapper();
+        this.mapper.registerModule(new JavaTimeModule());
+
     }
 
 
@@ -283,6 +288,11 @@ public class UserTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    /**
+     * Проверяет корректность записей (Movement) о передвижении юзера.
+     *
+     * @throws Exception Данные о передвижении из бд не совпадают с ожидаемыми
+     */
     @Test
     public void testMoveUser() throws Exception {
         UserDTO user = new UserDTO();
@@ -309,15 +319,17 @@ public class UserTest {
         String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
 
         Set<PromoCodeDTO> code = init.getStockCityWithPromoCodes().getPromoCodes();
-        List<String> codes = new ArrayList<>();
-        for (PromoCodeDTO promoCodeDTO : code) {
-            codes.add(promoCodeDTO.getPromoCode());
-        }
+        List<String> codes = code.stream()
+                .map(PromoCodeDTO::getPromoCode)
+                .peek(System.out::println)
+                .collect(Collectors.toList());
 
         this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes.get(3)).header("token", userToken))
                 .andExpect(status().isOk());
 
-        MvcResult movementR = this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(distance))
+        MvcResult movementR = this.mockMvc.perform(post("/api/user/move")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(distance))
                 .header("token", userToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -327,13 +339,15 @@ public class UserTest {
         assertEquals(movement.getDistance(), distance.getDistance());
         assertEquals(movement.getDate(), distance.getDate());
 
-        movementR = this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(distance))
+        movementR = this.mockMvc.perform(post("/api/user/move")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(distance))
                 .header("token", userToken))
                 .andExpect(status().isOk())
                 .andReturn();
         movement = mapper.readValue(movementR.getResponse().getContentAsString(), MovementDTO.class);
 
-        assertEquals(movement.getDistance(), Double.valueOf(24.0));
+        assertEquals(movement.getDistance(), Double.valueOf(distance.getDistance() * 2.0));
         assertEquals(movement.getUserId(), user.getId());
         assertEquals(movement.getDate(), distance.getDate());
     }
