@@ -15,6 +15,7 @@ import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeActiveException;
+import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -73,6 +74,39 @@ public class UserController {
     })
     @RequestMapping(path = "/auth/user/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> addUser(@Valid @RequestBody UserDTO user) {
+        return ResponseEntity.ok(userService.save(user));
+    }
+
+    @ApiOperation(value = "Update user",
+            notes = "Updates user in db.",
+            response = UserDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 400,
+                    message = "Validation error",
+                    response = ApiValidationException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class)
+    })
+    @RequestMapping(path = {"/api/user", "/admin/user"},
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO user) {
+        // TODO: 17.06.2020 check permissions (user can update only himself)
+        if (user.getId() == null) {
+            // TODO: 17.06.2020 ApiFieldException
+            throw new ApiUserNotFoundException("For update operation id must be not null");
+        }
+        if (userService.findById(user.getId()) == null) {
+            throw new ApiUserNotFoundException(String.format("User with id %d doesn`t found", user.getId()));
+        }
         return ResponseEntity.ok(userService.save(user));
     }
 
