@@ -94,10 +94,7 @@ public class PromoCodeActivationService {
         StockDTO stock = stockService.findById(stockId);
         return stock.getCities()
                 .stream()
-                .map(x -> new PromoCodeActivationStatisticDTO(x.getCityId(), x.getPromoCodes()
-                        .stream()
-                        .filter(PromoCodeDTO::getIsActive)
-                        .count()))
+                .map(x -> new PromoCodeActivationStatisticDTO(x.getCityId(), (long)x.getUsers().size()))
                 .collect(Collectors.toList());
     }
 }

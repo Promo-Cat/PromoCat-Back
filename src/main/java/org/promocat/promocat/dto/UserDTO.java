@@ -56,10 +56,10 @@ public class UserDTO extends AbstractAccountDTO {
     private Set<CarDTO> cars;
 
     @ApiModelProperty(
-            value = "Id of current users promo-code",
+            value = "Id of current users stock city",
             dataType = "Long"
     )
-    private Long promoCodeId;
+    private Long stockCityId;
 
     @ApiModelProperty(
             value = "Users movement",

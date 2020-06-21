@@ -188,7 +188,7 @@ public class CompanyService {
     }
 
     public List<CompanyDTO> getAllCompanyByInnAndVerified(String inn, boolean verified) {
-        return companyRepository.findAllByInnAndVerified(inn, true)
+        return companyRepository.findAllByInnAndVerified(inn, verified)
                 .stream()
                 .map(companyMapper::toDto)
                 .collect(Collectors.toList());

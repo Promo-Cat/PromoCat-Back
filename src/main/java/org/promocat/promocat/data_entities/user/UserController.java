@@ -133,42 +133,50 @@ public class UserController {
         return ResponseEntity.ok(userService.findByToken(token));
     }
 
-    @ApiOperation(value = "Set user's promo-code",
-            notes = "Returning user, whose id specified in params",
-            response = UserDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "User not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 403,
-                    message = "Wrong token",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Promo-code not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(value = "/api/user/promo-code", method = RequestMethod.POST)
-    public ResponseEntity<UserDTO> setPromoCode(@RequestParam("promo-code") String promoCode,
-                                                @RequestHeader("token") String token) {
-        PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
-        StockCityDTO stockCityDTO = stockCityService.findById(promoCodeDTO.getStockCityId());
-        StockDTO stockDTO = stockService.findById(stockCityDTO.getStockId());
-        if (stockDTO.getStartTime().isAfter(LocalDateTime.now())) {
-            log.error("Stock {} is not active", stockDTO.getId());
-            throw new ApiPromoCodeActiveException(String.format("Stock: %s is not active", stockDTO));
-        }
-        if (promoCodeDTO.getIsActive()) {
-            log.error("Promo-code {} already active", promoCode);
-            throw new ApiPromoCodeActiveException(String.format("Promo-code: %s already active", promoCode));
-        }
-        promoCodeDTO.setIsActive(true);
-        UserDTO user = userService.findByToken(token);
-        promoCodeActivationService.create(user, promoCodeDTO);
-        user.setPromoCodeId(promoCodeService.save(promoCodeDTO).getId());
-        return ResponseEntity.ok(userService.save(user));
+    // TODO: 21.06.2020 Что-то придумать с промокодами
+//    @ApiOperation(value = "Set user's promo-code",
+//            notes = "Returning user, whose id specified in params",
+//            response = UserDTO.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 404,
+//                    message = "User not found",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 403,
+//                    message = "Wrong token",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 404,
+//                    message = "Promo-code not found",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(value = "/api/user/promo-code", method = RequestMethod.POST)
+//    public ResponseEntity<UserDTO> setPromoCode(@RequestParam("promo-code") String promoCode,
+//                                                @RequestHeader("token") String token) {
+//        PromoCodeDTO promoCodeDTO = promoCodeService.findByPromoCode(promoCode);
+//        StockCityDTO stockCityDTO = stockCityService.findById(promoCodeDTO.getStockCityId());
+//        StockDTO stockDTO = stockService.findById(stockCityDTO.getStockId());
+//        if (stockDTO.getStartTime().isAfter(LocalDateTime.now())) {
+//            log.error("Stock {} is not active", stockDTO.getId());
+//            throw new ApiPromoCodeActiveException(String.format("Stock: %s is not active", stockDTO));
+//        }
+//        if (promoCodeDTO.getIsActive()) {
+//            log.error("Promo-code {} already active", promoCode);
+//            throw new ApiPromoCodeActiveException(String.format("Promo-code: %s already active", promoCode));
+//        }
+//        promoCodeDTO.setIsActive(true);
+//        UserDTO user = userService.findByToken(token);
+//        promoCodeActivationService.create(user, promoCodeDTO);
+//        user.setPromoCodeId(promoCodeService.save(promoCodeDTO).getId());
+//        return ResponseEntity.ok(userService.save(user));
+//    }
+
+    @RequestMapping(value = "/api/user/stock/{stockCityId}", method = RequestMethod.POST)
+    public ResponseEntity<UserDTO> setUserStockCity(@PathVariable("stockCityId") final Long stockCityId,
+                                                    @RequestHeader("token") final String token) {
+        UserDTO userDTO = userService.findByToken(token);
+        return ResponseEntity.ok(userService.setUserStockCity(userDTO, stockCityId));
     }
 
     @ApiOperation(value = "Add user movement",

@@ -67,27 +67,27 @@ public class StockController {
 
     // ------ Admin methods ------
 
-    @ApiOperation(value = "Generate promo-codes to stock.",
-            notes = "Returning stock with id specified in request",
-            response = StockDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(path = "/admin/company/stock/generate/{id}", method = RequestMethod.POST)
-    public ResponseEntity<StockDTO> generate(@PathVariable("id") Long id) {
-        StockDTO stock = stockService.findById(id);
-        if (Objects.isNull(stock.getIsAlive())) {
-            companyService.verify(stock.getCompanyId());
-            return ResponseEntity.ok(promoCodeService.savePromoCodes(stockService.setActive(id, true)));
-        }
-        throw new ApiStockActivationStatusException(String.format(
-                "Stock with id: %d is already %s", id, stock.getIsAlive() ? "activated" : "deactivated"));
-    }
+//    @ApiOperation(value = "Generate promo-codes to stock.",
+//            notes = "Returning stock with id specified in request",
+//            response = StockDTO.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 404,
+//                    message = "Stock not found",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(path = "/admin/company/stock/generate/{id}", method = RequestMethod.POST)
+//    public ResponseEntity<StockDTO> generate(@PathVariable("id") Long id) {
+//        StockDTO stock = stockService.findById(id);
+//        if (Objects.isNull(stock.getIsAlive())) {
+//            companyService.verify(stock.getCompanyId());
+//            return ResponseEntity.ok(promoCodeService.savePromoCodes(stockService.setActive(id, true)));
+//        }
+//        throw new ApiStockActivationStatusException(String.format(
+//                "Stock with id: %d is already %s", id, stock.getIsAlive() ? "activated" : "deactivated"));
+//    }
 
     @ApiOperation(value = "Deactivate stock.",
             notes = "Returning stock with id specified in request",

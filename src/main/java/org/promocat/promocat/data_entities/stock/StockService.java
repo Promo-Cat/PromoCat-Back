@@ -127,13 +127,13 @@ public class StockService {
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
 
             for (StockDTO stock : stocks) {
-                for (StockCityDTO city : stock.getCities()) {
-                    for (PromoCodeDTO code : city.getPromoCodes()) {
-                        code.setIsActive(false);
-                        code.setDeactivateDate(LocalDateTime.now());
-                        promoCodeService.save(code);
-                    }
-                }
+//                for (StockCityDTO city : stock.getCities()) {
+//                    for (PromoCodeDTO code : city.getPromoCodes()) {
+//                        code.setIsActive(false);
+//                        code.setDeactivateDate(LocalDateTime.now());
+//                        promoCodeService.save(code);
+//                    }
+//                }
                 stock.setIsAlive(false);
                 save(stock);
             }
@@ -177,13 +177,13 @@ public class StockService {
     public StockDTO deactivateStock(Long id) {
         log.info("Trying to deactivate stock with id: {}", id);
         StockDTO stock = findById(id);
-        if (Objects.nonNull(stock.getCities())) {
-            for (StockCityDTO city : stock.getCities()) {
-                for (PromoCodeDTO code : city.getPromoCodes()) {
-                    promoCodeService.setActive(code.getId(), false);
-                }
-            }
-        }
+//        if (Objects.nonNull(stock.getCities())) {
+//            for (StockCityDTO city : stock.getCities()) {
+//                for (PromoCodeDTO code : city.getPromoCodes()) {
+//                    promoCodeService.setActive(code.getId(), false);
+//                }
+//            }
+//        }
         return setActive(id, false);
     }
 
@@ -221,18 +221,18 @@ public class StockService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Получение всех промокодов.
-     *
-     * @param stockId уникальный идентификатор акции.
-     * @return Список промокодов. {@link PromoCodeDTO}
-     */
-    public Set<PromoCodeDTO> getCodes(final Long stockId) {
-        StockDTO dto = findById(stockId);
-        Set<PromoCodeDTO> res = new HashSet<>();
-        for (StockCityDTO city : dto.getCities()) {
-            res.addAll(city.getPromoCodes());
-        }
-        return res;
-    }
+//    /**
+//     * Получение всех промокодов.
+//     *
+//     * @param stockId уникальный идентификатор акции.
+//     * @return Список промокодов. {@link PromoCodeDTO}
+//     */
+//    public Set<PromoCodeDTO> getCodes(final Long stockId) {
+//        StockDTO dto = findById(stockId);
+//        Set<PromoCodeDTO> res = new HashSet<>();
+//        for (StockCityDTO city : dto.getCities()) {
+//            res.addAll(city.getPromoCodes());
+//        }
+//        return res;
+//    }
 }
