@@ -208,4 +208,8 @@ public class CompanyService {
                 });
         return companyDTO;
     }
+
+    public void deleteById(Long id) {
+        companyRepository.deleteById(id);
+    }
 }

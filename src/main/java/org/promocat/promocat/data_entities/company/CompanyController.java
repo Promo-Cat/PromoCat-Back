@@ -21,6 +21,7 @@ import org.promocat.promocat.dto.pojo.StockCostDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
+import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,37 @@ public class CompanyController {
         }
     }
 
+    @ApiOperation(value = "Update company",
+            notes = "Updates company",
+            response = CompanyDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 400,
+                    message = "Validation error",
+                    response = ApiValidationException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class)
+    })
+    @RequestMapping(path = { "/api/company", "/admin/company" }, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CompanyDTO> updateCompany(@Valid @RequestBody CompanyDTO company) {
+        // TODO: 17.06.2020 check permissions (company can update only himself)
+        if (company.getId() == null) {
+            // TODO: 17.06.2020 ApiFieldException
+            throw new ApiCompanyNotFoundException("For update operation id must be not null");
+        }
+        if (companyService.findById(company.getId()) == null) {
+            throw new ApiCompanyNotFoundException(String.format("User with id %d doesn`t found", company.getId()));
+        }
+        return ResponseEntity.ok(companyService.save(company));
+    }
+
     @ApiOperation(value = "Get company, who authorized with token from request header",
             notes = "Registering company with telephone in format +X(XXX)XXX-XX-XX",
             response = CompanyDTO.class)
@@ -110,6 +142,24 @@ public class CompanyController {
             throw new ApiForbiddenException("Account type is not a company.");
         }
         return ResponseEntity.ok(companyService.findByToken(token));
+    }
+
+    @ApiOperation(value = "Delete company by id",
+            notes = "Deletes company by id from request params",
+            response = CompanyDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(path = "/admin/company", method = RequestMethod.DELETE)
+    public ResponseEntity<CompanyDTO> deleteCompany(@RequestParam("id") Long id) {
+        CompanyDTO companyDTO = companyService.findById(id);
+        companyService.deleteById(companyDTO.getId());
+        return ResponseEntity.ok(companyDTO);
     }
 
     @ApiOperation(value = "Get total number of activated promo-codes.",
