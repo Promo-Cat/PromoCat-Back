@@ -59,7 +59,10 @@ public class CarController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/api/user/car", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CarDTO> addCar(@Valid @RequestBody CarDTO car) {
+    public ResponseEntity<CarDTO> addCar(@RequestBody CarDTO car,
+                                         @RequestHeader("token") String token) {
+        UserDTO user = userService.findByToken(token);
+        car.setUserId(user.getId());
         return ResponseEntity.ok(carService.save(car));
     }
 
