@@ -66,7 +66,7 @@ public class StockCity extends AbstractEntity {
         return city;
     }
 
-    @Cascade({CascadeType.ALL})
+    @Cascade({CascadeType.SAVE_UPDATE})
     @OneToMany(mappedBy = "stockCity", fetch = FetchType.LAZY)
     public Set<User> getUsers() {
         return users;

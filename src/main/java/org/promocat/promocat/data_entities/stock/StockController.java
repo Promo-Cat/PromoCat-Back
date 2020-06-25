@@ -131,7 +131,7 @@ public class StockController {
                     response = ApiException.class)
     })
     @RequestMapping(value = "/admin/stock/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteStockById(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteStockById(@PathVariable("id") final Long id) {
         stockService.deleteById(id);
         return ResponseEntity.ok("{}");
     }

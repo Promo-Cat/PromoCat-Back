@@ -649,5 +649,4 @@ public class CompanyController {
     public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") final String mail) {
         return ResponseEntity.ok(companyService.findByMail(mail));
     }
-
 }
