@@ -20,9 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +118,7 @@ public class StockService {
     }
 
     /**
-     * Удаление всеъ просроченных промокодов и установка акций в неактивное состояние.
+     * Удаление всех просроченных промокодов и установка акций в неактивное состояние.
      */
     @Scheduled(cron = "59 59 23 * * *")
     public void checkAlive() {
@@ -146,7 +144,13 @@ public class StockService {
      * Установка активности акции
      *
      * @param id     акции
-     * @param status требуемое состояние {@code true} активно, {@code false} неактивно. {@code null} неизвестно.
+     * @param status требуемое состояние {@code POSTER_NOT_CONFIRMED} постер не подтвержден,
+     * {@code POSTER_CONFIRMED_WITHOUT_PREPAY} постер подтвержден без предоплаты,
+     * {@code POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE} постер подтвержден с предоплатой,
+     * {@code ACTIVE} акция активна,
+     * {@code STOCK_IS_OVER_WITHOUT_POSTPAY} акция завершена без постоплатой,
+     * {@code STOCK_IS_OVER_WITH_POSTPAY} акция заверешена с постоплатой,
+     * {@code BAN} акция забанена.
      * @return представление акции в БД. {@link StockDTO}
      */
     public StockDTO setActive(final Long id, final StockStatus status) {

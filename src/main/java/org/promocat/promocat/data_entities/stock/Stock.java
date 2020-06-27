@@ -68,7 +68,7 @@ public class Stock extends AbstractEntity {
     }
 
     /**
-     * Активность акции.
+     * Статус акции.
      */
     @Column(name = "isAlive")
     public StockStatus getIsAlive() {
