@@ -58,10 +58,11 @@ public class StockMapper extends AbstractMapper<Stock, StockDTO> {
     private Long getPosterId(Stock source) {
         return Objects.isNull(source) || Objects.isNull(source.getPoster()) ? null : source.getPoster().getId();
     }
-    
+
     @Override
     void mapSpecificFields(StockDTO source, Stock destination) {
         destination.setCompany(companyRepository.findById(source.getCompanyId()).orElse(null));
-        destination.setPoster(posterRepository.findById(source.getPosterId()).orElse(null));
+        Long posterId = source.getPosterId() == null ? 0 : source.getPosterId();
+        destination.setPoster(posterRepository.findById(posterId).orElse(null));
     }
 }
