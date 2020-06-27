@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
@@ -21,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.Objects;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -113,6 +113,7 @@ public class StockController {
 //                "Stock with id: %d is already %s", id, stock.getIsAlive() ? "activated" : "deactivated"));
 //    }
 
+
     @ApiOperation(value = "Deactivate stock.",
             notes = "Returning stock with id specified in request",
             response = StockDTO.class)
@@ -126,7 +127,7 @@ public class StockController {
     })
     @RequestMapping(path = "/admin/company/stock/active/{id}", method = RequestMethod.POST)
     public ResponseEntity<StockDTO> deactivateStock(@PathVariable("id") Long id,
-                                                    @RequestParam("activation_status") Boolean activationStatus) {
+                                                    @RequestParam("activation_status") StockStatus activationStatus) {
         return ResponseEntity.ok(stockService.setActive(id, activationStatus));
     }
 
