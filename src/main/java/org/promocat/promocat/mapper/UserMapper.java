@@ -3,6 +3,7 @@ package org.promocat.promocat.mapper;
 import org.modelmapper.ModelMapper;
 import org.promocat.promocat.data_entities.city.CityRepository;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityRepository;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +21,16 @@ public class UserMapper extends AbstractMapper<User, UserDTO> {
 
     private final ModelMapper mapper;
     private final CityRepository cityRepository;
-    private final PromoCodeRepository promoCodeRepository;
+    private final StockCityRepository stockCityRepository;
 
     @Autowired
     public UserMapper(final ModelMapper mapper,
                       final CityRepository cityRepository,
-                      final PromoCodeRepository promoCodeRepository) {
+                      final StockCityRepository stockCityRepository) {
         super(User.class, UserDTO.class);
         this.mapper = mapper;
         this.cityRepository = cityRepository;
-        this.promoCodeRepository = promoCodeRepository;
+        this.stockCityRepository = stockCityRepository;
     }
 
     @PostConstruct
@@ -37,12 +38,12 @@ public class UserMapper extends AbstractMapper<User, UserDTO> {
         mapper.createTypeMap(User.class, UserDTO.class)
                 .addMappings(m -> {
                     m.skip(UserDTO::setCityId);
-                    m.skip(UserDTO::setPromoCodeId);
+                    m.skip(UserDTO::setStockCityId);
                 }).setPostConverter(toDtoConverter());
         mapper.createTypeMap(UserDTO.class, User.class)
                 .addMappings(m -> {
                     m.skip(User::setCity);
-                    m.skip(User::setPromoCode);
+                    m.skip(User::setStockCity);
                 }).setPostConverter(toEntityConverter());
     }
 
@@ -50,20 +51,20 @@ public class UserMapper extends AbstractMapper<User, UserDTO> {
         return Objects.isNull(source) || Objects.isNull(source.getCity()) ? null : source.getCity().getId();
     }
 
-    private Long getPromoCodeId(User source) {
-        return Objects.isNull(source) || Objects.isNull(source.getPromoCode()) ? null : source.getPromoCode().getId();
+    private Long getStockCityId(User source) {
+        return Objects.isNull(source) || Objects.isNull(source.getStockCity()) ? null : source.getStockCity().getId();
     }
 
     @Override
     void mapSpecificFields(User source, UserDTO destination) {
         destination.setCityId(getCityId(source));
-        destination.setPromoCodeId(getPromoCodeId(source));
+        destination.setStockCityId(getStockCityId(source));
     }
 
     @Override
     void mapSpecificFields(UserDTO source, User destination) {
         destination.setCity(cityRepository.findById(source.getCityId()).orElse(null));
-        Long promoCodeId = source.getPromoCodeId() == null ? 1 : source.getPromoCodeId(); // FIXME: 03.06.2020
-        destination.setPromoCode(promoCodeRepository.findById(promoCodeId).orElse(null));
+        Long stockCityId = source.getStockCityId() == null ? 1 : source.getStockCityId(); // FIXME: 03.06.2020
+        destination.setStockCity(stockCityRepository.findById(stockCityId).orElse(null));
     }
 }

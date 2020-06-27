@@ -49,5 +49,5 @@ public class StockCityDTO extends AbstractDTO {
     private Long numberOfPromoCodes;
 
     @JsonIgnore
-    private Set<PromoCodeDTO> promoCodes;
+    private Set<UserDTO> users;
 }

@@ -94,7 +94,7 @@ public class Stock extends AbstractEntity {
     /**
      * Id организации, которой принадлежит акция.
      */
-    @Cascade({CascadeType.ALL})
+    @Cascade({CascadeType.SAVE_UPDATE})
     @ManyToOne(fetch = FetchType.LAZY)
     //TODO check not null
     public Company getCompany() {

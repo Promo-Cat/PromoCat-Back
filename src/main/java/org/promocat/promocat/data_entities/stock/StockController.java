@@ -15,11 +15,7 @@ import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Objects;
@@ -67,27 +63,28 @@ public class StockController {
 
     // ------ Admin methods ------
 
-    @ApiOperation(value = "Generate promo-codes to stock.",
-            notes = "Returning stock with id specified in request",
-            response = StockDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(path = "/admin/company/stock/generate/{id}", method = RequestMethod.POST)
-    public ResponseEntity<StockDTO> generate(@PathVariable("id") Long id) {
-        StockDTO stock = stockService.findById(id);
-        if (Objects.isNull(stock.getIsAlive())) {
-            companyService.verify(stock.getCompanyId());
-            return ResponseEntity.ok(promoCodeService.savePromoCodes(stockService.setActive(id, true)));
-        }
-        throw new ApiStockActivationStatusException(String.format(
-                "Stock with id: %d is already %s", id, true ? "activated" : "deactivated"));
-    }
+//    @ApiOperation(value = "Generate promo-codes to stock.",
+//            notes = "Returning stock with id specified in request",
+//            response = StockDTO.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 404,
+//                    message = "Stock not found",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(path = "/admin/company/stock/generate/{id}", method = RequestMethod.POST)
+//    public ResponseEntity<StockDTO> generate(@PathVariable("id") Long id) {
+//        StockDTO stock = stockService.findById(id);
+//        if (Objects.isNull(stock.getIsAlive())) {
+//            companyService.verify(stock.getCompanyId());
+//            return ResponseEntity.ok(promoCodeService.savePromoCodes(stockService.setActive(id, true)));
+//        }
+//        throw new ApiStockActivationStatusException(String.format(
+//                "Stock with id: %d is already %s", id, stock.getIsAlive() ? "activated" : "deactivated"));
+//    }
+
 
     @ApiOperation(value = "Deactivate stock.",
             notes = "Returning stock with id specified in request",
@@ -100,9 +97,10 @@ public class StockController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/company/stock/deactivate/{id}", method = RequestMethod.POST)
-    public ResponseEntity<StockDTO> deactivateStock(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(stockService.deactivateStock(id));
+    @RequestMapping(path = "/admin/company/stock/active/{id}", method = RequestMethod.POST)
+    public ResponseEntity<StockDTO> deactivateStock(@PathVariable("id") Long id,
+                                                    @RequestParam("activation_status") Boolean activationStatus) {
+        return ResponseEntity.ok(stockService.setActive(id, activationStatus));
     }
 
 
@@ -134,7 +132,7 @@ public class StockController {
                     response = ApiException.class)
     })
     @RequestMapping(value = "/admin/stock/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteStockById(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteStockById(@PathVariable("id") final Long id) {
         stockService.deleteById(id);
         return ResponseEntity.ok("{}");
     }

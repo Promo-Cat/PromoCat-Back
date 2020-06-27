@@ -10,6 +10,7 @@ import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import org.promocat.promocat.data_entities.stock.Stock;
+import org.promocat.promocat.data_entities.user.User;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +36,7 @@ public class StockCity extends AbstractEntity {
     private Stock stock;
     private Long numberOfPromoCodes;
     private City city;
-    private Set<PromoCode> promoCodes;
+    private Set<User> users;
 
     /**
      * Акция.
@@ -65,9 +66,9 @@ public class StockCity extends AbstractEntity {
         return city;
     }
 
-    @Cascade({CascadeType.ALL})
+    @Cascade({CascadeType.SAVE_UPDATE})
     @OneToMany(mappedBy = "stockCity", fetch = FetchType.LAZY)
-    public Set<PromoCode> getPromoCodes() {
-        return promoCodes;
+    public Set<User> getUsers() {
+        return users;
     }
 }

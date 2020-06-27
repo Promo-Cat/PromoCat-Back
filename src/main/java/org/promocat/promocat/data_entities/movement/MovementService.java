@@ -55,7 +55,7 @@ public class MovementService {
      * @return Представление передвижения сохраненное в БД. {@link MovementDTO}
      */
     public MovementDTO save(final MovementDTO movementDTO) {
-        Double panel = movementMapper.toEntity(movementDTO).getUser().getPromoCode().getStockCity().getStock().getPanel() / 100.0;
+        Double panel = movementMapper.toEntity(movementDTO).getUser().getStockCity().getStock().getPanel() / 100.0;
         movementDTO.setPanel(movementDTO.getEarnings() * panel);
         return movementMapper.toDto(movementRepository.save(movementMapper.toEntity(movementDTO)));
     }
@@ -71,8 +71,7 @@ public class MovementService {
     public MovementDTO create(final DistanceDTO distance, final Double earnedMoney, final UserDTO user) {
         MovementDTO movementDTO = new MovementDTO();
         movementDTO.setUserId(user.getId());
-        movementDTO.setStockId(stockCityService.findById(promoCodeService.findById(user.getPromoCodeId())
-                .getStockCityId()).getStockId());
+        movementDTO.setStockId(stockCityService.findById(user.getStockCityId()).getStockId());
         movementDTO.setDate(distance.getDate());
         movementDTO.setDistance(distance.getDistance());
         movementDTO.setEarnings(earnedMoney);

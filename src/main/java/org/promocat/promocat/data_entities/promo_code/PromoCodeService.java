@@ -110,85 +110,85 @@ public class PromoCodeService {
     }
 
     // TODO структурировать данный метод, разбить на меньшие. Лучше вынетси его в отдельный метод, тут он совсем не к месту.
-
-    /**
-     * Отправка почтового письма с промокодами внутри.
-     *
-     * @param cities {@link Set} сущностей {@link StockCityDTO}.
-     */
-    private void sendMail(final Set<StockCityDTO> cities) {
-        List<Path> images = new ArrayList<>();
-        List<Path> archives = new ArrayList<>();
-
-        for (StockCityDTO city : cities) {
-            List<Path> imagesInCity = new ArrayList<>();
-
-            String zipName = Generator.generate(GeneratorConfig.FILE_NAME) + "$" +
-                    cityService.findById(city.getCityId()).getCity() + ".zip";
-
-            Path pathToZip = Paths.get(PATH, zipName);
-
-            for (PromoCodeDTO code : city.getPromoCodes()) {
-
-                String imageName = code.getPromoCode() + "$" +
-                        cityService.findById(city.getCityId()).getCity() + ".png";
-
-                Path pathToImage = Paths.get(PATH, imageName);
-
-                try {
-                    ImageIO.write(Generator.generateQRCodeImage(code.getPromoCode()),
-                            "png", new File(pathToImage.toString()));
-                    log.info("QR code {} with promo-code {} was generated", pathToImage.toString(),
-                            code.getPromoCode());
-                } catch (IOException e) {
-                    log.error("An exception occurs {}", e.getMessage());
-                    throw new ApiServerErrorException("Problems with generating promo-code");
-                }
-                imagesInCity.add(pathToImage);
-            }
-
-            images.addAll(imagesInCity);
-
-            try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(pathToZip.toString()))) {
-                for (Path filePath : imagesInCity) {
-                    File fileToZip = new File(filePath.toString());
-                    zipOut.putNextEntry(new ZipEntry(fileToZip.getName()));
-                    Files.copy(fileToZip.toPath(), zipOut);
-                }
-            } catch (IOException e) {
-                log.error("An exception occurs {}", e.getMessage());
-                throw new ApiServerErrorException("Problems with generating zip");
-            }
-
-            archives.add(pathToZip);
-        }
-
-        try {
-            emailSender.send(archives);
-            log.info("Files was send");
-        } catch (MessagingException e) {
-            log.error("Files wasn't send");
-        } finally {
-            for (Path path : images) {
-                File file = path.toFile();
-                if (file.delete()) {
-                    log.info("Delete QR {}", file.getName());
-                } else {
-                    log.warn("QR {} not found", file.getName());
-                }
-            }
-
-            for (Path path : archives) {
-                File file = path.toFile();
-                if (file.delete()) {
-                    log.info("Delete zip {} with QRs", file.getName());
-                } else {
-                    log.warn("Zip {} not found", file.getName());
-                }
-            }
-        }
-
-    }
+    // TODO: 21.06.2020 Закомменчено...
+//    /**
+//     * Отправка почтового письма с промокодами внутри.
+//     *
+//     * @param cities {@link Set} сущностей {@link StockCityDTO}.
+//     */
+//    private void sendMail(final Set<StockCityDTO> cities) {
+//        List<Path> images = new ArrayList<>();
+//        List<Path> archives = new ArrayList<>();
+//
+//        for (StockCityDTO city : cities) {
+//            List<Path> imagesInCity = new ArrayList<>();
+//
+//            String zipName = Generator.generate(GeneratorConfig.FILE_NAME) + "$" +
+//                    cityService.findById(city.getCityId()).getCity() + ".zip";
+//
+//            Path pathToZip = Paths.get(PATH, zipName);
+//
+//            for (PromoCodeDTO code : city.getPromoCodes()) {
+//
+//                String imageName = code.getPromoCode() + "$" +
+//                        cityService.findById(city.getCityId()).getCity() + ".png";
+//
+//                Path pathToImage = Paths.get(PATH, imageName);
+//
+//                try {
+//                    ImageIO.write(Generator.generateQRCodeImage(code.getPromoCode()),
+//                            "png", new File(pathToImage.toString()));
+//                    log.info("QR code {} with promo-code {} was generated", pathToImage.toString(),
+//                            code.getPromoCode());
+//                } catch (IOException e) {
+//                    log.error("An exception occurs {}", e.getMessage());
+//                    throw new ApiServerErrorException("Problems with generating promo-code");
+//                }
+//                imagesInCity.add(pathToImage);
+//            }
+//
+//            images.addAll(imagesInCity);
+//
+//            try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(pathToZip.toString()))) {
+//                for (Path filePath : imagesInCity) {
+//                    File fileToZip = new File(filePath.toString());
+//                    zipOut.putNextEntry(new ZipEntry(fileToZip.getName()));
+//                    Files.copy(fileToZip.toPath(), zipOut);
+//                }
+//            } catch (IOException e) {
+//                log.error("An exception occurs {}", e.getMessage());
+//                throw new ApiServerErrorException("Problems with generating zip");
+//            }
+//
+//            archives.add(pathToZip);
+//        }
+//
+//        try {
+//            emailSender.send(archives);
+//            log.info("Files was send");
+//        } catch (MessagingException e) {
+//            log.error("Files wasn't send");
+//        } finally {
+//            for (Path path : images) {
+//                File file = path.toFile();
+//                if (file.delete()) {
+//                    log.info("Delete QR {}", file.getName());
+//                } else {
+//                    log.warn("QR {} not found", file.getName());
+//                }
+//            }
+//
+//            for (Path path : archives) {
+//                File file = path.toFile();
+//                if (file.delete()) {
+//                    log.info("Delete zip {} with QRs", file.getName());
+//                } else {
+//                    log.warn("Zip {} not found", file.getName());
+//                }
+//            }
+//        }
+//
+//    }
 
     /**
      * Генерация промо-кодов для акции.
@@ -209,23 +209,23 @@ public class PromoCodeService {
         return codes;
     }
 
-    /**
-     * Сохранение промокодов к ациии.
-     *
-     * @param stock объектное представление акции.
-     * @return представление акции в БД. {@link StockDTO}
-     */
-    public StockDTO savePromoCodes(StockDTO stock) {
-        log.info("Saving promo-codes to stock: {}", stock.getId());
-        if (Objects.nonNull(stock.getCities())) {
-            for (StockCityDTO city : stock.getCities()) {
-                Set<PromoCodeDTO> codesForCity = generate(stock.getId(), city);
-                city.setPromoCodes(codesForCity.stream().map(this::save).collect(Collectors.toSet()));
-            }
-            sendMail(stock.getCities());
-        }
-        return stock;
-    }
+//    /**
+//     * Сохранение промокодов к ациии.
+//     *
+//     * @param stock объектное представление акции.
+//     * @return представление акции в БД. {@link StockDTO}
+//     */
+//    public StockDTO savePromoCodes(StockDTO stock) {
+//        log.info("Saving promo-codes to stock: {}", stock.getId());
+//        if (Objects.nonNull(stock.getCities())) {
+//            for (StockCityDTO city : stock.getCities()) {
+//                Set<PromoCodeDTO> codesForCity = generate(stock.getId(), city);
+//                city.setPromoCodes(codesForCity.stream().map(this::save).collect(Collectors.toSet()));
+//            }
+////            sendMail(stock.getCities());
+//        }
+//        return stock;
+//    }
 
     /**
      * Изменение активности промокода по его id.

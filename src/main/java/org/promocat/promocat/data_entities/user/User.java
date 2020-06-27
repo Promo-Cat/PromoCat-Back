@@ -12,6 +12,7 @@ import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.movement.Movement;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,15 +44,15 @@ public class User extends AbstractAccount {
     private Long balance = 0L;
     private Set<Car> cars = new HashSet<>();
     private Set<Movement> movements = new HashSet<>();
-    private PromoCode promoCode;
+    private StockCity stockCity;
     private Double totalDistance = 0.0;
     private Double totalEarnings = 0.0;
 
-    public User(String name, City city, Long balance, PromoCode promoCode) {
+    public User(String name, City city, Long balance, StockCity stockCity) {
         this.name = name;
         this.city = city;
         this.balance = balance;
-        this.promoCode = promoCode;
+        this.stockCity = stockCity;
         this.setAccountType(AccountType.USER);
     }
 
@@ -102,10 +103,10 @@ public class User extends AbstractAccount {
     /**
      * Действующий промокод.
      */
-    @OneToOne
-    @JoinColumn(name = "promo_code_id")
-    public PromoCode getPromoCode() {
-        return promoCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stock_city_id")
+    public StockCity getStockCity() {
+        return stockCity;
     }
 
     /**

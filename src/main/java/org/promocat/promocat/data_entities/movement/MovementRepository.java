@@ -39,18 +39,18 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     List<DistanceDTO> getDistanceInAllCitiesSummaryByStock(Long stockId);
 
     @Query(
-            "select new org.promocat.promocat.dto.pojo.DistanceWithCityDTO(m.date, sum(m.distance), m.user.promoCode.stockCity.city.id) " +
+            "select new org.promocat.promocat.dto.pojo.DistanceWithCityDTO(m.date, sum(m.distance), m.user.stockCity.city.id) " +
                     "from Movement m " +
                     "where m.stock.id=?1 " +
-                    "group by m.date, m.user.promoCode.stockCity.city"
+                    "group by m.date, m.user.stockCity.city"
     )
     List<DistanceWithCityDTO> getDistanceInCitiesByStock(Long stockId);
 
     @Query(
-            "select new org.promocat.promocat.dto.pojo.DistanceWithCityDTO(m.date, sum(m.distance), m.user.promoCode.stockCity.city.id) " +
+            "select new org.promocat.promocat.dto.pojo.DistanceWithCityDTO(m.date, sum(m.distance), m.user.stockCity.city.id) " +
                     "from Movement m " +
-                    "where m.stock.id=?1 and m.user.promoCode.stockCity.city.id=?2 " +
-                    "group by m.date, m.user.promoCode.stockCity.city"
+                    "where m.stock.id=?1 and m.user.stockCity.city.id=?2 " +
+                    "group by m.date, m.user.stockCity.city"
     )
     List<DistanceWithCityDTO> getDistanceInCityByStockAndCity(Long stockId, Long cityId);
 
@@ -63,10 +63,10 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     DistanceDTO getSummaryDistanceByStock(Long stockId);
 
     @Query(
-            "select new org.promocat.promocat.dto.pojo.DistanceWithCityDTO(sum(m.distance), m.user.promoCode.stockCity.city.id) " +
+            "select new org.promocat.promocat.dto.pojo.DistanceWithCityDTO(sum(m.distance), m.user.stockCity.city.id) " +
                     "from Movement m " +
-                    "where m.stock.id=?1 and (?2 is null or m.user.promoCode.stockCity.city.id=?2) " +
-                    "group by m.stock, m.user.promoCode.stockCity.city"
+                    "where m.stock.id=?1 and (?2 is null or m.user.stockCity.city.id=?2) " +
+                    "group by m.stock, m.user.stockCity.city"
     )
     List<DistanceWithCityDTO> getSummaryDistanceByStockAndCity(Long stockId, Long cityId);
 
