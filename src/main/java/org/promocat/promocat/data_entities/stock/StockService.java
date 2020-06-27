@@ -238,19 +238,4 @@ public class StockService {
 //        return res;
 //    }
 
-    /**
-     * Добавление постера к акции.
-     * @param stock акция.
-     * @param file файл постера {@link MultipartFile}
-     * @throws ApiServerErrorException если постер не может быть загружен
-     */
-    public void loadPoster(final StockDTO stock, final MultipartFile file) {
-        try {
-            stock.setPoster(file.getBytes());
-            save(stock);
-        } catch (IOException e) {
-            log.error("Cannot read poster");
-            throw new ApiServerErrorException(String.format("Cannot add poster for stock %d", stock.getId()));
-        }
-    }
 }

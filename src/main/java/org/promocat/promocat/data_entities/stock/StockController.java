@@ -9,18 +9,19 @@ import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
+import org.promocat.promocat.data_entities.stock.poster.PosterService;
+import org.promocat.promocat.dto.PosterDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
-import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 
 /**
@@ -34,14 +35,16 @@ public class StockController {
     private final StockService stockService;
     private final PromoCodeService promoCodeService;
     private final CompanyService companyService;
+    private final PosterService posterService;
 
     @Autowired
     public StockController(final StockService stockService,
                            final PromoCodeService promoCodeService,
-                           final CompanyService companyService) {
+                           final CompanyService companyService, final PosterService posterService) {
         this.stockService = stockService;
         this.promoCodeService = promoCodeService;
         this.companyService = companyService;
+        this.posterService = posterService;
     }
 
     @ApiOperation(value = "Create stock",
@@ -67,15 +70,18 @@ public class StockController {
 
     @RequestMapping(path = "/api/company/stock/{id}/poster", method = RequestMethod.POST)
     public ResponseEntity<String> loadPoster(@PathVariable("id") Long id,
-                                           @RequestParam("poster") MultipartFile poster,
+                                           @RequestParam("poster") MultipartFile file,
                                            @RequestHeader("token") String token) {
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
-            stockService.loadPoster(stockService.findById(id), poster);
-        } else {
+            PosterDTO poster = posterService.loadPoster(file);
+            StockDTO stock = stockService.findById(id);
+            stock.setPosterId(poster.getId());
+            stockService.save(stock);
+            return ResponseEntity.ok("{}");
+         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }
-        return ResponseEntity.ok("{}");
     }
 
 //    @RequestMapping(path = "/api/company/stock/{id}/poster", method = RequestMethod.GET)
@@ -84,7 +90,7 @@ public class StockController {
 //        Long companyId = companyService.findByToken(token).getId();
 //        if (companyService.isOwner(companyId, id)) {
 //            StockDTO stock = stockService.findById(id);
-//            return ResponseEntity.ok().contentType(MediaType.parseMediaType("PDF"))
+//
 //        } else {
 //            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
 //        }

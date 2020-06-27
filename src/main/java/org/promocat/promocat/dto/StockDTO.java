@@ -85,6 +85,5 @@ public class StockDTO extends AbstractDTO {
     @JsonIgnore
     private Set<MovementDTO> movements;
 
-    @JsonIgnore
-    private byte[] poster;
+    private Long posterId;
 }

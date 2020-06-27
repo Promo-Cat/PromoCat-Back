@@ -13,12 +13,12 @@ import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.movement.Movement;
 import org.promocat.promocat.data_entities.parameters.Parameters;
+import org.promocat.promocat.data_entities.stock.poster.Poster;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
