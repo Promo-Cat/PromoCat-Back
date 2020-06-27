@@ -2,11 +2,11 @@ package org.promocat.promocat.data_entities.stock;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
-import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
@@ -20,11 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -134,7 +131,7 @@ public class StockService {
 //                        promoCodeService.save(code);
 //                    }
 //                }
-                stock.setIsAlive(false);
+                stock.setIsAlive(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
                 save(stock);
             }
         }
@@ -144,13 +141,13 @@ public class StockService {
      * Установка активности акции
      *
      * @param id     акции
-     * @param active требуемое состояние {@code true} активно, {@code false} неактивно. {@code null} неизвестно.
+     * @param status требуемое состояние {@code true} активно, {@code false} неактивно. {@code null} неизвестно.
      * @return представление акции в БД. {@link StockDTO}
      */
-    public StockDTO setActive(final Long id, final Boolean active) {
-        log.info("Setting stock: {} active: {}", id, active);
+    public StockDTO setActive(final Long id, final StockStatus status) {
+        log.info("Setting stock: {} active: {}", id, status);
         StockDTO stock = findById(id);
-        stock.setIsAlive(active);
+        stock.setIsAlive(status);
         return save(stock);
     }
 
@@ -184,7 +181,7 @@ public class StockService {
 //                }
 //            }
 //        }
-        return setActive(id, false);
+        return setActive(id, StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
     }
 
     /**
