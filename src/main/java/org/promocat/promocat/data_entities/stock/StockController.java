@@ -16,7 +16,9 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -84,17 +86,23 @@ public class StockController {
         }
     }
 
-//    @RequestMapping(path = "/api/company/stock/{id}/poster", method = RequestMethod.GET)
-//    public ResponseEntity<Resource> getPoster(@PathVariable("id") Long id,
-//                                              @RequestHeader("token") String token) {
-//        Long companyId = companyService.findByToken(token).getId();
-//        if (companyService.isOwner(companyId, id)) {
-//            StockDTO stock = stockService.findById(id);
-//
-//        } else {
-//            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
-//        }
-//    }
+    @RequestMapping(path = "/api/company/stock/{id}/poster", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getPoster(@PathVariable("id") Long id,
+                                              @RequestHeader("token") String token) {
+        Long companyId = companyService.findByToken(token).getId();
+        if (companyService.isOwner(companyId, id)) {
+            StockDTO stock = stockService.findById(id);
+            PosterDTO poster = posterService.findById(stock.getPosterId());
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(poster.getDataType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + poster.getFileName() + "\"")
+                    .body(new ByteArrayResource(poster.getPoster()));
+        } else {
+            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
+        }
+    }
+
     // ------ Admin methods ------
 
 //    @ApiOperation(value = "Generate promo-codes to stock.",
