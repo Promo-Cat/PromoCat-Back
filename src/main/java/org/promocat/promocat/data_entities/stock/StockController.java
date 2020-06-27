@@ -66,6 +66,7 @@ public class StockController {
     })
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock) {
+        stock.setIsAlive(StockStatus.POSTER_NOT_CONFIRMED);
         return ResponseEntity.ok(stockService.create(stock));
     }
 
