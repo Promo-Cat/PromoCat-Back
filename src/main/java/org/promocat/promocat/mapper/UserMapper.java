@@ -64,7 +64,7 @@ public class UserMapper extends AbstractMapper<User, UserDTO> {
     @Override
     void mapSpecificFields(UserDTO source, User destination) {
         destination.setCity(cityRepository.findById(source.getCityId()).orElse(null));
-        Long stockCityId = source.getStockCityId() == null ? 1 : source.getStockCityId(); // FIXME: 03.06.2020
+        Long stockCityId = source.getStockCityId() == null ? 0 : source.getStockCityId(); // FIXME: 03.06.2020
         destination.setStockCity(stockCityRepository.findById(stockCityId).orElse(null));
     }
 }

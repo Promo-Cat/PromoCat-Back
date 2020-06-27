@@ -103,7 +103,7 @@ public class Stock extends AbstractEntity {
     /**
      * Передвижения пользователей участвующих в акции.
      */
-    @Cascade({CascadeType.ALL})
+    @Cascade({CascadeType.SAVE_UPDATE})
     @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
     public Set<Movement> getMovements() {
         return movements;

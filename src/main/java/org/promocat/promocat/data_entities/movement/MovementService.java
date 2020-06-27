@@ -112,9 +112,9 @@ public class MovementService {
      * @return заработок пользователя
      * (дистанция, общий заработок, коммиссия, заработок с учетом коммиссии). {@link UserStockEarningStatisticDTO}
      */
-    public UserStockEarningStatisticDTO getUserEarningStatistic(final UserDTO userDTO, final Long stockId) {
+    public UserStockEarningStatisticDTO getUserEarningStatistic(final UserDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
-        return Optional.ofNullable(movementRepository.getUserStatistic(user.getId(), stockId))
+        return Optional.ofNullable(movementRepository.getUserStatistic(user.getId()))
                 .orElse(new UserStockEarningStatisticDTO(0.0, 0.0, 0.0));
     }
 

@@ -56,6 +56,7 @@ public class MovementMapper extends AbstractMapper<Movement, MovementDTO> {
     @Override
     void mapSpecificFields(MovementDTO source, Movement destination) {
         destination.setUser(userRepository.findById(source.getUserId()).orElse(null));
-        destination.setStock(stockRepository.findById(source.getStockId()).orElse(null));
+        Long stockId = source.getStockId() == null ? 0 : source.getStockId();
+        destination.setStock(stockRepository.findById(stockId).orElse(null));
     }
 }

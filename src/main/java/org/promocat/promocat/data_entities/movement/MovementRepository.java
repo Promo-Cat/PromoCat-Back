@@ -26,9 +26,9 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     @Query(
             "select new org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO(sum(m.distance), sum(m.earnings), sum(m.panel))" +
                     "from Movement m " +
-                    "where m.stock.id=?1 and m.user.id=?2"
+                    "where m.user.id=?1"
     )
-    UserStockEarningStatisticDTO getUserStatistic(Long stockId, Long userId);
+    UserStockEarningStatisticDTO getUserStatistic(Long userId);
 
     @Query(
             "select new org.promocat.promocat.dto.pojo.DistanceDTO(m.date, sum(m.distance)) " +

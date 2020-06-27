@@ -11,14 +11,11 @@ import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.user.User;
+import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Set;
 
 /**
@@ -66,9 +63,10 @@ public class StockCity extends AbstractEntity {
         return city;
     }
 
-    @Cascade({CascadeType.SAVE_UPDATE})
+    @Cascade({CascadeType.DETACH})
     @OneToMany(mappedBy = "stockCity", fetch = FetchType.LAZY)
     public Set<User> getUsers() {
         return users;
     }
+
 }

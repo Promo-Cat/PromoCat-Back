@@ -10,7 +10,9 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
@@ -21,7 +23,6 @@ import org.promocat.promocat.dto.pojo.StockCostDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
-import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,16 +53,19 @@ public class CompanyController {
     private final StockService stockService;
     private final PromoCodeActivationService promoCodeActivationService;
     private final MovementService movementService;
+    private final UserService userService;
 
     @Autowired
     public CompanyController(final CompanyService companyService,
                              final StockService stockService,
                              final PromoCodeActivationService promoCodeActivationService,
-                             final MovementService movementService) {
+                             final MovementService movementService,
+                             final UserService userService) {
         this.companyService = companyService;
         this.stockService = stockService;
         this.promoCodeActivationService = promoCodeActivationService;
         this.movementService = movementService;
+        this.userService = userService;
     }
 
     @ApiOperation(value = "Register company",
@@ -107,7 +111,7 @@ public class CompanyController {
                     message = "Company not found",
                     response = ApiException.class)
     })
-    @RequestMapping(path = { "/api/company", "/admin/company" }, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = {"/api/company", "/admin/company"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CompanyDTO> updateCompany(@Valid @RequestBody CompanyDTO company) {
         // TODO: 17.06.2020 check permissions (company can update only himself)
         if (company.getId() == null) {
@@ -158,6 +162,18 @@ public class CompanyController {
     @RequestMapping(path = "/admin/company", method = RequestMethod.DELETE)
     public ResponseEntity<CompanyDTO> deleteCompany(@RequestParam("id") Long id) {
         CompanyDTO companyDTO = companyService.findById(id);
+        companyDTO.getStocks().forEach(
+                x -> {
+                    x.getMovements().stream()
+                            .peek(y -> y.setStockId(null))
+                            .forEach(movementService::save);
+                    x.getCities().forEach(
+                            y -> y.getUsers().stream()
+                                    .peek(z -> z.setStockCityId(null))
+                                    .forEach(userService::save)
+                    );
+                }
+        );
         companyService.deleteById(companyDTO.getId());
         return ResponseEntity.ok(companyDTO);
     }
@@ -317,6 +333,7 @@ public class CompanyController {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
     }
+
     //TODO если город не активный, то выдает 404
     @ApiOperation(value = "Get total number of promo-codes in all cities.",
             notes = "Getting all promo-codes in all cities.",

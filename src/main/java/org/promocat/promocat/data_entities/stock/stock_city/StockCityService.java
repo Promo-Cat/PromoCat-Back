@@ -52,6 +52,9 @@ public class StockCityService {
      * @throws ApiStockCityNotFoundException если такой сущности нет.
      */
     public StockCityDTO findById(final Long id) {
+        if (id == null) {
+            return null;
+        }
         Optional<StockCity> stockCity = stockCityRepository.findById(id);
         if (stockCity.isPresent()) {
             stockCityRepository.flush();
