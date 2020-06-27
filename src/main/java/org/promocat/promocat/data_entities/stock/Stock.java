@@ -17,8 +17,10 @@ import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -44,6 +46,7 @@ public class Stock extends AbstractEntity {
     private Set<Movement> movements;
     private Set<StockCity> cities;
     private Double panel;
+    private Poster poster;
 
     /**
      * Значение комиссии для конкретной акции.
@@ -116,6 +119,12 @@ public class Stock extends AbstractEntity {
     @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
     public Set<StockCity> getCities() {
         return cities;
+    }
+
+
+    @OneToOne
+    public Poster getPoster() {
+        return poster;
     }
 }
 

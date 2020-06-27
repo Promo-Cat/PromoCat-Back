@@ -11,13 +11,18 @@ import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.validators.StockDurationConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -235,4 +240,20 @@ public class StockService {
 //        }
 //        return res;
 //    }
+
+    /**
+     * Добавление постера к акции.
+     * @param stock акция.
+     * @param file файл постера {@link MultipartFile}
+     * @throws ApiServerErrorException если постер не может быть загружен
+     */
+    public void loadPoster(final StockDTO stock, final MultipartFile file) {
+        try {
+            stock.setPoster(file.getBytes());
+            save(stock);
+        } catch (IOException e) {
+            log.error("Cannot read poster");
+            throw new ApiServerErrorException(String.format("Cannot add poster for stock %d", stock.getId()));
+        }
+    }
 }
