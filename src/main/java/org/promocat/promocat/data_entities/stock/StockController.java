@@ -86,7 +86,7 @@ public class StockController {
             return ResponseEntity.ok(promoCodeService.savePromoCodes(stockService.setActive(id, true)));
         }
         throw new ApiStockActivationStatusException(String.format(
-                "Stock with id: %d is already %s", id, stock.getIsAlive() ? "activated" : "deactivated"));
+                "Stock with id: %d is already %s", id, true ? "activated" : "deactivated"));
     }
 
     @ApiOperation(value = "Deactivate stock.",

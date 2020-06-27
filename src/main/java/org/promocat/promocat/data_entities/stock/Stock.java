@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.constraints.StockDurationConstraint;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
@@ -37,7 +38,7 @@ import java.util.Set;
 public class Stock extends AbstractEntity {
 
     private String name;
-    private Boolean isAlive;
+    private StockStatus isAlive;
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
@@ -67,7 +68,7 @@ public class Stock extends AbstractEntity {
      * Активность акции.
      */
     @Column(name = "isAlive")
-    public Boolean getIsAlive() {
+    public StockStatus getIsAlive() {
         return isAlive;
     }
 
