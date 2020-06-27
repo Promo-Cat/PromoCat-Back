@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.constraints.StockDurationConstraint;
 
 import javax.validation.constraints.NotBlank;
@@ -41,7 +42,7 @@ public class StockDTO extends AbstractDTO {
             value = "Stock activation status",
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
-    private Boolean isAlive;
+    private StockStatus isAlive;
 
     @ApiModelProperty(
             value = "Company id",
@@ -83,4 +84,6 @@ public class StockDTO extends AbstractDTO {
 
     @JsonIgnore
     private Set<MovementDTO> movements;
+
+    private Long posterId;
 }

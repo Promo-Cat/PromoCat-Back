@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
@@ -279,7 +280,7 @@ public class StockTest {
         StockDTO stock = new StockDTO();
         stock.setName("ww22w");
         stock.setStartTime(LocalDateTime.now());
-        stock.setIsAlive(true);
+        stock.setIsAlive(StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
         stock.setDuration(7L);
 
         stock.setCompanyId(company.getId());
@@ -337,7 +338,6 @@ public class StockTest {
 
         StockDTO stockRes = this.mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
         assertEquals(stock.getId(), stockRes.getId());
-        assertFalse(stockRes.getIsAlive());
 
         result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())

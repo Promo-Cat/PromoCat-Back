@@ -1,9 +1,9 @@
 package org.promocat.promocat.mapper;
 
 import org.modelmapper.ModelMapper;
-import org.promocat.promocat.data_entities.city.CityRepository;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
 import org.promocat.promocat.data_entities.stock.Stock;
+import org.promocat.promocat.data_entities.stock.poster.PosterRepository;
 import org.promocat.promocat.dto.StockDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,16 +19,16 @@ public class StockMapper extends AbstractMapper<Stock, StockDTO> {
 
     private final ModelMapper mapper;
     private final CompanyRepository companyRepository;
-    private final CityRepository cityRepository;
+    private final PosterRepository posterRepository;
 
     @Autowired
     public StockMapper(final ModelMapper mapper,
                        final CompanyRepository companyRepository,
-                       final CityRepository cityRepository) {
+                       final PosterRepository posterRepository) {
         super(Stock.class, StockDTO.class);
         this.mapper = mapper;
         this.companyRepository = companyRepository;
-        this.cityRepository = cityRepository;
+        this.posterRepository = posterRepository;
     }
 
     @PostConstruct
@@ -36,24 +36,32 @@ public class StockMapper extends AbstractMapper<Stock, StockDTO> {
         mapper.createTypeMap(Stock.class, StockDTO.class)
                 .addMappings(m -> {
                     m.skip(StockDTO::setCompanyId);
+                    m.skip(StockDTO::setPosterId);
                 }).setPostConverter(toDtoConverter());
         mapper.createTypeMap(StockDTO.class, Stock.class)
                 .addMappings(m -> {
                     m.skip(Stock::setCompany);
+                    m.skip(Stock::setPoster);
                 }).setPostConverter(toEntityConverter());
     }
 
     @Override
     public void mapSpecificFields(Stock source, StockDTO destination) {
         destination.setCompanyId(getCompanyId(source));
+        destination.setPosterId(getPosterId(source));
     }
 
     private Long getCompanyId(Stock source) {
         return Objects.isNull(source) || Objects.isNull(source.getCompany()) ? null : source.getCompany().getId();
     }
 
+    private Long getPosterId(Stock source) {
+        return Objects.isNull(source) || Objects.isNull(source.getPoster()) ? null : source.getPoster().getId();
+    }
+    
     @Override
     void mapSpecificFields(StockDTO source, Stock destination) {
         destination.setCompany(companyRepository.findById(source.getCompanyId()).orElse(null));
+        destination.setPoster(posterRepository.findById(source.getPosterId()).orElse(null));
     }
 }
