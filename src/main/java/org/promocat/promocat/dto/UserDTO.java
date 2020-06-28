@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -24,12 +25,14 @@ import java.util.Set;
 public class UserDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
-            value = "Users name",
+            value = "Users mail",
             dataType = "String",
-            required = true
+            required = true,
+            allowableValues = "Standard email format."
     )
-    @NotBlank(message = "Имя не может быть пустым")
-    private String name;
+    @Email
+    @NotBlank(message = "Почта не может быть пустой")
+    private String mail;
 
     @ApiModelProperty(
             value = "Users city",

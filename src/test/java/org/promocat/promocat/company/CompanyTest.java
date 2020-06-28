@@ -461,7 +461,7 @@ public class CompanyTest {
     @Test
     public void testGetSummaryPromoCodeActivation() throws Exception {
         UserDTO user = new UserDTO();
-        user.setName("I");
+        user.setMail("I");
         user.setCityId(2L);
         user.setTelephone("+7(693)222-22-22");
         MvcResult result = this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -526,7 +526,7 @@ public class CompanyTest {
     @Test
     public void testGetPromoCodes() throws Exception {
         UserDTO user = new UserDTO();
-        user.setName("I");
+        user.setMail("I");
         user.setCityId(2L);
         user.setTelephone("+7(693)720-22-22");
         MvcResult result = this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON_VALUE)

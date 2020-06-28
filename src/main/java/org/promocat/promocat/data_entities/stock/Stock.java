@@ -78,7 +78,6 @@ public class Stock extends AbstractEntity {
     /**
      * Время начала акции.
      */
-    @NotNull(message = "Время начала акции не может быть пустым.")
     @Column(name = "start_time")
     public LocalDateTime getStartTime() {
         return startTime;
@@ -87,7 +86,6 @@ public class Stock extends AbstractEntity {
     /**
      * Время продолжительности акции.
      */
-    @NotNull(message = "Время продолжительности акции не может быть пустым.")
     @Column(name = "duration")
     @StockDurationConstraint
     public Long getDuration() {

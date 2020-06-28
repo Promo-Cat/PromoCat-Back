@@ -66,18 +66,16 @@ public class StockDTO extends AbstractDTO {
             dataType = "Local date time",
             required = true
     )
-    @NotNull(message = "Время начала акции не может быть пустым.")
     private LocalDateTime startTime;
 
     @ApiModelProperty(
-            value = "Stock duration",
+            value = "Stock duration. Standard value 14.",
             allowableValues = "7, 14, 21, 28",
             dataType = "Long",
             required = true
     )
-    @NotNull(message = "Время продолжительности акции не может быть пустым.")
     @StockDurationConstraint
-    private Long duration;
+    private Long duration = 14L;
 
     // TODO: 05.06.2020 DOCS
     private Double panel;

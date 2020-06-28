@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -39,7 +40,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class User extends AbstractAccount {
 
-    private String name;
+    private String mail;
     private City city;
     private Long balance = 0L;
     private Set<Car> cars = new HashSet<>();
@@ -48,8 +49,8 @@ public class User extends AbstractAccount {
     private Double totalDistance = 0.0;
     private Double totalEarnings = 0.0;
 
-    public User(String name, City city, Long balance, StockCity stockCity) {
-        this.name = name;
+    public User(String mail, City city, Long balance, StockCity stockCity) {
+        this.mail = mail;
         this.city = city;
         this.balance = balance;
         this.stockCity = stockCity;
@@ -59,10 +60,11 @@ public class User extends AbstractAccount {
     /**
      * Имя пользователя.
      */
-    @NotBlank(message = "Имя не может быть пустым")
-    @Column(name = "name")
-    public String getName() {
-        return name;
+    @Email
+    @NotBlank(message = "Почта не может быть пустой")
+    @Column(name = "mail", unique = true)
+    public String getMail() {
+        return mail;
     }
 
     /**

@@ -44,7 +44,7 @@ public class CarTest {
     @Before
     public void init() throws Exception {
         user = new UserDTO();
-        user.setName("I");
+        user.setMail("I");
         user.setTelephone("+7(999)243-26-99");
         user.setCityId(2L);
         user.setId(1L);
