@@ -63,16 +63,14 @@ public class StockDTO extends AbstractDTO {
 
     @ApiModelProperty(
             value = "Start time of stock",
-            dataType = "Local date time",
-            required = true
+            dataType = "Local date time"
     )
     private LocalDateTime startTime;
 
     @ApiModelProperty(
             value = "Stock duration. Standard value 14.",
             allowableValues = "7, 14, 21, 28",
-            dataType = "Long",
-            required = true
+            dataType = "Long"
     )
     @StockDurationConstraint
     private Long duration = 14L;
