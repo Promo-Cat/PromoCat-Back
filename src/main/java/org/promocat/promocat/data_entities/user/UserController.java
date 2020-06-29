@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -10,20 +11,25 @@ import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
-import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.exception.ApiException;
-import org.promocat.promocat.exception.promo_code.ApiPromoCodeActiveException;
-import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.EntityUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,25 +42,16 @@ import java.util.Objects;
 public class UserController {
 
     private final UserService userService;
-    private final PromoCodeService promoCodeService;
     private final PromoCodeActivationService promoCodeActivationService;
     private final MovementService movementService;
-    private final StockCityService stockCityService;
-    private final StockService stockService;
 
     @Autowired
     public UserController(final UserService userService,
-                          final PromoCodeService promoCodeService,
                           final PromoCodeActivationService promoCodeActivationService,
-                          final MovementService movementService,
-                          final StockCityService stockCityService,
-                          final StockService stockService) {
+                          final MovementService movementService) {
         this.userService = userService;
-        this.promoCodeService = promoCodeService;
         this.promoCodeActivationService = promoCodeActivationService;
         this.movementService = movementService;
-        this.stockCityService = stockCityService;
-        this.stockService = stockService;
     }
 
     @ApiOperation(value = "Registering user",
@@ -72,7 +69,7 @@ public class UserController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/auth/user/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "/auth/register/user", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> addUser(@Valid @RequestBody UserDTO user) {
         return ResponseEntity.ok(userService.save(user));
     }
@@ -98,16 +95,11 @@ public class UserController {
     @RequestMapping(path = {"/api/user", "/admin/user"},
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO user) {
-        // TODO: 17.06.2020 check permissions (user can update only himself)
-        if (user.getId() == null) {
-            // TODO: 17.06.2020 ApiFieldException
-            throw new ApiUserNotFoundException("For update operation id must be not null");
-        }
-        if (userService.findById(user.getId()) == null) {
-            throw new ApiUserNotFoundException(String.format("User with id %d doesn`t found", user.getId()));
-        }
-        return ResponseEntity.ok(userService.save(user));
+    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO user,
+                                              @RequestHeader String token) {
+        UserDTO actualUser = userService.findByToken(token);
+        EntityUpdate.copyNonNullProperties(user, actualUser);
+        return ResponseEntity.ok(userService.save(actualUser));
     }
 
     @ApiOperation(value = "Get authorized user",

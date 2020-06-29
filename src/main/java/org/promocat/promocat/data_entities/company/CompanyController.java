@@ -15,6 +15,7 @@ import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
 import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
@@ -24,6 +25,7 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -112,16 +114,11 @@ public class CompanyController {
                     response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company", "/admin/company"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CompanyDTO> updateCompany(@Valid @RequestBody CompanyDTO company) {
-        // TODO: 17.06.2020 check permissions (company can update only himself)
-        if (company.getId() == null) {
-            // TODO: 17.06.2020 ApiFieldException
-            throw new ApiCompanyNotFoundException("For update operation id must be not null");
-        }
-        if (companyService.findById(company.getId()) == null) {
-            throw new ApiCompanyNotFoundException(String.format("User with id %d doesn`t found", company.getId()));
-        }
-        return ResponseEntity.ok(companyService.save(company));
+    public ResponseEntity<CompanyDTO> updateCompany(@Valid @RequestBody CompanyDTO company,
+                                                    @RequestHeader String token) {
+        CompanyDTO actualCompany = companyService.findByToken(token);
+        EntityUpdate.copyNonNullProperties(company, actualCompany);
+        return ResponseEntity.ok(companyService.save(actualCompany));
     }
 
     @ApiOperation(value = "Get company, who authorized with token from request header",

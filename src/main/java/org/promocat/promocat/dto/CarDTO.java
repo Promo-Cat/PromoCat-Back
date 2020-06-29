@@ -25,7 +25,6 @@ public class CarDTO extends AbstractDTO {
             dataType = "Long",
             required = true
     )
-    @NotNull(message = "Id пользователя должно быть задано.")
     private Long userId;
 
     @ApiModelProperty(
