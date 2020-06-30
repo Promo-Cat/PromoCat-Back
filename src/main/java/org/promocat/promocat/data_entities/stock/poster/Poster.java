@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 import org.promocat.promocat.data_entities.AbstractEntity;
 
 import javax.persistence.Column;
@@ -29,7 +30,8 @@ public class Poster extends AbstractEntity {
      * Байтовое представление постера.
      */
     @Lob
-    @Column(name = "poster", columnDefinition = "BLOB")
+    @Type(type = "org.hibernate.type.BinaryType")
+    @Column(name = "poster")
     public byte[] getPoster() {
         return poster;
     }
