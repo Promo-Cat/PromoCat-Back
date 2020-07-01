@@ -46,16 +46,13 @@ public class StockDTO extends AbstractDTO {
 
     @ApiModelProperty(
             value = "Company id",
-            dataType = "Long",
-            required = true
+            dataType = "Long"
     )
-    @NotNull(message = "Id компании не может быть пустым.")
     private Long companyId;
 
     @ApiModelProperty(
             value = "Cities where the stock takes place",
             dataType = "List of StockCity entities",
-            required = true,
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

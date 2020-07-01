@@ -10,6 +10,7 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
+import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.PosterDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
@@ -65,7 +66,10 @@ public class StockController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock) {
+    public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock,
+                                             @RequestHeader String token) {
+        CompanyDTO company = companyService.findByToken(token);
+        stock.setCompanyId(company.getId());
         stock.setIsAlive(StockStatus.POSTER_NOT_CONFIRMED);
         return ResponseEntity.ok(stockService.create(stock));
     }
