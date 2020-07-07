@@ -6,10 +6,14 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.dto.AdminDTO;
+import org.promocat.promocat.dto.PosterDTO;
 import org.promocat.promocat.dto.pojo.TelephoneDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,8 +21,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.nio.file.Path;
 import java.util.List;
 
 @Api(tags = {SpringFoxConfig.ADMIN})
@@ -65,20 +72,27 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getAll());
     }
 
-    @ApiOperation(value = "Delete admin.",
-            notes = "Deletes admin with id specified in request.",
+    @ApiOperation(value = "Delete admin.", notes = "Deletes admin with id specified in request.",
             response = String.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Admin not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "Admin not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = "/admin/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteAdmin(@PathVariable("id") Long id) {
         adminService.delete(id);
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Add new example poster",
+            notes = "Adding new example poster. Max size is 2MB, .pdf format required", response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server problems", response = ApiException.class)
+    })
+    @RequestMapping(path = "/admin/poster/example", method = RequestMethod.POST)
+    public ResponseEntity<String> addPosterExample(@RequestParam("poster") MultipartFile poster) {
+        adminService.savePoster(poster);
         return ResponseEntity.ok("{}");
     }
 }

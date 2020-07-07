@@ -8,13 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
-import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.PosterDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -22,10 +22,18 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.sql.Blob;
+import java.sql.SQLException;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -36,16 +44,14 @@ import javax.validation.Valid;
 public class StockController {
 
     private final StockService stockService;
-    private final PromoCodeService promoCodeService;
     private final CompanyService companyService;
     private final PosterService posterService;
 
     @Autowired
     public StockController(final StockService stockService,
-                           final PromoCodeService promoCodeService,
-                           final CompanyService companyService, final PosterService posterService) {
+                           final CompanyService companyService,
+                           final PosterService posterService) {
         this.stockService = stockService;
-        this.promoCodeService = promoCodeService;
         this.companyService = companyService;
         this.posterService = posterService;
     }
@@ -55,15 +61,9 @@ public class StockController {
             response = StockDTO.class,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
-            @ApiResponse(code = 400,
-                    message = "Validation error",
-                    response = ApiValidationException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
+            @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock,
@@ -74,11 +74,19 @@ public class StockController {
         return ResponseEntity.ok(stockService.create(stock));
     }
 
-
+    @ApiOperation(value = "Load poster",
+            notes = "Loads new poster for this stock. Max size is 2MB, .pdf is required format",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
+    })
     @RequestMapping(path = "/api/company/stock/{id}/poster", method = RequestMethod.POST)
     public ResponseEntity<String> loadPoster(@PathVariable("id") Long id,
-                                           @RequestParam("poster") MultipartFile file,
-                                           @RequestHeader("token") String token) {
+                                             @RequestParam("poster") MultipartFile file,
+                                             @RequestHeader("token") String token) {
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
             PosterDTO poster = posterService.loadPoster(file);
@@ -86,11 +94,20 @@ public class StockController {
             stock.setPosterId(poster.getId());
             stockService.save(stock);
             return ResponseEntity.ok("{}");
-         } else {
+        } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }
     }
 
+    @ApiOperation(value = "Get poster",
+            notes = "Get poster for this stock. Poster in .pdf format.",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
+    })
     @RequestMapping(path = "/api/company/stock/{id}/poster", method = RequestMethod.GET)
     public ResponseEntity<Resource> getPoster(@PathVariable("id") Long id,
                                               @RequestHeader("token") String token) {
@@ -98,11 +115,17 @@ public class StockController {
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
             PosterDTO poster = posterService.findById(stock.getPosterId());
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(poster.getDataType()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + poster.getFileName() + "\"")
-                    .body(new ByteArrayResource(poster.getPoster()));
+            Blob blob = poster.getPoster();
+            try {
+                byte[] bytes = blob.getBytes(1, (int)blob.length());
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(poster.getDataType()))
+                        .header(HttpHeaders.CONTENT_DISPOSITION,
+                                "attachment; filename=\"" + poster.getFileName() + "\"")
+                        .body(new ByteArrayResource(bytes));
+            } catch (SQLException throwables) {
+                throw new ApiServerErrorException("Some sql exception");
+            }
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }

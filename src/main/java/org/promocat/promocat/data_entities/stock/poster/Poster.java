@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import java.sql.Blob;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 11:01 27.06.2020
@@ -22,7 +23,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Poster extends AbstractEntity {
-    private byte[] poster;
+    private Blob poster;
     private String dataType;
     private String fileName;
 
@@ -30,9 +31,8 @@ public class Poster extends AbstractEntity {
      * Байтовое представление постера.
      */
     @Lob
-    @Type(type = "org.hibernate.type.BinaryType")
     @Column(name = "poster")
-    public byte[] getPoster() {
+    public Blob getPoster() {
         return poster;
     }
 

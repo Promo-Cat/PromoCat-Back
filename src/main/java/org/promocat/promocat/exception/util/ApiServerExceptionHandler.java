@@ -19,13 +19,25 @@ public class ApiServerExceptionHandler {
 
     @ExceptionHandler(value = {ApiServerErrorException.class})
     public ResponseEntity<Object> handleServerError(ApiServerErrorException e) {
-        final HttpStatus notFound = HttpStatus.INTERNAL_SERVER_ERROR;
+        final HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                notFound,
+                internalServerError,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
         log.error("Server error: " + e.getMessage());
-        return new ResponseEntity<>(apiException, notFound);
+        return new ResponseEntity<>(apiException, internalServerError);
+    }
+
+    @ExceptionHandler(value = {ApiFileFormatException.class})
+    public ResponseEntity<Object> handleFileFormatError(ApiFileFormatException e) {
+        final HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                internalServerError,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("File format error: " + e.getMessage());
+        return new ResponseEntity<>(apiException, internalServerError);
     }
 }
