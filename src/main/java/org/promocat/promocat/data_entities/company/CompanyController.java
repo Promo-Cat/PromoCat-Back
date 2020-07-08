@@ -11,6 +11,7 @@ import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.PosterDTO;
@@ -24,14 +25,11 @@ import org.promocat.promocat.dto.pojo.StockCostDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
-import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.JwtReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,8 +41,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -63,6 +59,7 @@ public class CompanyController {
     private final MovementService movementService;
     private final UserService userService;
     private final AdminService adminService;
+    private final PosterService posterService;
 
     @Autowired
     public CompanyController(final CompanyService companyService,
@@ -70,13 +67,15 @@ public class CompanyController {
                              final PromoCodeActivationService promoCodeActivationService,
                              final MovementService movementService,
                              final UserService userService,
-                             final AdminService adminService) {
+                             final AdminService adminService,
+                             final PosterService posterService) {
         this.companyService = companyService;
         this.stockService = stockService;
         this.promoCodeActivationService = promoCodeActivationService;
         this.movementService = movementService;
         this.userService = userService;
         this.adminService = adminService;
+        this.posterService = posterService;
     }
 
     @ApiOperation(value = "Register company",
@@ -334,7 +333,6 @@ public class CompanyController {
         }
     }
 
-    //TODO если город не активный, то выдает 404
     @ApiOperation(value = "Get total number of promo-codes in all cities.",
             notes = "Getting all promo-codes in all cities.",
             response = PromoCodesInCityDTO.class,
@@ -345,6 +343,9 @@ public class CompanyController {
                     response = ApiException.class),
             @ApiResponse(code = 404,
                     message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 404,
+                    message = "City not active",
                     response = ApiException.class),
             @ApiResponse(code = 404,
                     message = "Stock not found",
@@ -673,16 +674,6 @@ public class CompanyController {
             "company/poster/example"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getPosterExample() {
         PosterDTO poster = adminService.getPosterExample();
-        Blob blob = poster.getPoster();
-        try {
-            byte[] bytes = blob.getBytes(1, (int)blob.length());
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(poster.getDataType()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + poster.getFileName() + "\"")
-                    .body(new ByteArrayResource(bytes));
-        } catch (SQLException throwables) {
-            throw new ApiServerErrorException("Some sql exception");
-        }
+        return posterService.getResourceResponseEntity(poster);
     }
 }

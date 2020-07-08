@@ -11,7 +11,6 @@ import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.AdminMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -84,6 +83,7 @@ public class AdminService {
 
     /**
      * Сохранение примера постера для рекламодателей.
+     *
      * @param file постер {@link MultipartFile}
      * @throws ApiServerErrorException если не получилось загрузить постер.
      */
@@ -103,12 +103,13 @@ public class AdminService {
         }
     }
 
-
     /**
      * Получение примера постера.
+     *
      * @return представление постера в БД, {@link PosterDTO}
-     * @throws ApiServerErrorException если постера не существует или не получилось его представить
-     * в виде {@link PosterDTO}
+     * @throws ApiFileFormatException  если постера не существует или не получилось его представить
+     *                                 в виде {@link PosterDTO}.
+     * @throws ApiServerErrorException если не получилось привести постер к {@link java.sql.Blob}.
      */
     public PosterDTO getPosterExample() {
         Path pathToExample = Paths.get(PATH, "example.pdf");
@@ -118,8 +119,9 @@ public class AdminService {
                 poster.setDataType(Files.probeContentType(pathToExample));
                 try {
                     poster.setPoster(new SerialBlob(Files.readAllBytes(pathToExample)));
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    throw new ApiServerErrorException("Problems with setting poster");
                 }
                 poster.setFileName(pathToExample.getFileName().toString());
                 return poster;
