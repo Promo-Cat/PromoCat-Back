@@ -14,12 +14,9 @@ import org.promocat.promocat.dto.PosterDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
-import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.sql.Blob;
-import java.sql.SQLException;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -75,7 +70,7 @@ public class StockController {
     }
 
     @ApiOperation(value = "Load poster",
-            notes = "Loads new poster for this stock. Max size is 2MB, .pdf is required format",
+            notes = "Loads new poster for this stock. Max size is 5MB, .pdf is required format",
             response = String.class)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
@@ -89,8 +84,8 @@ public class StockController {
                                              @RequestHeader("token") String token) {
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
-            PosterDTO poster = posterService.loadPoster(file);
             StockDTO stock = stockService.findById(id);
+            PosterDTO poster = posterService.loadPoster(file, stock.getPosterId());
             stock.setPosterId(poster.getId());
             stockService.save(stock);
             return ResponseEntity.ok("{}");
@@ -115,17 +110,7 @@ public class StockController {
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
             PosterDTO poster = posterService.findById(stock.getPosterId());
-            Blob blob = poster.getPoster();
-            try {
-                byte[] bytes = blob.getBytes(1, (int)blob.length());
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(poster.getDataType()))
-                        .header(HttpHeaders.CONTENT_DISPOSITION,
-                                "attachment; filename=\"" + poster.getFileName() + "\"")
-                        .body(new ByteArrayResource(bytes));
-            } catch (SQLException throwables) {
-                throw new ApiServerErrorException("Some sql exception");
-            }
+            return posterService.getResourceResponseEntity(poster);
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }
