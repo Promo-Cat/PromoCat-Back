@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -104,6 +105,7 @@ public class PosterService {
      * @param poster постер
      * @return Возвращает {@link ResponseEntity} {@link Resource}.
      */
+    @Transactional
     public ResponseEntity<Resource> getResourceResponseEntity(final PosterDTO poster) {
         Blob blob = poster.getPoster();
         try {
