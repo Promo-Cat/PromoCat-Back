@@ -114,8 +114,8 @@ public class PosterService {
                             "attachment; filename=\"" + poster.getFileName() + "\"")
                     .body(new ByteArrayResource(bytes));
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new ApiServerErrorException(String.format("Some DB exception, %s", e.getSQLState()));
+            log.error(e.getLocalizedMessage());
+            throw new ApiServerErrorException("Some DB exception");
         }
     }
 }
