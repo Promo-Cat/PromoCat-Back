@@ -115,7 +115,7 @@ public class PosterService {
                     .body(new ByteArrayResource(bytes));
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new ApiServerErrorException("Some DB exception");
+            throw new ApiServerErrorException(String.format("Some DB exception, %s", e.getSQLState()));
         }
     }
 }
