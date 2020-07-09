@@ -29,7 +29,6 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-// TODO logs
 public class PosterService {
     private final PosterRepository posterRepository;
     private final PosterMapper posterMapper;
@@ -48,6 +47,7 @@ public class PosterService {
      * @return предсавление постера в БД. {@link PosterDTO}
      */
     public PosterDTO save(final PosterDTO poster) {
+        log.info("Saving poster...");
         return posterMapper.toDto(posterRepository.save(posterMapper.toEntity(poster)));
     }
 
@@ -61,8 +61,10 @@ public class PosterService {
     public PosterDTO findById(final Long id) {
         Optional<Poster> poster = posterRepository.findById(id);
         if (poster.isPresent()) {
+            log.info("Poster with id: {} found", id);
             return posterMapper.toDto(poster.get());
         } else {
+            log.warn("Poster with id was not: {} found", id);
             throw new ApiPosterNotFoundException(String.format("Poster with id: %d not found", id));
         }
     }
@@ -86,13 +88,15 @@ public class PosterService {
             poster.setFileName(fileName);
             poster.setDataType(file.getContentType());
             try {
+                log.info("Poster with id: {} set", posterId);
                 poster.setPoster(new SerialBlob(file.getBytes()));
             } catch (SQLException e) {
-                e.printStackTrace();
+                log.error(e.getLocalizedMessage());
                 throw new ApiServerErrorException("Problems with setting poster");
             }
             return save(poster);
         } catch (IOException e) {
+            log.error(e.getLocalizedMessage());
             throw new ApiFileFormatException("Some poster format problems");
         }
     }
@@ -105,11 +109,17 @@ public class PosterService {
      * @param poster постер
      * @return Возвращает {@link ResponseEntity} {@link Resource}.
      */
+    /*
+        - Зачем нужна транзакция?
+        - Оказывается postgres требует получение Blob в отдельной транзакции, тк он слишком большой.
+        - https://stackoverflow.com/questions/3164072/large-objects-may-not-be-used-in-auto-commit-mode
+     */
     @Transactional
     public ResponseEntity<Resource> getResourceResponseEntity(final PosterDTO poster) {
         Blob blob = poster.getPoster();
         try {
             byte[] bytes = blob.getBytes(1, (int) blob.length());
+            log.info("Returning poster with id: {}", poster.getId());
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(poster.getDataType()))
                     .header(HttpHeaders.CONTENT_DISPOSITION,
