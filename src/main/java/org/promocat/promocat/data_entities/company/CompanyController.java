@@ -671,7 +671,7 @@ public class CompanyController {
             @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
     })
     @RequestMapping(path = {"admin/poster/example",
-            "company/poster/example"}, method = RequestMethod.GET)
+            "/api/company/poster/example"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getPosterExample() {
         PosterDTO poster = adminService.getPosterExample();
         return posterService.getResourceResponseEntity(poster);
