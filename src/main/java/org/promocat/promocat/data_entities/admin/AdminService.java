@@ -99,6 +99,7 @@ public class AdminService {
             file.transferTo(pathToExample);
             log.info("New example poster downloaded");
         } catch (IOException e) {
+            log.error(e.getLocalizedMessage());
             throw new ApiFileFormatException("Poster example problem");
         }
     }
@@ -120,15 +121,18 @@ public class AdminService {
                 try {
                     poster.setPoster(new SerialBlob(Files.readAllBytes(pathToExample)));
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    log.error(e.getLocalizedMessage());
                     throw new ApiServerErrorException("Problems with setting poster");
                 }
                 poster.setFileName(pathToExample.getFileName().toString());
+                log.info("Returning poster example...");
                 return poster;
             } catch (IOException e) {
+                log.error(e.getLocalizedMessage());
                 throw new ApiFileFormatException("Poster example error");
             }
         } else {
+            log.error("Poster example does not exist");
             throw new ApiFileFormatException("Poster example does not exist");
         }
     }
