@@ -67,7 +67,7 @@ public class CarTest {
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
         adminToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-        this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
+        this.mockMvc.perform(put("/data/examples/admin/city/active?city=Змеиногорск").header("token", adminToken))
                 .andExpect(status().isOk());
     }
 
@@ -132,7 +132,7 @@ public class CarTest {
     @Test
     public void testGetCarByNumberAndRegion() throws Exception {
         CarDTO car = save("222");
-        MvcResult result = this.mockMvc.perform(get("/admin/car/number?number=222&region=26").header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/car/number?number=222&region=26").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -144,21 +144,21 @@ public class CarTest {
 
     @Test
     public void testGetCarWithIncorrectNumber() throws Exception {
-        this.mockMvc.perform(get("/admin/car/number?number=12331&region=26").header("token", adminToken))
+        this.mockMvc.perform(get("/data/examples/admin/car/number?number=12331&region=26").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
     public void testGetCarWithIncorrectRegion() throws Exception {
         save("111");
-        this.mockMvc.perform(get("/admin/car/number?number=111&region=27").header("token", adminToken))
+        this.mockMvc.perform(get("/data/examples/admin/car/number?number=111&region=27").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
     public void testGetCarWithIncorrectRegionAndNumber() throws Exception {
         save("qwfqp");
-        this.mockMvc.perform(get("/admin/car/number?number=121&region=27").header("token", adminToken))
+        this.mockMvc.perform(get("/data/examples/admin/car/number?number=121&region=27").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -166,7 +166,7 @@ public class CarTest {
     public void testGetCarById() throws Exception {
         CarDTO car = save("rtyui");
 
-        MvcResult result = this.mockMvc.perform(get("/admin/car/" + car.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/car/" + car.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 

@@ -64,7 +64,7 @@ public class AdminTest {
     @Test
     public void addAdminTest() throws Exception {
         TelephoneDTO telephone = new TelephoneDTO("+7(222)333-22-22");
-        MvcResult result = this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(telephone))
                 .header("token", adminToken))
                 .andExpect(status().isOk())
@@ -78,12 +78,12 @@ public class AdminTest {
     @Test
     public void addAdminWithExistedTelephoneTest() throws Exception {
         TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
-        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(telephone))
                 .header("token", adminToken))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(telephone))
                 .header("token", adminToken))
                 .andExpect(status().is4xxClientError());
@@ -92,7 +92,7 @@ public class AdminTest {
     @Test
     public void getAdminByTelephoneTest() throws Exception {
         TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
-        MvcResult result = this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(telephone))
                 .header("token", adminToken))
                 .andExpect(status().isOk())
@@ -112,12 +112,12 @@ public class AdminTest {
     @Test
     public void getAdminsTest() throws Exception {
         TelephoneDTO telephone = new TelephoneDTO("+7(222)334-22-22");
-        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(telephone))
                 .header("token", adminToken))
                 .andExpect(status().isOk());
 
-        MvcResult result = this.mockMvc.perform(get("/admin/").header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         List<AdminDTO> admins = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<List<AdminDTO>>() {
@@ -128,7 +128,7 @@ public class AdminTest {
     @Test
     public void deleteAdminTest() throws Exception {
         TelephoneDTO telephone = new TelephoneDTO("+7(222)622-22-22");
-        MvcResult result = this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(telephone))
                 .header("token", adminToken))
                 .andExpect(status().isOk())
@@ -136,10 +136,10 @@ public class AdminTest {
 
         AdminDTO admin = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
 
-        this.mockMvc.perform(delete("/admin/" + admin.getId()).header("token", adminToken))
+        this.mockMvc.perform(delete("/data/examples/admin/" + admin.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
-        result = this.mockMvc.perform(get("/admin/").header("token", adminToken))
+        result = this.mockMvc.perform(get("/data/examples/admin/").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         List<AdminDTO> admins = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
@@ -149,7 +149,7 @@ public class AdminTest {
 
     @Test
     public void deleteAdminWithoutCorrectIdTest() throws Exception {
-        this.mockMvc.perform(delete("/admin/?id=" + 222).header("token", adminToken))
+        this.mockMvc.perform(delete("/data/examples/admin/?id=" + 222).header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 }

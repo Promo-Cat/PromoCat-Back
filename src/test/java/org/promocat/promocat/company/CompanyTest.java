@@ -193,7 +193,7 @@ public class CompanyTest {
     @Test
     public void testGetCompanyById() throws Exception {
         CompanyDTO company = save("qwe", "33");
-        MvcResult result = this.mockMvc.perform(get("/admin/company/" + company.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/company/" + company.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -208,14 +208,14 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyWithIncorrectId() throws Exception {
-        this.mockMvc.perform(get("/admin/company/555").header("token", adminToken))
+        this.mockMvc.perform(get("/data/examples/admin/company/555").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
     public void testGetCompanyByTelephone() throws Exception {
         CompanyDTO company = save("rfv", "44");
-        MvcResult result = this.mockMvc.perform(get("/admin/company/telephone?telephone=" + company.getTelephone()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/company/telephone?telephone=" + company.getTelephone()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -230,14 +230,14 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyWithIncorrectTelephone() throws Exception {
-        this.mockMvc.perform(get("/admin/company/telephone?telephone=+4(234)222-22-22").header("token", adminToken))
+        this.mockMvc.perform(get("/data/examples/admin/company/telephone?telephone=+4(234)222-22-22").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
     public void testGetCompanyByOrganizationName() throws Exception {
         CompanyDTO company = save("pkl", "12");
-        MvcResult result = this.mockMvc.perform(get("/admin/company/organizationName?organizationName=" + company.getOrganizationName()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/company/organizationName?organizationName=" + company.getOrganizationName()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -252,14 +252,14 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyWithIncorrectOrganizationName() throws Exception {
-        this.mockMvc.perform(get("/admin/company/organizationName?organizationName=12345").header("token", adminToken))
+        this.mockMvc.perform(get("/data/examples/admin/company/organizationName?organizationName=12345").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
     public void testGetCompanyByMail() throws Exception {
         CompanyDTO company = save("bnm", "56");
-        MvcResult result = this.mockMvc.perform(get("/admin/company/mail?mail=" + company.getMail()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/company/mail?mail=" + company.getMail()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -274,7 +274,7 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyWithIncorrectMail() throws Exception {
-        this.mockMvc.perform(get("/admin/company/mail?mail=iomp@mail.ru").header("token", adminToken))
+        this.mockMvc.perform(get("/data/examples/admin/company/mail?mail=iomp@mail.ru").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -426,7 +426,7 @@ public class CompanyTest {
                 .andReturn();
         String token = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
 
-        MvcResult cityR = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
+        MvcResult cityR = this.mockMvc.perform(put("/data/examples/admin/city/active?city=Змеиногорск").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         CityDTO city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
@@ -452,7 +452,7 @@ public class CompanyTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(stockCity)))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(post("/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
+        this.mockMvc.perform(post("/data/examples/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
         return stock;
@@ -481,7 +481,7 @@ public class CompanyTest {
         String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
 
         StockDTO stock = generate();
-        result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
+        result = this.mockMvc.perform(get("/data/examples/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -501,7 +501,7 @@ public class CompanyTest {
         this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[3]).header("token", userToken))
                 .andExpect(status().isOk());
 
-        result = this.mockMvc.perform(get("/admin/company/" + stock.getCompanyId()).header("token", adminToken))
+        result = this.mockMvc.perform(get("/data/examples/admin/company/" + stock.getCompanyId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         CompanyDTO company = mapper.readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
@@ -546,7 +546,7 @@ public class CompanyTest {
         String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
 
         StockDTO stock = generate();
-        result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
+        result = this.mockMvc.perform(get("/data/examples/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -566,7 +566,7 @@ public class CompanyTest {
         this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[3]).header("token", userToken))
                 .andExpect(status().isOk());
 
-        result = this.mockMvc.perform(get("/admin/company/" + stock.getCompanyId()).header("token", adminToken))
+        result = this.mockMvc.perform(get("/data/examples/admin/company/" + stock.getCompanyId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         CompanyDTO company = mapper.readValue(result.getResponse().getContentAsString(), CompanyDTO.class);

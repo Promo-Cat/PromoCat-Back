@@ -54,7 +54,7 @@ public class CityTest {
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
         adminToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-        MvcResult result = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(put("/data/examples/admin/city/active?city=Змеиногорск").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         city = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CityDTO.class);
@@ -74,7 +74,7 @@ public class CityTest {
 
     @Test
     public void getCityByNameTest() throws Exception {
-        MvcResult result = this.mockMvc.perform(get("/admin/city?city=Змеиногорск").header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/city?city=Змеиногорск").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         CityDTO city = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CityDTO.class);
@@ -88,7 +88,7 @@ public class CityTest {
 
     @Test
     public void getCityByIdTest() throws Exception {
-        MvcResult result = this.mockMvc.perform(get("/admin/city/11").header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/city/11").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         CityDTO city = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CityDTO.class);
@@ -97,7 +97,7 @@ public class CityTest {
 
     @Test
     public void getCityWithoutCorrectNameTest() throws Exception {
-        this.mockMvc.perform(get("/admin/city?city=ККК").header("token", adminToken))
+        this.mockMvc.perform(get("/data/examples/admin/city?city=ККК").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 }

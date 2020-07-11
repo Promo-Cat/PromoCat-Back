@@ -14,8 +14,8 @@ import java.sql.Blob;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PosterDTO extends AbstractDTO {
+public class MultiPartFileDTO extends AbstractDTO {
     private String fileName;
     private String dataType;
-    private Blob poster;
+    private Blob file;
 }

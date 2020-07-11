@@ -14,7 +14,7 @@ import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.PosterDTO;
+import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
@@ -673,7 +673,7 @@ public class CompanyController {
     @RequestMapping(path = {"admin/poster/example",
             "/api/company/poster/example"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getPosterExample() {
-        PosterDTO poster = adminService.getPosterExample();
+        MultiPartFileDTO poster = adminService.getPosterExample();
         return posterService.getResourceResponseEntity(poster);
     }
 }

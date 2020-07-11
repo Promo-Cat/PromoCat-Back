@@ -3,7 +3,7 @@ package org.promocat.promocat.data_entities.admin;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.dto.AdminDTO;
-import org.promocat.promocat.dto.PosterDTO;
+import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.exception.admin.ApiAdminAlreadyExistsException;
 import org.promocat.promocat.exception.admin.ApiAdminNotFoundException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
@@ -32,7 +32,7 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final AdminMapper adminMapper;
 
-    @Value("${data.resources.poster}")
+    @Value("${data.resources.admin.examples}")
     private String PATH;
 
     @Autowired
@@ -89,37 +89,58 @@ public class AdminService {
      */
     public void savePoster(final MultipartFile file) {
         Path pathToExample = Paths.get(PATH, "example.pdf");
-        File poster = pathToExample.toFile();
-        if (poster.delete()) {
-            log.info("Old example poster deleted");
-        } else {
-            log.warn("Old example poster was not deleted");
-        }
-        try {
-            file.transferTo(pathToExample);
-            log.info("New example poster downloaded");
-        } catch (IOException e) {
-            log.error(e.getLocalizedMessage());
-            throw new ApiFileFormatException("Poster example problem");
-        }
+        saveFile(file, pathToExample);
     }
 
     /**
      * Получение примера постера.
      *
-     * @return представление постера в БД, {@link PosterDTO}
+     * @return представление постера в БД, {@link MultiPartFileDTO}
      * @throws ApiFileFormatException  если постера не существует или не получилось его представить
-     *                                 в виде {@link PosterDTO}.
+     *                                 в виде {@link MultiPartFileDTO}.
      * @throws ApiServerErrorException если не получилось привести постер к {@link java.sql.Blob}.
      */
-    public PosterDTO getPosterExample() {
+    public MultiPartFileDTO getPosterExample() {
         Path pathToExample = Paths.get(PATH, "example.pdf");
+        return createMultiPartFileFromPath(pathToExample);
+    }
+
+    /**
+     * Сохранение пользовательского соглашения.
+     *
+     * @param file пользовательского соглашение {@link MultipartFile}
+     * @throws ApiServerErrorException если не получилось загрузить пользовательского соглашение.
+     */
+    public void saveTermsOfUse(final MultipartFile file) {
+        Path pathToTermsOfUse = Paths.get(PATH, "terms_of_use.pdf");
+        saveFile(file, pathToTermsOfUse);
+    }
+
+    /**
+     * Получение пользовательского соглашения.
+     *
+     * @return представление пользовательского соглашения в БД, {@link MultiPartFileDTO}
+     * @throws ApiFileFormatException  если постера не существует или не получилось его представить
+     *                                 в виде {@link MultiPartFileDTO}.
+     * @throws ApiServerErrorException если не получилось привести постер к {@link java.sql.Blob}.
+     */
+    public MultiPartFileDTO getTermsOfUse() {
+        Path pathToTermsOfUse = Paths.get(PATH, "terms_of_use.pdf");
+        return createMultiPartFileFromPath(pathToTermsOfUse);
+    }
+
+    /**
+     * Получение объекта файла.
+     * @param pathToExample путь к файлу.
+     * @return объектное представление файла. {@link MultiPartFileDTO}
+     */
+    private MultiPartFileDTO createMultiPartFileFromPath(final Path pathToExample) {
         if (Files.exists(pathToExample)) {
-            PosterDTO poster = new PosterDTO();
+            MultiPartFileDTO poster = new MultiPartFileDTO();
             try {
                 poster.setDataType(Files.probeContentType(pathToExample));
                 try {
-                    poster.setPoster(new SerialBlob(Files.readAllBytes(pathToExample)));
+                    poster.setFile(new SerialBlob(Files.readAllBytes(pathToExample)));
                 } catch (SQLException e) {
                     log.error(e.getLocalizedMessage());
                     throw new ApiServerErrorException("Problems with setting poster");
@@ -136,4 +157,26 @@ public class AdminService {
             throw new ApiFileFormatException("Poster example does not exist");
         }
     }
+
+    /**
+     * Сохранение файла по заданному пути.
+     * @param file файл.
+     * @param pathToExample путь.
+     */
+    private void saveFile(final MultipartFile file, final Path pathToExample) {
+        File terms_of_use = pathToExample.toFile();
+        if (terms_of_use.delete()) {
+            log.info("Old {} deleted", pathToExample.toString());
+        } else {
+            log.warn("Old {} was not deleted", pathToExample.toString());
+        }
+        try {
+            file.transferTo(pathToExample);
+            log.info("New {} downloaded", pathToExample.toString());
+        } catch (IOException e) {
+            log.error(e.getLocalizedMessage());
+            throw new ApiFileFormatException(String.format("File %s problem", pathToExample.toString()));
+        }
+    }
+
 }

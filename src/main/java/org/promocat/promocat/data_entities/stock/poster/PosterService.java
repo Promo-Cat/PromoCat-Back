@@ -1,7 +1,7 @@
 package org.promocat.promocat.data_entities.stock.poster;
 
 import lombok.extern.slf4j.Slf4j;
-import org.promocat.promocat.dto.PosterDTO;
+import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.exception.stock.poster.ApiPosterNotFoundException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
@@ -44,9 +44,9 @@ public class PosterService {
      * Сохранение постера в БД.
      *
      * @param poster объектное представление постера.
-     * @return предсавление постера в БД. {@link PosterDTO}
+     * @return предсавление постера в БД. {@link MultiPartFileDTO}
      */
-    public PosterDTO save(final PosterDTO poster) {
+    public MultiPartFileDTO save(final MultiPartFileDTO poster) {
         log.info("Saving poster...");
         return posterMapper.toDto(posterRepository.save(posterMapper.toEntity(poster)));
     }
@@ -55,10 +55,10 @@ public class PosterService {
      * Поиск постера по id.
      *
      * @param id уникальный идентификатор постера
-     * @return предсавление постера в БД. {@link PosterDTO}.
+     * @return предсавление постера в БД. {@link MultiPartFileDTO}.
      * @throws ApiFileFormatException если постер не найден
      */
-    public PosterDTO findById(final Long id) {
+    public MultiPartFileDTO findById(final Long id) {
         Optional<Poster> poster = posterRepository.findById(id);
         if (poster.isPresent()) {
             log.info("Poster with id: {} found", id);
@@ -75,21 +75,21 @@ public class PosterService {
      * @param file     файловое представление постера.
      * @param posterId уникальный идентификатор постера. Если равен {@code null}, то добавляется новый,
      *                иначе обновляется постер с таким {@code id}.
-     * @return представление постера в БД. {@link PosterDTO}
+     * @return представление постера в БД. {@link MultiPartFileDTO}
      * @throws ApiFileFormatException  если не получилось сохранить постер.
      * @throws ApiServerErrorException если не получилось привести постер к {@link java.sql.Blob}
      */
-    public PosterDTO loadPoster(final MultipartFile file, final Long posterId) {
+    public MultiPartFileDTO loadPoster(final MultipartFile file, final Long posterId) {
 
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         try {
-            PosterDTO poster = new PosterDTO();
+            MultiPartFileDTO poster = new MultiPartFileDTO();
             poster.setId(posterId);
             poster.setFileName(fileName);
             poster.setDataType(file.getContentType());
             try {
                 log.info("Poster with id: {} set", posterId);
-                poster.setPoster(new SerialBlob(file.getBytes()));
+                poster.setFile(new SerialBlob(file.getBytes()));
             } catch (SQLException e) {
                 log.error(e.getLocalizedMessage());
                 throw new ApiServerErrorException("Problems with setting poster");
@@ -115,8 +115,8 @@ public class PosterService {
         - https://stackoverflow.com/questions/3164072/large-objects-may-not-be-used-in-auto-commit-mode
      */
     @Transactional
-    public ResponseEntity<Resource> getResourceResponseEntity(final PosterDTO poster) {
-        Blob blob = poster.getPoster();
+    public ResponseEntity<Resource> getResourceResponseEntity(final MultiPartFileDTO poster) {
+        Blob blob = poster.getFile();
         try {
             byte[] bytes = blob.getBytes(1, (int) blob.length());
             log.info("Returning poster with id: {}", poster.getId());

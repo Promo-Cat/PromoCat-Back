@@ -10,7 +10,7 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.PosterDTO;
+import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
@@ -85,7 +85,7 @@ public class StockController {
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
-            PosterDTO poster = posterService.loadPoster(file, stock.getPosterId());
+            MultiPartFileDTO poster = posterService.loadPoster(file, stock.getPosterId());
             stock.setPosterId(poster.getId());
             stockService.save(stock);
             return ResponseEntity.ok("{}");
@@ -109,7 +109,7 @@ public class StockController {
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
-            PosterDTO poster = posterService.findById(stock.getPosterId());
+            MultiPartFileDTO poster = posterService.findById(stock.getPosterId());
             return posterService.getResourceResponseEntity(poster);
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));

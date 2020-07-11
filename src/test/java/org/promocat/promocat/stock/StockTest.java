@@ -80,7 +80,7 @@ public class StockTest {
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
         adminToken = mapper.readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-        MvcResult cityR = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
+        MvcResult cityR = this.mockMvc.perform(put("/data/examples/admin/city/active?city=Змеиногорск").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
@@ -162,7 +162,7 @@ public class StockTest {
 
     @Test
     public void testDeactivateWithIncorrectId() throws Exception {
-        this.mockMvc.perform(post("/admin/company/stock/deactivate?id=100").header("token", adminToken))
+        this.mockMvc.perform(post("/data/examples/admin/company/stock/deactivate?id=100").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -180,7 +180,7 @@ public class StockTest {
                 .andReturn();
 
         stock = mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
-        result = this.mockMvc.perform(get("/admin/stock/" + stock.getId()).header("token", adminToken))
+        result = this.mockMvc.perform(get("/data/examples/admin/stock/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -201,7 +201,7 @@ public class StockTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        this.mockMvc.perform(get("/admin/stock/222").header("token", adminToken))
+        this.mockMvc.perform(get("/data/examples/admin/stock/222").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -221,16 +221,16 @@ public class StockTest {
 
         stock = mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
 
-        this.mockMvc.perform(delete("/admin/stock/" + stock.getId()).header("token", adminToken))
+        this.mockMvc.perform(delete("/data/examples/admin/stock/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/admin/stock/" + stock.getId()).header("token", adminToken))
+        this.mockMvc.perform(get("/data/examples/admin/stock/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
     public void testDeleteWithIncorrectId() throws Exception {
-        this.mockMvc.perform(delete("/admin/stock/222").header("token", adminToken))
+        this.mockMvc.perform(delete("/data/examples/admin/stock/222").header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -260,10 +260,10 @@ public class StockTest {
 
         stockCity = new ObjectMapper().readValue(cityR.getResponse().getContentAsString(), StockCityDTO.class);
 
-        this.mockMvc.perform(post("/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
+        this.mockMvc.perform(post("/data/examples/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
-        MvcResult result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         Set<PromoCodeDTO> codes = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
@@ -300,7 +300,7 @@ public class StockTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(stockCity)))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(post("/admin/company/stock/generate?id=" + stock.getId()).header("token", adminToken))
+        this.mockMvc.perform(post("/data/examples/admin/company/stock/generate?id=" + stock.getId()).header("token", adminToken))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -327,19 +327,19 @@ public class StockTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(stockCity)))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(post("/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
+        this.mockMvc.perform(post("/data/examples/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
-        this.mockMvc.perform(post("/admin/company/stock/deactivate/" + stock.getId()).header("token", adminToken))
+        this.mockMvc.perform(post("/data/examples/admin/company/stock/deactivate/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk());
 
-        MvcResult result = this.mockMvc.perform(get("/admin/stock/" + stock.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/stock/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
 
         StockDTO stockRes = this.mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
         assertEquals(stock.getId(), stockRes.getId());
 
-        result = this.mockMvc.perform(get("/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
+        result = this.mockMvc.perform(get("/data/examples/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         Set<PromoCodeDTO> codes = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {

@@ -85,7 +85,7 @@ public class PromoCodeTest {
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
         adminToken = mapper.readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-        MvcResult cityR = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
+        MvcResult cityR = this.mockMvc.perform(put("/data/examples/admin/city/active?city=Змеиногорск").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         CityDTO city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
@@ -125,7 +125,7 @@ public class PromoCodeTest {
 
         promoCode = promoCodeService.save(promoCode);
 
-        MvcResult result = this.mockMvc.perform(get("/admin/promoCode/" + promoCode.getId()).header("token", adminToken))
+        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/promoCode/" + promoCode.getId()).header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         PromoCodeDTO that = mapper.readValue(result.getResponse().getContentAsString(), PromoCodeDTO.class);
@@ -143,7 +143,7 @@ public class PromoCodeTest {
         promoCode.setActiveDate(LocalDateTime.now());
 
         promoCode = promoCodeService.save(promoCode);
-        MvcResult thatR = this.mockMvc.perform(get("/admin/promoCode/promoCode?promoCode=" + promoCode.getPromoCode())
+        MvcResult thatR = this.mockMvc.perform(get("/data/examples/admin/promoCode/promoCode?promoCode=" + promoCode.getPromoCode())
                 .header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -163,7 +163,7 @@ public class PromoCodeTest {
         promoCode.setActiveDate(LocalDateTime.now());
 
         promoCode = promoCodeService.save(promoCode);
-        MvcResult thatR = this.mockMvc.perform(get("/admin/promoCode/stockCity?promoCode=" + promoCode.getPromoCode())
+        MvcResult thatR = this.mockMvc.perform(get("/data/examples/admin/promoCode/stockCity?promoCode=" + promoCode.getPromoCode())
                 .header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();

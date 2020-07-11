@@ -95,7 +95,7 @@ public class StockCityTest {
                 + "&code=1337")).andExpect(status().isOk())
                 .andReturn();
         String adminToken = mapper.readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-        MvcResult cityR = this.mockMvc.perform(put("/admin/city/active?city=Змеиногорск").header("token", adminToken))
+        MvcResult cityR = this.mockMvc.perform(put("/data/examples/admin/city/active?city=Змеиногорск").header("token", adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
         city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
