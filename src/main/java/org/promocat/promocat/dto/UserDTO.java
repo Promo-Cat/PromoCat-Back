@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.user.UserStatus;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -89,6 +90,9 @@ public class UserDTO extends AbstractAccountDTO {
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double totalEarnings;
+
+    // TODO: 12.07.2020 DOCS
+    private UserStatus status;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);

@@ -169,4 +169,8 @@ public class UserService {
         return save(user);
     }
 
+    public boolean existsByTelephone(final String telephone) {
+        return userRepository.getByTelephone(telephone).isPresent();
+    }
+
 }
