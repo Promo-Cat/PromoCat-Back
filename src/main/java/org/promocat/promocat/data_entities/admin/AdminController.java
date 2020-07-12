@@ -105,7 +105,7 @@ public class AdminController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server problems", response = ApiException.class)
     })
-    @RequestMapping(path = "admin/termsOfUse", method = RequestMethod.POST,
+    @RequestMapping(path = "/admin/termsOfUse", method = RequestMethod.POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addTermsOfUseExample(@RequestParam("file") MultipartFile file) {
         adminService.saveTermsOfUse(file);
@@ -118,7 +118,7 @@ public class AdminController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
             @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
     })
-    @RequestMapping(path = "admin/termsOfUse", method = RequestMethod.GET)
+    @RequestMapping(path = "/admin/termsOfUse", method = RequestMethod.GET)
     public ResponseEntity<Resource> getTermsOfUse() {
         MultiPartFileDTO termsOfUse = adminService.getTermsOfUse();
         return posterService.getResourceResponseEntity(termsOfUse);
