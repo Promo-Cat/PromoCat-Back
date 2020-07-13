@@ -43,7 +43,6 @@ public class UserDTO extends AbstractAccountDTO {
 //    @NotNull(message = "ID города не может быть пустой")
     private Long cityId;
 
-
     @ApiModelProperty(
             value = "Users balance",
             dataType = "Long"
@@ -93,6 +92,9 @@ public class UserDTO extends AbstractAccountDTO {
 
     // TODO: 12.07.2020 DOCS
     private UserStatus status;
+
+    // TODO Dosc
+    private Boolean termsOfUseStatus = false;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);
