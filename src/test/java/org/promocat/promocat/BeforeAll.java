@@ -112,6 +112,7 @@ public class BeforeAll {
 
     /**
      * Создание пользователя.
+     * 
      * @return UserDTO.
      */
     private UserDTO createUser(String telephone, String mail) {
@@ -126,6 +127,7 @@ public class BeforeAll {
 
     /**
      * Получение токена.
+     *
      * @return String.
      */
     private String getToken(AccountType accountType, String telephone) {
