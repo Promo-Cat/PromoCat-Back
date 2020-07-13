@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -56,7 +58,7 @@ public class CarTest {
         CarDTO car = new CarDTO();
         car.setRegion("26");
 
-        this.mockMvc.perform(post("/api/user/car").header("token", beforeAll.userToken).contentType(MediaType.APPLICATION_JSON_VALUE)
+        this.mockMvc.perform(post("/api/user/car").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().is4xxClientError());
     }
@@ -71,7 +73,7 @@ public class CarTest {
         CarDTO car = new CarDTO();
         car.setNumber("awfawfaf");
 
-        this.mockMvc.perform(post("/api/user/car").header("token", beforeAll.userToken).contentType(MediaType.APPLICATION_JSON_VALUE)
+        this.mockMvc.perform(post("/api/user/car").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().is4xxClientError());
     }
@@ -85,7 +87,7 @@ public class CarTest {
         car.setNumber("awfawfaf");
         car.setRegion("26");
 
-        MvcResult result = this.mockMvc.perform(post("/api/user/car").header("token", beforeAll.userToken).contentType(MediaType.APPLICATION_JSON_VALUE)
+        MvcResult result = this.mockMvc.perform(post("/api/user/car").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(car)))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -94,66 +96,97 @@ public class CarTest {
         assertNotNull(that.getId());
         assertEquals(car.getNumber(), that.getNumber());
         assertEquals(car.getRegion(), that.getRegion());
-        assertEquals(that.getUserId(), beforeAll.userDTO.getId());
+        assertEquals(that.getUserId(), beforeAll.user1DTO.getId());
     }
 
-//    private CarDTO save(String number) throws Exception {
-//        CarDTO car = new CarDTO();
-//        car.setNumber(number);
-//        car.setRegion("26");
-//        car.setUserId(user.getId());
-//
-//        MvcResult result = this.mockMvc.perform(post("/api/user/car").header("token", token).contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(new ObjectMapper().writeValueAsString(car)))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        return new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
-//    }
-//
-//    @Test
-//    public void testGetCarByNumberAndRegion() throws Exception {
-//        CarDTO car = save("222");
-//        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/car/number?number=222&region=26").header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        CarDTO carRes = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
-//        assertEquals(car.getNumber(), carRes.getNumber());
-//        assertEquals(car.getRegion(), carRes.getRegion());
-//        assertEquals(car.getId(), carRes.getId());
-//    }
-//
-//    @Test
-//    public void testGetCarWithIncorrectNumber() throws Exception {
-//        this.mockMvc.perform(get("/data/examples/admin/car/number?number=12331&region=26").header("token", adminToken))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    @Test
-//    public void testGetCarWithIncorrectRegion() throws Exception {
-//        save("111");
-//        this.mockMvc.perform(get("/data/examples/admin/car/number?number=111&region=27").header("token", adminToken))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    @Test
-//    public void testGetCarWithIncorrectRegionAndNumber() throws Exception {
-//        save("qwfqp");
-//        this.mockMvc.perform(get("/data/examples/admin/car/number?number=121&region=27").header("token", adminToken))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    @Test
-//    public void testGetCarById() throws Exception {
-//        CarDTO car = save("rtyui");
-//
-//        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/car/" + car.getId()).header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        CarDTO carRes = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
-//        assertEquals(car.getNumber(), carRes.getNumber());
-//        assertEquals(car.getRegion(), carRes.getRegion());
-//        assertEquals(carRes.getId(), car.getId());
-//    }
+    /**
+     * Получение машины по Id.
+     *
+     * @throws Exception Не удалось получить машину, оштбка 400.
+     */
+    @Test
+    public void testGetCarWithIncorrectId() throws Exception {
+        this.mockMvc.perform(get("/admin/car/" + beforeAll.car1DTO.getId() + 11).header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Получение машины по Id.
+     */
+    @Test
+    public void testGetCarById() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/admin/car/" + beforeAll.car1DTO.getId()).header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        CarDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
+        assertEquals(beforeAll.car1DTO.getNumber(), that.getNumber());
+        assertEquals(beforeAll.car1DTO.getRegion(), that.getRegion());
+        assertEquals(beforeAll.car1DTO.getUserId(), that.getUserId());
+        assertEquals(beforeAll.car1DTO.getId(), that.getId());
+    }
+
+    /**
+     * Получение машины по номеру и региону.
+     */
+    @Test
+    public void testGetCarByNumberAndRegion() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/admin/car/number?number=" + beforeAll.car1DTO.getNumber()
+                + "&region=" + beforeAll.car1DTO.getRegion()).header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        CarDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
+        assertEquals(beforeAll.car1DTO.getNumber(), that.getNumber());
+        assertEquals(beforeAll.car1DTO.getRegion(), that.getRegion());
+        assertEquals(beforeAll.car1DTO.getUserId(), that.getUserId());
+        assertEquals(beforeAll.car1DTO.getId(), that.getId());
+    }
+
+    /**
+     * Получение машины по некорректному номеру и региону.
+     *
+     * @throws Exception Не удалось получить машину, оштбка 400.
+     */
+    @Test
+    public void testGetCarWithIncorrectNumber() throws Exception {
+        this.mockMvc.perform(get("/data/examples/admin/car/number?number=12331&region=" + beforeAll.car1DTO.getRegion()).header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Получение машины по номеру и некореутному региону.
+     *
+     * @throws Exception Не удалось получить машину, оштбка 400.
+     */
+    @Test
+    public void testGetCarWithIncorrectRegion() throws Exception {
+        this.mockMvc.perform(get("/data/examples/admin/car/number?number=" + beforeAll.car1DTO.getNumber() + "&region=99").header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Удаление машины по Id + проверка.
+     *
+     * @throws Exception Машины нет в бд, ошибка 404.
+     */
+    @Test
+    public void testDeleteCarById() throws Exception {
+        this.mockMvc.perform(delete("/api/user/car/" + beforeAll.car1DTO.getId()).header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(delete("/api/user/car/" + beforeAll.car1DTO.getId()).header("token", beforeAll.user1Token))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Удаление чужой машины.
+     *
+     * @throws Exception Машина не принадлежит пользователю, ошибка 403.
+     */
+    @Test
+    public void testDeleteIncorrectCar() throws Exception {
+        this.mockMvc.perform(delete("/api/user/car/" + beforeAll.car1DTO.getId()).header("token", beforeAll.user2Token))
+                .andExpect(status().is4xxClientError());
+    }
 }

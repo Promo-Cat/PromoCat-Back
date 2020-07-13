@@ -115,7 +115,7 @@ public class UserTest {
     public void testSaveCorrectUser() throws Exception {
         UserDTO user = new UserDTO();
         user.setMail("qwe@mail.ru");
-        user.setTelephone("+7(222)222-22-22");
+        user.setTelephone("+7(333)333-33-33");
         user.setCityId(1L);
         MvcResult result = this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(user)))
