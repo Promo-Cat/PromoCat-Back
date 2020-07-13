@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
+import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -43,14 +44,17 @@ public class UserController {
     private final UserService userService;
     private final PromoCodeActivationService promoCodeActivationService;
     private final MovementService movementService;
+    private final StockService stockService;
 
     @Autowired
     public UserController(final UserService userService,
                           final PromoCodeActivationService promoCodeActivationService,
-                          final MovementService movementService) {
+                          final MovementService movementService,
+                          final StockService stockService) {
         this.userService = userService;
         this.promoCodeActivationService = promoCodeActivationService;
         this.movementService = movementService;
+        this.stockService = stockService;
     }
 
     @ApiOperation(value = "Registering user",
@@ -273,6 +277,16 @@ public class UserController {
         user.setTermsOfUseStatus(true);
         updateUser(user, token);
         return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Get active stocks", notes = "Getting all active stocks",
+            response = StockDTO.class, responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/activeStocks", method = RequestMethod.GET)
+    public ResponseEntity<List<StockDTO>> getAllActiveStocks() {
+        return ResponseEntity.ok(stockService.getAllActiveStocks());
     }
 
     // ------ Admin methods ------
