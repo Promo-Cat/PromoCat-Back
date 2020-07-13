@@ -19,6 +19,7 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -97,7 +99,15 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO user,
                                               @RequestHeader String token) {
+        Pattern mailPattern = Pattern.compile("^(.+)@(.+)$");
         UserDTO actualUser = userService.findByToken(token);
+        if (user.getMail() != null &&
+                mailPattern.matcher(user.getMail()).matches() &&
+                user.getCityId() != null &&
+                actualUser.getStatus() == UserStatus.JUST_REGISTERED) {
+            user.setStatus(UserStatus.FULL);
+        }
+        user.setTelephone(actualUser.getTelephone());
         EntityUpdate.copyNonNullProperties(user, actualUser);
         return ResponseEntity.ok(userService.save(actualUser));
     }
@@ -164,10 +174,14 @@ public class UserController {
 //        return ResponseEntity.ok(userService.save(user));
 //    }
 
+    // TODO: 13.07.2020 DOCS
     @RequestMapping(value = "/api/user/stock/{stockCityId}", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> setUserStockCity(@PathVariable("stockCityId") final Long stockCityId,
                                                     @RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
+        if (userDTO.getStatus() != UserStatus.FULL) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         return ResponseEntity.ok(userService.setUserStockCity(userDTO, stockCityId));
     }
 
