@@ -31,7 +31,7 @@ public class ApiServerExceptionHandler {
 
     @ExceptionHandler(value = {ApiFileFormatException.class})
     public ResponseEntity<Object> handleFileFormatError(ApiFileFormatException e) {
-        final HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
+        final HttpStatus internalServerError = HttpStatus.BAD_REQUEST;
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 internalServerError,
