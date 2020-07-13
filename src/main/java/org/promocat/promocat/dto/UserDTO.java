@@ -36,7 +36,7 @@ public class UserDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
             value = "Users city",
-            dataType = "String",
+            dataType = "String"
     )
 //    @NotNull(message = "ID города не может быть пустой")
     private Long cityId;
