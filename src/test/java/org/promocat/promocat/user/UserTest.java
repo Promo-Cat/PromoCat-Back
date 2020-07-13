@@ -1,132 +1,134 @@
-//package org.promocat.promocat.user;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-//import lombok.extern.slf4j.Slf4j;
-//import org.junit.After;
-//import org.junit.BeforeClass;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.promocat.promocat.Init;
-//import org.promocat.promocat.config.GeneratorConfig;
-//import org.promocat.promocat.dto.MovementDTO;
-//import org.promocat.promocat.dto.PromoCodeDTO;
-//import org.promocat.promocat.dto.UserDTO;
-//import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
-//import org.promocat.promocat.dto.pojo.DistanceDTO;
-//import org.promocat.promocat.dto.pojo.TokenDTO;
-//import org.promocat.promocat.exception.login.token.ApiTokenNotFoundException;
-//import org.promocat.promocat.utils.Generator;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.http.MediaType;
-//import org.springframework.test.annotation.DirtiesContext;
-//import org.springframework.test.context.ActiveProfiles;
-//import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-//import org.springframework.test.context.web.WebAppConfiguration;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.MvcResult;
-//
-//import javax.annotation.PostConstruct;
-//import java.time.LocalDate;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Set;
-//import java.util.stream.Collectors;
-//
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertNotNull;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//
-///**
-// * Created by Danil Lyskin at 12:08 20.02.2020
-// */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@WebAppConfiguration
-//@SpringBootTest
-//@ActiveProfiles("test")
-//@AutoConfigureMockMvc
-//@Slf4j
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-//public class UserTest {
-//
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    private String adminToken;
-//    private ObjectMapper mapper;
-//
-//    @Autowired
-//    private Init init;
-//
-//    @PostConstruct
-//    public void postConstruct() {
-//        System.out.println(init);
-//        try {
-//            this.init.init();
-//        } catch (Exception e) {
-//            log.error("Can not init DB", e);
-//        }
-//        this.mapper = new ObjectMapper();
-//        this.mapper.registerModule(new JavaTimeModule());
-//
-//    }
-//
-//
-//    @BeforeClass
-//    public static void setUp() throws Exception {
-////        init.init();
-//    }
-//
-//    @After
-//    public void clearDb() {
-//
-//    }
-//
-//    @Test
-//    public void testSaveUserIncorrectTelephone() throws Exception {
-//        UserDTO user = new UserDTO();
-//        user.setName("I");
-//        user.setCityId(2L);
-//        user.setTelephone("+7(222)-222-22-22");
-//        this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(new ObjectMapper().writeValueAsString(user)))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    /**
-//     * Сохранение пользователя без телефона.
-//     *
-//     * @throws Exception Пользователь не сохраняется, появляется ошибка 400.
-//     */
-//    @Test
-//    public void testSaveUserWithoutTelephone() throws Exception {
-//        UserDTO user = new UserDTO();
-//        user.setName("I");
-//        user.setCityId(2L);
-//        this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(new ObjectMapper().writeValueAsString(user)))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    @Test
-//    public void testSaveUserWithAllCorrect() throws Exception {
-//        UserDTO user = new UserDTO();
-//        user.setName("I");
-//        user.setCityId(2L);
-//        user.setTelephone(Generator.generate(GeneratorConfig.TELEPHONE));
-//        MvcResult result = this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(new ObjectMapper().writeValueAsString(user)))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
-//        assertEquals(that.getTelephone(), user.getTelephone());
-//        assertEquals(that.getCityId(), user.getCityId());
-//        assertEquals(that.getName(), user.getName());
-//    }
+package org.promocat.promocat.user;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.promocat.promocat.BeforeAll;
+import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.dto.UserDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+/**
+ * Created by Danil Lyskin at 12:08 20.02.2020
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+@Slf4j
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class UserTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    BeforeAll beforeAll;
+
+    @Before
+    public void clean() {
+        beforeAll.init();
+    }
+
+    /**
+     * Добавление пользователя с некорректным номером телефона.
+     *
+     * @throws Exception Пользователь не сохраняется, ошибка 400.
+     */
+    @Test
+    public void testSaveUserWithIncorrectTelephone() throws Exception {
+        UserDTO user = new UserDTO();
+        user.setCityId(1L);
+        user.setMail("qwe@mail.ru");
+        user.setTelephone("+7(222)-222-22-22");
+        this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Добавление пользователя без телефона.
+     *
+     * @throws Exception Пользователь не сохраняется, ошибка 400.
+     */
+    @Test
+    public void testSaveUserWithoutTelephone() throws Exception {
+        UserDTO user = new UserDTO();
+        user.setCityId(1L);
+        user.setMail("qwe@mail.ru");
+        this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Добавление пользователя без почты.
+     *
+     * @throws Exception Пользователь не сохраняется, ошибка 400.
+     */
+    @Test
+    public void testSaveUserWithoutMail() throws Exception {
+        UserDTO user = new UserDTO();
+        user.setCityId(1L);
+        user.setTelephone("+7(222)222-22-22");
+        this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Добавление пользователя без города.
+     *
+     * @throws Exception Пользователь не сохраняется, ошибка 400.
+     */
+    @Test
+    public void testSaveUserWithoutCity() throws Exception {
+        UserDTO user = new UserDTO();
+        user.setMail("qwe@mail.ru");
+        user.setTelephone("+7(222)222-22-22");
+        this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Добавление пользователя.
+     */
+    @Test
+    public void testSaveCorrectUser() throws Exception {
+        UserDTO user = new UserDTO();
+        user.setMail("qwe@mail.ru");
+        user.setTelephone("+7(222)222-22-22");
+        user.setCityId(1L);
+        MvcResult result = this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+
+        assertNotNull(that.getId());
+        assertEquals(user.getCityId(), that.getCityId());
+        assertEquals(user.getTelephone(), that.getTelephone());
+        assertEquals(that.getAccountType(), AccountType.USER);
+    }
 //
 //    @Test
 //    public void testGetUserWithoutCorrectId() throws Exception {
@@ -499,4 +501,4 @@
 ////        });
 ////        assertEquals(stocks.size(), 1);
 ////    }
-//}
+}
