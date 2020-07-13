@@ -1,6 +1,5 @@
 package org.promocat.promocat.data_entities.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -8,9 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
-import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
-import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -164,6 +161,7 @@ public class UserController {
 //        return ResponseEntity.ok(userService.save(user));
 //    }
 
+    // TODO Docs
     @RequestMapping(value = "/api/user/stock/{stockCityId}", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> setUserStockCity(@PathVariable("stockCityId") final Long stockCityId,
                                                     @RequestHeader("token") final String token) {
@@ -251,7 +249,12 @@ public class UserController {
     }
 
 
-    @RequestMapping(value= "/api/user/acceptTermsOfUse", method = RequestMethod.POST)
+    @ApiOperation(value = "Accept terms of use", notes = "Accepting terms of use for user", response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/acceptTermsOfUse", method = RequestMethod.POST)
     public ResponseEntity<String> acceptTermsOfUse(@RequestHeader("token") String token) {
         UserDTO user = userService.findByToken(token);
         user.setTermsOfUseStatus(true);
