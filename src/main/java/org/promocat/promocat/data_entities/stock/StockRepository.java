@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.stock;
 
+import org.promocat.promocat.attributes.StockStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.Optional;
 public interface StockRepository extends JpaRepository<Stock, Long> {
 
     Optional<List<Stock>> getByStartTimeLessThanAndDurationEquals(LocalDateTime time, Long days);
+    List<Stock> getByIsAliveEquals(StockStatus status);
 
     Optional<Stock> findById(Long id);
 

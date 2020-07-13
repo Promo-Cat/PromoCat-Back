@@ -227,6 +227,16 @@ public class StockService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Получение всех активных акций.
+     *
+     * @return Список {@link StockDTO}.
+     */
+    public List<StockDTO> getAllActiveStocks() {
+        List<Stock> activeStocks = repository.getByIsAliveEquals(StockStatus.ACTIVE);
+        return activeStocks.stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
 //    /**
 //     * Получение всех промокодов.
 //     *
