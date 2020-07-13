@@ -28,17 +28,15 @@ public class UserDTO extends AbstractAccountDTO {
     @ApiModelProperty(
             value = "Users mail",
             dataType = "String",
-            required = true,
             allowableValues = "Standard email format."
     )
-//    @Email
+    @Email
 //    @NotBlank(message = "Почта не может быть пустой")
     private String mail;
 
     @ApiModelProperty(
             value = "Users city",
             dataType = "String",
-            required = true
     )
 //    @NotNull(message = "ID города не может быть пустой")
     private Long cityId;

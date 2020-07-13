@@ -56,6 +56,7 @@ public class User extends AbstractAccount {
     public String getMail() {
         return mail;
     }
+
     // TODO: 12.07.2020 NotBlank NotNull убрал, что с ними делаем?
     /**
      * Город пользователя.
