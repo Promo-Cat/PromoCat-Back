@@ -250,6 +250,15 @@ public class UserController {
         return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
     }
 
+
+    @RequestMapping(value= "/api/user/acceptTermsOfUse", method = RequestMethod.POST)
+    public ResponseEntity<String> acceptTermsOfUse(@RequestHeader("token") String token) {
+        UserDTO user = userService.findByToken(token);
+        user.setTermsOfUseStatus(true);
+        updateUser(user, token);
+        return ResponseEntity.ok("{}");
+    }
+
     // ------ Admin methods ------
 
     @ApiOperation(value = "Get user by id",
@@ -299,4 +308,6 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {
         return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
+
+
 }
