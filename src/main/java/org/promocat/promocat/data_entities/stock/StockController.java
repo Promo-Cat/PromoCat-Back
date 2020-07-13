@@ -154,8 +154,8 @@ public class StockController {
     })
     @RequestMapping(path = "/admin/company/stock/active/{id}", method = RequestMethod.POST)
     public ResponseEntity<StockDTO> deactivateStock(@PathVariable("id") Long id,
-                                                    @RequestParam("activation_status") StockStatus activationStatus) {
-        return ResponseEntity.ok(stockService.setActive(id, activationStatus));
+                                                    @RequestParam("activation_status") String activationStatus) {
+        return ResponseEntity.ok(stockService.setActive(id, StockStatus.valueOf(activationStatus.toUpperCase())));
     }
 
 
