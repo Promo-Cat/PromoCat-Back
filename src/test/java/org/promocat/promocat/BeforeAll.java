@@ -52,6 +52,9 @@ public class BeforeAll {
     @Autowired
     UserRepository userRepository;
 
+    /**
+     * Отчистка БД.
+     */
     public void init() {
         adminRepository.deleteAll();
         carRepository.deleteAll();

@@ -43,6 +43,11 @@ public class CompanyTest {
         beforeAll.init();
     }
 
+    /**
+     * Добавление компании без имени организации.
+     *
+     * @throws Exception Компания не сохраняется, ошибка 400.
+     */
     @Test
     public void testSaveCompanyWithoutOrganizationName() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -54,6 +59,11 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    /**
+     * Добавление компании без ИНН.
+     *
+     * @throws Exception Компания не сохраняется, ошибка 400.
+     */
     @Test
     public void testSaveCompanyWithoutInn() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -65,6 +75,11 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    /**
+     * Добавление компании с некорректным ИНН.
+     *
+     * @throws Exception Компания не сохраняется, ошибка 400.
+     */
     @Test
     public void testSaveCompanyWithIncorrectInn() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -77,6 +92,11 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    /**
+     * Добавление компании без почты.
+     *
+     * @throws Exception Компания не сохраняется, ошибка 400.
+     */
     @Test
     public void testSaveCompanyWithoutMail() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -88,6 +108,12 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
+
+    /**
+     * Добавление компании без телефона организации.
+     *
+     * @throws Exception Компания не сохраняется, ошибка 400.
+     */
     @Test
     public void testSaveCompanyWithoutTelephone() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -99,6 +125,11 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    /**
+     * Добавление компании с некорректным телефоном организации.
+     *
+     * @throws Exception Компания не сохраняется, ошибка 400.
+     */
     @Test
     public void testSaveCompanyWithIncorrectTelephone() throws Exception {
         CompanyDTO company = new CompanyDTO();
@@ -111,6 +142,10 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
+
+    /**
+     * Добавление компании.
+     */
     @Test
     public void testSaveCorrectCompany() throws Exception {
         CompanyDTO company = new CompanyDTO();
