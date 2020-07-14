@@ -4,13 +4,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.dto.AdminDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.pojo.TelephoneDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.MimeTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -28,6 +31,7 @@ import java.util.List;
 
 @Api(tags = {SpringFoxConfig.ADMIN})
 @Controller
+@Slf4j
 public class AdminController {
 
     private final AdminService adminService;
@@ -89,13 +93,22 @@ public class AdminController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
-            @ApiResponse(code = 500, message = "Some server problems", response = ApiException.class)
+            @ApiResponse(code = 500, message = "Some server problems", response = ApiException.class),
+            @ApiResponse(code = 400, message = "File format or size problems", response = ApiException.class)
     })
     @RequestMapping(path = "/admin/poster/example", method = RequestMethod.POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPosterExample(@RequestParam("file") MultipartFile file) {
-        adminService.savePoster(file);
-        return ResponseEntity.ok("{}");
+        if (MimeTypes.MIME_APPLICATION_PDF.equals(file.getContentType())) {
+            if (MimeTypes.getSizeInMB(file.getSize()) <= 5) {
+                adminService.savePoster(file);
+                return ResponseEntity.ok("{}");
+            } else {
+                throw new ApiFileFormatException("File too large. Max size 5MB");
+            }
+        } else {
+            throw new ApiFileFormatException(String.format(".pdf required %s provided", file.getContentType()));
+        }
     }
 
     @ApiOperation(value = "Add new terms of use",
@@ -103,13 +116,22 @@ public class AdminController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
-            @ApiResponse(code = 500, message = "Some server problems", response = ApiException.class)
+            @ApiResponse(code = 500, message = "Some server problems", response = ApiException.class),
+            @ApiResponse(code = 400, message = "File format or size problems", response = ApiException.class)
     })
     @RequestMapping(path = "/admin/termsOfUse", method = RequestMethod.POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addTermsOfUseExample(@RequestParam("file") MultipartFile file) {
-        adminService.saveTermsOfUse(file);
-        return ResponseEntity.ok("{}");
+        if (MimeTypes.MIME_APPLICATION_PDF.equals(file.getContentType())) {
+            if (MimeTypes.getSizeInMB(file.getSize()) <= 5) {
+                adminService.saveTermsOfUse(file);
+                return ResponseEntity.ok("{}");
+            } else {
+                throw new ApiFileFormatException("File too large. Max size 5MB");
+            }
+        } else {
+            throw new ApiFileFormatException(String.format(".pdf required %s provided", file.getContentType()));
+        }
     }
 
     @ApiOperation(value = "Get terms of use",

@@ -4,21 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.movement.Movement;
-import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,6 +37,7 @@ public class User extends AbstractAccount {
     private Double totalDistance = 0.0;
     private Double totalEarnings = 0.0;
     private UserStatus status;
+    private Boolean termsOfUseStatus;
 
     public User(String mail, City city, Long balance, StockCity stockCity) {
         this.mail = mail;
@@ -60,6 +56,7 @@ public class User extends AbstractAccount {
     public String getMail() {
         return mail;
     }
+
     // TODO: 12.07.2020 NotBlank NotNull убрал, что с ними делаем?
     /**
      * Город пользователя.
@@ -125,5 +122,13 @@ public class User extends AbstractAccount {
     @Column(name = "status")
     public UserStatus getStatus() {
         return status;
+    }
+
+    /**
+     * Статус соглашение с пользователським соглашением.
+     */
+    @Column(name = "terms_of_use")
+    public Boolean getTermsOfUseStatus() {
+        return termsOfUseStatus;
     }
 }

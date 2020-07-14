@@ -1,6 +1,5 @@
 package org.promocat.promocat.data_entities.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -8,7 +7,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
-import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.MovementDTO;
@@ -19,6 +17,7 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -44,14 +44,17 @@ public class UserController {
     private final UserService userService;
     private final PromoCodeActivationService promoCodeActivationService;
     private final MovementService movementService;
+    private final StockService stockService;
 
     @Autowired
     public UserController(final UserService userService,
                           final PromoCodeActivationService promoCodeActivationService,
-                          final MovementService movementService) {
+                          final MovementService movementService,
+                          final StockService stockService) {
         this.userService = userService;
         this.promoCodeActivationService = promoCodeActivationService;
         this.movementService = movementService;
+        this.stockService = stockService;
     }
 
     @ApiOperation(value = "Registering user",
@@ -97,7 +100,15 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO user,
                                               @RequestHeader String token) {
+        Pattern mailPattern = Pattern.compile("^(.+)@(.+)$");
         UserDTO actualUser = userService.findByToken(token);
+        if (user.getMail() != null &&
+                mailPattern.matcher(user.getMail()).matches() &&
+                user.getCityId() != null &&
+                actualUser.getStatus() == UserStatus.JUST_REGISTERED) {
+            user.setStatus(UserStatus.FULL);
+        }
+        user.setTelephone(actualUser.getTelephone());
         EntityUpdate.copyNonNullProperties(user, actualUser);
         return ResponseEntity.ok(userService.save(actualUser));
     }
@@ -164,10 +175,14 @@ public class UserController {
 //        return ResponseEntity.ok(userService.save(user));
 //    }
 
+    // TODO: 13.07.2020 DOCS
     @RequestMapping(value = "/api/user/stock/{stockCityId}", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> setUserStockCity(@PathVariable("stockCityId") final Long stockCityId,
                                                     @RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
+        if (userDTO.getStatus() != UserStatus.FULL) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         return ResponseEntity.ok(userService.setUserStockCity(userDTO, stockCityId));
     }
 
@@ -250,6 +265,30 @@ public class UserController {
         return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
     }
 
+
+    @ApiOperation(value = "Accept terms of use", notes = "Accepting terms of use for user", response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/acceptTermsOfUse", method = RequestMethod.POST)
+    public ResponseEntity<String> acceptTermsOfUse(@RequestHeader("token") String token) {
+        UserDTO user = userService.findByToken(token);
+        user.setTermsOfUseStatus(true);
+        updateUser(user, token);
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Get active stocks", notes = "Getting all active stocks",
+            response = StockDTO.class, responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/activeStocks", method = RequestMethod.GET)
+    public ResponseEntity<List<StockDTO>> getAllActiveStocks() {
+        return ResponseEntity.ok(stockService.getAllActiveStocks());
+    }
+
     // ------ Admin methods ------
 
     @ApiOperation(value = "Get user by id",
@@ -299,4 +338,6 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {
         return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
+
+
 }

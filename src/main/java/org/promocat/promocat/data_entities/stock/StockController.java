@@ -14,7 +14,9 @@ import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
+import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.MimeTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -73,6 +75,7 @@ public class StockController {
             notes = "Loads new poster for this stock. Max size is 5MB, .pdf is required format",
             response = String.class)
     @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "File format or size problems", response = ApiException.class),
             @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
             @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
             @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
@@ -82,13 +85,22 @@ public class StockController {
     public ResponseEntity<String> loadPoster(@PathVariable("id") Long id,
                                              @RequestParam("poster") MultipartFile file,
                                              @RequestHeader("token") String token) {
+
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
-            MultiPartFileDTO poster = posterService.loadPoster(file, stock.getPosterId());
-            stock.setPosterId(poster.getId());
-            stockService.save(stock);
-            return ResponseEntity.ok("{}");
+            if (MimeTypes.MIME_APPLICATION_PDF.equals(file.getContentType())) {
+                if (MimeTypes.getSizeInMB(file.getSize()) <= 5) {
+                    MultiPartFileDTO poster = posterService.loadPoster(file, stock.getPosterId());
+                    stock.setPosterId(poster.getId());
+                    stockService.save(stock);
+                    return ResponseEntity.ok("{}");
+                } else {
+                    throw new ApiFileFormatException("File too large. Max size 5MB");
+                }
+            } else {
+                throw new ApiFileFormatException(String.format(".pdf required %s provided", file.getContentType()));
+            }
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }
@@ -154,8 +166,8 @@ public class StockController {
     })
     @RequestMapping(path = "/admin/company/stock/active/{id}", method = RequestMethod.POST)
     public ResponseEntity<StockDTO> deactivateStock(@PathVariable("id") Long id,
-                                                    @RequestParam("activation_status") StockStatus activationStatus) {
-        return ResponseEntity.ok(stockService.setActive(id, activationStatus));
+                                                    @RequestParam("activation_status") String activationStatus) {
+        return ResponseEntity.ok(stockService.setActive(id, StockStatus.valueOf(activationStatus.toUpperCase())));
     }
 
 

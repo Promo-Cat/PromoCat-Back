@@ -28,21 +28,18 @@ public class UserDTO extends AbstractAccountDTO {
     @ApiModelProperty(
             value = "Users mail",
             dataType = "String",
-            required = true,
             allowableValues = "Standard email format."
     )
     @Email
-    @NotBlank(message = "Почта не может быть пустой")
+//    @NotBlank(message = "Почта не может быть пустой")
     private String mail;
 
     @ApiModelProperty(
             value = "Users city",
-            dataType = "String",
-            required = true
+            dataType = "String"
     )
-    @NotNull(message = "ID города не может быть пустой")
+//    @NotNull(message = "ID города не может быть пустой")
     private Long cityId;
-
 
     @ApiModelProperty(
             value = "Users balance",
@@ -93,6 +90,9 @@ public class UserDTO extends AbstractAccountDTO {
 
     // TODO: 12.07.2020 DOCS
     private UserStatus status;
+
+    // TODO Dosc
+    private Boolean termsOfUseStatus = false;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);
