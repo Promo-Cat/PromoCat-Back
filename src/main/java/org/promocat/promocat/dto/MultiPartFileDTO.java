@@ -17,5 +17,5 @@ import java.sql.Blob;
 public class MultiPartFileDTO extends AbstractDTO {
     private String fileName;
     private String dataType;
-    private Blob file;
+    private Blob blob;
 }

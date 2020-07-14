@@ -2,25 +2,30 @@ package org.promocat.promocat.data_entities.stock;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
+import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
-import org.promocat.promocat.exception.util.ApiServerErrorException;
+import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.validators.StockDurationConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,12 +150,12 @@ public class StockService {
      *
      * @param id     акции
      * @param status требуемое состояние {@code POSTER_NOT_CONFIRMED} постер не подтвержден,
-     * {@code POSTER_CONFIRMED_WITHOUT_PREPAY} постер подтвержден без предоплаты,
-     * {@code POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE} постер подтвержден с предоплатой,
-     * {@code ACTIVE} акция активна,
-     * {@code STOCK_IS_OVER_WITHOUT_POSTPAY} акция завершена без постоплатой,
-     * {@code STOCK_IS_OVER_WITH_POSTPAY} акция заверешена с постоплатой,
-     * {@code BAN} акция забанена.
+     *               {@code POSTER_CONFIRMED_WITHOUT_PREPAY} постер подтвержден без предоплаты,
+     *               {@code POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE} постер подтвержден с предоплатой,
+     *               {@code ACTIVE} акция активна,
+     *               {@code STOCK_IS_OVER_WITHOUT_POSTPAY} акция завершена без постоплатой,
+     *               {@code STOCK_IS_OVER_WITH_POSTPAY} акция заверешена с постоплатой,
+     *               {@code BAN} акция забанена.
      * @return представление акции в БД. {@link StockDTO}
      */
     public StockDTO setActive(final Long id, final StockStatus status) {
@@ -235,6 +240,22 @@ public class StockService {
     public List<StockDTO> getAllActiveStocks() {
         List<Stock> activeStocks = repository.getByIsAliveEquals(StockStatus.ACTIVE);
         return activeStocks.stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
+
+    public File getPosterPdf(final MultiPartFileDTO poster) {
+        Blob blobPdf = poster.getBlob();
+        File outputFile = new File(System.getProperty("java.io.tmpdir") +
+                poster.getId() + poster.getFileName());
+
+        try (FileOutputStream fout = new FileOutputStream(outputFile)) {
+            IOUtils.copy(blobPdf.getBinaryStream(), fout);
+        } catch (IOException | SQLException e) {
+            // TODO exception
+            e.printStackTrace();
+            throw new ApiFileFormatException("probs");
+        }
+        return outputFile;
     }
 
 //    /**

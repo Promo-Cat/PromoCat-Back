@@ -89,7 +89,7 @@ public class PosterService {
             poster.setDataType(file.getContentType());
             try {
                 log.info("Poster with id: {} set", posterId);
-                poster.setFile(new SerialBlob(file.getBytes()));
+                poster.setBlob(new SerialBlob(file.getBytes()));
             } catch (SQLException e) {
                 log.error(e.getLocalizedMessage());
                 throw new ApiServerErrorException("Problems with setting poster");
@@ -102,7 +102,6 @@ public class PosterService {
     }
 
     // TODO избавиться от ResponseEntity. Возвращать только Resource
-
     /**
      * Представление постера в виде файла.
      *
@@ -116,7 +115,7 @@ public class PosterService {
      */
     @Transactional
     public ResponseEntity<Resource> getResourceResponseEntity(final MultiPartFileDTO poster) {
-        Blob blob = poster.getFile();
+        Blob blob = poster.getBlob();
         try {
             byte[] bytes = blob.getBytes(1, (int) blob.length());
             log.info("Returning poster with id: {}", poster.getId());
