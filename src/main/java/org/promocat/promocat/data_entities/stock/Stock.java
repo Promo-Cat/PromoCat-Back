@@ -47,6 +47,8 @@ public class Stock extends AbstractEntity {
     private Set<Movement> movements;
     private Set<StockCity> cities;
     private Double panel;
+    private Double prepayment;
+    private Double postpayment;
     private Poster poster;
 
     /**

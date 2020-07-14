@@ -5,6 +5,7 @@ import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
@@ -108,7 +109,6 @@ public class MovementService {
      * Заработок пользователя.
      *
      * @param userDTO объектное представление пользователя. {@link UserDTO}
-     * @param stockId уникальный идентификатор акции.
      * @return заработок пользователя
      * (дистанция, общий заработок, коммиссия, заработок с учетом коммиссии). {@link UserStockEarningStatisticDTO}
      */
@@ -167,8 +167,11 @@ public class MovementService {
         StockDTO stock = stockService.findById(stockId);
         UserStockEarningStatisticDTO earnings = movementRepository.getSummaryEarningByStock(stock.getId());
         StockCostDTO stockCostDTO = new StockCostDTO();
-        stockCostDTO.setDriversPayment(earnings.getSummary());
-        stockCostDTO.setPrepayment(paymentService.getPrepayment(stock));
+        stockCostDTO.setDriversPayment(earnings.getDistance() * paymentService.getDriversPayment(stock));
+        stockCostDTO.setPrepayment(stock.getCities().stream()
+                .map(StockCityDTO::getNumberOfPromoCodes)
+                .mapToLong(Long::longValue)
+                .sum() * paymentService.getPrepayment(stock));
         // TODO: 06.06.2020  тесты
         return stockCostDTO;
     }

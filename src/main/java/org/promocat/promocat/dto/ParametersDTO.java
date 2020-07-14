@@ -15,5 +15,7 @@ import lombok.NoArgsConstructor;
 public class ParametersDTO extends AbstractDTO {
 
     private Double panel;
+    private Double prepayment;
+    private Double postpayment;
 
 }
