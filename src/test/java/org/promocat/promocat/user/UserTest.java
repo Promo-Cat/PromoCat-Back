@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -117,7 +118,7 @@ public class UserTest {
      * Обновление пользователя.
      */
     @Test
-    public void updateUser() throws Exception {
+    public void testUpdateUser() throws Exception {
         UserDTO user = new UserDTO();
         user.setMail("my@mail.ru");
         user.setTelephone(beforeAll.user1DTO.getTelephone());
@@ -133,6 +134,7 @@ public class UserTest {
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
 
         assertEquals(that.getMail(), "my@mail.ru");
+        assertEquals(that.getStatus(), UserStatus.FULL);
     }
 
     /**
@@ -259,6 +261,23 @@ public class UserTest {
     public void testGetUserWithIncorrectToken() throws Exception {
         this.mockMvc.perform(get("/api/user").header("token", "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlbl9jcmVhdGVfdGltZSI6MTU5MTI4NTU1MzY3OCwiYWNjb3VudF90eXBlIjoiQ09NUEFOWSIsInRva2VuX2V4cGlyYXRpb25fZGF0ZSI6MTYyMjgyMTU1MzY3OCwidGVsZXBob25lIjoiKzcoOTk5KTI0My0yNi00OSJ9.WqYvXKLsm-pgGpco_U9R-iD6yPOiyMXY6liFA8L0zFQ4YZnoZmpqcSYa3IWMudpiL2JF8aArydGXIIpPVjT_BA"))
                 .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Принятие пользовательского соглашения.
+     */
+    @Test
+    public void testAcceptTermsOfUse() throws Exception {
+        this.mockMvc.perform(post("/api/user/acceptTermsOfUse").header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get("/api/user")
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+        assertTrue(that.getTermsOfUseStatus());
     }
 
 

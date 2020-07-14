@@ -1,94 +1,73 @@
-//package org.promocat.promocat.admin;
-//
-//import com.fasterxml.jackson.core.type.TypeReference;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.promocat.promocat.data_entities.admin.AdminService;
-//import org.promocat.promocat.dto.AdminDTO;
-//import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
-//import org.promocat.promocat.dto.pojo.TelephoneDTO;
-//import org.promocat.promocat.dto.pojo.TokenDTO;
-//import org.promocat.promocat.exception.admin.ApiAdminNotFoundException;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.http.MediaType;
-//import org.springframework.test.context.ActiveProfiles;
-//import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-//import org.springframework.test.context.web.WebAppConfiguration;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.MvcResult;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.util.List;
-//
-//import static org.junit.Assert.assertEquals;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//
-///**
-// * Created by Danil Lyskin at 17:04 29.05.2020
-// */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@WebAppConfiguration
-//@SpringBootTest
-//@ActiveProfiles("test")
-//@AutoConfigureMockMvc
-//public class AdminTest {
-//
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @Autowired
-//    private AdminService adminService;
-//
-//    private String adminToken;
-//
-//    @Before
-//    public void init() throws Exception {
-//        MvcResult result = this.mockMvc.perform(get("/auth/admin/login?telephone=+7(999)243-26-99"))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        String key = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey();
-//        result = this.mockMvc.perform(get("/auth/token?authorizationKey=" + key + "&code=1337"))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        adminToken = new ObjectMapper().readValue(result.getResponse().getContentAsString(), TokenDTO.class).getToken();
-//    }
-//
-//    @Test
-//    public void addAdminTest() throws Exception {
-//        TelephoneDTO telephone = new TelephoneDTO("+7(222)333-22-22");
-//        MvcResult result = this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(telephone))
-//                .header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        AdminDTO admin = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
-//        assertEquals(admin.getTelephone(), "+7(222)333-22-22");
-//    }
-//
-//    @Transactional
-//    @Test
-//    public void addAdminWithExistedTelephoneTest() throws Exception {
-//        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
-//        this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(telephone))
-//                .header("token", adminToken))
-//                .andExpect(status().isOk());
-//
-//        this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(telephone))
-//                .header("token", adminToken))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
+package org.promocat.promocat.admin;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.promocat.promocat.BeforeAll;
+import org.promocat.promocat.dto.AdminDTO;
+import org.promocat.promocat.dto.pojo.TelephoneDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+/**
+ * Created by Danil Lyskin at 17:04 29.05.2020
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+public class AdminTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    BeforeAll beforeAll;
+
+    @Before
+    public void clear() {
+        beforeAll.init();
+    }
+
+    @Test
+    public void addAdminTest() throws Exception {
+        TelephoneDTO telephone = new TelephoneDTO("+7(222)333-22-22");
+        MvcResult result = this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(telephone))
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        AdminDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
+        assertEquals(that.getTelephone(), telephone.getTelephone());
+        //assertEquals(that.getAccountType(), AccountType.ADMIN);
+        assertNotNull(that.getId());
+    }
+
+    @Test
+    public void addAdminWithExistedTelephoneTest() throws Exception {
+        TelephoneDTO telephone = new TelephoneDTO(beforeAll.adminDTO.getTelephone());
+
+        this.mockMvc.perform(post("/admin/").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(telephone))
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
 //    @Test
 //    public void getAdminByTelephoneTest() throws Exception {
 //        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
@@ -152,4 +131,4 @@
 //        this.mockMvc.perform(delete("/data/examples/admin/?id=" + 222).header("token", adminToken))
 //                .andExpect(status().is4xxClientError());
 //    }
-//}
+}

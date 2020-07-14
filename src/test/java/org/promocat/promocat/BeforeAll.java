@@ -24,6 +24,7 @@ import org.promocat.promocat.data_entities.user.UserStatus;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
+import org.promocat.promocat.mapper.AdminMapper;
 import org.promocat.promocat.mapper.CarMapper;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.promocat.promocat.mapper.UserMapper;
@@ -93,6 +94,9 @@ public class BeforeAll {
     CompanyMapper companyMapper;
 
     @Autowired
+    AdminMapper adminMapper;
+
+    @Autowired
     StockService stockService;
 
     public City city;
@@ -109,6 +113,7 @@ public class BeforeAll {
     public String company2Token;
     public StockDTO stock1DTO;
     public StockDTO stock2DTO;
+    public AdminDTO adminDTO;
 
     /**
      * Отчистка и заполнение БД.
@@ -225,6 +230,7 @@ public class BeforeAll {
         admin.setAccountType(AccountType.ADMIN);
         admin.setTelephone("+7(000)000-00-00");
         admin = adminRepository.save(admin);
+        adminDTO = adminMapper.toDto(admin);
 
         adminToken = getToken(AccountType.ADMIN, admin.getTelephone());
 
