@@ -140,7 +140,7 @@ public class AdminService {
             try {
                 poster.setDataType(Files.probeContentType(pathToExample));
                 try {
-                    poster.setFile(new SerialBlob(Files.readAllBytes(pathToExample)));
+                    poster.setBlob(new SerialBlob(Files.readAllBytes(pathToExample)));
                 } catch (SQLException e) {
                     log.error(e.getLocalizedMessage());
                     throw new ApiServerErrorException("Problems with setting poster");

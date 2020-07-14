@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
@@ -15,8 +17,10 @@ import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.MimeTypes;
+import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -30,7 +34,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -123,6 +133,30 @@ public class StockController {
             StockDTO stock = stockService.findById(id);
             MultiPartFileDTO poster = posterService.findById(stock.getPosterId());
             return posterService.getResourceResponseEntity(poster);
+        } else {
+            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
+        }
+    }
+
+    @RequestMapping(path = "/api/company/stock/{id}/poster/preview", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getPosterPreview(@PathVariable("id") Long id,
+                                              @RequestHeader("token") String token) {
+        Long companyId = companyService.findByToken(token).getId();
+        if (companyService.isOwner(companyId, id)) {
+            StockDTO stock = stockService.findById(id);
+            MultiPartFileDTO poster = posterService.findById(stock.getPosterId());
+            File pdf = stockService.getPosterPdf(poster);
+            MultipartFile image = MultiPartFileUtils.pdfToImage(pdf);
+            MultiPartFileDTO posterPreview = new MultiPartFileDTO();
+            posterPreview.setDataType(image.getContentType());
+            posterPreview.setFileName(image.getOriginalFilename());
+            try {
+                poster.setBlob(new SerialBlob(image.getBytes()));
+            } catch (SQLException | IOException e) {
+                log.error(e.getLocalizedMessage());
+                throw new ApiServerErrorException("Problems with setting poster");
+            }
+            return posterService.getResourceResponseEntity(posterPreview);
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }

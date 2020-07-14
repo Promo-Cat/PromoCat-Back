@@ -23,7 +23,7 @@ import java.sql.Blob;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Poster extends AbstractEntity {
-    private Blob poster;
+    private Blob blob;
     private String dataType;
     private String fileName;
 
@@ -32,8 +32,8 @@ public class Poster extends AbstractEntity {
      */
     @Lob
     @Column(name = "poster")
-    public Blob getPoster() {
-        return poster;
+    public Blob getBlob() {
+        return blob;
     }
 
     /**
