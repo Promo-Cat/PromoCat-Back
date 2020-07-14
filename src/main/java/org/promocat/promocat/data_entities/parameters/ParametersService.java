@@ -63,6 +63,6 @@ public class ParametersService {
      * @return запись, которая хранит в себе параметры приложения
      */
     private Parameters getParameters() {
-        return parametersRepository.getOne(1L);
+        return parametersRepository.findById(1L).orElse(null);
     }
 }
