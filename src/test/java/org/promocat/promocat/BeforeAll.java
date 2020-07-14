@@ -20,6 +20,7 @@ import org.promocat.promocat.data_entities.stock.StockRepository;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.user.UserStatus;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
@@ -134,6 +135,7 @@ public class BeforeAll {
         user.setTelephone(telephone);
         user.setMail(mail);
         user.setCity(city);
+        user.setStatus(UserStatus.JUST_REGISTERED);
         user.setAccountType(AccountType.USER);
         user = userRepository.save(user);
         return userMapper.toDto(user);

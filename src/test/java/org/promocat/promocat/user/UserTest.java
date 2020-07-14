@@ -7,7 +7,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.BeforeAll;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.user.UserStatus;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
+import org.promocat.promocat.dto.pojo.TokenDTO;
+import org.promocat.promocat.exception.login.token.ApiTokenNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,8 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -48,204 +51,217 @@ public class UserTest {
     }
 
     /**
-     * Добавление пользователя с некорректным номером телефона.
-     *
-     * @throws Exception Пользователь не сохраняется, ошибка 400.
+     * Логинизация пользователя.
      */
     @Test
-    public void testSaveUserWithIncorrectTelephone() throws Exception {
+    public void testLoginUser() throws Exception {
         UserDTO user = new UserDTO();
-        user.setCityId(1L);
-        user.setMail("qwe@mail.ru");
-        user.setTelephone("+7(222)-222-22-22");
-        this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(user)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    /**
-     * Добавление пользователя без телефона.
-     *
-     * @throws Exception Пользователь не сохраняется, ошибка 400.
-     */
-    @Test
-    public void testSaveUserWithoutTelephone() throws Exception {
-        UserDTO user = new UserDTO();
-        user.setCityId(1L);
-        user.setMail("qwe@mail.ru");
-        this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(user)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    /**
-     * Добавление пользователя без почты.
-     *
-     * @throws Exception Пользователь не сохраняется, ошибка 400.
-     */
-    @Test
-    public void testSaveUserWithoutMail() throws Exception {
-        UserDTO user = new UserDTO();
-        user.setCityId(1L);
-        user.setTelephone("+7(222)222-22-22");
-        this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(user)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    /**
-     * Добавление пользователя без города.
-     *
-     * @throws Exception Пользователь не сохраняется, ошибка 400.
-     */
-    @Test
-    public void testSaveUserWithoutCity() throws Exception {
-        UserDTO user = new UserDTO();
-        user.setMail("qwe@mail.ru");
-        user.setTelephone("+7(222)222-22-22");
-        this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(user)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    /**
-     * Добавление пользователя.
-     */
-    @Test
-    public void testSaveCorrectUser() throws Exception {
-        UserDTO user = new UserDTO();
-        user.setMail("qwe@mail.ru");
         user.setTelephone("+7(333)333-33-33");
-        user.setCityId(1L);
-        MvcResult result = this.mockMvc.perform(post("/auth/register/user").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(user)))
+
+        MvcResult result = this.mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
+                .andExpect(status().isOk())
+                .andReturn();
+        AuthorizationKeyDTO key = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AuthorizationKeyDTO.class);
+
+        result = this.mockMvc.perform(get("/auth/token?authorizationKey=" + key.getAuthorizationKey() + "&code=1337"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        TokenDTO token = new ObjectMapper().readValue(result.getResponse().getContentAsString(), TokenDTO.class);
+
+        result = this.mockMvc.perform(get("/api/user")
+                .header("token", token.getToken()))
                 .andExpect(status().isOk())
                 .andReturn();
 
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
 
-        assertNotNull(that.getId());
-        assertEquals(user.getCityId(), that.getCityId());
         assertEquals(user.getTelephone(), that.getTelephone());
+        assertEquals(that.getStatus(), UserStatus.JUST_REGISTERED);
         assertEquals(that.getAccountType(), AccountType.USER);
     }
-//
-//    @Test
-//    public void testGetUserWithoutCorrectId() throws Exception {
-//        this.mockMvc.perform(get("/admin/user/1111").header("token", init.getAdminToken()))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    @Test
-//    public void testGetUserById() throws Exception {
-//        UserDTO user = init.getEmptyUser();
-//        MvcResult result = this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", init.getAdminToken()))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
-//        assertEquals(that.getName(), user.getName());
-//        assertEquals(that.getId(), user.getId());
-//        assertEquals(that.getCityId(), user.getCityId());
-//        assertEquals(that.getTelephone(), user.getTelephone());
-//    }
-//
-//    /**
-//     * Удаление несуществующего пользователя.
-//     *
-//     * @throws Exception никто не удаляется, появляется ошибка 404.
-//     */
-//    @Test
-//    public void testDeleteUserWithoutIncorrectId() throws Exception {
-//        this.mockMvc.perform(delete("/admin/user/1111").header("token", init.getAdminToken()))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    @Test
-//    public void testDeleteUserById() throws Exception {
-//        UserDTO user = new UserDTO();
-//        user.setName("I");
-//        user.setCityId(2L);
-//        user.setTelephone(Generator.generate(GeneratorConfig.TELEPHONE));
-//        MvcResult mvcResult = this.mockMvc.perform(post("/auth/user/register")
-//                .contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(new ObjectMapper().writeValueAsString(user)))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        user = mapper.readValue(mvcResult.getResponse().getContentAsString(), UserDTO.class);
-//        this.mockMvc.perform(delete("/admin/user/" + user.getId())
-//                .header("token", init.getAdminToken()))
-//                .andExpect(status().isOk());
-//
-//        this.mockMvc.perform(get("/admin/user/" + user.getId()).header("token", init.getAdminToken()))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    /**
-//     * Получение пользователя по номеру телефона.
-//     * <p>
-//     * Администратор получает корректные данные о пользователе.
-//     *
-//     * @throws Exception возникли какие-то проблемы.
-//     */
-//    @Test
-//    public void testGetUserByTelephone() throws Exception {
-//        UserDTO user = init.getEmptyUser();
-//        MvcResult result = this.mockMvc.perform(get("/admin/user/telephone?telephone=" + user.getTelephone())
-//                .header("token", init.getAdminToken()))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
-//        assertEquals(user.getId(), that.getId());
-//        assertEquals(user.getTelephone(), that.getTelephone());
-//        assertEquals(user.getCityId(), that.getCityId());
-//        assertEquals(user.getName(), that.getName());
-//        assertEquals(user.getAccountType(), that.getAccountType());
-//    }
-//
-//    /**
-//     * Получение пользователя по его токену.
-//     * <p>
-//     * Пользователь должен быть успешно получен.
-//     *
-//     * @throws Exception возникли какие-то проблемы.
-//     */
-//    @Test
-//    public void testGetUserByToken() throws Exception {
-//        UserDTO user = init.getEmptyUser();
-//
-//        MvcResult result = this.mockMvc.perform(get("/api/user")
-//                .header("token", user.getToken()))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
-//        assertEquals(user.getId(), that.getId());
-//        assertEquals(user.getTelephone(), that.getTelephone());
-//        assertEquals(user.getCityId(), that.getCityId());
-//        assertEquals(user.getName(), that.getName());
-//        assertEquals(user.getAccountType(), that.getAccountType());
-//    }
-//
-//    @Test(expected = ApiTokenNotFoundException.class)
-//    public void testGetUserWithIncorrectToken() throws Exception {
-//        this.mockMvc.perform(get("/api/user").header("token", "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlbl9jcmVhdGVfdGltZSI6MTU5MTI4NTU1MzY3OCwiYWNjb3VudF90eXBlIjoiQ09NUEFOWSIsInRva2VuX2V4cGlyYXRpb25fZGF0ZSI6MTYyMjgyMTU1MzY3OCwidGVsZXBob25lIjoiKzcoOTk5KTI0My0yNi00OSJ9.WqYvXKLsm-pgGpco_U9R-iD6yPOiyMXY6liFA8L0zFQ4YZnoZmpqcSYa3IWMudpiL2JF8aArydGXIIpPVjT_BA"))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    /**
-//     * Установка промо-кода не пользователю.
-//     *
-//     * @throws Exception Промо-код не установлен, появляется ошибка 403.
-//     */
-//    @Test
-//    public void testSetPromoCodeWithIncorrectToken() throws Exception {
-//        this.mockMvc.perform(post("/api/user/promo-code?promo-code=A")
-//                .header("token", init.getEmptyCompanyToken()))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
+
+    /**
+     * Повторная логинизация существующего пользователя.
+     */
+    @Test
+    public void testReloginUser() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/auth/user/login?telephone=" + beforeAll.user1DTO.getTelephone()))
+                .andExpect(status().isOk())
+                .andReturn();
+        AuthorizationKeyDTO key = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AuthorizationKeyDTO.class);
+
+        result = this.mockMvc.perform(get("/auth/token?authorizationKey=" + key.getAuthorizationKey() + "&code=1337"))
+                .andExpect(status().isOk())
+                .andReturn();
+        TokenDTO token = new ObjectMapper().readValue(result.getResponse().getContentAsString(), TokenDTO.class);
+
+        result = this.mockMvc.perform(get("/api/user")
+                .header("token", token.getToken()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+
+        assertEquals(beforeAll.user1DTO.getId(), that.getId());
+        assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
+        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
+        assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
+        assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
+        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
+        assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
+        assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
+    }
+
+    /**
+     * Обновление пользователя.
+     */
+    @Test
+    public void updateUser() throws Exception {
+        UserDTO user = new UserDTO();
+        user.setMail("my@mail.ru");
+        user.setTelephone(beforeAll.user1DTO.getTelephone());
+        user.setCityId(1L);
+        this.mockMvc.perform(post("/api/user").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get("/admin/user/" + beforeAll.user1DTO.getId()).header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+
+        assertEquals(that.getMail(), "my@mail.ru");
+    }
+
+    /**
+     * Получение пользователя по номеру телефона.
+     */
+    @Test
+    public void testGetUserByTelephone() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/admin/user/telephone?telephone=" + beforeAll.user1DTO.getTelephone())
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+        assertEquals(beforeAll.user1DTO.getId(), that.getId());
+        assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
+        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
+        assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
+        assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
+        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
+    }
+
+    /**
+     * Получение пользователя по несуществующему номеру телефона.
+     *
+     * @throws Exception Не удалось получить пользователя, ошибка 404.
+     */
+    @Test
+    public void testGetUserWithNotFoundTelephone() throws Exception {
+        this.mockMvc.perform(get("/admin/user/telephone?telephone=+7(555)455-34-57")
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Получение пользователя по некорректному номеру телефона.
+     *
+     * @throws Exception Не удалось получить пользователя, ошибка 400.
+     */
+    @Test
+    public void testGetUserWithIncorrectTelephone() throws Exception {
+        this.mockMvc.perform(get("/admin/user/telephone?telephone=+7(555)-455-34-57")
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Получение пользователя по несуществующему ID.
+     *
+     * @throws Exception Не удалось получить пользователя, ошибка 404.
+     */
+    @Test
+    public void testGetUserWithIncorrectId() throws Exception {
+        this.mockMvc.perform(get("/admin/user/5678").header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Получение пользователя по ID.
+     */
+    @Test
+    public void testGetUserById() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/admin/user/" + beforeAll.user1DTO.getId()).header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+        assertEquals(beforeAll.user1DTO.getId(), that.getId());
+        assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
+        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
+        assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
+        assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
+        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
+    }
+
+
+    /**
+     * Удаление пользователя по несуществующему ID.
+     *
+     * @throws Exception Не удалось удалить пользователя, ошибка 404.
+     */
+    @Test
+    public void testDeleteUserWithoutIncorrectId() throws Exception {
+        this.mockMvc.perform(delete("/admin/user/1111").header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Удаление пользователя по ID.
+     */
+    @Test
+    public void testDeleteUserById() throws Exception {
+        this.mockMvc.perform(delete("/admin/user/" + beforeAll.user1DTO.getId()).header("token", beforeAll.adminToken))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/admin/user/" + beforeAll.user1DTO.getId()).header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Получение пользователя по его токену.
+     */
+    @Test
+    public void testGetUserByToken() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/api/user")
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
+        assertEquals(beforeAll.user1DTO.getId(), that.getId());
+        assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
+        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
+        assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
+        assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
+        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
+    }
+
+    /**
+     * Получение пользователя по некорректному токену.
+     *
+     * @throws ApiTokenNotFoundException Некорректный токен.
+     */
+    @Test(expected = ApiTokenNotFoundException.class)
+    public void testGetUserWithIncorrectToken() throws Exception {
+        this.mockMvc.perform(get("/api/user").header("token", "eyJhbGciOiJIUzUxMiJ9.eyJ0b2tlbl9jcmVhdGVfdGltZSI6MTU5MTI4NTU1MzY3OCwiYWNjb3VudF90eXBlIjoiQ09NUEFOWSIsInRva2VuX2V4cGlyYXRpb25fZGF0ZSI6MTYyMjgyMTU1MzY3OCwidGVsZXBob25lIjoiKzcoOTk5KTI0My0yNi00OSJ9.WqYvXKLsm-pgGpco_U9R-iD6yPOiyMXY6liFA8L0zFQ4YZnoZmpqcSYa3IWMudpiL2JF8aArydGXIIpPVjT_BA"))
+                .andExpect(status().is4xxClientError());
+    }
+
+
 //    @Test
 //    public void testSetPromoCode() throws Exception {
 //        UserDTO user = new UserDTO();
