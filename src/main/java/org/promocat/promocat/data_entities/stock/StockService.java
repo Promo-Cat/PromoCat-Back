@@ -81,6 +81,8 @@ public class StockService {
      */
     public StockDTO create(final StockDTO dto) {
         dto.setPanel(parametersService.getPanel());
+        dto.setPrepayment(parametersService.getParameters().getPrepayment());
+        dto.setPostpayment(parametersService.getParameters().getPostpayment());
         return save(dto);
     }
 

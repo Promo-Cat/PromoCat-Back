@@ -168,10 +168,7 @@ public class MovementService {
         UserStockEarningStatisticDTO earnings = movementRepository.getSummaryEarningByStock(stock.getId());
         StockCostDTO stockCostDTO = new StockCostDTO();
         stockCostDTO.setDriversPayment(earnings.getDistance() * paymentService.getDriversPayment(stock));
-        stockCostDTO.setPrepayment(stock.getCities().stream()
-                .map(StockCityDTO::getNumberOfPromoCodes)
-                .mapToLong(Long::longValue)
-                .sum() * paymentService.getPrepayment(stock));
+        stockCostDTO.setPrepayment(paymentService.getPrepayment(stock));
         // TODO: 06.06.2020  тесты
         return stockCostDTO;
     }

@@ -46,7 +46,7 @@ public class UserDTO extends AbstractAccountDTO {
             dataType = "Long"
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long balance;
+    private Double balance;
 
     @ApiModelProperty(
             value = "Users cars",

@@ -1,11 +1,11 @@
 package org.promocat.promocat.utils;
 
+import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
+import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
 
 @Component
 public class PaymentServiceImpl implements PaymentService {
@@ -14,7 +14,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final ParametersService parametersService;
 
     @Autowired
-    public PaymentServiceImpl(ParametersService parametersService) {
+    public PaymentServiceImpl(final ParametersService parametersService) {
         this.parametersService = parametersService;
     }
 
@@ -26,7 +26,10 @@ public class PaymentServiceImpl implements PaymentService {
     // TODO: 06.06.2020 логика рассчёта
     @Override
     public Double getPrepayment(StockDTO stockDTO) {
-        return parametersService.getParameters().getPrepayment();
+        return stockDTO.getCities().stream()
+                .map(StockCityDTO::getNumberOfPromoCodes)
+                .mapToLong(Long::longValue)
+                .sum() * parametersService.getParameters().getPrepayment();
     }
 
     @Override

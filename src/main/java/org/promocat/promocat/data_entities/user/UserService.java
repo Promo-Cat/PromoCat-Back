@@ -159,6 +159,7 @@ public class UserService {
     public double earnMoney(final UserDTO user, final Double distance) {
         Double earnedMoney = paymentService.distanceToMoney(distance);
         log.info("User with id {} earned {} money", user.getId(), earnedMoney);
+        user.setBalance(user.getBalance() + earnedMoney);
         user.setTotalEarnings(user.getTotalEarnings() + earnedMoney);
         save(user);
         return earnedMoney;

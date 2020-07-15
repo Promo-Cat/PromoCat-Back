@@ -60,6 +60,16 @@ public class Stock extends AbstractEntity {
         return panel;
     }
 
+    @Column(name = "prepayment")
+    public Double getPrepayment() {
+        return prepayment;
+    }
+
+    @Column(name = "postpayment")
+    public Double getPostpayment() {
+        return postpayment;
+    }
+
     /**
      * Название акции.
      */
@@ -126,5 +136,8 @@ public class Stock extends AbstractEntity {
     public Poster getPoster() {
         return poster;
     }
+
+
+
 }
 

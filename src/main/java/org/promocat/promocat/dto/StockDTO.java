@@ -74,6 +74,8 @@ public class StockDTO extends AbstractDTO {
 
     // TODO: 05.06.2020 DOCS
     private Double panel;
+    private Double prepayment;
+    private Double postpayment;
 
     @JsonIgnore
     private Set<MovementDTO> movements;
