@@ -42,7 +42,6 @@ public class StockService {
 
     private final StockMapper mapper;
     private final StockRepository repository;
-    private final PromoCodeService promoCodeService;
     private final StockCityService stockCityService;
     private final CityService cityService;
     private final ParametersService parametersService;
@@ -50,13 +49,11 @@ public class StockService {
     @Autowired
     public StockService(final StockMapper mapper,
                         final StockRepository repository,
-                        final PromoCodeService promoCodeService,
                         final StockCityService stockCityService,
                         final CityService cityService,
                         final ParametersService parametersService) {
         this.mapper = mapper;
         this.repository = repository;
-        this.promoCodeService = promoCodeService;
         this.stockCityService = stockCityService;
         this.cityService = cityService;
         this.parametersService = parametersService;
@@ -240,22 +237,6 @@ public class StockService {
     public List<StockDTO> getAllActiveStocks() {
         List<Stock> activeStocks = repository.getByIsAliveEquals(StockStatus.ACTIVE);
         return activeStocks.stream().map(mapper::toDto).collect(Collectors.toList());
-    }
-
-
-    public File getPosterPdf(final MultiPartFileDTO poster) {
-        Blob blobPdf = poster.getBlob();
-        File outputFile = new File(System.getProperty("java.io.tmpdir") +
-                poster.getId() + poster.getFileName());
-
-        try (FileOutputStream fout = new FileOutputStream(outputFile)) {
-            IOUtils.copy(blobPdf.getBinaryStream(), fout);
-        } catch (IOException | SQLException e) {
-            // TODO exception
-            e.printStackTrace();
-            throw new ApiFileFormatException("probs");
-        }
-        return outputFile;
     }
 
 //    /**

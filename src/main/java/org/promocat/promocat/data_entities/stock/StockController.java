@@ -5,19 +5,17 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
+import org.promocat.promocat.dto.PosterDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
-import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
@@ -34,13 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.sql.rowset.serial.SerialBlob;
 import javax.validation.Valid;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.Blob;
-import java.sql.SQLException;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -101,7 +93,7 @@ public class StockController {
             StockDTO stock = stockService.findById(id);
             if (MimeTypes.MIME_APPLICATION_PDF.equals(file.getContentType())) {
                 if (MimeTypes.getSizeInMB(file.getSize()) <= 5) {
-                    MultiPartFileDTO poster = posterService.loadPoster(file, stock.getPosterId());
+                    PosterDTO poster = posterService.loadPoster(file, stock.getPosterId());
                     stock.setPosterId(poster.getId());
                     stockService.save(stock);
                     return ResponseEntity.ok("{}");
@@ -131,8 +123,8 @@ public class StockController {
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
-            MultiPartFileDTO poster = posterService.findById(stock.getPosterId());
-            return posterService.getResourceResponseEntity(poster);
+            PosterDTO poster = posterService.findById(stock.getPosterId());
+            return posterService.getResourceResponseEntity(posterService.getPoster(poster));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }
@@ -144,18 +136,7 @@ public class StockController {
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
-            MultiPartFileDTO poster = posterService.findById(stock.getPosterId());
-            File pdf = stockService.getPosterPdf(poster);
-            MultipartFile image = MultiPartFileUtils.pdfToImage(pdf);
-            MultiPartFileDTO posterPreview = new MultiPartFileDTO();
-            posterPreview.setDataType(image.getContentType());
-            posterPreview.setFileName(image.getOriginalFilename());
-            try {
-                poster.setBlob(new SerialBlob(image.getBytes()));
-            } catch (SQLException | IOException e) {
-                log.error(e.getLocalizedMessage());
-                throw new ApiServerErrorException("Problems with setting poster");
-            }
+            MultiPartFileDTO posterPreview = posterService.getPosterPreview(posterService.findById(stock.getPosterId()));
             return posterService.getResourceResponseEntity(posterPreview);
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));

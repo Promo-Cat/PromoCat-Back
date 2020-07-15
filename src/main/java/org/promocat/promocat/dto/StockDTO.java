@@ -78,5 +78,6 @@ public class StockDTO extends AbstractDTO {
     @JsonIgnore
     private Set<MovementDTO> movements;
 
-    private Long posterId;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Long posterId = 0L;
 }
