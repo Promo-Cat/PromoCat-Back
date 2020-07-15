@@ -1,6 +1,8 @@
 package org.promocat.promocat.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.promocat.promocat.BeforeAll;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.user.UserStatus;
+import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
@@ -46,9 +49,15 @@ public class UserTest {
     @Autowired
     BeforeAll beforeAll;
 
+    private ObjectMapper mapper;
+
     @Before
     public void clean() {
         beforeAll.init();
+
+        mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     /**
@@ -280,6 +289,27 @@ public class UserTest {
         assertTrue(that.getTermsOfUseStatus());
     }
 
+    @Test
+    public void testMoveUser() throws Exception {
+        MvcResult result = this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        MovementDTO move = mapper.readValue(result.getResponse().getContentAsString(), MovementDTO.class);
+        assertEquals(move.getDistance(), beforeAll.distance.getDistance());
+        assertEquals(move.getUserId(), beforeAll.user1DTO.getId());
+
+        result = this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        move = mapper.readValue(result.getResponse().getContentAsString(), MovementDTO.class);
+        assertEquals(move.getDistance(), Double.valueOf(2 * beforeAll.distance.getDistance()));
+    }
 
 //    @Test
 //    public void testSetPromoCode() throws Exception {

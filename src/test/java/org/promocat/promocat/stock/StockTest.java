@@ -180,19 +180,19 @@ public class StockTest {
         assertEquals(beforeAll.stock1DTO.getIsAlive(), that.getIsAlive());
     }
 
-    /**
-     * Удаление акции по ID.
-     *
-     * @throws Exception Проверка наличия акции после удаления, ошибка 404.
-     */
-    @Test
-    public void testDeleteStockById() throws Exception {
-        this.mockMvc.perform(delete("/admin/stock/" + beforeAll.stock1DTO.getId()).header("token", beforeAll.adminToken))
-                .andExpect(status().isOk());
-
-        this.mockMvc.perform(get("/admin/stock/" + beforeAll.stock1DTO.getId()).header("token", beforeAll.adminToken))
-                .andExpect(status().is4xxClientError());
-    }
+//    /**
+//     * Удаление акции по ID.
+//     *
+//     * @throws Exception Проверка наличия акции после удаления, ошибка 404.
+//     */
+//    @Test
+//    public void testDeleteStockById() throws Exception {
+//        this.mockMvc.perform(delete("/admin/stock/" + beforeAll.stock1DTO.getId()).header("token", beforeAll.adminToken))
+//                .andExpect(status().isOk());
+//
+//        this.mockMvc.perform(get("/admin/stock/" + beforeAll.stock1DTO.getId()).header("token", beforeAll.adminToken))
+//                .andExpect(status().is4xxClientError());
+//    }
 
     /**
      * Удаление акции по некорректному ID.

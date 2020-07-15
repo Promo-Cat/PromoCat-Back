@@ -57,25 +57,25 @@ public class UserController {
         this.stockService = stockService;
     }
 
-    @ApiOperation(value = "Registering user",
-            notes = "Registering user with unique telephone in format +X(XXX)XXX-XX-XX",
-            response = UserDTO.class,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {
-            @ApiResponse(code = 400,
-                    message = "Validation error",
-                    response = ApiValidationException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(path = "/auth/register/user", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> addUser(@Valid @RequestBody UserDTO user) {
-        return ResponseEntity.ok(userService.save(user));
-    }
+//    @ApiOperation(value = "Registering user",
+//            notes = "Registering user with unique telephone in format +X(XXX)XXX-XX-XX",
+//            response = UserDTO.class,
+//            consumes = MediaType.APPLICATION_JSON_VALUE)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 400,
+//                    message = "Validation error",
+//                    response = ApiValidationException.class),
+//            @ApiResponse(code = 415,
+//                    message = "Not acceptable media type",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(path = "/auth/register/user", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<UserDTO> addUser(@Valid @RequestBody UserDTO user) {
+//        return ResponseEntity.ok(userService.save(user));
+//    }
 
     @ApiOperation(value = "Update user",
             notes = "Updates user in db.",

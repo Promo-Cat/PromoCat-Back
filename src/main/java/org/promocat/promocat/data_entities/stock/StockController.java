@@ -165,7 +165,7 @@ public class StockController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/admin/company/stock/active/{id}", method = RequestMethod.POST)
-    public ResponseEntity<StockDTO> deactivateStock(@PathVariable("id") Long id,
+    public ResponseEntity<StockDTO> setActiveStock(@PathVariable("id") Long id,
                                                     @RequestParam("activation_status") String activationStatus) {
         return ResponseEntity.ok(stockService.setActive(id, StockStatus.valueOf(activationStatus.toUpperCase())));
     }
@@ -204,106 +204,106 @@ public class StockController {
         return ResponseEntity.ok("{}");
     }
 
-    @ApiOperation(value = "Set new status for stock",
-            notes = "Set confirmed without prepay",
-            response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(value = "/admin/stock/{id}/set/confirm/without/prepay", method = RequestMethod.POST)
-    public ResponseEntity<String> setConfirmedWithoutPrepay(@PathVariable("id") final Long id) {
-        stockService.setActive(id, StockStatus.POSTER_CONFIRMED_WITHOUT_PREPAY);
-        return ResponseEntity.ok("{}");
-    }
-
-    @ApiOperation(value = "Set new status for stock",
-            notes = "Set confirmed with prepay, but not active",
-            response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(value = "/admin/stock/{id}/set/confirm/with/prepay/inactively", method = RequestMethod.POST)
-    public ResponseEntity<String> setConfirmedWithPrepayNotActive(@PathVariable("id") final Long id) {
-        stockService.setActive(id, StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
-        return ResponseEntity.ok("{}");
-    }
-
-    @ApiOperation(value = "Set new status for stock",
-            notes = "Set active",
-            response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(value = "/admin/stock/{id}/set/active", method = RequestMethod.POST)
-    public ResponseEntity<String> setStockActive(@PathVariable("id") final Long id) {
-        stockService.setActive(id, StockStatus.ACTIVE);
-        return ResponseEntity.ok("{}");
-    }
-
-    @ApiOperation(value = "Set new status for stock",
-            notes = "Set stock is over, without postpay",
-            response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(value = "/admin/stock/{id}/set/over/without/postpay", method = RequestMethod.POST)
-    public ResponseEntity<String> setStockOverWithoutPostpay(@PathVariable("id") final Long id) {
-        stockService.setActive(id, StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
-        return ResponseEntity.ok("{}");
-    }
-
-
-    @ApiOperation(value = "Set new status for stock",
-            notes = "Set stock is over, with postpay",
-            response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(value = "/admin/stock/{id}/set/over/with/postpay", method = RequestMethod.POST)
-    public ResponseEntity<String> setStockOverWithPostpay(@PathVariable("id") final Long id) {
-        stockService.setActive(id, StockStatus.STOCK_IS_OVER_WITH_POSTPAY);
-        return ResponseEntity.ok("{}");
-    }
-
-    @ApiOperation(value = "Set new status for stock",
-            notes = "Set active",
-            response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(value = "/admin/stock/{id}/set/ban", method = RequestMethod.POST)
-    public ResponseEntity<String> setStockBan(@PathVariable("id") final Long id) {
-        stockService.setActive(id, StockStatus.BAN);
-        return ResponseEntity.ok("{}");
-    }
+//    @ApiOperation(value = "Set new status for stock",
+//            notes = "Set confirmed without prepay",
+//            response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 404,
+//                    message = "Stock not found",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(value = "/admin/stock/{id}/set/confirm/without/prepay", method = RequestMethod.POST)
+//    public ResponseEntity<String> setConfirmedWithoutPrepay(@PathVariable("id") final Long id) {
+//        stockService.setActive(id, StockStatus.POSTER_CONFIRMED_WITHOUT_PREPAY);
+//        return ResponseEntity.ok("{}");
+//    }
+//
+//    @ApiOperation(value = "Set new status for stock",
+//            notes = "Set confirmed with prepay, but not active",
+//            response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 404,
+//                    message = "Stock not found",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(value = "/admin/stock/{id}/set/confirm/with/prepay/inactively", method = RequestMethod.POST)
+//    public ResponseEntity<String> setConfirmedWithPrepayNotActive(@PathVariable("id") final Long id) {
+//        stockService.setActive(id, StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
+//        return ResponseEntity.ok("{}");
+//    }
+//
+//    @ApiOperation(value = "Set new status for stock",
+//            notes = "Set active",
+//            response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 404,
+//                    message = "Stock not found",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(value = "/admin/stock/{id}/set/active", method = RequestMethod.POST)
+//    public ResponseEntity<String> setStockActive(@PathVariable("id") final Long id) {
+//        stockService.setActive(id, StockStatus.ACTIVE);
+//        return ResponseEntity.ok("{}");
+//    }
+//
+//    @ApiOperation(value = "Set new status for stock",
+//            notes = "Set stock is over, without postpay",
+//            response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 404,
+//                    message = "Stock not found",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(value = "/admin/stock/{id}/set/over/without/postpay", method = RequestMethod.POST)
+//    public ResponseEntity<String> setStockOverWithoutPostpay(@PathVariable("id") final Long id) {
+//        stockService.setActive(id, StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
+//        return ResponseEntity.ok("{}");
+//    }
+//
+//
+//    @ApiOperation(value = "Set new status for stock",
+//            notes = "Set stock is over, with postpay",
+//            response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 404,
+//                    message = "Stock not found",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(value = "/admin/stock/{id}/set/over/with/postpay", method = RequestMethod.POST)
+//    public ResponseEntity<String> setStockOverWithPostpay(@PathVariable("id") final Long id) {
+//        stockService.setActive(id, StockStatus.STOCK_IS_OVER_WITH_POSTPAY);
+//        return ResponseEntity.ok("{}");
+//    }
+//
+//    @ApiOperation(value = "Set new status for stock",
+//            notes = "Set active",
+//            response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 404,
+//                    message = "Stock not found",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(value = "/admin/stock/{id}/set/ban", method = RequestMethod.POST)
+//    public ResponseEntity<String> setStockBan(@PathVariable("id") final Long id) {
+//        stockService.setActive(id, StockStatus.BAN);
+//        return ResponseEntity.ok("{}");
+//    }
 }
