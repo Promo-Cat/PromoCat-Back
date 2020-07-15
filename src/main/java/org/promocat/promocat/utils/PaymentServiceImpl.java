@@ -1,6 +1,5 @@
 package org.promocat.promocat.utils;
 
-import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
@@ -20,7 +19,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Double distanceToMoney(Double distance) {
-        return distance * parametersService.getParameters().getPanel();
+        return distance * parametersService.getParameters().getFare();
     }
 
     // TODO: 06.06.2020 логика рассчёта

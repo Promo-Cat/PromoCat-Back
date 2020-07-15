@@ -21,7 +21,7 @@ public class Parameters extends AbstractEntity {
     /**
      * Комиссия
      */
-    private Double panel;
+    private Double fare;
 
     /**
      * Предоплата
@@ -33,9 +33,9 @@ public class Parameters extends AbstractEntity {
      */
     private Double postpayment;
 
-    @Column(name = "panel")
-    public Double getPanel() {
-        return panel;
+    @Column(name = "fare")
+    public Double getFare() {
+        return fare;
     }
 
     @Column(name = "prepayment")

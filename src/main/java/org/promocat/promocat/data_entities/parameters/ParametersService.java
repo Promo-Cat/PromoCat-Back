@@ -15,7 +15,7 @@ public class ParametersService {
      * Стандартное значение комисси для инициализации таблицы с параметрами
      */
     // TODO: 05.06.2020 Сделать через инициализатор. @Value подгружается после загрузки контекста.
-    private static final Double DEFAULT_PANEL_VALUE = 0.1;
+    private static final Double DEFAULT_PANEL_VALUE = 1.0;
     private static final Double DEFAULT_PREPAYMENT_VALUE = 240.0;
     private static final Double DEFAULT_POSTPAYMENT_VALUE = 4.8;
 
@@ -39,12 +39,12 @@ public class ParametersService {
      * @return значение комиссии (0 - 100)
      */
     public Double getPanel() {
-        return getParameters().getPanel();
+        return getParameters().getFare();
     }
 
     public void setPanel(Double panel) {
         ParametersDTO parameters = getParameters();
-        parameters.setPanel(panel);
+        parameters.setFare(panel);
         save(parameters);
     }
 
@@ -80,7 +80,7 @@ public class ParametersService {
             return false;
         } else {
             Parameters parameters = new Parameters();
-            parameters.setPanel(DEFAULT_PANEL_VALUE);
+            parameters.setFare(DEFAULT_PANEL_VALUE);
             parameters.setPostpayment(DEFAULT_POSTPAYMENT_VALUE);
             parameters.setPrepayment(DEFAULT_PREPAYMENT_VALUE);
             parameters.setId(1L);

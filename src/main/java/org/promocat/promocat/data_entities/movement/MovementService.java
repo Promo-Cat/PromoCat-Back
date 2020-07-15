@@ -56,8 +56,6 @@ public class MovementService {
      * @return Представление передвижения сохраненное в БД. {@link MovementDTO}
      */
     public MovementDTO save(final MovementDTO movementDTO) {
-        Double panel = movementMapper.toEntity(movementDTO).getUser().getStockCity().getStock().getPanel() / 100.0;
-        movementDTO.setPanel(movementDTO.getEarnings() * panel);
         return movementMapper.toDto(movementRepository.save(movementMapper.toEntity(movementDTO)));
     }
 
@@ -115,7 +113,7 @@ public class MovementService {
     public UserStockEarningStatisticDTO getUserEarningStatistic(final UserDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
         return Optional.ofNullable(movementRepository.getUserStatistic(user.getId()))
-                .orElse(new UserStockEarningStatisticDTO(0.0, 0.0, 0.0));
+                .orElse(new UserStockEarningStatisticDTO(0.0, 0.0));
     }
 
     public List<DistanceWithCityDTO> getMovementsByStockForEveryCityForEachDay(Long stockId) {

@@ -59,12 +59,12 @@ public class MovementDTO extends AbstractDTO {
     )
     private Double earnings;
 
-    @ApiModelProperty(
-            value = "Panel",
-            dataType = "Double",
-            required = true
-    )
-    private Double panel;
+//    @ApiModelProperty(
+//            value = "Panel",
+//            dataType = "Double",
+//            required = true
+//    )
+//    private Double panel;
 
 
 }
