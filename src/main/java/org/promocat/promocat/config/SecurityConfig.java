@@ -32,10 +32,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
             new AntPathRequestMatcher("/api/**"),
+            new AntPathRequestMatcher("/data/examples/admin/**"),
             new AntPathRequestMatcher("/admin/**")
     );
 
     private static final RequestMatcher ADMIN_URLS = new OrRequestMatcher(
+            new AntPathRequestMatcher("/data/examples/admin/**"),
             new AntPathRequestMatcher("/admin/**")
     );
 

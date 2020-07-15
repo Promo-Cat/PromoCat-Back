@@ -19,16 +19,15 @@ public class ParametersController {
         this.parametersService = parametersService;
     }
 
-    @RequestMapping(path = "/admin/parameters/panel", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> setPanel(@RequestBody Parameters parameters) {
-        parametersService.setPanel(parameters.getPanel());
-        return ResponseEntity.ok("{}");
+    @RequestMapping(path = "/admin/parameters", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ParametersDTO> setPanel(@RequestBody ParametersDTO parameters) {
+        parametersService.update(parameters);
+        return ResponseEntity.ok(parametersService.getParameters());
     }
 
     @RequestMapping(path = "/admin/parameters", method = RequestMethod.GET)
     public ResponseEntity<ParametersDTO> getParameters() {
-        ParametersDTO parameters = new ParametersDTO();
-        parameters.setPanel(parametersService.getPanel());
+        ParametersDTO parameters = parametersService.getParameters();
         return ResponseEntity.ok(parameters);
     }
 }

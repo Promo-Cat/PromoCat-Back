@@ -4,28 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.movement.Movement;
-import org.promocat.promocat.data_entities.promo_code.PromoCode;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,14 +30,16 @@ public class User extends AbstractAccount {
 
     private String mail;
     private City city;
-    private Long balance = 0L;
+    private Double balance = 0.0;
     private Set<Car> cars = new HashSet<>();
     private Set<Movement> movements = new HashSet<>();
     private StockCity stockCity;
     private Double totalDistance = 0.0;
     private Double totalEarnings = 0.0;
+    private UserStatus status;
+    private Boolean termsOfUseStatus;
 
-    public User(String mail, City city, Long balance, StockCity stockCity) {
+    public User(String mail, City city, Double balance, StockCity stockCity) {
         this.mail = mail;
         this.city = city;
         this.balance = balance;
@@ -61,16 +51,17 @@ public class User extends AbstractAccount {
      * Имя пользователя.
      */
     @Email
-    @NotBlank(message = "Почта не может быть пустой")
+//    @NotBlank(message = "Почта не может быть пустой")
     @Column(name = "mail", unique = true)
     public String getMail() {
         return mail;
     }
 
+    // TODO: 12.07.2020 NotBlank NotNull убрал, что с ними делаем?
     /**
      * Город пользователя.
      */
-    @NotNull(message = "Город не может быть пустой")
+//    @NotNull(message = "Город не может быть пустой")
     @ManyToOne
     @JoinColumn(name = "city")
     public City getCity() {
@@ -82,7 +73,7 @@ public class User extends AbstractAccount {
      */
     @Min(0)
     @Column(name = "balance")
-    public Long getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
@@ -125,5 +116,19 @@ public class User extends AbstractAccount {
     @Column(name = "total_distance")
     public Double getTotalDistance() {
         return totalDistance;
+    }
+
+    @Enumerated
+    @Column(name = "status")
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Статус соглашение с пользователським соглашением.
+     */
+    @Column(name = "terms_of_use")
+    public Boolean getTermsOfUseStatus() {
+        return termsOfUseStatus;
     }
 }

@@ -14,7 +14,6 @@ import java.util.Objects;
 )
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserStockEarningStatisticDTO {
 
     @ApiModelProperty(
@@ -31,24 +30,10 @@ public class UserStockEarningStatisticDTO {
     )
     private Double summary;
 
-    @ApiModelProperty(
-            value = "PromoCat panel",
-            dataType = "Double",
-            required = true
-    )
-    private Double panel;
 
-    @ApiModelProperty(
-            value = "Income",
-            dataType = "Double",
-            required = true
-    )
-    private Double income;
 
-    public UserStockEarningStatisticDTO(Double distance, Double summary, Double panel) {
+    public UserStockEarningStatisticDTO(Double distance, Double summary) {
         this.distance = Objects.isNull(distance) ? 0.0 : distance;
         this.summary = Objects.isNull(summary) ? 0.0 : summary;
-        this.panel = Objects.isNull(panel) ? 0.0 : panel;
-        this.income = this.summary - this.panel;
     }
 }

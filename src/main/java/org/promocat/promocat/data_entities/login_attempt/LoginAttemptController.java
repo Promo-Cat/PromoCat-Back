@@ -9,6 +9,10 @@ import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.admin.AdminService;
+import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.user.UserService;
+import org.promocat.promocat.data_entities.user.UserStatus;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.login.ApiLoginAttemptNotFoundException;
@@ -36,14 +40,17 @@ import java.util.Optional;
 public class LoginAttemptController {
 
     private final LoginAttemptService loginAttemptService;
+    private final UserService userService;
     private final AdminService adminService;
     private final AccountRepositoryManager accountRepositoryManager;
 
     @Autowired
     public LoginAttemptController(final LoginAttemptService loginAttemptService,
+                                  final UserService userService,
                                   final AdminService adminService,
                                   final AccountRepositoryManager accountRepositoryManager) {
         this.loginAttemptService = loginAttemptService;
+        this.userService = userService;
         this.adminService = adminService;
         this.accountRepositoryManager = accountRepositoryManager;
     }
@@ -69,6 +76,13 @@ public class LoginAttemptController {
     })
     @RequestMapping(value = "/user/login", method = RequestMethod.GET)
     public ResponseEntity<AuthorizationKeyDTO> loginUser(@Valid @RequestParam("telephone") String telephone) {
+        if (!userService.existsByTelephone(telephone)) {
+            log.info("User with telephone {} doesn`t found in DB. Creating new one.", telephone);
+            UserDTO userDTO = new UserDTO();
+            userDTO.setTelephone(telephone);
+            userDTO.setStatus(UserStatus.JUST_REGISTERED);
+            userService.save(userDTO);
+        }
         return login(AccountType.USER, telephone);
     }
 

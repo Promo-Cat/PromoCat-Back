@@ -1,6 +1,7 @@
 package org.promocat.promocat.mapper;
 
 import org.promocat.promocat.data_entities.stock.poster.Poster;
+import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.PosterDTO;
 import org.springframework.stereotype.Component;
 

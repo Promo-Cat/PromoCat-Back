@@ -32,7 +32,7 @@ public class Movement extends AbstractEntity {
     private LocalDate date;
     private Double distance;
     private Double earnings;
-    private Double panel;
+//    private Double panel;
 
     @Cascade({CascadeType.SAVE_UPDATE})
     @ManyToOne(fetch = FetchType.LAZY)
@@ -66,9 +66,9 @@ public class Movement extends AbstractEntity {
         return earnings;
     }
 
-    @NotNull(message = "Комиссия не может быть пустой.")
-    @Column(name = "panel")
-    public Double getPanel() {
-        return panel;
-    }
+//    @NotNull(message = "Комиссия не может быть пустой.")
+//    @Column(name = "panel")
+//    public Double getPanel() {
+//        return panel;
+//    }
 }

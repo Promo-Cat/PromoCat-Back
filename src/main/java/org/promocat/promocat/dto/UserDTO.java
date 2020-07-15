@@ -8,10 +8,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.user.UserStatus;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @ApiModel(
@@ -27,28 +26,25 @@ public class UserDTO extends AbstractAccountDTO {
     @ApiModelProperty(
             value = "Users mail",
             dataType = "String",
-            required = true,
             allowableValues = "Standard email format."
     )
     @Email
-    @NotBlank(message = "Почта не может быть пустой")
+//    @NotBlank(message = "Почта не может быть пустой")
     private String mail;
 
     @ApiModelProperty(
             value = "Users city",
-            dataType = "String",
-            required = true
+            dataType = "String"
     )
-    @NotNull(message = "ID города не может быть пустой")
+//    @NotNull(message = "ID города не может быть пустой")
     private Long cityId;
-
 
     @ApiModelProperty(
             value = "Users balance",
             dataType = "Long"
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long balance;
+    private Double balance;
 
     @ApiModelProperty(
             value = "Users cars",
@@ -89,6 +85,17 @@ public class UserDTO extends AbstractAccountDTO {
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double totalEarnings;
+
+    @ApiModelProperty(
+            value = "Users status",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    private UserStatus status;
+
+    @ApiModelProperty(value = "Terms of use status. True if user accepted terms of use, else otherwise.",
+            dataType = "Boolean"
+    )
+    private Boolean termsOfUseStatus = false;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);
