@@ -132,6 +132,9 @@ public class Stock extends AbstractEntity {
     }
 
 
+    /**
+     * Постер акции.
+     */
     @OneToOne
     public Poster getPoster() {
         return poster;

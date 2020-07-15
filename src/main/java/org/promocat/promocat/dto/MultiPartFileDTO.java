@@ -10,6 +10,7 @@ import java.sql.Blob;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 11:26 27.06.2020
  */
+// TODO docs
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
 @NoArgsConstructor
