@@ -114,6 +114,7 @@ public class StockController {
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
             @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Poster not found", response = ApiException.class),
             @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
@@ -130,6 +131,16 @@ public class StockController {
         }
     }
 
+    @ApiOperation(value = "Get posters preview",
+                 notes = "Get posters preview for this stock. Poster in .png format.",
+                 response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Poster not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
+    })
     @RequestMapping(path = "/api/company/stock/{id}/poster/preview", method = RequestMethod.GET)
     public ResponseEntity<Resource> getPosterPreview(@PathVariable("id") Long id,
                                               @RequestHeader("token") String token) {

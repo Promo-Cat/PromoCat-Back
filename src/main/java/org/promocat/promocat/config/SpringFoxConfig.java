@@ -73,10 +73,10 @@ public class SpringFoxConfig {
     public Docket admin() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .paths(PathSelectors.ant("/data/examples/admin/**"))
+                .paths(PathSelectors.ant("/admin/**"))
                 .apis(RequestHandlerSelectors.basePackage("org.promocat.promocat.data_entities"))
                 .build()
-                .groupName("data/examples/admin")
+                .groupName("admin")
                 .tags(new Tag(CITY, "City controller"))
                 .tags(new Tag(COMPANY, "Company controller"))
                 .tags(new Tag(CAR, "Car controller"))
