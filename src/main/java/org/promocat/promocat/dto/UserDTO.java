@@ -11,8 +11,6 @@ import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.user.UserStatus;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @ApiModel(
@@ -88,10 +86,15 @@ public class UserDTO extends AbstractAccountDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double totalEarnings;
 
-    // TODO: 12.07.2020 DOCS
+    @ApiModelProperty(
+            value = "Users status",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
     private UserStatus status;
 
-    // TODO Dosc
+    @ApiModelProperty(value = "Terms of use status. True if user accepted terms of use, else otherwise.",
+            dataType = "Boolean"
+    )
     private Boolean termsOfUseStatus = false;
 
     public UserDTO() {
