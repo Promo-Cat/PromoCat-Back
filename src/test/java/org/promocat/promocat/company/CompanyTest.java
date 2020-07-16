@@ -20,9 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -339,6 +337,86 @@ public class CompanyTest {
         this.mockMvc.perform(delete("/admin/company?id=1000").header("token", beforeAll.adminToken))
                 .andExpect(status().is4xxClientError());
     }
+
+    @Test
+    public void testGetCompanyByName() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/admin/company/organizationName?organizationName=" + beforeAll.company1DTO.getOrganizationName())
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        CompanyDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
+
+        assertEquals(beforeAll.company1DTO.getId(), that.getId());
+        assertEquals(beforeAll.company1DTO.getInn(), that.getInn());
+        assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
+        assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
+        assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
+        assertEquals(beforeAll.company1DTO.getVerified(), that.getVerified());
+    }
+
+    @Test
+    public void testGetCompanyByIncorrectName() throws Exception {
+        this.mockMvc.perform(get("/admin/company/organizationName?organizationName=cvbnm")
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testUpdateCompanyByCompanyToken() throws Exception {
+        CompanyDTO company = new CompanyDTO();
+        company.setTelephone("+7(456)456-22-22");
+        company.setMail("bnm@mail.ru");
+        company.setOrganizationName("test0");
+        company.setId(beforeAll.company1DTO.getId());
+        company.setAccountType(AccountType.COMPANY);
+        company.setInn(beforeAll.company1DTO.getInn());
+        company.setVerified(beforeAll.company1DTO.getVerified());
+
+        this.mockMvc.perform(post("/api/company").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(company))
+                .header("token", beforeAll.company1Token))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get("/api/company").header("token", beforeAll.company1Token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        CompanyDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
+        assertEquals(that.getId(), beforeAll.company1DTO.getId());
+        assertEquals(that.getVerified(), beforeAll.company1DTO.getVerified());
+        assertEquals(that.getTelephone(), "+7(456)456-22-22");
+        assertEquals(that.getMail(), "bnm@mail.ru");
+        assertEquals(that.getOrganizationName(), "test0");
+    }
+
+//    @Test
+//    public void testUpdateCompanyByAdminToken() throws Exception {
+//        CompanyDTO company = new CompanyDTO();
+//        company.setTelephone("+7(456)456-22-22");
+//        company.setMail("bnm@mail.ru");
+//        company.setOrganizationName("test0");
+//        company.setId(beforeAll.company1DTO.getId());
+//        company.setAccountType(AccountType.COMPANY);
+//        company.setInn(beforeAll.company1DTO.getInn());
+//        company.setVerified(beforeAll.company1DTO.getVerified());
+//
+//        this.mockMvc.perform(post("/admin/company").contentType(MediaType.APPLICATION_JSON_VALUE)
+//                .content(new ObjectMapper().writeValueAsString(company))
+//                .header("token", beforeAll.adminToken))
+//                .andExpect(status().isOk());
+//
+//        MvcResult result = this.mockMvc.perform(get("/api/company").header("token", beforeAll.company1Token))
+//                .andExpect(status().isOk())
+//                .andReturn();
+//
+//        CompanyDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
+//        assertEquals(that.getId(), beforeAll.company1DTO.getId());
+//        assertEquals(that.getVerified(), beforeAll.company1DTO.getVerified());
+//        assertEquals(that.getTelephone(), "+7(456)456-22-22");
+//        assertEquals(that.getMail(), "bnm@mail.ru");
+//        assertEquals(that.getOrganizationName(), "test0");
+//    }
 
 //    @Test
 //    public void testCompanyAndIncorrectStock() throws Exception {

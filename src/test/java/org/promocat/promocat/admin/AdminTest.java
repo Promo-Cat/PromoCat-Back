@@ -1,5 +1,6 @@
 package org.promocat.promocat.admin;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.promocat.promocat.BeforeAll;
 import org.promocat.promocat.dto.AdminDTO;
 import org.promocat.promocat.dto.pojo.TelephoneDTO;
+import org.promocat.promocat.exception.login.token.ApiTokenNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,9 +19,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -68,67 +74,32 @@ public class AdminTest {
                 .andExpect(status().is4xxClientError());
     }
 
-//    @Test
-//    public void getAdminByTelephoneTest() throws Exception {
-//        TelephoneDTO telephone = new TelephoneDTO("+7(222)222-22-22");
-//        MvcResult result = this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(telephone))
-//                .header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        AdminDTO admin = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
-//        AdminDTO adminRes = adminService.getByTelephone("+7(222)222-22-22");
-//        assertEquals(admin.getTelephone(), adminRes.getTelephone());
-//        assertEquals(admin.getId(), adminRes.getId());
-//    }
-//
-//    @Test(expected = ApiAdminNotFoundException.class)
-//    public void getAdminByIncorrectTelephoneTest() {
-//        adminService.getByTelephone("+7(666)222-22-22");
-//    }
-//
-//    @Test
-//    public void getAdminsTest() throws Exception {
-//        TelephoneDTO telephone = new TelephoneDTO("+7(222)334-22-22");
-//        this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(telephone))
-//                .header("token", adminToken))
-//                .andExpect(status().isOk());
-//
-//        MvcResult result = this.mockMvc.perform(get("/data/examples/admin/").header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        List<AdminDTO> admins = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<List<AdminDTO>>() {
-//        });
-//        assertEquals(admins.size(), 4);
-//    }
-//
-//    @Test
-//    public void deleteAdminTest() throws Exception {
-//        TelephoneDTO telephone = new TelephoneDTO("+7(222)622-22-22");
-//        MvcResult result = this.mockMvc.perform(post("/data/examples/admin/").contentType(MediaType.APPLICATION_JSON)
-//                .content(new ObjectMapper().writeValueAsString(telephone))
-//                .header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        AdminDTO admin = new ObjectMapper().readValue(result.getResponse().getContentAsString(), AdminDTO.class);
-//
-//        this.mockMvc.perform(delete("/data/examples/admin/" + admin.getId()).header("token", adminToken))
-//                .andExpect(status().isOk());
-//
-//        result = this.mockMvc.perform(get("/data/examples/admin/").header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        List<AdminDTO> admins = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-//        });
-//        assertEquals(admins.size(), 4);
-//    }
-//
-//    @Test
-//    public void deleteAdminWithoutCorrectIdTest() throws Exception {
-//        this.mockMvc.perform(delete("/data/examples/admin/?id=" + 222).header("token", adminToken))
-//                .andExpect(status().is4xxClientError());
-//    }
+    @Test
+    public void testGetAdmins() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/admin/")
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<AdminDTO> that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
+        assertEquals(that.size(), 1);
+        assertEquals(that.get(0).getId(), beforeAll.adminDTO.getId());
+        assertEquals(that.get(0).getTelephone(), beforeAll.adminDTO.getTelephone());
+    }
+
+    @Test(expected = ApiTokenNotFoundException.class)
+    public void TestDeleteAdminById() throws Exception {
+        this.mockMvc.perform(delete("/admin/" + beforeAll.adminDTO.getId()).header("token", beforeAll.adminToken))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/admin/")
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void TestDeleteAdminWithIncorrectId() throws Exception {
+        this.mockMvc.perform(delete("/admin/222").header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
 }
