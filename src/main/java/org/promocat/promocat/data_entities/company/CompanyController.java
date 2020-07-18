@@ -667,7 +667,7 @@ public class CompanyController {
     })
     @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByOrganizationName(
-            @RequestParam("organizationName") final String organizationName) {
+            @RequestParam("name") final String organizationName) {
         return ResponseEntity.ok(companyService.findByOrganizationName(organizationName));
     }
 

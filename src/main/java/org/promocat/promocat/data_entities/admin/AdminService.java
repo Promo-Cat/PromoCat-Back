@@ -230,6 +230,11 @@ public class AdminService {
         return newFile;
     }
 
+    /**
+     * Удаление файла и логирование.
+     *
+     * @param file файл, который требуется удалить.
+     */
     private void logDeleteFile(final File file) {
         if (file.delete()) {
             log.info("Old {} deleted", file.toString());
