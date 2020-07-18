@@ -5,17 +5,20 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.StockWithStockCityDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
 import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -29,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -44,16 +46,19 @@ public class UserController {
     private final PromoCodeActivationService promoCodeActivationService;
     private final MovementService movementService;
     private final StockService stockService;
+    private final StockCityService stockCityService;
 
     @Autowired
     public UserController(final UserService userService,
                           final PromoCodeActivationService promoCodeActivationService,
                           final MovementService movementService,
-                          final StockService stockService) {
+                          final StockService stockService,
+                          final StockCityService stockCityService) {
         this.userService = userService;
         this.promoCodeActivationService = promoCodeActivationService;
         this.movementService = movementService;
         this.stockService = stockService;
+        this.stockCityService = stockCityService;
     }
 
 //    @ApiOperation(value = "Registering user",
@@ -178,6 +183,10 @@ public class UserController {
         UserDTO userDTO = userService.findByToken(token);
         if (userDTO.getStatus() != UserStatus.FULL) {
             throw new ApiUserStatusException(String.format("Status of user with telephone: %s doesn't allow to participate in the Stock", userDTO.getTelephone()));
+        }
+        StockDTO stock = stockService.findById(stockCityService.findById(stockCityId).getStockId());
+        if (stock.getIsAlive() != StockStatus.ACTIVE) {
+            throw new ApiStockActivationStatusException("Stock isn`t active now");
         }
         return ResponseEntity.ok(userService.setUserStockCity(userDTO, stockCityId));
     }
