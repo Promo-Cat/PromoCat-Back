@@ -185,7 +185,7 @@ public class UserController {
             throw new ApiUserStatusException(String.format("Status of user with telephone: %s doesn't allow to participate in the Stock", userDTO.getTelephone()));
         }
         StockDTO stock = stockService.findById(stockCityService.findById(stockCityId).getStockId());
-        if (stock.getIsAlive() != StockStatus.ACTIVE) {
+        if (stock.getStatus() != StockStatus.ACTIVE) {
             throw new ApiStockActivationStatusException("Stock isn`t active now");
         }
         return ResponseEntity.ok(userService.setUserStockCity(userDTO, stockCityId));
