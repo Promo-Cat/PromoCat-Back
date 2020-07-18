@@ -95,7 +95,7 @@ public class UserController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO user,
-                                              @RequestHeader String token) {
+                                              @RequestHeader final String token) {
         UserDTO actualUser = userService.findByToken(token);
         if (actualUser.getStatus() == UserStatus.JUST_REGISTERED &&
                 RequiredForFullConstraintValidator.check(user)) {
@@ -117,7 +117,7 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = "/api/user", method = RequestMethod.GET)
-    public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String token) {
+    public ResponseEntity<UserDTO> getUser(@RequestHeader("token") final String token) {
         return ResponseEntity.ok(userService.findByToken(token));
     }
 
@@ -190,8 +190,8 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/move", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
-                                                @RequestHeader("token") String token) {
+    public ResponseEntity<MovementDTO> moveUser(@RequestBody final DistanceDTO distanceDTO,
+                                                @RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
         if (Objects.isNull(user.getStockCityId())) {
             throw new ApiStockCityNotFoundException(String.format("User with telephone: %s doesn't have stock", user.getTelephone()));
@@ -223,7 +223,7 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/statistics", method = RequestMethod.GET)
-    public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") String token) {
+    public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") final String token) {
         return ResponseEntity.ok(userService.getUserStatistics(userService.findByToken(token)));
     }
 
@@ -237,7 +237,7 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
-    public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") String token) {
+    public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
         return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
     }
@@ -249,7 +249,7 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/acceptTermsOfUse", method = RequestMethod.POST)
-    public ResponseEntity<String> acceptTermsOfUse(@RequestHeader("token") String token) {
+    public ResponseEntity<String> acceptTermsOfUse(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
         user.setTermsOfUseStatus(true);
         updateUser(user, token);
@@ -262,7 +262,7 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/activeStocks", method = RequestMethod.GET)
-    public ResponseEntity<List<StockWithStockCityDTO>> getAllActiveStocks(@RequestHeader("token") String token) {
+    public ResponseEntity<List<StockWithStockCityDTO>> getAllActiveStocks(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
         List<StockWithStockCityDTO> res = stockService.getAllActiveStocks().stream()
                 .map(e -> new StockWithStockCityDTO(e, e.getCities().stream()
