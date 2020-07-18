@@ -6,11 +6,13 @@ import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
+import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.StockMapper;
+import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.validators.StockDurationConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -36,18 +38,24 @@ public class StockService {
     private final StockCityService stockCityService;
     private final CityService cityService;
     private final ParametersService parametersService;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Autowired
     public StockService(final StockMapper mapper,
                         final StockRepository repository,
                         final StockCityService stockCityService,
                         final CityService cityService,
-                        final ParametersService parametersService) {
+                        final ParametersService parametersService,
+                        final UserRepository userRepository,
+                        final UserMapper userMapper) {
         this.mapper = mapper;
         this.repository = repository;
         this.stockCityService = stockCityService;
         this.cityService = cityService;
         this.parametersService = parametersService;
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -121,10 +129,16 @@ public class StockService {
             log.info("Clear stock with end time after: {}", day);
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day, StockStatus.ACTIVE);
 
-            for (StockDTO stock : stocks) {
-                stock.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
-                save(stock);
-            }
+            stocks.forEach(e -> {
+                e.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
+                save(e);
+                e.getCities().stream()
+                        .flatMap(x -> x.getUsers().stream())
+                        .forEach(y -> {
+                            y.setStockCityId(null);
+                            userRepository.save(userMapper.toEntity(y));
+                        });
+            });
         }
     }
 
