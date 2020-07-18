@@ -1,4 +1,4 @@
-package org.promocat.promocat.data_entities.user;
+package org.promocat.promocat.attributes;
 
 public enum UserStatus {
     FULL, JUST_REGISTERED, BANNED

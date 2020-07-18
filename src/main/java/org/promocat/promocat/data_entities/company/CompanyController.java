@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.movement.MovementService;
@@ -26,10 +27,13 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.util_entities.TokenService;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.JwtReader;
+import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,6 +64,7 @@ public class CompanyController {
     private final UserService userService;
     private final AdminService adminService;
     private final PosterService posterService;
+    private final TokenService tokenService;
 
     @Autowired
     public CompanyController(final CompanyService companyService,
@@ -68,7 +73,8 @@ public class CompanyController {
                              final MovementService movementService,
                              final UserService userService,
                              final AdminService adminService,
-                             final PosterService posterService) {
+                             final PosterService posterService,
+                             final TokenService tokenService) {
         this.companyService = companyService;
         this.stockService = stockService;
         this.promoCodeActivationService = promoCodeActivationService;
@@ -76,6 +82,7 @@ public class CompanyController {
         this.userService = userService;
         this.adminService = adminService;
         this.posterService = posterService;
+        this.tokenService = tokenService;
     }
 
     @ApiOperation(value = "Register company",
@@ -123,8 +130,20 @@ public class CompanyController {
     })
     @RequestMapping(path = {"/api/company", "/admin/company"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CompanyDTO> updateCompany(@Valid @RequestBody CompanyDTO company,
-                                                    @RequestHeader String token) {
-        CompanyDTO actualCompany = companyService.findByToken(token);
+                                                    @RequestHeader("token") String token) {
+        AccountType accountType = tokenService.getAccountType(token);
+        CompanyDTO actualCompany;
+        if (accountType == AccountType.COMPANY) {
+            actualCompany = companyService.findByToken(token);
+        } else if (accountType == AccountType.ADMIN) {
+            actualCompany = companyService.findByTelephone(company.getTelephone());
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (actualCompany.getCompanyStatus() == CompanyStatus.JUST_REGISTERED &&
+                RequiredForFullConstraintValidator.check(company)) {
+            company.setCompanyStatus(CompanyStatus.FULL);
+        }
         EntityUpdate.copyNonNullProperties(company, actualCompany);
         return ResponseEntity.ok(companyService.save(actualCompany));
     }
