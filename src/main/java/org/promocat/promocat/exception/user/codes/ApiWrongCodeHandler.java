@@ -28,4 +28,16 @@ public class ApiWrongCodeHandler {
         log.error("Wrong code from user: " + e.getMessage());
         return new ResponseEntity<>(apiException, badRequest);
     }
+
+    @ExceptionHandler(value = {ApiUserStatusException.class})
+    public ResponseEntity<Object> handelWrongCode(ApiUserStatusException e) {
+        final HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                forbidden,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("User status doesn't allow to participate in the stock");
+        return new ResponseEntity<>(apiException, forbidden);
+    }
 }

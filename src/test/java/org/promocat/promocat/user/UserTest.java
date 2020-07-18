@@ -321,4 +321,14 @@ public class UserTest {
                 .header("token", token))
                 .andExpect(status().is4xxClientError());
     }
+
+    @Test
+    public void testSetUserStockCity() throws Exception {
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", "mail@mail.ru", null, UserStatus.JUST_REGISTERED);
+        String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
+
+        this.mockMvc.perform(post("/api/user/stock/" + beforeAll.stockCity1DTO.getId())
+                .header("token", token))
+                .andExpect(status().is4xxClientError());
+    }
 }
