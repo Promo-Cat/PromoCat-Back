@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.CompanyStatus;
+import org.promocat.promocat.constraints.RequiredForFull;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -31,7 +33,8 @@ public class CompanyDTO extends AbstractAccountDTO {
             dataType = "String",
             required = true
     )
-    @NotBlank(message = "Имя организации не может быть пустым.")
+    @RequiredForFull
+//    @NotBlank(message = "Имя организации не может быть пустым.")
     private String organizationName;
 
     @ApiModelProperty(
@@ -42,7 +45,7 @@ public class CompanyDTO extends AbstractAccountDTO {
     )
     @Pattern(regexp = "\\d{10}", message = "ИНН задан неверно, должен состоять из 10 цифр. " +
             "Работа ведется только с юридическими лицами.")
-    @NotBlank(message = "ИНН организации не может быть пустым.")
+//    @NotBlank(message = "ИНН организации не может быть пустым.")
     private String inn;
 
     @ApiModelProperty(
@@ -52,7 +55,8 @@ public class CompanyDTO extends AbstractAccountDTO {
             allowableValues = "Standard email format."
     )
     @Email
-    @NotBlank(message = "Имя почты не может быть пустым.")
+    @RequiredForFull
+//    @NotBlank(message = "Имя почты не может быть пустым.")
     private String mail;
 
     @ApiModelProperty(
@@ -64,6 +68,8 @@ public class CompanyDTO extends AbstractAccountDTO {
 
     // TODO: 13.06.2020 MAKS DOCS 
     private Boolean verified = false;
+
+    private CompanyStatus companyStatus;
 
     public CompanyDTO() {
         this.setAccountType(AccountType.COMPANY);

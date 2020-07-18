@@ -209,6 +209,10 @@ public class CompanyService {
         return companyDTO;
     }
 
+    public boolean existsByTelephone(String telephone) {
+        return companyRepository.findByTelephone(telephone).isPresent();
+    }
+
     public void deleteById(Long id) {
         companyRepository.deleteById(id);
     }
