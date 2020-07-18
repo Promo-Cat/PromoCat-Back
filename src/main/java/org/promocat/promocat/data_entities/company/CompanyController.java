@@ -667,7 +667,7 @@ public class CompanyController {
     })
     @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByOrganizationName(
-            @RequestParam("organizationName") final String organizationName) {
+            @RequestParam("name") final String organizationName) {
         return ResponseEntity.ok(companyService.findByOrganizationName(organizationName));
     }
 
@@ -693,6 +693,18 @@ public class CompanyController {
             "/api/company/poster/example"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getPosterExample() {
         MultiPartFileDTO poster = adminService.getPosterExample();
+        return posterService.getResourceResponseEntity(poster);
+    }
+
+    @ApiOperation(value = "Get poster preview example", notes = "Returning example of poster (.pdf)",
+            response = Resource.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(path = "/data/poster/example/preview", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getPosterExamplePreview() {
+        MultiPartFileDTO poster = adminService.getPosterPreviewExample();
         return posterService.getResourceResponseEntity(poster);
     }
 }
