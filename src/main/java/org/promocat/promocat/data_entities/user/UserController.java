@@ -14,6 +14,7 @@ import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,6 +208,9 @@ public class UserController {
     public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
                                                 @RequestHeader("token") String token) {
         UserDTO user = userService.findByToken(token);
+        if (Objects.isNull(user.getStockCityId())) {
+            throw new ApiStockCityNotFoundException(String.format("User with telephone: %s doesn't have stock", user.getTelephone()));
+        }
         user.setTotalDistance(user.getTotalDistance() + distanceDTO.getDistance());
         user = userService.save(user);
         MovementDTO movement = movementService.findByUserAndDate(user, distanceDTO.getDate());
