@@ -12,6 +12,7 @@ import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.constraints.RequiredForFull;
 
 import javax.validation.constraints.Email;
+import java.util.HashSet;
 import java.util.Set;
 
 @ApiModel(
@@ -55,7 +56,7 @@ public class UserDTO extends AbstractAccountDTO {
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Set<CarDTO> cars;
+    private Set<CarDTO> cars = new HashSet<>();
 
     @ApiModelProperty(
             value = "Id of current users stock city",
@@ -70,7 +71,7 @@ public class UserDTO extends AbstractAccountDTO {
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Set<MovementDTO> movements;
+    private Set<MovementDTO> movements = new HashSet<>();
 
     @ApiModelProperty(
             value = "Users total distance",
