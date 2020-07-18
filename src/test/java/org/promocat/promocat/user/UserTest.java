@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.BeforeAll;
 import org.promocat.promocat.attributes.AccountType;
-import org.promocat.promocat.data_entities.user.UserStatus;
+import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;

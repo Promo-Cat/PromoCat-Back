@@ -2,6 +2,7 @@ package org.promocat.promocat;
 
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.attributes.StockStatus;
+import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.admin.Admin;
 import org.promocat.promocat.data_entities.admin.AdminRepository;
@@ -22,7 +23,6 @@ import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityRepository;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserRepository;
-import org.promocat.promocat.data_entities.user.UserStatus;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
