@@ -191,23 +191,15 @@ public class UserController {
         return ResponseEntity.ok(userService.setUserStockCity(userDTO, stockCityId));
     }
 
-    //TODO возможно стоит подправить документацию из-за ApiStockCityNotFoundException
     @ApiOperation(value = "Add user movement",
             notes = "Adds users movement",
             response = MovementDTO.class)
     @ApiResponses({
-            @ApiResponse(code = 404,
-                    message = "User not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 403,
-                    message = "Wrong token",
-                    response = ApiException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "StockCity not found", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Wrong token", response = ApiException.class),
+            @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/move", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
