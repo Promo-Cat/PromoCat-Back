@@ -18,7 +18,6 @@ import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.MimeTypes;
-import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -132,8 +131,8 @@ public class StockController {
     }
 
     @ApiOperation(value = "Get posters preview",
-                 notes = "Get posters preview for this stock. Poster in .png format.",
-                 response = String.class)
+            notes = "Get posters preview for this stock. Poster in .png format.",
+            response = String.class)
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
             @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
@@ -143,12 +142,37 @@ public class StockController {
     })
     @RequestMapping(path = "/api/company/stock/{id}/poster/preview", method = RequestMethod.GET)
     public ResponseEntity<Resource> getPosterPreview(@PathVariable("id") Long id,
-                                              @RequestHeader("token") String token) {
+                                                     @RequestHeader("token") String token) {
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
             MultiPartFileDTO posterPreview = posterService.getPosterPreview(posterService.findById(stock.getPosterId()));
             return posterService.getResourceResponseEntity(posterPreview);
+        } else {
+            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
+        }
+    }
+
+    @ApiOperation(value = "Delete poster",
+            notes = "Deletes poster and posters preview for this stock.",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Poster not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
+    })
+    @RequestMapping(path = "/api/company/stock/{id}/poster", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deletePoster(@PathVariable("id") final Long id,
+                                               @RequestHeader("token") final String token) {
+        Long companyId = companyService.findByToken(token).getId();
+        if (companyService.isOwner(companyId, id)) {
+            StockDTO stockDTO = stockService.findById(id);
+            posterService.delete(stockDTO.getPosterId());
+            stockDTO.setPosterId(0L);
+            stockService.save(stockDTO);
+            return ResponseEntity.ok("{}");
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }
@@ -192,7 +216,7 @@ public class StockController {
     })
     @RequestMapping(path = "/admin/company/stock/active/{id}", method = RequestMethod.POST)
     public ResponseEntity<StockDTO> setActiveStock(@PathVariable("id") Long id,
-                                                    @RequestParam("activation_status") String activationStatus) {
+                                                   @RequestParam("activation_status") String activationStatus) {
         return ResponseEntity.ok(stockService.setActive(id, StockStatus.valueOf(activationStatus.toUpperCase())));
     }
 
