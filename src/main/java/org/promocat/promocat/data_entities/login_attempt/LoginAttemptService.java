@@ -136,6 +136,9 @@ public class LoginAttemptService {
      */
     public Optional<? extends AbstractAccount> checkLoginAttemptCode(LoginAttemptDTO attempt) {
         LoginAttempt loginAttempt = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorizationKey());
+        if (loginAttempt == null) {
+            return Optional.empty();
+        }
         if (loginAttempt.getPhoneCode().equals(attempt.getCode())) {
             delete(loginAttempt);
             log.info("Login success with auth-key: {} and code: {}", attempt.getAuthorizationKey(), attempt.getCode());
