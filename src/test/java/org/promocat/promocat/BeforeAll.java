@@ -1,6 +1,7 @@
 package org.promocat.promocat;
 
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.admin.Admin;
 import org.promocat.promocat.data_entities.admin.AdminRepository;
@@ -8,28 +9,34 @@ import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.car.CarRepository;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.city.CityRepository;
+import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
 import org.promocat.promocat.data_entities.login_attempt.LoginAttemptService;
 import org.promocat.promocat.data_entities.movement.MovementRepository;
+import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.parameters.ParametersRepository;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationRepository;
 import org.promocat.promocat.data_entities.stock.StockRepository;
+import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityRepository;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserRepository;
-import org.promocat.promocat.dto.CarDTO;
-import org.promocat.promocat.dto.LoginAttemptDTO;
-import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.data_entities.user.UserStatus;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
-import org.promocat.promocat.mapper.CarMapper;
-import org.promocat.promocat.mapper.UserMapper;
+import org.promocat.promocat.mapper.*;
 import org.promocat.promocat.util_entities.TokenService;
 import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -68,6 +75,9 @@ public class BeforeAll {
     StockRepository stockRepository;
 
     @Autowired
+    StockCityRepository stockCityRepository;
+
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
@@ -85,6 +95,25 @@ public class BeforeAll {
     @Autowired
     CarMapper carMapper;
 
+    @Autowired
+    CompanyMapper companyMapper;
+
+    @Autowired
+    AdminMapper adminMapper;
+
+    @Autowired
+    StockCityMapper stockCityMapper;
+
+    @Autowired
+    MovementMapper movementMapper;
+
+    @Autowired
+    StockService stockService;
+
+    @Autowired
+    MovementService movementService;
+
+
     public City city;
     public String user1Token;
     public UserDTO user1DTO;
@@ -93,6 +122,16 @@ public class BeforeAll {
     public UserDTO user2DTO;
     public CarDTO car2DTO;
     public String adminToken;
+    public CompanyDTO company1DTO;
+    public CompanyDTO company2DTO;
+    public String company1Token;
+    public String company2Token;
+    public StockDTO stock1DTO;
+    public StockDTO stock2DTO;
+    public AdminDTO adminDTO;
+    public DistanceDTO distance;
+    public StockCityDTO stockCity1DTO;
+    public StockCityDTO stockCity2DTO;
 
     /**
      * Отчистка и заполнение БД.
@@ -100,35 +139,42 @@ public class BeforeAll {
     public void init() {
         adminRepository.deleteAll();
         carRepository.deleteAll();
+        userRepository.deleteAll();
         companyRepository.deleteAll();
         movementRepository.deleteAll();
-        parametersRepository.deleteAll();
         promoCodeRepository.deleteAll();
         promoCodeActivationRepository.deleteAll();
         stockRepository.deleteAll();
-        userRepository.deleteAll();
+        stockCityRepository.deleteAll();
         create();
     }
 
     /**
      * Создание пользователя.
+     *
      * @return UserDTO.
      */
-    private UserDTO createUser(String telephone, String mail) {
+    public UserDTO createUser(String telephone, String mail, StockCityDTO stockCity, UserStatus status) {
         User user = new User();
         user.setTelephone(telephone);
         user.setMail(mail);
-        user.setCity(city);
+        user.setCity(this.city);
+        user.setStatus(status);
+        user.setTermsOfUseStatus(true);
         user.setAccountType(AccountType.USER);
+        if (Objects.nonNull(stockCity)) {
+            user.setStockCity(stockCityRepository.findById(stockCity.getId()).get());
+        }
         user = userRepository.save(user);
         return userMapper.toDto(user);
     }
 
     /**
      * Получение токена.
+     *
      * @return String.
      */
-    private String getToken(AccountType accountType, String telephone) {
+    public String getToken(AccountType accountType, String telephone) {
         Optional<? extends AbstractAccount> account = accountRepositoryManager.getRepository(accountType).getByTelephone(telephone);
         AuthorizationKeyDTO key = loginAttemptService.login(account.get());
 
@@ -154,33 +200,87 @@ public class BeforeAll {
     }
 
     /**
+     * Добавление компаниию.
+     *
+     * @return CompanyDTO.
+     */
+    private CompanyDTO createCompany(String telephone, String INN, String name, String mail) {
+        Company company = new Company();
+        company.setTelephone(telephone);
+        company.setInn(INN);
+        company.setOrganizationName(name);
+        company.setMail(mail);
+        company.setVerified(true);
+        company.setAccountType(AccountType.COMPANY);
+        company = companyRepository.save(company);
+        return companyMapper.toDto(company);
+    }
+
+    private StockDTO createStock(String name, CompanyDTO company) {
+        StockDTO stock = new StockDTO();
+        stock.setCompanyId(company.getId());
+        stock.setIsAlive(StockStatus.POSTER_NOT_CONFIRMED);
+        stock.setDuration(7L);
+        stock.setStartTime(LocalDateTime.now());
+        stock.setName(name);
+        return stockService.create(stock);
+    }
+
+    private StockCityDTO addStockCity(StockDTO stock, Long cityId) {
+        StockCityDTO stockCity = new StockCityDTO();
+        stockCity.setCityId(cityId);
+        stockCity.setStockId(stock.getId());
+        stockCity.setNumberOfPromoCodes(10L);
+
+        return stockCityMapper.toDto(stockCityRepository.save(stockCityMapper.toEntity(stockCity)));
+    }
+
+    /**
      * Заполнение БД.
      */
     private void create() {
-        // Активация города в БД.
-        Optional<City> op = cityRepository.findById(1L);
-        City city = op.get();
-        city.setActive(true);
-        cityRepository.save(city);
+        // Активация города.
+        this.city  = cityRepository.findById(1L).get();
+        this.city.setActive(true);
+        this.city = cityRepository.save(city);
 
-        // Добавление пользователя в БД + токен.
-        user1DTO = createUser("+7(111)111-11-11", "qwert@mail.ru");
-        user2DTO = createUser("+7(222)222-22-22", "asdfg@mail.ru");
-
-        user1Token = getToken(AccountType.USER, "+7(111)111-11-11");
-        user2Token = getToken(AccountType.USER, "+7(222)222-22-22");
-
-
-        // Добавление машины пользователю.
-        car1DTO = createCar(user1DTO, "A777XY", "26");
-        car2DTO = createCar(user2DTO, "I222TT", "09");
 
         // Добавление админа + токен.
         Admin admin = new Admin();
         admin.setAccountType(AccountType.ADMIN);
         admin.setTelephone("+7(000)000-00-00");
         admin = adminRepository.save(admin);
+        adminDTO = adminMapper.toDto(admin);
 
         adminToken = getToken(AccountType.ADMIN, admin.getTelephone());
+
+        // Добавление компаний + токены.
+        company1DTO = createCompany("+7(888)888-88-88", "8888888888", "test1", "test1@mail.ru");
+        company2DTO = createCompany("+7(999)999-99-99", "9999999999", "test2", "test2@mail.ru");
+
+        company1Token = getToken(AccountType.COMPANY, company1DTO.getTelephone());
+        company2Token = getToken(AccountType.COMPANY, company2DTO.getTelephone());
+
+        // Добавление акций.
+        stock1DTO = createStock("company1", company1DTO);
+        stock2DTO = createStock("company2", company2DTO);
+
+        // Добавление городов к акциям.
+        stockCity1DTO = addStockCity(stock1DTO, city.getId());
+        stockCity2DTO = addStockCity(stock2DTO, city.getId());
+
+        // Добавление передвижения.
+        distance = new DistanceDTO(LocalDate.now(), 5.5);
+
+        // Добавление пользователей + токены.
+        user1DTO = createUser("+7(111)111-11-11", "qwert@mail.ru", stockCity1DTO, UserStatus.FULL);
+        user2DTO = createUser("+7(222)222-22-22", "asdfg@mail.ru", stockCity2DTO, UserStatus.FULL);
+
+        user1Token = getToken(AccountType.USER, "+7(111)111-11-11");
+        user2Token = getToken(AccountType.USER, "+7(222)222-22-22");
+
+        // Добавление машины пользователю.
+        car1DTO = createCar(user1DTO, "A777XY", "26");
+        car2DTO = createCar(user2DTO, "I222TT", "09");
     }
 }
