@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -107,10 +108,10 @@ public class StockService {
      * @param days длительность акции
      * @return список прросроченных акций. {@link StockDTO}
      */
-    private List<StockDTO> getByTime(final LocalDateTime time, final Long days, final StockStatus status) {
+    private List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
         log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
                 time, days);
-        Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, status);
+        Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, StockStatus.ACTIVE);
         List<StockDTO> result = new ArrayList<>();
         if (optional.isPresent()) {
             for (Stock stock : optional.get()) {
@@ -127,11 +128,14 @@ public class StockService {
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
-            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day, StockStatus.ACTIVE);
+            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
 
             stocks.forEach(e -> {
                 e.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
                 save(e);
+                if (Objects.isNull(e.getCities())) {
+                    return;
+                }
                 e.getCities().stream()
                         .flatMap(x -> x.getUsers().stream())
                         .forEach(y -> {
