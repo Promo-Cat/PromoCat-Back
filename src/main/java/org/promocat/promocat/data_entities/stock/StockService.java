@@ -2,18 +2,14 @@ package org.promocat.promocat.data_entities.stock;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
-import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
-import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
-import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.validators.StockDurationConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +17,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,10 +99,10 @@ public class StockService {
      * @param days длительность акции
      * @return список прросроченных акций. {@link StockDTO}
      */
-    private List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
+    private List<StockDTO> getByTime(final LocalDateTime time, final Long days, final StockStatus status) {
         log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
                 time, days);
-        Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndDurationEquals(time, days);
+        Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, status);
         List<StockDTO> result = new ArrayList<>();
         if (optional.isPresent()) {
             for (Stock stock : optional.get()) {
@@ -122,23 +113,16 @@ public class StockService {
     }
 
     /**
-     * Удаление всех просроченных промокодов и установка акций в неактивное состояние.
+     * Удаление акции по её завершению.
      */
     @Scheduled(cron = "59 59 23 * * *")
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
-            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
+            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day, StockStatus.ACTIVE);
 
             for (StockDTO stock : stocks) {
-//                for (StockCityDTO city : stock.getCities()) {
-//                    for (PromoCodeDTO code : city.getPromoCodes()) {
-//                        code.setIsActive(false);
-//                        code.setDeactivateDate(LocalDateTime.now());
-//                        promoCodeService.save(code);
-//                    }
-//                }
-                stock.setIsAlive(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
+                stock.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
                 save(stock);
             }
         }
@@ -160,7 +144,7 @@ public class StockService {
     public StockDTO setActive(final Long id, final StockStatus status) {
         log.info("Setting stock: {} active: {}", id, status);
         StockDTO stock = findById(id);
-        stock.setIsAlive(status);
+        stock.setStatus(status);
         return save(stock);
     }
 

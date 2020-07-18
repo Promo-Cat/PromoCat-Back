@@ -12,7 +12,6 @@ import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.constraints.StockDurationConstraint;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -42,7 +41,7 @@ public class StockDTO extends AbstractDTO {
             value = "Stock activation status",
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
-    private StockStatus isAlive;
+    private StockStatus status;
 
     @ApiModelProperty(
             value = "Company id",

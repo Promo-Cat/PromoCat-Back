@@ -16,15 +16,8 @@ import org.promocat.promocat.data_entities.parameters.Parameters;
 import org.promocat.promocat.data_entities.stock.poster.Poster;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -40,7 +33,7 @@ import java.util.Set;
 public class Stock extends AbstractEntity {
 
     private String name;
-    private StockStatus isAlive;
+    private StockStatus status;
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
@@ -82,9 +75,9 @@ public class Stock extends AbstractEntity {
     /**
      * Статус акции.
      */
-    @Column(name = "isAlive")
-    public StockStatus getIsAlive() {
-        return isAlive;
+    @Column(name = "status")
+    public StockStatus getStatus() {
+        return status;
     }
 
     /**
