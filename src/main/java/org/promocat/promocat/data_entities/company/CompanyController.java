@@ -676,4 +676,16 @@ public class CompanyController {
         MultiPartFileDTO poster = adminService.getPosterExample();
         return posterService.getResourceResponseEntity(poster);
     }
+
+    @ApiOperation(value = "Get poster preview example", notes = "Returning example of poster (.pdf)",
+            response = Resource.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(path = "/data/poster/example/preview", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getPosterExamplePreview() {
+        MultiPartFileDTO poster = adminService.getPosterPreviewExample();
+        return posterService.getResourceResponseEntity(poster);
+    }
 }
