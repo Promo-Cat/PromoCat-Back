@@ -79,6 +79,10 @@ public class PosterService {
         }
     }
 
+    public void delete(final Long id) {
+        posterRepository.delete(posterMapper.toEntity(findById(id)));
+    }
+
     /**
      * Загрузка постера.
      *

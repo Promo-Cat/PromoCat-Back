@@ -16,7 +16,14 @@ import org.promocat.promocat.data_entities.parameters.Parameters;
 import org.promocat.promocat.data_entities.stock.poster.Poster;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -54,11 +61,13 @@ public class Stock extends AbstractEntity {
         return panel;
     }
 
+    // TODO docs
     @Column(name = "prepayment")
     public Double getPrepayment() {
         return prepayment;
     }
 
+    // TODO docs
     @Column(name = "postpayment")
     public Double getPostpayment() {
         return postpayment;
@@ -129,12 +138,12 @@ public class Stock extends AbstractEntity {
     /**
      * Постер акции.
      */
-    @OneToOne
+    @Cascade({CascadeType.ALL})
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "poster_id")
     public Poster getPoster() {
         return poster;
     }
-
-
 
 }
 
