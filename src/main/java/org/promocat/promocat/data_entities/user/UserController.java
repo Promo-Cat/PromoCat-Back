@@ -16,6 +16,7 @@ import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.StockWithStockCityDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
@@ -61,25 +62,25 @@ public class UserController {
         this.stockService = stockService;
     }
 
-    @ApiOperation(value = "Registering user",
-            notes = "Registering user with unique telephone in format +X(XXX)XXX-XX-XX",
-            response = UserDTO.class,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {
-            @ApiResponse(code = 400,
-                    message = "Validation error",
-                    response = ApiValidationException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(path = "/auth/register/user", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> addUser(@Valid @RequestBody UserDTO user) {
-        return ResponseEntity.ok(userService.save(user));
-    }
+//    @ApiOperation(value = "Registering user",
+//            notes = "Registering user with unique telephone in format +X(XXX)XXX-XX-XX",
+//            response = UserDTO.class,
+//            consumes = MediaType.APPLICATION_JSON_VALUE)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 400,
+//                    message = "Validation error",
+//                    response = ApiValidationException.class),
+//            @ApiResponse(code = 415,
+//                    message = "Not acceptable media type",
+//                    response = ApiException.class),
+//            @ApiResponse(code = 406,
+//                    message = "Some DB problems",
+//                    response = ApiException.class)
+//    })
+//    @RequestMapping(path = "/auth/register/user", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<UserDTO> addUser(@Valid @RequestBody UserDTO user) {
+//        return ResponseEntity.ok(userService.save(user));
+//    }
 
     @ApiOperation(value = "Update user",
             notes = "Updates user in db.",
@@ -208,6 +209,9 @@ public class UserController {
     public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
                                                 @RequestHeader("token") String token) {
         UserDTO user = userService.findByToken(token);
+        if (Objects.isNull(user.getStockCityId())) {
+            throw new ApiStockCityNotFoundException(String.format("User with telephone: %s doesn't have stock", user.getTelephone()));
+        }
         user.setTotalDistance(user.getTotalDistance() + distanceDTO.getDistance());
         user = userService.save(user);
         MovementDTO movement = movementService.findByUserAndDate(user, distanceDTO.getDate());
