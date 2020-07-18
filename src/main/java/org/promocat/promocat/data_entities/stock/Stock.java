@@ -19,6 +19,7 @@ import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -37,8 +38,8 @@ public class Stock extends AbstractEntity {
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
-    private Set<Movement> movements;
-    private Set<StockCity> cities;
+    private Set<Movement> movements = new HashSet<>();
+    private Set<StockCity> cities = new HashSet<>();
     private Double panel;
     private Double prepayment;
     private Double postpayment;
