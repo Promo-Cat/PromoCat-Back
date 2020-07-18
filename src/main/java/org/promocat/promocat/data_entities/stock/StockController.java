@@ -18,6 +18,7 @@ import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.MimeTypes;
+import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -39,14 +40,17 @@ public class StockController {
     private final StockService stockService;
     private final CompanyService companyService;
     private final PosterService posterService;
+    private final MultiPartFileUtils multiPartFileUtils;
 
     @Autowired
     public StockController(final StockService stockService,
                            final CompanyService companyService,
-                           final PosterService posterService) {
+                           final PosterService posterService,
+                           final MultiPartFileUtils multiPartFileUtils) {
         this.stockService = stockService;
         this.companyService = companyService;
         this.posterService = posterService;
+        this.multiPartFileUtils = multiPartFileUtils;
     }
 
     @ApiOperation(value = "Create stock",
@@ -86,7 +90,7 @@ public class StockController {
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
             if (MimeTypes.MIME_APPLICATION_PDF.equals(file.getContentType())) {
-                if (MimeTypes.getSizeInMB(file.getSize()) <= 5) {
+                if (multiPartFileUtils.getSizeInMB(file.getSize()) <= 5) {
                     PosterDTO poster = posterService.loadPoster(file, stock.getPosterId());
                     stock.setPosterId(poster.getId());
                     stockService.save(stock);

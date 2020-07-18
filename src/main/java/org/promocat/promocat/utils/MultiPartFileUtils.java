@@ -85,4 +85,14 @@ public class MultiPartFileUtils {
             throw new ApiServerErrorException("Problems with setting poster");
         }
     }
+
+    /**
+     * Перевод из байт в MB.
+     * @param sizeInBytes размер в байтах.
+     * @return размера файла в MB.
+     */
+    public double getSizeInMB(long sizeInBytes) {
+        return sizeInBytes / 1024.0 / 1024.0;
+    }
+
 }
