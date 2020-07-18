@@ -6,12 +6,14 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.admin.AdminService;
-import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.user.UserService;
-import org.promocat.promocat.data_entities.user.UserStatus;
+import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.exception.ApiException;
@@ -41,16 +43,19 @@ public class LoginAttemptController {
 
     private final LoginAttemptService loginAttemptService;
     private final UserService userService;
+    private final CompanyService companyService;
     private final AdminService adminService;
     private final AccountRepositoryManager accountRepositoryManager;
 
     @Autowired
     public LoginAttemptController(final LoginAttemptService loginAttemptService,
                                   final UserService userService,
+                                  final CompanyService companyService,
                                   final AdminService adminService,
                                   final AccountRepositoryManager accountRepositoryManager) {
         this.loginAttemptService = loginAttemptService;
         this.userService = userService;
+        this.companyService = companyService;
         this.adminService = adminService;
         this.accountRepositoryManager = accountRepositoryManager;
     }
@@ -108,6 +113,13 @@ public class LoginAttemptController {
     })
     @RequestMapping(value = "/company/login", method = RequestMethod.GET)
     public ResponseEntity<AuthorizationKeyDTO> loginCompany(@Valid @RequestParam("telephone") String telephone) {
+        if (!companyService.existsByTelephone(telephone)) {
+            log.info("Company with telephone {} doesn`t found in DB. Creating new one.", telephone);
+            CompanyDTO company = new CompanyDTO();
+            company.setTelephone(telephone);
+            company.setCompanyStatus(CompanyStatus.JUST_REGISTERED);
+            companyService.save(company);
+        }
         return login(AccountType.COMPANY, telephone);
     }
 

@@ -3,6 +3,7 @@ package org.promocat.promocat.constraints;
 import org.promocat.promocat.validators.StockDurationConstraintValidator;
 
 import javax.validation.Constraint;
+import javax.validation.ConstraintTarget;
 import javax.validation.Payload;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

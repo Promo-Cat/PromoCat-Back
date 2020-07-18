@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.constraints.RequiredForFull;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.city.City;
@@ -28,7 +30,9 @@ import java.util.Set;
 @NoArgsConstructor
 public class User extends AbstractAccount {
 
+    @RequiredForFull
     private String mail;
+    @RequiredForFull
     private City city;
     private Double balance = 0.0;
     private Set<Car> cars = new HashSet<>();

@@ -8,7 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
-import org.promocat.promocat.data_entities.user.UserStatus;
+import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.constraints.RequiredForFull;
 
 import javax.validation.constraints.Email;
 import java.util.Set;
@@ -29,6 +30,7 @@ public class UserDTO extends AbstractAccountDTO {
             allowableValues = "Standard email format."
     )
     @Email
+    @RequiredForFull
 //    @NotBlank(message = "Почта не может быть пустой")
     private String mail;
 
@@ -36,6 +38,7 @@ public class UserDTO extends AbstractAccountDTO {
             value = "Users city",
             dataType = "String"
     )
+    @RequiredForFull
 //    @NotNull(message = "ID города не может быть пустой")
     private Long cityId;
 
