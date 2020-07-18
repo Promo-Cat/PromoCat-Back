@@ -243,10 +243,13 @@ public class StockService {
         return activeStocks.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
+    /**
+     * Получение всех неактивных акций.
+     *
+     * @return Список {@link StockDTO}
+     */
     public List<StockDTO> getAllInactive() {
-        List<Stock> inactiveStocks = repository.getByStatusEquals(StockStatus.POSTER_NOT_CONFIRMED);
-        inactiveStocks.addAll(repository.getByStatusEquals(StockStatus.POSTER_CONFIRMED_WITHOUT_PREPAY));
-        inactiveStocks.addAll(repository.getByStatusEquals(StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE));
+        List<Stock> inactiveStocks = repository.getByStatusIsNot(StockStatus.ACTIVE);
         return inactiveStocks.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 

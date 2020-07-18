@@ -250,7 +250,7 @@ public class StockController {
     }
 
     @ApiOperation(value = "Get all inactive stocks",
-            notes = "Getting all stocks, whose status before ACTIVE",
+            notes = "Getting all stocks, whose status not ACTIVE",
             response = StockDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
