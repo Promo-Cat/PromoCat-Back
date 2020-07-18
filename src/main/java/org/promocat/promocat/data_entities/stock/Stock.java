@@ -60,11 +60,13 @@ public class Stock extends AbstractEntity {
         return panel;
     }
 
+    // TODO docs
     @Column(name = "prepayment")
     public Double getPrepayment() {
         return prepayment;
     }
 
+    // TODO docs
     @Column(name = "postpayment")
     public Double getPostpayment() {
         return postpayment;
@@ -135,12 +137,11 @@ public class Stock extends AbstractEntity {
     /**
      * Постер акции.
      */
+    @Cascade({CascadeType.REMOVE})
     @OneToOne
     public Poster getPoster() {
         return poster;
     }
-
-
 
 }
 
