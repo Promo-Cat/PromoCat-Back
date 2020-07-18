@@ -221,7 +221,7 @@ public class StockService {
      * @return Список {@link StockDTO}.
      */
     public List<StockDTO> getAllActiveStocks() {
-        List<Stock> activeStocks = repository.getByIsAliveEquals(StockStatus.ACTIVE);
+        List<Stock> activeStocks = repository.getByStatusEquals(StockStatus.ACTIVE);
         return activeStocks.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
