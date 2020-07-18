@@ -26,6 +26,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -40,12 +41,12 @@ import java.util.Set;
 public class Stock extends AbstractEntity {
 
     private String name;
-    private StockStatus isAlive;
+    private StockStatus status;
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
-    private Set<Movement> movements;
-    private Set<StockCity> cities;
+    private Set<Movement> movements = new HashSet<>();
+    private Set<StockCity> cities = new HashSet<>();
     private Double panel;
     private Double prepayment;
     private Double postpayment;
@@ -84,9 +85,9 @@ public class Stock extends AbstractEntity {
     /**
      * Статус акции.
      */
-    @Column(name = "isAlive")
-    public StockStatus getIsAlive() {
-        return isAlive;
+    @Column(name = "status")
+    public StockStatus getStatus() {
+        return status;
     }
 
     /**
