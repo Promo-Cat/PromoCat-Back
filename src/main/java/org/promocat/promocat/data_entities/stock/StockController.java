@@ -13,7 +13,6 @@ import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.PosterDTO;
 import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
@@ -252,7 +251,7 @@ public class StockController {
 
     @ApiOperation(value = "Get all inactive stocks",
             notes = "Getting all stocks, whose status before ACTIVE",
-            response = DistanceDTO.class,
+            response = StockDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 406,
