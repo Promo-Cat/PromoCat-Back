@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ParametersDTO extends AbstractDTO {
 
-    private Double panel;
+    private Double fare;
+    private Double prepayment;
+    private Double postpayment;
 
 }

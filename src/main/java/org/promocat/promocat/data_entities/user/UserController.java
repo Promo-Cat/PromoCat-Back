@@ -10,9 +10,11 @@ import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
+import org.promocat.promocat.dto.pojo.StockWithStockCityDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -32,7 +34,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -289,8 +293,15 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/activeStocks", method = RequestMethod.GET)
-    public ResponseEntity<List<StockDTO>> getAllActiveStocks() {
-        return ResponseEntity.ok(stockService.getAllActiveStocks());
+    public ResponseEntity<List<StockWithStockCityDTO>> getAllActiveStocks(@RequestHeader("token") String token) {
+        UserDTO user = userService.findByToken(token);
+        List<StockWithStockCityDTO> res = stockService.getAllActiveStocks().stream()
+                .map(e -> new StockWithStockCityDTO(e, e.getCities().stream()
+                        .filter(x -> x.getCityId().equals(user.getCityId()))
+                        .findFirst().orElse(null)))
+                .filter(e -> e.getStockCityId() != null)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(res);
     }
 
     // ------ Admin methods ------

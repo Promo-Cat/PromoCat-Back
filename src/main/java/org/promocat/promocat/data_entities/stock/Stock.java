@@ -47,6 +47,8 @@ public class Stock extends AbstractEntity {
     private Set<Movement> movements;
     private Set<StockCity> cities;
     private Double panel;
+    private Double prepayment;
+    private Double postpayment;
     private Poster poster;
 
     /**
@@ -56,6 +58,16 @@ public class Stock extends AbstractEntity {
     @Column(name = "panel")
     public Double getPanel() {
         return panel;
+    }
+
+    @Column(name = "prepayment")
+    public Double getPrepayment() {
+        return prepayment;
+    }
+
+    @Column(name = "postpayment")
+    public Double getPostpayment() {
+        return postpayment;
     }
 
     /**
@@ -120,9 +132,15 @@ public class Stock extends AbstractEntity {
     }
 
 
+    /**
+     * Постер акции.
+     */
     @OneToOne
     public Poster getPoster() {
         return poster;
     }
+
+
+
 }
 

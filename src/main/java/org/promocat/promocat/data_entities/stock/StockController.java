@@ -11,12 +11,14 @@ import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
+import org.promocat.promocat.dto.PosterDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.MimeTypes;
+import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -91,7 +93,7 @@ public class StockController {
             StockDTO stock = stockService.findById(id);
             if (MimeTypes.MIME_APPLICATION_PDF.equals(file.getContentType())) {
                 if (MimeTypes.getSizeInMB(file.getSize()) <= 5) {
-                    MultiPartFileDTO poster = posterService.loadPoster(file, stock.getPosterId());
+                    PosterDTO poster = posterService.loadPoster(file, stock.getPosterId());
                     stock.setPosterId(poster.getId());
                     stockService.save(stock);
                     return ResponseEntity.ok("{}");
@@ -112,6 +114,7 @@ public class StockController {
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
             @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Poster not found", response = ApiException.class),
             @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
@@ -121,8 +124,31 @@ public class StockController {
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
-            MultiPartFileDTO poster = posterService.findById(stock.getPosterId());
-            return posterService.getResourceResponseEntity(poster);
+            PosterDTO poster = posterService.findById(stock.getPosterId());
+            return posterService.getResourceResponseEntity(posterService.getPoster(poster));
+        } else {
+            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
+        }
+    }
+
+    @ApiOperation(value = "Get posters preview",
+                 notes = "Get posters preview for this stock. Poster in .png format.",
+                 response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Poster not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
+    })
+    @RequestMapping(path = "/api/company/stock/{id}/poster/preview", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getPosterPreview(@PathVariable("id") Long id,
+                                              @RequestHeader("token") String token) {
+        Long companyId = companyService.findByToken(token).getId();
+        if (companyService.isOwner(companyId, id)) {
+            StockDTO stock = stockService.findById(id);
+            MultiPartFileDTO posterPreview = posterService.getPosterPreview(posterService.findById(stock.getPosterId()));
+            return posterService.getResourceResponseEntity(posterPreview);
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }

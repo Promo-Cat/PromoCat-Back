@@ -5,6 +5,7 @@ import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
@@ -55,8 +56,6 @@ public class MovementService {
      * @return Представление передвижения сохраненное в БД. {@link MovementDTO}
      */
     public MovementDTO save(final MovementDTO movementDTO) {
-        Double panel = movementMapper.toEntity(movementDTO).getUser().getStockCity().getStock().getPanel() / 100.0;
-        movementDTO.setPanel(movementDTO.getEarnings() * panel);
         return movementMapper.toDto(movementRepository.save(movementMapper.toEntity(movementDTO)));
     }
 
@@ -108,14 +107,13 @@ public class MovementService {
      * Заработок пользователя.
      *
      * @param userDTO объектное представление пользователя. {@link UserDTO}
-     * @param stockId уникальный идентификатор акции.
      * @return заработок пользователя
      * (дистанция, общий заработок, коммиссия, заработок с учетом коммиссии). {@link UserStockEarningStatisticDTO}
      */
     public UserStockEarningStatisticDTO getUserEarningStatistic(final UserDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
         return Optional.ofNullable(movementRepository.getUserStatistic(user.getId()))
-                .orElse(new UserStockEarningStatisticDTO(0.0, 0.0, 0.0));
+                .orElse(new UserStockEarningStatisticDTO(0.0, 0.0));
     }
 
     public List<DistanceWithCityDTO> getMovementsByStockForEveryCityForEachDay(Long stockId) {
@@ -167,7 +165,7 @@ public class MovementService {
         StockDTO stock = stockService.findById(stockId);
         UserStockEarningStatisticDTO earnings = movementRepository.getSummaryEarningByStock(stock.getId());
         StockCostDTO stockCostDTO = new StockCostDTO();
-        stockCostDTO.setDriversPayment(earnings.getSummary());
+        stockCostDTO.setDriversPayment(earnings.getDistance() * paymentService.getDriversPayment(stock));
         stockCostDTO.setPrepayment(paymentService.getPrepayment(stock));
         // TODO: 06.06.2020  тесты
         return stockCostDTO;

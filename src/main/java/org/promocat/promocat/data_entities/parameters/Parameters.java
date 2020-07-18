@@ -21,11 +21,31 @@ public class Parameters extends AbstractEntity {
     /**
      * Комиссия
      */
-    private Double panel;
+    private Double fare;
 
-    @Column(name = "panel")
-    public Double getPanel() {
-        return panel;
+    /**
+     * Предоплата
+     */
+    private Double prepayment;
+
+    /**
+     * Постоплата
+     */
+    private Double postpayment;
+
+    @Column(name = "fare")
+    public Double getFare() {
+        return fare;
+    }
+
+    @Column(name = "prepayment")
+    public Double getPrepayment() {
+        return prepayment;
+    }
+
+    @Column(name = "postpayment")
+    public Double getPostpayment() {
+        return postpayment;
     }
 
 }

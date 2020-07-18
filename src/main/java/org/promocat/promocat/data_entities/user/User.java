@@ -30,7 +30,7 @@ public class User extends AbstractAccount {
 
     private String mail;
     private City city;
-    private Long balance = 0L;
+    private Double balance = 0.0;
     private Set<Car> cars = new HashSet<>();
     private Set<Movement> movements = new HashSet<>();
     private StockCity stockCity;
@@ -39,7 +39,7 @@ public class User extends AbstractAccount {
     private UserStatus status;
     private Boolean termsOfUseStatus;
 
-    public User(String mail, City city, Long balance, StockCity stockCity) {
+    public User(String mail, City city, Double balance, StockCity stockCity) {
         this.mail = mail;
         this.city = city;
         this.balance = balance;
@@ -73,7 +73,7 @@ public class User extends AbstractAccount {
      */
     @Min(0)
     @Column(name = "balance")
-    public Long getBalance() {
+    public Double getBalance() {
         return balance;
     }
 

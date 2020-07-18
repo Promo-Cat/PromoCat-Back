@@ -74,9 +74,12 @@ public class StockDTO extends AbstractDTO {
 
     // TODO: 05.06.2020 DOCS
     private Double panel;
+    private Double prepayment;
+    private Double postpayment;
 
     @JsonIgnore
     private Set<MovementDTO> movements;
 
-    private Long posterId;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Long posterId = 0L;
 }
