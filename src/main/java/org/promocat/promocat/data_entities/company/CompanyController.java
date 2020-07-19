@@ -18,13 +18,8 @@ import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
 import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.pojo.DistanceDTO;
-import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
-import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
-import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
-import org.promocat.promocat.dto.pojo.StockCostDTO;
+import org.promocat.promocat.dto.pojo.*;
 import org.promocat.promocat.exception.ApiException;
-import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.util_entities.TokenService;
@@ -36,13 +31,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -85,24 +74,24 @@ public class CompanyController {
         this.tokenService = tokenService;
     }
 
-    @ApiOperation(value = "Register company",
-            notes = "Registering company with telephone in format +X(XXX)XXX-XX-XX",
-            response = CompanyDTO.class,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
-            @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
-            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
-    })
-    @RequestMapping(path = "/auth/register/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CompanyDTO> addCompany(@Valid @RequestBody CompanyDTO company) {
-        if (companyService.getAllCompanyByInnAndVerified(company.getInn(), true).isEmpty()) {
-            return ResponseEntity.ok(companyService.save(company));
-        } else {
-            // TODO: 13.06.2020 MAKS EXCEPTION (попытка добавить компанию с существующим ИНН у верифицированной компании)
-            throw new ApiCompanyNotFoundException(String.format("There is another verified company with inn %s", company.getInn()));
-        }
-    }
+//    @ApiOperation(value = "Register company",
+//            notes = "Registering company with telephone in format +X(XXX)XXX-XX-XX",
+//            response = CompanyDTO.class,
+//            consumes = MediaType.APPLICATION_JSON_VALUE)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
+//            @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
+//            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+//    })
+//    @RequestMapping(path = "/auth/register/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<CompanyDTO> addCompany(@Valid @RequestBody CompanyDTO company) {
+//        if (companyService.getAllCompanyByInnAndVerified(company.getInn(), true).isEmpty()) {
+//            return ResponseEntity.ok(companyService.save(company));
+//        } else {
+//            // TODO: 13.06.2020 MAKS EXCEPTION (попытка добавить компанию с существующим ИНН у верифицированной компании)
+//            throw new ApiCompanyNotFoundException(String.format("There is another verified company with inn %s", company.getInn()));
+//        }
+//    }
 
     @ApiOperation(value = "Update company",
             notes = "Updates company", response = CompanyDTO.class, consumes = MediaType.APPLICATION_JSON_VALUE)
