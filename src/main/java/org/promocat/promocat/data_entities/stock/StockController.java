@@ -59,11 +59,20 @@ public class StockController {
     })
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock,
-                                             @RequestHeader String token) {
+                                             @RequestHeader("token") String token) {
         CompanyDTO company = companyService.findByToken(token);
+        if (company.getCurrentStock() != null
+                && company.getCurrentStock().getStatus() != StockStatus.STOCK_IS_OVER_WITH_POSTPAY
+                && company.getCurrentStock().getStatus() != StockStatus.BAN) {
+            // TODO: 18.07.2020 exception (previous stock isn`t ended)
+            throw new RuntimeException("Previous stock isn`t ended. Unable to create new one");
+        }
         stock.setCompanyId(company.getId());
         stock.setStatus(StockStatus.POSTER_NOT_CONFIRMED);
-        return ResponseEntity.ok(stockService.create(stock));
+        StockDTO res = stockService.create(stock);
+        company.setCurrentStock(res);
+        companyService.save(company);
+        return ResponseEntity.ok(res);
     }
 
     @ApiOperation(value = "Load poster",
