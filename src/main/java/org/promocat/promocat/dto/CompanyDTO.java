@@ -66,7 +66,7 @@ public class CompanyDTO extends AbstractAccountDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<StockDTO> stocks = new HashSet<>();
 
-    private StockDTO currentStock;
+    private Long currentStockId;
 
     // TODO: 13.06.2020 MAKS DOCS 
     private Boolean verified = false;

@@ -66,16 +66,17 @@ public class StockController {
     public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock,
                                              @RequestHeader("token") String token) {
         CompanyDTO company = companyService.findByToken(token);
-        if (company.getCurrentStock() != null
-                && company.getCurrentStock().getStatus() != StockStatus.STOCK_IS_OVER_WITH_POSTPAY
-                && company.getCurrentStock().getStatus() != StockStatus.BAN) {
+        StockDTO companyCurrentStock = company.getCurrentStockId() == null ? null : stockService.findById(company.getCurrentStockId());
+        if (companyCurrentStock != null
+                && companyCurrentStock.getStatus() != StockStatus.STOCK_IS_OVER_WITH_POSTPAY
+                && companyCurrentStock.getStatus() != StockStatus.BAN) {
             // TODO: 18.07.2020 exception (previous stock isn`t ended)
             throw new RuntimeException("Previous stock isn`t ended. Unable to create new one");
         }
         stock.setCompanyId(company.getId());
         stock.setStatus(StockStatus.POSTER_NOT_CONFIRMED);
         StockDTO res = stockService.create(stock);
-        company.setCurrentStock(res);
+        company.setCurrentStockId(res.getId());
         companyService.save(company);
         return ResponseEntity.ok(res);
     }
