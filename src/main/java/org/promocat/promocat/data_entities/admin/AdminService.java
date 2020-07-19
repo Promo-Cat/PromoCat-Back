@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-// TODO javadocs
 public class AdminService {
 
     private final AdminRepository adminRepository;
@@ -47,25 +46,50 @@ public class AdminService {
         this.multiPartFileUtils = multiPartFileUtils;
     }
 
-    public boolean isAdmin(String telephone) {
+    /**
+     * Проверка является ли пользователь с таким телефоном админом.
+     *
+     * @param telephone номер телефона.
+     * @return {@code true} если является, {@code false} иначе.
+     */
+    public boolean isAdmin(final String telephone) {
         log.info("Requested do account with telephone {} has permissions", telephone);
         return adminRepository.existsByTelephone(telephone);
     }
 
-    public AdminDTO getByTelephone(String telephone) {
+    /**
+     * Получение админского представления {@link AdminDTO} по номеру телефона.
+     *
+     * @param telephone номер телефона.
+     * @return представление админа {@link AdminDTO}.
+     * @throws ApiAdminNotFoundException если админ не найден.
+     */
+    public AdminDTO getByTelephone(final String telephone) {
         log.info("Requested admin by telephone {}", telephone);
         return adminMapper.toDto(adminRepository.getByTelephone(telephone).
                 orElseThrow(() -> new ApiAdminNotFoundException(
                         String.format("Admin with such telephone: %s not found", telephone))));
     }
 
+    /**
+     * Получение всех администраторов.
+     *
+     * @return список {@link AdminDTO}.
+     */
     public List<AdminDTO> getAll() {
         log.info("Requested list of all admins.");
         List<Admin> admins = adminRepository.findAll();
         return admins.stream().map(adminMapper::toDto).collect(Collectors.toList());
     }
 
-    public AdminDTO add(String telephone) {
+    /**
+     * Добавление нового админа.
+     *
+     * @param telephone номер телефона.
+     * @return представление админа {@link AdminDTO}.
+     * @throws ApiAdminAlreadyExistsException если админ уже существует.
+     */
+    public AdminDTO add(final String telephone) {
         if (adminRepository.existsByTelephone(telephone)) {
             log.warn("Attempt to add another admin with same telephone {}", telephone);
             throw new ApiAdminAlreadyExistsException(
@@ -78,13 +102,19 @@ public class AdminService {
         return adminMapper.toDto(adminRepository.save(record));
     }
 
-    public void delete(Long id) {
+    /**
+     * Удаление админа по {@code id}.
+     *
+     * @param id уникальный идентификатор админа.
+     * @throws ApiAdminNotFoundException если админ не найден
+     */
+    public void delete(final Long id) {
         if (!adminRepository.existsById(id)) {
-            log.error("Attempt to delete non admin with id {}, who doesn`t exist in db", id);
-            throw new ApiAdminNotFoundException(String.format("Admin with id %d not found", id));
+            log.error("Attempt to delete non admin with id: {}, who doesn`t exist in db", id);
+            throw new ApiAdminNotFoundException(String.format("Admin with id: %d not found", id));
         }
         adminRepository.deleteById(id);
-        log.info("Admin with id {} deleted successfully", id);
+        log.info("Admin with id: {} deleted successfully", id);
     }
 
     /**

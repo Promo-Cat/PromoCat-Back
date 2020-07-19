@@ -18,6 +18,7 @@ import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.MimeTypes;
+import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -38,14 +40,17 @@ public class StockController {
     private final StockService stockService;
     private final CompanyService companyService;
     private final PosterService posterService;
+    private final MultiPartFileUtils multiPartFileUtils;
 
     @Autowired
     public StockController(final StockService stockService,
                            final CompanyService companyService,
-                           final PosterService posterService) {
+                           final PosterService posterService,
+                           final MultiPartFileUtils multiPartFileUtils) {
         this.stockService = stockService;
         this.companyService = companyService;
         this.posterService = posterService;
+        this.multiPartFileUtils = multiPartFileUtils;
     }
 
     @ApiOperation(value = "Create stock",
@@ -94,7 +99,7 @@ public class StockController {
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
             if (MimeTypes.MIME_APPLICATION_PDF.equals(file.getContentType())) {
-                if (MimeTypes.getSizeInMB(file.getSize()) <= 5) {
+                if (multiPartFileUtils.getSizeInMB(file.getSize()) <= 5) {
                     PosterDTO poster = posterService.loadPoster(file, stock.getPosterId());
                     stock.setPosterId(poster.getId());
                     stockService.save(stock);
@@ -257,6 +262,19 @@ public class StockController {
         return ResponseEntity.ok("{}");
     }
 
+    @ApiOperation(value = "Get all inactive stocks",
+            notes = "Getting all stocks, whose status not ACTIVE",
+            response = StockDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/stock/inactive", method = RequestMethod.GET)
+    public ResponseEntity<List<StockDTO>> getAllInactiveStock() {
+        return ResponseEntity.ok(stockService.getAllInactive());
+    }
 //    @ApiOperation(value = "Set new status for stock",
 //            notes = "Set confirmed without prepay",
 //            response = String.class)

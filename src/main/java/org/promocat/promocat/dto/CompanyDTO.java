@@ -11,8 +11,8 @@ import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.constraints.RequiredForFull;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -64,7 +64,7 @@ public class CompanyDTO extends AbstractAccountDTO {
             dataType = "List"
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Set<StockDTO> stocks;
+    private Set<StockDTO> stocks = new HashSet<>();
 
     private StockDTO currentStock;
 

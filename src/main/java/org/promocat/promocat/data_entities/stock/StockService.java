@@ -243,6 +243,16 @@ public class StockService {
         return activeStocks.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
+    /**
+     * Получение всех неактивных акций.
+     *
+     * @return Список {@link StockDTO}
+     */
+    public List<StockDTO> getAllInactive() {
+        List<Stock> inactiveStocks = repository.getByStatusIsNot(StockStatus.ACTIVE);
+        return inactiveStocks.stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
 //    /**
 //     * Получение всех промокодов.
 //     *

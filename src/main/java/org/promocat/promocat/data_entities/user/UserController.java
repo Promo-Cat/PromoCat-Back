@@ -21,6 +21,7 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
 import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
+import org.promocat.promocat.exception.user.codes.ApiUserStockException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
@@ -86,24 +87,16 @@ public class UserController {
             response = UserDTO.class,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
-            @ApiResponse(code = 400,
-                    message = "Validation error",
-                    response = ApiValidationException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "User not found",
-                    response = ApiException.class)
+            @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
+            @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/user", "/admin/user"},
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO user,
-                                              @RequestHeader String token) {
+                                              @RequestHeader final String token) {
         UserDTO actualUser = userService.findByToken(token);
         if (actualUser.getStatus() == UserStatus.JUST_REGISTERED &&
                 RequiredForFullConstraintValidator.check(user)) {
@@ -119,21 +112,13 @@ public class UserController {
             response = UserDTO.class,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "User not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 403,
-                    message = "Wrong token",
-                    response = ApiException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Wrong token", response = ApiException.class),
+            @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = "/api/user", method = RequestMethod.GET)
-    public ResponseEntity<UserDTO> getUser(@RequestHeader("token") String token) {
+    public ResponseEntity<UserDTO> getUser(@RequestHeader("token") final String token) {
         return ResponseEntity.ok(userService.findByToken(token));
     }
 
@@ -176,11 +161,22 @@ public class UserController {
 //        return ResponseEntity.ok(userService.save(user));
 //    }
 
-    // TODO: 13.07.2020 DOCS
+    @ApiOperation(value = "Take part in the stock.",
+            notes = "User takes part in particular stock.",
+            response = UserDTO.class)
+    @ApiResponses({
+            @ApiResponse(code = 403, message = "User not allowed to take part in stock", response = ApiException.class),
+            @ApiResponse(code = 403, message = "User already has StockCity", response = ApiException.class),
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
     @RequestMapping(value = "/api/user/stock/{stockCityId}", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> setUserStockCity(@PathVariable("stockCityId") final Long stockCityId,
                                                     @RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
+        if (Objects.nonNull(userDTO.getStockCityId())) {
+            throw new ApiUserStockException(String.format("User with telephone: %s already participate in the stock", userDTO.getTelephone()));
+        }
         if (userDTO.getStatus() != UserStatus.FULL) {
             throw new ApiUserStatusException(String.format("Status of user with telephone: %s doesn't allow to participate in the Stock", userDTO.getTelephone()));
         }
@@ -191,8 +187,8 @@ public class UserController {
         return ResponseEntity.ok(userService.setUserStockCity(userDTO, stockCityId));
     }
 
-    @ApiOperation(value = "Add user movement",
-            notes = "Adds users movement",
+    @ApiOperation(value = "Add user movement.",
+            notes = "Adds users movement.",
             response = MovementDTO.class)
     @ApiResponses({
             @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
@@ -202,8 +198,8 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/move", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MovementDTO> moveUser(@RequestBody DistanceDTO distanceDTO,
-                                                @RequestHeader("token") String token) {
+    public ResponseEntity<MovementDTO> moveUser(@RequestBody final DistanceDTO distanceDTO,
+                                                @RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
         if (Objects.isNull(user.getStockCityId())) {
             throw new ApiStockCityNotFoundException(String.format("User with telephone: %s doesn't have stock", user.getTelephone()));
@@ -230,18 +226,12 @@ public class UserController {
             response = MovementDTO.class,
             responseContainer = "List")
     @ApiResponses({
-            @ApiResponse(code = 404,
-                    message = "User not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 403,
-                    message = "Wrong token",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Wrong token", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/statistics", method = RequestMethod.GET)
-    public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") String token) {
+    public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") final String token) {
         return ResponseEntity.ok(userService.getUserStatistics(userService.findByToken(token)));
     }
 
@@ -250,18 +240,12 @@ public class UserController {
             response = StockDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "User not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 403,
-                    message = "Wrong token",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Wrong token", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
-    public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") String token) {
+    public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
         return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
     }
@@ -273,7 +257,7 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/acceptTermsOfUse", method = RequestMethod.POST)
-    public ResponseEntity<String> acceptTermsOfUse(@RequestHeader("token") String token) {
+    public ResponseEntity<String> acceptTermsOfUse(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
         user.setTermsOfUseStatus(true);
         updateUser(user, token);
@@ -286,7 +270,7 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/activeStocks", method = RequestMethod.GET)
-    public ResponseEntity<List<StockWithStockCityDTO>> getAllActiveStocks(@RequestHeader("token") String token) {
+    public ResponseEntity<List<StockWithStockCityDTO>> getAllActiveStocks(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
         List<StockWithStockCityDTO> res = stockService.getAllActiveStocks().stream()
                 .map(e -> new StockWithStockCityDTO(e, e.getCities().stream()
@@ -303,12 +287,8 @@ public class UserController {
             notes = "Returning user, whose id specified in params",
             response = UserDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "User not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
@@ -318,12 +298,8 @@ public class UserController {
     @ApiOperation(value = "Delete user by id",
             notes = "Deleting user, whose id specified in params")
     @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "User not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteUserById(@PathVariable("id") Long id) {
@@ -335,12 +311,8 @@ public class UserController {
             notes = "Returning user, whose telephone specified in params",
             response = UserDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "User not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/admin/user/telephone", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {

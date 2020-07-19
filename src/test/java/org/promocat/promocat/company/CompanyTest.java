@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,132 +41,6 @@ public class CompanyTest {
     @Before
     public void clean() {
         beforeAll.init();
-    }
-
-    /**
-     * Добавление компании без имени организации.
-     *
-     * @throws Exception Компания не сохраняется, ошибка 400.
-     */
-    @Test
-    public void testSaveCompanyWithoutOrganizationName() throws Exception {
-        CompanyDTO company = new CompanyDTO();
-        company.setInn("1111111111");
-        company.setMail("qwfqwf@mail.ru");
-        company.setTelephone("+7(222)222-22-22");
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    /**
-     * Добавление компании без ИНН.
-     *
-     * @throws Exception Компания не сохраняется, ошибка 400.
-     */
-    @Test
-    public void testSaveCompanyWithoutInn() throws Exception {
-        CompanyDTO company = new CompanyDTO();
-        company.setOrganizationName("HHH");
-        company.setMail("qwfqwf@mail.ru");
-        company.setTelephone("+7(222)222-22-22");
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    /**
-     * Добавление компании с некорректным ИНН.
-     *
-     * @throws Exception Компания не сохраняется, ошибка 400.
-     */
-    @Test
-    public void testSaveCompanyWithIncorrectInn() throws Exception {
-        CompanyDTO company = new CompanyDTO();
-        company.setOrganizationName("HHH");
-        company.setInn("111111111");
-        company.setMail("qwfqwf@mail.ru");
-        company.setTelephone("+7(222)222-22-22");
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    /**
-     * Добавление компании без почты.
-     *
-     * @throws Exception Компания не сохраняется, ошибка 400.
-     */
-    @Test
-    public void testSaveCompanyWithoutMail() throws Exception {
-        CompanyDTO company = new CompanyDTO();
-        company.setOrganizationName("HHH");
-        company.setInn("111111111");
-        company.setTelephone("+7(222)222-22-22");
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().is4xxClientError());
-    }
-
-
-    /**
-     * Добавление компании без телефона организации.
-     *
-     * @throws Exception Компания не сохраняется, ошибка 400.
-     */
-    @Test
-    public void testSaveCompanyWithoutTelephone() throws Exception {
-        CompanyDTO company = new CompanyDTO();
-        company.setOrganizationName("HHH");
-        company.setInn("1111111111");
-        company.setMail("qwfqwf@mail.ru");
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    /**
-     * Добавление компании с некорректным телефоном организации.
-     *
-     * @throws Exception Компания не сохраняется, ошибка 400.
-     */
-    @Test
-    public void testSaveCompanyWithIncorrectTelephone() throws Exception {
-        CompanyDTO company = new CompanyDTO();
-        company.setOrganizationName("HHH");
-        company.setInn("1111111111");
-        company.setMail("qwfqwf@mail.ru");
-        company.setTelephone("+7(222)-222-22-22");
-        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().is4xxClientError());
-    }
-
-
-    /**
-     * Добавление компании.
-     */
-    @Test
-    public void testSaveCorrectCompany() throws Exception {
-        CompanyDTO company = new CompanyDTO();
-        company.setOrganizationName("HHH");
-        company.setInn("1111111111");
-        company.setMail("qwfqwf@mail.ru");
-        company.setTelephone("+7(222)222-22-22");
-        MvcResult result = this.mockMvc.perform(post("/auth/register/company")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(new ObjectMapper().writeValueAsString(company)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        CompanyDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
-
-        assertNotNull(that.getId());
-        assertEquals(company.getTelephone(), that.getTelephone());
-        assertEquals(company.getMail(), that.getMail());
-        assertEquals(company.getOrganizationName(), that.getOrganizationName());
-        assertEquals(company.getInn(), that.getInn());
-        assertEquals(that.getAccountType(), AccountType.COMPANY);
     }
 
     /**
@@ -312,20 +185,20 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    /**
-     * Удаление компании по ID.
-     *
-     * @throws Exception Не удалось найти удаленную компанию, ошибка 404.
-     */
-    @Test
-    public void testDeleteCompanyById() throws Exception {
-        this.mockMvc.perform(delete("/admin/company?id=" + beforeAll.company1DTO.getId()).header("token", beforeAll.adminToken))
-                .andExpect(status().isOk());
-
-        this.mockMvc.perform(get("/admin/company/" + beforeAll.company1DTO.getId())
-                .header("token", beforeAll.adminToken))
-                .andExpect(status().is4xxClientError());
-    }
+//    /**
+//     * Удаление компании по ID.
+//     *
+//     * @throws Exception Не удалось найти удаленную компанию, ошибка 404.
+//     */
+//    @Test
+//    public void testDeleteCompanyById() throws Exception {
+//        this.mockMvc.perform(delete("/admin/company?id=" + beforeAll.company1DTO.getId()).header("token", beforeAll.adminToken))
+//                .andExpect(status().isOk());
+//
+//        this.mockMvc.perform(get("/admin/company/" + beforeAll.company1DTO.getId())
+//                .header("token", beforeAll.adminToken))
+//                .andExpect(status().is4xxClientError());
+//    }
 
     /**
      * Удаление компании по несуществующему ID.
@@ -340,7 +213,7 @@ public class CompanyTest {
 
     @Test
     public void testGetCompanyByName() throws Exception {
-        MvcResult result = this.mockMvc.perform(get("/admin/company/organizationName?organizationName=" + beforeAll.company1DTO.getOrganizationName())
+        MvcResult result = this.mockMvc.perform(get("/admin/company/organizationName?name=" + beforeAll.company1DTO.getOrganizationName())
                 .header("token", beforeAll.adminToken))
                 .andExpect(status().isOk())
                 .andReturn();
