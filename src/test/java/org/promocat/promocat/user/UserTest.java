@@ -331,4 +331,11 @@ public class UserTest {
                 .header("token", token))
                 .andExpect(status().is4xxClientError());
     }
+
+    @Test
+    public void testSetUserStockCityInTimeStock() throws Exception {
+        this.mockMvc.perform(post("/api/user/stock/" + beforeAll.stockCity2DTO.getId())
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().is4xxClientError());
+    }
 }

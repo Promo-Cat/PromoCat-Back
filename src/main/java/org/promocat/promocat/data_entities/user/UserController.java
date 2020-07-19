@@ -18,19 +18,14 @@ import org.promocat.promocat.dto.pojo.StockWithStockCityDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
+import org.promocat.promocat.exception.user.codes.ApiUserStockException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -165,14 +160,17 @@ public class UserController {
             response = UserDTO.class)
     @ApiResponses({
             @ApiResponse(code = 403, message = "User not allowed to take part in stock", response = ApiException.class),
+            @ApiResponse(code = 403, message = "User already has StockCity", response = ApiException.class),
             @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
-    @RequestMapping(value = "/api/user/stock/{stockCityId}", method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/api/user/stock/{stockCityId}", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> setUserStockCity(@PathVariable("stockCityId") final Long stockCityId,
                                                     @RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
+        if (Objects.nonNull(userDTO.getStockCityId())) {
+            throw new ApiUserStockException(String.format("User with telephone: %s already participate in the stock", userDTO.getTelephone()));
+        }
         if (userDTO.getStatus() != UserStatus.FULL) {
             throw new ApiUserStatusException(String.format("Status of user with telephone: %s doesn't allow to participate in the Stock", userDTO.getTelephone()));
         }
