@@ -13,9 +13,4 @@ public class PromoCatApplication {
     public static void main(String[] args) {
         SpringApplication.run(PromoCatApplication.class, args);
     }
-
-    @Bean(name = "multipartResolver")
-    public CommonsMultipartResolver commonsMultipartResolver(){
-        return new CommonsMultipartResolver();
-    }
 }
