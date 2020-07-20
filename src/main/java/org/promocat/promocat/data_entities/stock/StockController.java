@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
@@ -64,11 +65,24 @@ public class StockController {
     })
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock,
-                                             @RequestHeader String token) {
+                                             @RequestHeader("token") String token) {
         CompanyDTO company = companyService.findByToken(token);
+        StockDTO companyCurrentStock = company.getCurrentStockId() == 0L ? null : stockService.findById(company.getCurrentStockId());
+        if (companyCurrentStock != null
+                && companyCurrentStock.getStatus() != StockStatus.STOCK_IS_OVER_WITH_POSTPAY
+                && companyCurrentStock.getStatus() != StockStatus.BAN) {
+            // TODO: 18.07.2020 exception (previous stock isn`t ended)
+            throw new RuntimeException("Previous stock isn`t ended. Unable to create new one");
+        }
+        if (company.getCompanyStatus() != CompanyStatus.FULL) {
+            throw new RuntimeException("Company account isn`t fully filled");
+        }
         stock.setCompanyId(company.getId());
         stock.setStatus(StockStatus.POSTER_NOT_CONFIRMED);
-        return ResponseEntity.ok(stockService.create(stock));
+        StockDTO res = stockService.create(stock);
+        company.setCurrentStockId(res.getId());
+        companyService.save(company);
+        return ResponseEntity.ok(res);
     }
 
     @ApiOperation(value = "Load poster",

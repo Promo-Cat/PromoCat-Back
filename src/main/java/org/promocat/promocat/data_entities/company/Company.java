@@ -31,6 +31,7 @@ public class Company extends AbstractAccount {
     private String inn;
     private String mail;
     private Set<Stock> stocks;
+    private Stock currentStock;
     private Boolean verified;
     private CompanyStatus companyStatus;
 
@@ -86,5 +87,12 @@ public class Company extends AbstractAccount {
     @Column(name = "company_status")
     public CompanyStatus getCompanyStatus() {
         return companyStatus;
+    }
+
+//    @Cascade(CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "current_stock_id", referencedColumnName = "id")
+    public Stock getCurrentStock() {
+        return currentStock;
     }
 }
