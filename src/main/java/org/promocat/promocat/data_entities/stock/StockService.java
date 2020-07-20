@@ -146,6 +146,17 @@ public class StockService {
         }
     }
 
+    @Scheduled(cron = "0 0 0 * * *")
+    public void updateStockStatus() {
+        Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
+                StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
+        optional.ifPresent(stocks -> stocks.forEach(e -> {
+            StockDTO stockDTO = mapper.toDto(e);
+            stockDTO.setStatus(StockStatus.ACTIVE);
+            save(stockDTO);
+        }));
+    }
+
     /**
      * Установка активности акции
      *
