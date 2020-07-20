@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
@@ -72,6 +73,9 @@ public class StockController {
                 && companyCurrentStock.getStatus() != StockStatus.BAN) {
             // TODO: 18.07.2020 exception (previous stock isn`t ended)
             throw new RuntimeException("Previous stock isn`t ended. Unable to create new one");
+        }
+        if (company.getCompanyStatus() != CompanyStatus.FULL) {
+            throw new RuntimeException("Company account isn`t fully filled");
         }
         stock.setCompanyId(company.getId());
         stock.setStatus(StockStatus.POSTER_NOT_CONFIRMED);
