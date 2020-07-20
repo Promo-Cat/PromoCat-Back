@@ -12,6 +12,7 @@ import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
+import org.promocat.promocat.data_entities.user_ban.UserBanService;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -48,18 +49,20 @@ public class UserController {
     private final MovementService movementService;
     private final StockService stockService;
     private final StockCityService stockCityService;
+    private final UserBanService userBanService;
 
     @Autowired
     public UserController(final UserService userService,
                           final PromoCodeActivationService promoCodeActivationService,
                           final MovementService movementService,
                           final StockService stockService,
-                          final StockCityService stockCityService) {
+                          final StockCityService stockCityService, UserBanService userBanService) {
         this.userService = userService;
         this.promoCodeActivationService = promoCodeActivationService;
         this.movementService = movementService;
         this.stockService = stockService;
         this.stockCityService = stockCityService;
+        this.userBanService = userBanService;
     }
 
 //    @ApiOperation(value = "Registering user",
@@ -181,6 +184,9 @@ public class UserController {
             throw new ApiUserStatusException(String.format("Status of user with telephone: %s doesn't allow to participate in the Stock", userDTO.getTelephone()));
         }
         StockDTO stock = stockService.findById(stockCityService.findById(stockCityId).getStockId());
+        if (userBanService.isBanned(userDTO, stock)) {
+            throw new ApiUserStockException(String.format("User with number %s is banned in that stock", userDTO.getTelephone()));
+        }
         if (stock.getStatus() != StockStatus.ACTIVE) {
             throw new ApiStockActivationStatusException("Stock isn`t active now");
         }

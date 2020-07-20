@@ -66,7 +66,7 @@ public class StockController {
     public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock,
                                              @RequestHeader("token") String token) {
         CompanyDTO company = companyService.findByToken(token);
-        StockDTO companyCurrentStock = company.getCurrentStockId() == null ? null : stockService.findById(company.getCurrentStockId());
+        StockDTO companyCurrentStock = company.getCurrentStockId() == 0L ? null : stockService.findById(company.getCurrentStockId());
         if (companyCurrentStock != null
                 && companyCurrentStock.getStatus() != StockStatus.STOCK_IS_OVER_WITH_POSTPAY
                 && companyCurrentStock.getStatus() != StockStatus.BAN) {
