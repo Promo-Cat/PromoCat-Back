@@ -112,9 +112,4 @@ public final class MimeTypes {
     public static final String MIME_VIDEO_X_MS_WMV = "video/x-ms-wmv";
     public static final String MIME_VIDEO_X_SGI_MOVIE = "video/x-sgi-movie";
     public static final String MIME_X_CONFERENCE_X_COOLTALK = "x-conference/x-cooltalk";
-
-
-    public static double getSizeInMB(long sizeInBytes) {
-        return sizeInBytes / 1024.0 / 1024.0;
-    }
 }

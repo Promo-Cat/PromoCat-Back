@@ -8,9 +8,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
-import org.promocat.promocat.data_entities.user.UserStatus;
+import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.constraints.RequiredForFull;
 
 import javax.validation.constraints.Email;
+import java.util.HashSet;
 import java.util.Set;
 
 @ApiModel(
@@ -29,6 +31,7 @@ public class UserDTO extends AbstractAccountDTO {
             allowableValues = "Standard email format."
     )
     @Email
+    @RequiredForFull
 //    @NotBlank(message = "Почта не может быть пустой")
     private String mail;
 
@@ -36,6 +39,7 @@ public class UserDTO extends AbstractAccountDTO {
             value = "Users city",
             dataType = "String"
     )
+    @RequiredForFull
 //    @NotNull(message = "ID города не может быть пустой")
     private Long cityId;
 
@@ -52,7 +56,7 @@ public class UserDTO extends AbstractAccountDTO {
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Set<CarDTO> cars;
+    private Set<CarDTO> cars = new HashSet<>();
 
     @ApiModelProperty(
             value = "Id of current users stock city",
@@ -67,7 +71,7 @@ public class UserDTO extends AbstractAccountDTO {
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Set<MovementDTO> movements;
+    private Set<MovementDTO> movements = new HashSet<>();
 
     @ApiModelProperty(
             value = "Users total distance",

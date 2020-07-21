@@ -95,6 +95,6 @@ public class ParametersService {
      * @return запись, которая хранит в себе параметры приложения
      */
     public ParametersDTO getParameters() {
-        return parametersMapper.toDto(parametersRepository.getOne(1L));
+        return parametersMapper.toDto(parametersRepository.findById(1L).orElseThrow());
     }
 }

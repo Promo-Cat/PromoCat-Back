@@ -14,6 +14,7 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.MimeTypes;
+import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -36,11 +37,15 @@ public class AdminController {
 
     private final AdminService adminService;
     private final PosterService posterService;
+    private final MultiPartFileUtils multiPartFileUtils;
 
     @Autowired
-    public AdminController(final AdminService adminService, final PosterService posterService) {
+    public AdminController(final AdminService adminService,
+                           final PosterService posterService,
+                           final MultiPartFileUtils multiPartFileUtils) {
         this.adminService = adminService;
         this.posterService = posterService;
+        this.multiPartFileUtils = multiPartFileUtils;
     }
 
     @ApiOperation(value = "Add new admin.",
@@ -57,7 +62,7 @@ public class AdminController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(path = "/admin/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "/admin", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdminDTO> addAdmin(@Valid @RequestBody TelephoneDTO telephoneDTO) {
         return ResponseEntity.ok(adminService.add(telephoneDTO.getTelephone()));
     }
@@ -100,7 +105,7 @@ public class AdminController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addPosterExample(@RequestParam("file") MultipartFile file) {
         if (MimeTypes.MIME_APPLICATION_PDF.equals(file.getContentType())) {
-            if (MimeTypes.getSizeInMB(file.getSize()) <= 5) {
+            if (multiPartFileUtils.getSizeInMB(file.getSize()) <= 5) {
                 adminService.savePoster(file);
                 return ResponseEntity.ok("{}");
             } else {
@@ -123,7 +128,7 @@ public class AdminController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addTermsOfUseExample(@RequestParam("file") MultipartFile file) {
         if (MimeTypes.MIME_APPLICATION_PDF.equals(file.getContentType())) {
-            if (MimeTypes.getSizeInMB(file.getSize()) <= 5) {
+            if (multiPartFileUtils.getSizeInMB(file.getSize()) <= 5) {
                 adminService.saveTermsOfUse(file);
                 return ResponseEntity.ok("{}");
             } else {

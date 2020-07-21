@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.movement.MovementService;
@@ -17,28 +18,20 @@ import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.PromoCodeActivationDTO;
 import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.pojo.DistanceDTO;
-import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
-import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
-import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
-import org.promocat.promocat.dto.pojo.StockCostDTO;
+import org.promocat.promocat.dto.pojo.*;
 import org.promocat.promocat.exception.ApiException;
-import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.util_entities.TokenService;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.JwtReader;
+import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -60,6 +53,7 @@ public class CompanyController {
     private final UserService userService;
     private final AdminService adminService;
     private final PosterService posterService;
+    private final TokenService tokenService;
 
     @Autowired
     public CompanyController(final CompanyService companyService,
@@ -68,7 +62,8 @@ public class CompanyController {
                              final MovementService movementService,
                              final UserService userService,
                              final AdminService adminService,
-                             final PosterService posterService) {
+                             final PosterService posterService,
+                             final TokenService tokenService) {
         this.companyService = companyService;
         this.stockService = stockService;
         this.promoCodeActivationService = promoCodeActivationService;
@@ -76,55 +71,53 @@ public class CompanyController {
         this.userService = userService;
         this.adminService = adminService;
         this.posterService = posterService;
+        this.tokenService = tokenService;
     }
 
-    @ApiOperation(value = "Register company",
-            notes = "Registering company with telephone in format +X(XXX)XXX-XX-XX",
-            response = CompanyDTO.class,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {
-            @ApiResponse(code = 400,
-                    message = "Validation error",
-                    response = ApiValidationException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
-    })
-    @RequestMapping(path = "/auth/register/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CompanyDTO> addCompany(@Valid @RequestBody CompanyDTO company) {
-        if (companyService.getAllCompanyByInnAndVerified(company.getInn(), true).isEmpty()) {
-            return ResponseEntity.ok(companyService.save(company));
-        } else {
-            // TODO: 13.06.2020 MAKS EXCEPTION (попытка добавить компанию с существующим ИНН у верифицированной компании)
-            throw new ApiCompanyNotFoundException(String.format("There is another verified company with inn %s", company.getInn()));
-        }
-    }
+//    @ApiOperation(value = "Register company",
+//            notes = "Registering company with telephone in format +X(XXX)XXX-XX-XX",
+//            response = CompanyDTO.class,
+//            consumes = MediaType.APPLICATION_JSON_VALUE)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
+//            @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
+//            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+//    })
+//    @RequestMapping(path = "/auth/register/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<CompanyDTO> addCompany(@Valid @RequestBody CompanyDTO company) {
+//        if (companyService.getAllCompanyByInnAndVerified(company.getInn(), true).isEmpty()) {
+//            return ResponseEntity.ok(companyService.save(company));
+//        } else {
+//            // TODO: 13.06.2020 MAKS EXCEPTION (попытка добавить компанию с существующим ИНН у верифицированной компании)
+//            throw new ApiCompanyNotFoundException(String.format("There is another verified company with inn %s", company.getInn()));
+//        }
+//    }
 
     @ApiOperation(value = "Update company",
-            notes = "Updates company",
-            response = CompanyDTO.class,
-            consumes = MediaType.APPLICATION_JSON_VALUE)
+            notes = "Updates company", response = CompanyDTO.class, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
-            @ApiResponse(code = 400,
-                    message = "Validation error",
-                    response = ApiValidationException.class),
-            @ApiResponse(code = 415,
-                    message = "Not acceptable media type",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class)
+            @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
+            @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class)
     })
-    @RequestMapping(path = {"/api/company", "/admin/company"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "/api/company", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CompanyDTO> updateCompany(@Valid @RequestBody CompanyDTO company,
-                                                    @RequestHeader String token) {
-        CompanyDTO actualCompany = companyService.findByToken(token);
+                                                    @RequestHeader("token") String token) {
+        AccountType accountType = tokenService.getAccountType(token);
+        CompanyDTO actualCompany;
+        if (accountType == AccountType.COMPANY) {
+            actualCompany = companyService.findByToken(token);
+        } else if (accountType == AccountType.ADMIN) {
+            actualCompany = companyService.findByTelephone(company.getTelephone());
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (actualCompany.getCompanyStatus() == CompanyStatus.JUST_REGISTERED &&
+                RequiredForFullConstraintValidator.check(company)) {
+            company.setCompanyStatus(CompanyStatus.FULL);
+        }
         EntityUpdate.copyNonNullProperties(company, actualCompany);
         return ResponseEntity.ok(companyService.save(actualCompany));
     }
@@ -181,18 +174,10 @@ public class CompanyController {
             notes = "Getting all activated promo-codes.",
             response = Long.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/promoCodeActivation/summary",
             "/admin/statistic/company/stock/{stockId}/promoCodeActivation/summary"}, method = RequestMethod.GET)
@@ -208,23 +193,14 @@ public class CompanyController {
     }
 
 
-    //TODO если город не активный выдает 0 промокодов(отличие с одним из следующих)
     @ApiOperation(value = "Get total number of activated promo-codes in city.",
             notes = "Getting all activated promo-codes in a given city.",
             response = Long.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}",
             "/admin/statistic/company/stock/{stockId}/promoCodeActivation/byCity/{cityId}"}, method = RequestMethod.GET)
@@ -245,18 +221,10 @@ public class CompanyController {
             response = PromoCodeActivationDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/promoCodeActivation/byCity",
             "/admin/statistic/company/stock/{stockId}/promoCodeActivation/byCity"}, method = RequestMethod.GET)
@@ -276,18 +244,10 @@ public class CompanyController {
             notes = "Getting all promo-codes in a given city.",
             response = Long.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/statistic/byCity/{cityId}",
             "/admin/statistic/company/stock/{stockId}/byCity/{cityId}"}, method = RequestMethod.GET)
@@ -307,18 +267,10 @@ public class CompanyController {
             notes = "Getting all promo-codes.",
             response = Long.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/statistic/total",
             "/admin/statistic/company/stock/{stockId}/total"}, method = RequestMethod.GET)
@@ -338,21 +290,11 @@ public class CompanyController {
             response = PromoCodesInCityDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "City not active",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "City not active", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/statistic/byCity",
             "/admin/statistic/company/stock/{stockId}/byCity"}, method = RequestMethod.GET)
@@ -372,18 +314,10 @@ public class CompanyController {
             response = DistanceDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/movements/forEachDay/summary",
             "/admin/statistic/company/stock/{stockId}/movements/forEachDay/summary"}, method = RequestMethod.GET)
@@ -403,18 +337,10 @@ public class CompanyController {
             response = DistanceWithCityDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/movements/forEachDay",
             "/admin/statistic/company/stock/{stockId}/movements/forEachDay"}, method = RequestMethod.GET)
@@ -434,21 +360,11 @@ public class CompanyController {
             response = DistanceWithCityDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "City not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "City not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/movements/forEachDay/byCity/{cityId}",
             "/admin/statistic/company/stock/{stockId}/movements/forEachDay/byCity/{cityId}"}, method = RequestMethod.GET)
@@ -490,18 +406,10 @@ public class CompanyController {
             response = DistanceWithCityDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/movements/summary",
             "/admin/statistic/company/stock/{stockId}/movements/summary"}, method = RequestMethod.GET)
@@ -521,21 +429,11 @@ public class CompanyController {
             response = DistanceWithCityDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "City not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "City not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/movements/summary/byCity/{cityId}",
             "/admin/statistic/company/stock/{stockId}/movements/summary/byCity/{cityId}"}, method = RequestMethod.GET)
@@ -561,18 +459,10 @@ public class CompanyController {
             response = DistanceWithCityDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
-            @ApiResponse(code = 403,
-                    message = "Stock is not owned by this company.",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 404,
-                    message = "Stock not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/movements/summary/byCity",
             "/admin/statistic/company/stock/{stockId}/movements/summary/byCity"}, method = RequestMethod.GET)
@@ -587,6 +477,7 @@ public class CompanyController {
         }
     }
 
+    // TODO docs
     @RequestMapping(path = {"/api/company/stock/{stockId}/cost",
             "/admin/statistic/company/stock/{stockId}/cost"}, method = RequestMethod.GET)
     public ResponseEntity<StockCostDTO> getStockCost(@PathVariable("stockId") Long stockId,
@@ -607,12 +498,8 @@ public class CompanyController {
             notes = "Returning company, which id specified in params",
             response = CompanyDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = "/admin/company/{id}", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getById(@PathVariable("id") final Long id) {
@@ -623,12 +510,8 @@ public class CompanyController {
             notes = "Returning company, which telephone specified in params",
             response = CompanyDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = "/admin/company/telephone", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByTelephone(@RequestParam("telephone") final String telephone) {
@@ -639,16 +522,12 @@ public class CompanyController {
             notes = "Returning company, which organization name specified in params",
             response = CompanyDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 404,
-                    message = "Company not found",
-                    response = ApiException.class),
-            @ApiResponse(code = 406,
-                    message = "Some DB problems",
-                    response = ApiException.class)
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = "/admin/company/organizationName", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getByOrganizationName(
-            @RequestParam("organizationName") final String organizationName) {
+            @RequestParam("name") final String organizationName) {
         return ResponseEntity.ok(companyService.findByOrganizationName(organizationName));
     }
 
@@ -674,6 +553,18 @@ public class CompanyController {
             "/api/company/poster/example"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getPosterExample() {
         MultiPartFileDTO poster = adminService.getPosterExample();
+        return posterService.getResourceResponseEntity(poster);
+    }
+
+    @ApiOperation(value = "Get poster preview example", notes = "Returning example of poster (.pdf)",
+            response = Resource.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(path = "/data/poster/example/preview", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getPosterExamplePreview() {
+        MultiPartFileDTO poster = adminService.getPosterPreviewExample();
         return posterService.getResourceResponseEntity(poster);
     }
 }

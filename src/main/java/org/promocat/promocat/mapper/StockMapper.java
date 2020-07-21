@@ -52,7 +52,7 @@ public class StockMapper extends AbstractMapper<Stock, StockDTO> {
     }
 
     private Long getCompanyId(Stock source) {
-        return Objects.isNull(source) || Objects.isNull(source.getCompany()) ? null : source.getCompany().getId();
+        return Objects.isNull(source) || Objects.isNull(source.getCompany()) ? 0L : source.getCompany().getId();
     }
 
     private Long getPosterId(Stock source) {
