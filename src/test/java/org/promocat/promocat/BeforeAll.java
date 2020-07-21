@@ -1,6 +1,7 @@
 package org.promocat.promocat;
 
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.AbstractAccount;
@@ -212,6 +213,7 @@ public class BeforeAll {
         company.setMail(mail);
         company.setVerified(true);
         company.setAccountType(AccountType.COMPANY);
+        company.setCompanyStatus(CompanyStatus.FULL);
         company = companyRepository.save(company);
         return companyMapper.toDto(company);
     }
