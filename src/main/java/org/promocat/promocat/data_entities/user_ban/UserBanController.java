@@ -22,7 +22,6 @@ public class UserBanController {
 
     @RequestMapping(path = "/admin/ban/user/{userId}", method = RequestMethod.POST)
     public ResponseEntity<UserBanDTO> banUser(@PathVariable("userId") Long id) {
-
         return ResponseEntity.ok(userBanService.ban(userService.findById(id)));
     }
 }

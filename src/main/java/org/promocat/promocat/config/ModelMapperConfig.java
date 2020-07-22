@@ -22,8 +22,8 @@ public class ModelMapperConfig {
                 .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setFieldMatchingEnabled(true)
                 .setSkipNullEnabled(true)
-                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PUBLIC)
-                .setPropertyCondition(context -> !(context.getSource() instanceof PersistentCollection));
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PUBLIC);
+//                .setPropertyCondition(context -> !(context.getSource() instanceof PersistentCollection));
         return mapper;
     }
 

@@ -45,8 +45,8 @@ public class Stock extends AbstractEntity {
     private Company company;
     private LocalDateTime startTime;
     private Long duration;
-    private Set<Movement> movements = new HashSet<>();
-    private Set<StockCity> cities = new HashSet<>();
+    private Set<Movement> movements;
+    private Set<StockCity> cities;
     private Double panel;
     private Double prepayment;
     private Double postpayment;
