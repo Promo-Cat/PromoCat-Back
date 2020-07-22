@@ -41,4 +41,5 @@ public class UserBan extends AbstractEntity {
     public Double getBannedEarnings() {
         return bannedEarnings;
     }
+
 }

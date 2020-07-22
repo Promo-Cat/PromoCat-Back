@@ -33,6 +33,8 @@ public class SpringFoxConfig {
     public static final String STOCK_CITY = "Stock and city";
     public static final String TOKEN = "Token";
     public static final String MOVEMENT = "Movement";
+    public static final String USER_BAN = "User ban";
+    public static final String PARAMETERS = "Parameters";
 
     @Bean
     public Docket api() {
@@ -84,6 +86,8 @@ public class SpringFoxConfig {
                 .tags(new Tag(PROMO_CODE, "Promo-code controller"))
                 .tags(new Tag(STOCK, "Stock controller"))
                 .tags(new Tag(ADMIN, "Admin controller"))
+                .tags(new Tag(USER_BAN, "UserBan controller"))
+                .tags(new Tag(PARAMETERS, "Parameters controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
     }
@@ -93,9 +97,9 @@ public class SpringFoxConfig {
                 "PromoCat application API",
                 "Amazing promo application",
                 "1.0",
-                "https://api.promocatcompany.com",
-                new springfox.documentation.service.Contact("Alexandr", "https://api.promocatcompany.com",
-                        "pavlishen4b@gmail.com"),
+                "https://promocatcompany.com/termsofuse",
+                new springfox.documentation.service.Contact("Maxim", "https://promocatcompany.com",
+                        "devru@promocatcompany.com"),
                 "API License",
                 "https://api.promocatcompany.com",
                 Collections.emptyList()
