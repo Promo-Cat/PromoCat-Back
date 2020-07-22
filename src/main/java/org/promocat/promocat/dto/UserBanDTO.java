@@ -1,6 +1,7 @@
 package org.promocat.promocat.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 @ApiModel(
@@ -14,8 +15,25 @@ import lombok.*;
 @NoArgsConstructor
 public class UserBanDTO extends AbstractDTO {
 
+    @ApiModelProperty(
+            value = "Id of the user who will be banned.",
+            dataType = "Long",
+            required = true
+    )
     private Long userId;
+
+    @ApiModelProperty(
+            value = "Id of the stock in which user will be banned.",
+            dataType = "Long",
+            required = true
+    )
     private Long stockId;
+
+    @ApiModelProperty(
+            value = "Number of funds banned.",
+            dataType = "Double",
+            required = true
+    )
     private Double bannedEarnings;
 
 }
