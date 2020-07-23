@@ -7,9 +7,12 @@ import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserBanDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.mapper.UserBanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 public class UserBanService {
@@ -47,6 +50,10 @@ public class UserBanService {
      */
     public UserBanDTO ban(UserDTO userDTO) {
         StockCityDTO stockCity = stockCityService.findById(userDTO.getStockCityId());
+        if (Objects.isNull(stockCity)) {
+            throw new ApiStockCityNotFoundException(String.format("Stock for user with telephone: %s not found. " +
+                    "Can't ban", userDTO.getTelephone()));
+        }
         StockDTO stock = stockService.findById(stockCity.getId());
         UserBanDTO userBan = new UserBanDTO();
         userBan.setStockId(stock.getId());
