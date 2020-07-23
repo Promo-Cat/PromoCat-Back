@@ -24,27 +24,15 @@ import java.util.Set;
 @AllArgsConstructor
 public class StockCityDTO extends AbstractDTO {
 
-    @ApiModelProperty(
-            value = "Stock id",
-            dataType = "Long",
-            required = true
-    )
+    @ApiModelProperty(value = "Stock id", dataType = "Long", required = true)
     @NotNull(message = "Id акции не может быть пустым.")
     private Long stockId;
 
-    @ApiModelProperty(
-            value = "City id",
-            dataType = "Long",
-            required = true
-    )
+    @ApiModelProperty(value = "City id", dataType = "Long", required = true)
     @NotNull(message = "Id города не может быть пустым.")
     private Long cityId;
 
-    @ApiModelProperty(
-            value = "Number of promo-codes",
-            dataType = "Long",
-            required = true
-    )
+    @ApiModelProperty(value = "Number of promo-codes", dataType = "Long", required = true)
     @NotNull(message = "Количество промокодов не может быть пустым.")
     private Long numberOfPromoCodes;
 

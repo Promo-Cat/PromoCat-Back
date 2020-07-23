@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
+
 @ApiModel(
         value = "Parameters",
         description = "Parameters for promocat application."
@@ -20,25 +22,16 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ParametersDTO extends AbstractDTO {
 
-    @ApiModelProperty(
-            value = "Fare for drivers.",
-            dataType = "Double",
-            required = true
-    )
+    @ApiModelProperty(value = "Fare for drivers. Min value 0.", dataType = "Double")
+    @Min(0)
     private Double fare;
 
-    @ApiModelProperty(
-            value = "Prepayment for company.",
-            dataType = "Double",
-            required = true
-    )
+    @ApiModelProperty(value = "Prepayment for company. Min value 0.", dataType = "Double")
+    @Min(0)
     private Double prepayment;
 
-    @ApiModelProperty(
-            value = "Postpayment for company.",
-            dataType = "Double",
-            required = true
-    )
+    @ApiModelProperty(value = "Postpayment for company. Min value 0.", dataType = "Double")
+    @Min(0)
     private Double postpayment;
 
 }
