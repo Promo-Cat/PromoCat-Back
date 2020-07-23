@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.admin.AdminService;
@@ -24,11 +23,9 @@ import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.util_entities.TokenService;
 import org.promocat.promocat.utils.EntityUpdate;
-import org.promocat.promocat.utils.JwtReader;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -105,15 +102,8 @@ public class CompanyController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CompanyDTO> updateCompany(@Valid @RequestBody CompanyDTO company,
                                                     @RequestHeader("token") String token) {
-        AccountType accountType = tokenService.getAccountType(token);
-        CompanyDTO actualCompany;
-        if (accountType == AccountType.COMPANY) {
-            actualCompany = companyService.findByToken(token);
-        } else if (accountType == AccountType.ADMIN) {
-            actualCompany = companyService.findByTelephone(company.getTelephone());
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        CompanyDTO actualCompany = companyService.findByToken(token);
+
         if (actualCompany.getCompanyStatus() == CompanyStatus.JUST_REGISTERED &&
                 RequiredForFullConstraintValidator.check(company)) {
             company.setCompanyStatus(CompanyStatus.FULL);
@@ -132,11 +122,6 @@ public class CompanyController {
     })
     @RequestMapping(path = "/api/company", method = RequestMethod.GET)
     public ResponseEntity<CompanyDTO> getCompany(@RequestHeader("token") String token) {
-        JwtReader jwtReader = new JwtReader(token);
-        AccountType accountType = AccountType.of(jwtReader.getValue("account_type"));
-        if (accountType != AccountType.COMPANY) {
-            throw new ApiForbiddenException("Account type is not a company.");
-        }
         return ResponseEntity.ok(companyService.findByToken(token));
     }
 
