@@ -1,11 +1,13 @@
 package org.promocat.promocat.utils.soap;
 
 import com.sun.xml.bind.XmlAccessorFactory;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.constraints.XmlField;
 import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
 import org.promocat.promocat.utils.soap.operations.AbstractOperation;
 import org.promocat.promocat.utils.soap.operations.PostBindPartnerWithPhoneRequest;
+import org.promocat.promocat.utils.soap.operations.PostBindPartnerWithPhoneResponse;
 import org.promocat.promocat.utils.soap.operations.SendMessageResponse;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
@@ -28,6 +30,7 @@ import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -95,18 +98,19 @@ public class SoapClient {
         return this.token;
     }
 
-    public String send(AbstractOperation operation) {
+    @SneakyThrows
+    public Object send(AbstractOperation operation) {
         SoapRequest request = new SoapSendMessageRequest(operation, getToken());
         Optional<SOAPMessage> responseOptional = request.send(API_URL);
         if (responseOptional.isPresent()) {
             String messageId = getMessageId(responseOptional.get());
             log.info("MessageId: {}", messageId);
+            Thread.sleep(1000);
             SoapRequest getRequest = new SoapGetMessageRequest(new SendMessageResponse(messageId), getToken());
             responseOptional = getRequest.send(API_URL);
             if (responseOptional.isPresent()) {
                 try {
-                    Object res = soapXmlToPOJO(responseOptional.get(), operation.getResponseClass());
-                    System.out.println(res.toString());
+                    return soapXmlToPOJO(responseOptional.get(), operation.getResponseClass());
                 } catch (SOAPException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
@@ -120,7 +124,7 @@ public class SoapClient {
                 }
             }
 
-            return messageId;
+            return null;
         } else {
             throw new RuntimeException("Response doesn`t present");
         }
@@ -163,7 +167,9 @@ public class SoapClient {
                     // TODO: 24.07.2020 Value doesn`t present in xml
                     value = fieldValueInResponseNode.item(0).getFirstChild().getNodeValue();
                 }
+                field.setAccessible(true);
                 field.set(res, value);
+                field.setAccessible(false);
             }
         }
 
@@ -172,10 +178,12 @@ public class SoapClient {
 
     public static void main(String[] args) {
         PostBindPartnerWithPhoneRequest op = new PostBindPartnerWithPhoneRequest(
-                "79062007099",
-                List.of(ConnectionPermissions.INCOME_REGISTRATION, ConnectionPermissions.CANCEL_INCOME)
+                "79062587099",
+                List.of(ConnectionPermissions.INCOME_REGISTRATION)
         );
-        new SoapClient().send(op);
+        SoapClient client = new SoapClient();
+        PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse)client.send(op);
+        log.info("Post bind hue mae id {}", response.getId());
     }
 
 }
