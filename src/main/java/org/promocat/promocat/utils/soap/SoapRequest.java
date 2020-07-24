@@ -1,14 +1,10 @@
 package org.promocat.promocat.utils.soap;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.internal.util.xml.XmlDocument;
 import org.promocat.promocat.constraints.XmlField;
 
 import javax.xml.soap.*;
-import javax.xml.transform.dom.DOMSource;
 import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +17,6 @@ public abstract class SoapRequest {
      */
     protected final String operation;
     protected final SOAPConnection soapConnection;
-    protected SOAPMessage soapMessage;
     protected Object pojo;
     protected String token;
     /**
@@ -42,6 +37,11 @@ public abstract class SoapRequest {
         this.soapConnection = soapConnection1;
     }
 
+    /**
+     * Отправляет SOAP запрос на сервис по эндпоинту {@code destinationURL}
+     * @param destinationURL {@code URL} сервиса
+     * @return {@code Optional.empty()} - если что-то пошло не так и запрос не отправился, иначе ответ сервера на данный запрос
+     */
     public Optional<SOAPMessage> send(String destinationURL) {
         SOAPMessage response = null;
         try {
@@ -56,6 +56,11 @@ public abstract class SoapRequest {
         return Optional.ofNullable(response);
     }
 
+    /**
+     * Собирает сообщение ({@code xml} на основе данного объекта операции {@code pojo}.
+     * Добавляет все необходимые тэги и добваляет поля из {@code pojo} в тело операции, а так же выставляет хедеры.
+     * @return Объект сообщения
+     */
     public SOAPMessage createMessage() {
         try {
             SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
@@ -80,7 +85,7 @@ public abstract class SoapRequest {
             }
 
             insertPojoFields(operationBody);
-            getHeaders(soapMessage.getMimeHeaders());
+            setHeaders(soapMessage.getMimeHeaders());
             soapMessage.saveChanges();
             System.out.println("\n---------------REQUEST--------------\n");
             soapMessage.writeTo(System.out);
@@ -96,12 +101,21 @@ public abstract class SoapRequest {
         return null;
     }
 
-    protected void getHeaders(MimeHeaders headers) {
+    /**
+     * Устанавливает необходимые для запроса хедеры (в основном токены)
+     * @param headers ссылка на хедеры запроса
+     */
+    protected void setHeaders(MimeHeaders headers) {
+        // Наш какой-то там токен, в BASE64 160 символов
         headers.addHeader("FNS-OpenApi-UserToken", "fi7uTtOr5xPFEnxIvorCP8RzWQI0USN1TQoniL5glBpeRhZSqQLMR");
         headers.addHeader("FNS-OpenApi-Token", token);
         headers.addHeader("Content-Type", "application/xml; charset=utf-8");
     }
 
+    /**
+     * Сериализует объект {@code pojo} и добавляет все его поля, помеченные аннотацией {@link XmlField} в тело запроса
+     * @param target Тело запроса, в которое помещаются поля {@code pojo}
+     */
     protected void insertPojoFields(SOAPElement target) throws SOAPException, IllegalAccessException {
         for (Field declaredField : pojo.getClass().getDeclaredFields()) {
             if (declaredField.isAnnotationPresent(XmlField.class)) {

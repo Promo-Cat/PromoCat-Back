@@ -1,13 +1,10 @@
 package org.promocat.promocat.utils.soap;
 
 import lombok.extern.slf4j.Slf4j;
-import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
-import org.promocat.promocat.utils.soap.operations.PostBindPartnerWithPhoneRequest;
 import org.promocat.promocat.utils.soap.operations.SendMessageResponse;
 
 import javax.xml.soap.*;
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 public class SoapGetMessageRequest extends SoapRequest {
@@ -31,7 +28,7 @@ public class SoapGetMessageRequest extends SoapRequest {
                     .addChildElement(method, "ns")
                     .addChildElement("MessageId", "ns");
             operationBody.setTextContent(((SendMessageResponse)pojo).getMessageId());
-            getHeaders(soapMessage.getMimeHeaders());
+            setHeaders(soapMessage.getMimeHeaders());
             soapMessage.saveChanges();
             System.out.println("\n---------------REQUEST--------------\n");
             soapMessage.writeTo(System.out);
