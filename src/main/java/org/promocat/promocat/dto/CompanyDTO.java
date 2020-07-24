@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -21,7 +22,8 @@ import java.util.Set;
 
 @ApiModel(
         value = "Company",
-        description = "Object representation of company of PromoCat application."
+        description = "Object representation of company of PromoCat application." +
+                "Company name, company INN, company Email are required for full registration."
 )
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
@@ -30,8 +32,7 @@ public class CompanyDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
             value = "Company name",
-            dataType = "String",
-            required = true
+            dataType = "String"
     )
     @RequiredForFull
 //    @NotBlank(message = "Имя организации не может быть пустым.")
@@ -40,7 +41,6 @@ public class CompanyDTO extends AbstractAccountDTO {
     @ApiModelProperty(
             value = "Company INN",
             dataType = "String",
-            required = true,
             allowableValues = "INN in format 10 digits format."
     )
     @Pattern(regexp = "\\d{10}", message = "ИНН задан неверно, должен состоять из 10 цифр. " +
@@ -51,7 +51,6 @@ public class CompanyDTO extends AbstractAccountDTO {
     @ApiModelProperty(
             value = "Company Email",
             dataType = "String",
-            required = true,
             allowableValues = "Standard email format."
     )
     @Email
@@ -66,11 +65,24 @@ public class CompanyDTO extends AbstractAccountDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<StockDTO> stocks = new HashSet<>();
 
+    @ApiModelProperty(
+            value = "Current stock ID",
+            dataType = "Long",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long currentStockId;
 
-    // TODO: 13.06.2020 MAKS DOCS 
+    // TODO: 13.06.2020 MAKS DOCS
+    // FIXME: 23.07.2020 Поставил JsonIgnore тк верификация компаний исчезла
+    @JsonIgnore
     private Boolean verified = false;
 
+    @ApiModelProperty(
+            value = "Current company status",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private CompanyStatus companyStatus;
 
     public CompanyDTO() {

@@ -17,7 +17,8 @@ import java.util.Set;
 
 @ApiModel(
         value = "User",
-        description = "Object representation of user of PromoCat application."
+        description = "Object representation of user of PromoCat application." +
+                "Users mail, users city are required for full registration."
 )
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
@@ -67,7 +68,6 @@ public class UserDTO extends AbstractAccountDTO {
     @ApiModelProperty(
             value = "Users movement",
             dataType = "List of Movement entities",
-            required = true,
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

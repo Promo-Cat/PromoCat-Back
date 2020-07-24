@@ -20,27 +20,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PromoCodeActivationDTO extends AbstractDTO {
 
-    @ApiModelProperty(
-            value = "Users id",
-            dataType = "Long",
-            required = true
-    )
+    @ApiModelProperty(value = "Users id", dataType = "Long", required = true)
     @NotNull(message = "Id пользователя не может быть пустым.")
     private Long userId;
 
-    @ApiModelProperty(
-            value = "Promo-code id",
-            dataType = "Long",
-            required = true
-    )
+    @ApiModelProperty(value = "Promo-code id", dataType = "Long", required = true)
     @NotNull(message = "Id промо-кода не может быть пустым.")
     private Long promoCodeId;
 
-    @ApiModelProperty(
-            value = "Activation date",
-            dataType = "LocalDateTime",
-            required = true
-    )
+    @ApiModelProperty(value = "Activation date", dataType = "LocalDateTime", required = true)
     @NotNull(message = "Дата активации не может быть пустой.")
     private LocalDateTime activationDate;
 }

@@ -221,7 +221,7 @@ public class BeforeAll {
     private StockDTO createStock(String name, CompanyDTO company) {
         StockDTO stock = new StockDTO();
         stock.setCompanyId(company.getId());
-        stock.setStatus(StockStatus.POSTER_NOT_CONFIRMED);
+        stock.setStatus(StockStatus.ACTIVE);
         stock.setDuration(7L);
         stock.setStartTime(LocalDateTime.now());
         stock.setName(name);

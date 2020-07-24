@@ -19,6 +19,7 @@ import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.StockWithStockCityDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.car.ApiCarNotFoundException;
 import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
 import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
@@ -209,6 +210,9 @@ public class UserController {
         UserDTO user = userService.findByToken(token);
         if (Objects.isNull(user.getStockCityId())) {
             throw new ApiStockCityNotFoundException(String.format("User with telephone: %s doesn't have stock", user.getTelephone()));
+        }
+        if (user.getCars().size() == 0) {
+            throw new ApiCarNotFoundException(String.format("User with telephone: %s doesn't have car for move", user.getTelephone()));
         }
         user.setTotalDistance(user.getTotalDistance() + distanceDTO.getDistance());
         user = userService.save(user);

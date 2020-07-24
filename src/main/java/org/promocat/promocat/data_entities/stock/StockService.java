@@ -77,7 +77,7 @@ public class StockService {
      * @return представление акции в БД. {@link StockDTO}
      */
     public StockDTO create(final StockDTO dto) {
-        dto.setPanel(parametersService.getPanel());
+        dto.setFare(parametersService.getPanel());
         dto.setPrepayment(parametersService.getParameters().getPrepayment());
         dto.setPostpayment(parametersService.getParameters().getPostpayment());
         return save(dto);
