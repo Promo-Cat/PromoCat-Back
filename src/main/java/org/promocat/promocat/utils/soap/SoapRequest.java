@@ -4,16 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.internal.util.xml.XmlDocument;
 import org.promocat.promocat.constraints.XmlField;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.*;
 import javax.xml.transform.dom.DOMSource;
 import java.io.IOException;
@@ -31,14 +22,16 @@ public abstract class SoapRequest {
     protected final SOAPConnection soapConnection;
     protected SOAPMessage soapMessage;
     protected Object pojo;
+    protected String token;
     /**
      * GetMessage or SendMessage
      */
     protected String method;
 
-    public SoapRequest(Object pojo) {
+    public SoapRequest(Object pojo, String token) {
         SOAPConnection soapConnection1 = null;
         this.pojo = pojo;
+        this.token = token;
         this.operation = pojo.getClass().getSimpleName();
         try {
             soapConnection1 = SOAPConnectionFactory.newInstance().createConnection();
@@ -77,6 +70,7 @@ public abstract class SoapRequest {
                     .addChildElement("Message", "ns")
                     .addChildElement(operation, "", "urn://x-artefacts-gnivc-ru/ais3/SMZ/SmzPartnersIntegrationService/types/1.0");
             insertPojoFields(operationBody);
+            getHeaders(soapMessage.getMimeHeaders());
             soapMessage.saveChanges();
             soapMessage.writeTo(System.out);
 
@@ -91,36 +85,10 @@ public abstract class SoapRequest {
         return null;
     }
 
-    protected MimeHeaders getHeaders(MimeHeaders headers) {
+    protected void getHeaders(MimeHeaders headers) {
         headers.addHeader("FNS-OpenApi-UserToken", "fi7uTtOr5xPFEnxIvorCP8RzWQI0USN1TQoniL5glBpeRhZSqQLMR");
-        headers.addHeader("FNS-OpenApi-Token", "");
+        headers.addHeader("FNS-OpenApi-Token", token);
         headers.addHeader("Content-Type", "application/xml; charset=utf-8");
-        return headers;
-    }
-
-    private Node pojoToXml() {
-        try {
-            XmlMapper xmlMapper = new XmlMapper();
-            String deserializedPojo = xmlMapper.writeValueAsString(pojo);
-            DocumentBuilderFactory factory = DocumentBuilderFactory
-                    .newInstance();
-            factory.setNamespaceAware(true);
-            Document document = factory
-                    .newDocumentBuilder()
-                    .parse(
-                            new InputSource(
-                                    new StringReader(deserializedPojo)
-                            )
-                    );
-            return document;
-        } catch (SAXException e) {
-            log.error("Failed to parse xml", e);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     protected void insertPojoFields(SOAPElement target) throws SOAPException, IllegalAccessException {

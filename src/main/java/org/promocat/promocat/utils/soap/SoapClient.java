@@ -1,21 +1,32 @@
 package org.promocat.promocat.utils.soap;
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.utils.soap.operations.PostBindPartnerWithPhoneRequest;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @Component
 @Slf4j
 public class SoapClient {
 
     private static final String TOKEN_REQUEST = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"urn://x-artefacts-gnivc-ru/inplat/servin/OpenApiMessageConsumerService/types/1.0\"><soapenv:Header/><soapenv:Body><ns:GetMessageRequest><ns:Message><ns1:AuthRequest xmlns:ns1=\"urn://x-artefacts-gnivc-ru/ais3/kkt/AuthService/types/1.0\"><ns1:AuthAppInfo><ns1:MasterToken>dPymKnYFZufero6MW3wcpF8p7lgrQefCOGxTlhgwdvYo08RXzKGQqPyrzl7k0tuHgfMFtWNbgC1FpioqtnHMyQkYATlFEycH5pIb54vQNj7eBXlQyCey4Axgvf2tZNRZ</ns1:MasterToken></ns1:AuthAppInfo></ns1:AuthRequest></ns:Message></ns:GetMessageRequest></soapenv:Body></soapenv:Envelope>";
+    private static final String API_URL = "https://himself-ktr-api.nalog.ru:8090/ais3/smz/SmzIntegrationService";
+
+    private String token;
+    private ZonedDateTime tokenExpireTime;
 
     private String getNewToken() throws IOException {
         log.info("Getting new token");
@@ -24,7 +35,7 @@ public class SoapClient {
         con.setDoOutput(true);
         con.setRequestMethod("POST");
         con.setRequestProperty("SOAPAction", "urn:GetMessageRequest");
-        try( DataOutputStream wr = new DataOutputStream( con.getOutputStream())) {
+        try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
             wr.write(TOKEN_REQUEST.getBytes());
         }
         log.info("Token response status {}", con.getResponseCode());
@@ -36,16 +47,51 @@ public class SoapClient {
             content.append(inputLine);
         }
         in.close();
-        log.info("Token response content {}", content.toString());
-        return con.getResponseMessage();
+        log.info("Token response message {}", con.getResponseMessage());
+        return parseTokenXml(content.toString());
+    }
+
+    private String parseTokenXml(String xml) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new InputSource(new StringReader(xml)));
+
+            NodeList token = document.getElementsByTagName("Token");
+            NodeList expireTime = document.getElementsByTagName("ExpireTime");
+            if (token.getLength() == 0) {
+                log.error("Token doesn`t present");
+            }
+            this.token = token.item(0).getFirstChild().getNodeValue();
+            this.tokenExpireTime = ZonedDateTime.parse(expireTime.item(0).getFirstChild().getNodeValue());
+            log.debug("{} - {}", this.token, this.tokenExpireTime.toString());
+            return this.token;
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            log.error("Failed to parse token xml", e);
+        }
+        return null;
+    }
+
+    public synchronized String getToken() {
+        if (token == null || tokenExpireTime.isBefore(ZonedDateTime.now())) {
+            log.info("Token has expired. Getting new one.");
+            try {
+                getNewToken();
+            } catch (IOException e) {
+                log.error("Unable to get new token", e);
+            }
+        }
+        return this.token;
+    }
+
+    public void send(Object operation) {
+        SoapRequest request = new SoapSendMessageRequest(operation, getToken());
+        request.send(API_URL);
     }
 
     public static void main(String[] args) {
-        try {
-            new SoapClient().getNewToken();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        PostBindPartnerWithPhoneRequest op = new PostBindPartnerWithPhoneRequest("79062007099", "INCOME_REGISTRATION");
+        new SoapClient().send(op);
     }
 
 }
