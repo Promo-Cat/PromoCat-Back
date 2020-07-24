@@ -52,4 +52,28 @@ public class ApiWrongCodeHandler {
         log.error("Wrong stock for user: " + e.getMessage());
         return new ResponseEntity<>(apiException, forbidden);
     }
+
+    @ExceptionHandler(value = {ApiUserStockException.class})
+    public ResponseEntity<Object> handelWrongCode(ApiUserInnException e) {
+        final HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                forbidden,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Wrong inn for user: " + e.getMessage());
+        return new ResponseEntity<>(apiException, forbidden);
+    }
+
+    @ExceptionHandler(value = {ApiUserStockException.class})
+    public ResponseEntity<Object> handelWrongCode(ApiUserAccountException e) {
+        final HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                forbidden,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Wrong account for user: " + e.getMessage());
+        return new ResponseEntity<>(apiException, forbidden);
+    }
 }
