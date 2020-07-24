@@ -12,6 +12,7 @@ import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.constraints.RequiredForFull;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -100,6 +101,24 @@ public class UserDTO extends AbstractAccountDTO {
             dataType = "Boolean"
     )
     private Boolean termsOfUseStatus = false;
+
+    @Pattern(regexp = "\\d{5}.\\d{3}.\\d.\\d{11}",
+            message = "Расчетный счет должен соответствовать шаблону XXXXX.XXX.X.XXXXXXXXXXX")
+    @ApiModelProperty(
+            value = "Users account",
+            dataType = "String"
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String account;
+
+    @Pattern(regexp = "\\d{10}",
+            message = "ИНН должен соответствовать шаблону: XXXXXXXXXX")
+    @ApiModelProperty(
+            value = "Users inn",
+            dataType = "String"
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String inn;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);
