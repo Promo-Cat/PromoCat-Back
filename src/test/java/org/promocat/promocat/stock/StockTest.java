@@ -11,6 +11,7 @@ import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.stock.StockRepository;
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.utils.CSVGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,9 +26,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -45,6 +44,9 @@ public class StockTest {
 
     @Autowired
     BeforeAll beforeAll;
+
+    @Autowired
+    CSVGenerator csvGenerator;
 
     @Autowired
     StockRepository stockRepository;

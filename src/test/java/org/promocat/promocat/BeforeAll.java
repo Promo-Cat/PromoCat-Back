@@ -24,6 +24,7 @@ import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityRepository;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.user_ban.UserBanRepository;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
@@ -82,6 +83,9 @@ public class BeforeAll {
     UserRepository userRepository;
 
     @Autowired
+    UserBanRepository userBanRepository;
+
+    @Autowired
     AccountRepositoryManager accountRepositoryManager;
 
     @Autowired
@@ -114,7 +118,6 @@ public class BeforeAll {
     @Autowired
     MovementService movementService;
 
-
     public City city;
     public String user1Token;
     public UserDTO user1DTO;
@@ -138,6 +141,7 @@ public class BeforeAll {
      * Отчистка и заполнение БД.
      */
     public void init() {
+        userBanRepository.deleteAll();
         adminRepository.deleteAll();
         carRepository.deleteAll();
         userRepository.deleteAll();
@@ -211,7 +215,6 @@ public class BeforeAll {
         company.setInn(INN);
         company.setOrganizationName(name);
         company.setMail(mail);
-        company.setVerified(true);
         company.setAccountType(AccountType.COMPANY);
         company.setCompanyStatus(CompanyStatus.FULL);
         company = companyRepository.save(company);

@@ -9,6 +9,7 @@ import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
+import org.promocat.promocat.data_entities.stock.csvFile.CSVFileService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
@@ -18,6 +19,7 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.CSVGenerator;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 /**
@@ -42,16 +45,20 @@ public class StockController {
     private final CompanyService companyService;
     private final PosterService posterService;
     private final MultiPartFileUtils multiPartFileUtils;
+    private final CSVFileService csvFileService;
+    private final CSVGenerator csvGenerator;
 
     @Autowired
     public StockController(final StockService stockService,
                            final CompanyService companyService,
                            final PosterService posterService,
-                           final MultiPartFileUtils multiPartFileUtils) {
+                           final MultiPartFileUtils multiPartFileUtils, CSVFileService csvFileService, CSVGenerator csvGenerator) {
         this.stockService = stockService;
         this.companyService = companyService;
         this.posterService = posterService;
         this.multiPartFileUtils = multiPartFileUtils;
+        this.csvFileService = csvFileService;
+        this.csvGenerator = csvGenerator;
     }
 
     @ApiOperation(value = "Create stock",
@@ -189,6 +196,21 @@ public class StockController {
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }
+    }
+
+    @ApiOperation(value = "Get file",
+            notes = "Get file for this stock. file in .csv format.",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "File not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
+    })
+    @RequestMapping(path = "/admin/stock/csvFile", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getCSVFile(@PathParam("name") String name) {
+        return csvFileService.getFile(name);
     }
 
     // ------ Admin methods ------

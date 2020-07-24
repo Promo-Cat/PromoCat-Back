@@ -9,16 +9,22 @@ import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
+import org.promocat.promocat.utils.CSVGenerator;
 import org.promocat.promocat.validators.StockDurationConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +40,9 @@ import java.util.stream.Collectors;
 @Service
 public class StockService {
 
+    @Value("${data.codes.files}")
+    private String PATH;
+
     private final StockMapper mapper;
     private final StockRepository repository;
     private final StockCityService stockCityService;
@@ -41,6 +50,7 @@ public class StockService {
     private final ParametersService parametersService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final CSVGenerator csvGenerator;
 
     @Autowired
     public StockService(final StockMapper mapper,
@@ -49,7 +59,7 @@ public class StockService {
                         final CityService cityService,
                         final ParametersService parametersService,
                         final UserRepository userRepository,
-                        final UserMapper userMapper) {
+                        final UserMapper userMapper, CSVGenerator csvGenerator) {
         this.mapper = mapper;
         this.repository = repository;
         this.stockCityService = stockCityService;
@@ -57,6 +67,7 @@ public class StockService {
         this.parametersService = parametersService;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.csvGenerator = csvGenerator;
     }
 
     /**
@@ -129,19 +140,24 @@ public class StockService {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
-
             stocks.forEach(e -> {
                 e.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
+                Path path = Paths.get(PATH, e.getName() + e.getId().toString() + ".csv");
                 save(e);
                 if (Objects.isNull(e.getCities())) {
                     return;
                 }
+                List<UserDTO> users = new ArrayList<>();
                 e.getCities().stream()
                         .flatMap(x -> x.getUsers().stream())
                         .forEach(y -> {
                             y.setStockCityId(null);
+                            users.add(y);
                             userRepository.save(userMapper.toEntity(y));
                         });
+                csvGenerator.generate(path, users);
+                File file = path.toFile();
+                file.delete();
             });
         }
     }
