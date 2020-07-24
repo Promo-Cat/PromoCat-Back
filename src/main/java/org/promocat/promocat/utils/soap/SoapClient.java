@@ -1,7 +1,12 @@
 package org.promocat.promocat.utils.soap;
 
+import com.sun.xml.bind.XmlAccessorFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.constraints.XmlField;
+import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
+import org.promocat.promocat.utils.soap.operations.AbstractOperation;
 import org.promocat.promocat.utils.soap.operations.PostBindPartnerWithPhoneRequest;
+import org.promocat.promocat.utils.soap.operations.SendMessageResponse;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -11,12 +16,18 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -84,13 +95,86 @@ public class SoapClient {
         return this.token;
     }
 
-    public void send(Object operation) {
+    public String send(AbstractOperation operation) {
         SoapRequest request = new SoapSendMessageRequest(operation, getToken());
-        request.send(API_URL);
+        Optional<SOAPMessage> responseOptional = request.send(API_URL);
+        if (responseOptional.isPresent()) {
+            String messageId = getMessageId(responseOptional.get());
+            log.info("MessageId: {}", messageId);
+            SoapRequest getRequest = new SoapGetMessageRequest(new SendMessageResponse(messageId), getToken());
+            responseOptional = getRequest.send(API_URL);
+            if (responseOptional.isPresent()) {
+                try {
+                    Object res = soapXmlToPOJO(responseOptional.get(), operation.getResponseClass());
+                    System.out.println(res.toString());
+                } catch (SOAPException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return messageId;
+        } else {
+            throw new RuntimeException("Response doesn`t present");
+        }
+    }
+
+    private String getMessageId(SOAPMessage message) {
+        NodeList messageIdNode = null;
+        try {
+            messageIdNode = message.getSOAPBody().getOwnerDocument().getElementsByTagName("MessageId");
+        } catch (SOAPException e) {
+            log.error("SOAPException", e);
+        }
+        if (messageIdNode.getLength() == 0) {
+            log.error("Something goes wrong. No messageId in response");
+        }
+        return messageIdNode.item(0).getFirstChild().getNodeValue();
+    }
+
+
+    /**
+     * Assembly new object of type {@code pojoClass} from {@code SOAPMessage xml}
+     * @param xml given SOAP xml
+     * @param pojoClass class of object that will be returned
+     * @return new object with values from {@code SOAPMessage}
+     */
+    public Object soapXmlToPOJO(SOAPMessage xml, Class<?> pojoClass) throws SOAPException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        if (xml.getSOAPBody().getElementsByTagName(pojoClass.getSimpleName()).getLength() == 0) {
+            log.error("Response doesn`t apply presented POJO class");
+            // TODO: 24.07.2020 EXCEPTION (pojoClass doesn`t same with SOAP response body type)
+            throw new RuntimeException("");
+        }
+        Object res = pojoClass.getDeclaredConstructor().newInstance();
+        for (Field field : pojoClass.getDeclaredFields()) {
+            if (field.isAnnotationPresent(XmlField.class)) {
+                XmlField annotation = field.getAnnotation(XmlField.class);
+                // TODO: 24.07.2020 List support
+                NodeList fieldValueInResponseNode = xml.getSOAPBody().getElementsByTagName(annotation.value());
+                Object value = null;
+                if (fieldValueInResponseNode.getLength() != 0) {
+                    // TODO: 24.07.2020 Value doesn`t present in xml
+                    value = fieldValueInResponseNode.item(0).getFirstChild().getNodeValue();
+                }
+                field.set(res, value);
+            }
+        }
+
+        return res;
     }
 
     public static void main(String[] args) {
-        PostBindPartnerWithPhoneRequest op = new PostBindPartnerWithPhoneRequest("79062007099", "INCOME_REGISTRATION");
+        PostBindPartnerWithPhoneRequest op = new PostBindPartnerWithPhoneRequest(
+                "79062007099",
+                List.of(ConnectionPermissions.INCOME_REGISTRATION, ConnectionPermissions.CANCEL_INCOME)
+        );
         new SoapClient().send(op);
     }
 

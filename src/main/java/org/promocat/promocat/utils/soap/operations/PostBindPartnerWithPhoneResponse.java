@@ -9,7 +9,7 @@ import org.promocat.promocat.constraints.XmlField;
  */
 @Data
 @AllArgsConstructor
-public final class PostBindPartnerWithPhoneResponse {
+public final class PostBindPartnerWithPhoneResponse extends AbstractOperation {
 
     /**
      * ID заявки на подключение.
@@ -17,4 +17,8 @@ public final class PostBindPartnerWithPhoneResponse {
     @XmlField("Id")
     private String id;
 
+    @Override
+    public Class<? extends AbstractOperation> getResponseClass() {
+        return null;
+    }
 }

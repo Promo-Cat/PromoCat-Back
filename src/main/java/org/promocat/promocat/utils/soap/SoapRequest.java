@@ -10,6 +10,7 @@ import javax.xml.transform.dom.DOMSource;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -43,9 +44,9 @@ public abstract class SoapRequest {
 
     public Optional<SOAPMessage> send(String destinationURL) {
         SOAPMessage response = null;
-        createMessage();
         try {
             response = soapConnection.call(createMessage(), destinationURL);
+            System.out.println("\n----------RESPONSE------------\n");
             response.writeTo(System.out);
             soapConnection.close();
             // FIXME: 23.07.2020 IOException
@@ -65,13 +66,23 @@ public abstract class SoapRequest {
             soapEnvelope.setPrefix("soapenv");
             soapMessage.getSOAPHeader().setPrefix("soapenv");
             soapPart.setPrefix("soapenv");
-            SOAPElement operationBody = soapPart
-                    .addChildElement(method, "ns")
-                    .addChildElement("Message", "ns")
-                    .addChildElement(operation, "", "urn://x-artefacts-gnivc-ru/ais3/SMZ/SmzPartnersIntegrationService/types/1.0");
+            SOAPElement operationBody;
+            // FIXME: 24.07.2020 refactor
+            if (this instanceof SoapGetMessageRequest) {
+                operationBody = soapPart
+                        .addChildElement(method, "ns")
+                        .addChildElement(operation, "", "urn://x-artefacts-gnivc-ru/ais3/SMZ/SmzPartnersIntegrationService/types/1.0");
+            } else {
+                operationBody = soapPart
+                        .addChildElement(method, "ns")
+                        .addChildElement("Message", "ns")
+                        .addChildElement(operation, "", "urn://x-artefacts-gnivc-ru/ais3/SMZ/SmzPartnersIntegrationService/types/1.0");
+            }
+
             insertPojoFields(operationBody);
             getHeaders(soapMessage.getMimeHeaders());
             soapMessage.saveChanges();
+            System.out.println("\n---------------REQUEST--------------\n");
             soapMessage.writeTo(System.out);
 
             return soapMessage;
@@ -96,8 +107,16 @@ public abstract class SoapRequest {
             if (declaredField.isAnnotationPresent(XmlField.class)) {
                 XmlField annotation = declaredField.getAnnotation(XmlField.class);
                 declaredField.setAccessible(true);
-                target.addChildElement(annotation.value()).addTextNode((String)declaredField.get(pojo));
+                Object fieldValue = declaredField.get(pojo);
                 declaredField.setAccessible(false);
+                if (fieldValue instanceof List) {
+                    List fieldValueList = (List) fieldValue;
+                    for (Object el : fieldValueList) {
+                        target.addChildElement(annotation.value()).addTextNode(el.toString());
+                    }
+                } else {
+                    target.addChildElement(annotation.value()).addTextNode(fieldValue.toString());
+                }
             }
         }
     }
