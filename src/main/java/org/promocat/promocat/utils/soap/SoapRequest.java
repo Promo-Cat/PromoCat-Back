@@ -24,6 +24,11 @@ public abstract class SoapRequest {
      */
     protected String method;
 
+    /**
+     * Дефолтный конструктор, который создаёт запрос и открывает соединение
+     * @param pojo Класс операции, которую необходимо отправить на SOAP сервис
+     * @param token Актуальный {@code token} для работы с сервисом
+     */
     public SoapRequest(Object pojo, String token) {
         SOAPConnection soapConnection1 = null;
         this.pojo = pojo;

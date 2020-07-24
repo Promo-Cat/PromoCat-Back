@@ -13,6 +13,9 @@ public class SoapGetMessageRequest extends SoapRequest {
         this.method = "GetMessageRequest";
     }
 
+    /**
+     * Переопределённый метод создания сообщения. Так как GetMessageRequest и SendMessageRequest немного отличаются структурой
+     */
     @Override
     public SOAPMessage createMessage() {
         try {
