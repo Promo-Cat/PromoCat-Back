@@ -59,7 +59,6 @@ public class CompanyTest {
         assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
         assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
-        assertEquals(beforeAll.company1DTO.getVerified(), that.getVerified());
     }
 
     /**
@@ -89,7 +88,6 @@ public class CompanyTest {
         assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
         assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
-        assertEquals(beforeAll.company1DTO.getVerified(), that.getVerified());
     }
 
     /**
@@ -120,7 +118,6 @@ public class CompanyTest {
         assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
         assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
-        assertEquals(beforeAll.company1DTO.getVerified(), that.getVerified());
     }
 
     /**
@@ -150,7 +147,6 @@ public class CompanyTest {
         assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
         assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
-        assertEquals(beforeAll.company1DTO.getVerified(), that.getVerified());
     }
 
     /**
@@ -225,7 +221,6 @@ public class CompanyTest {
         assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
         assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
-        assertEquals(beforeAll.company1DTO.getVerified(), that.getVerified());
     }
 
     @Test
@@ -257,7 +252,6 @@ public class CompanyTest {
 
         CompanyDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
         assertEquals(that.getId(), beforeAll.company1DTO.getId());
-        assertEquals(that.getVerified(), beforeAll.company1DTO.getVerified());
         assertEquals(that.getTelephone(), "+7(456)456-22-22");
         assertEquals(that.getMail(), "bnm@mail.ru");
         assertEquals(that.getOrganizationName(), "test0");
