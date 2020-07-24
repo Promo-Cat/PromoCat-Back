@@ -11,4 +11,5 @@ public class PromoCatApplication {
     public static void main(String[] args) {
         SpringApplication.run(PromoCatApplication.class, args);
     }
+
 }
