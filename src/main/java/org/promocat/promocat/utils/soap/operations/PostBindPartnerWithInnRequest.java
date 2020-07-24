@@ -7,16 +7,18 @@ import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
 
 import java.util.List;
 
+/**
+ * @author Grankin Maxim (maximgran@gmail.com) at 10:32 24.07.2020
+ */
 @Data
 @AllArgsConstructor
-public final class PostBindPartnerWithPhoneRequest {
+public final class PostBindPartnerWithInnRequest {
 
     /**
-     * Номер телефона налогоплательщика.
-     * Формат +7(XXX)XXX-XX-XX.
+     * ИНН налогоплательщика.
      */
-    @XmlField("Phone")
-    private String phone;
+    @XmlField("Inn")
+    private String inn;
 
     /**
      * Список разрешений, которые запрашиваются у налогоплательщика.

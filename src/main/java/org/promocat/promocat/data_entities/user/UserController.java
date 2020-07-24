@@ -22,6 +22,8 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.car.ApiCarNotFoundException;
 import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
 import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
+import org.promocat.promocat.exception.user.codes.ApiUserAccountException;
+import org.promocat.promocat.exception.user.codes.ApiUserInnException;
 import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
 import org.promocat.promocat.exception.user.codes.ApiUserStockException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
@@ -178,6 +180,12 @@ public class UserController {
     public ResponseEntity<UserDTO> setUserStockCity(@PathVariable("stockCityId") final Long stockCityId,
                                                     @RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
+        if (Objects.isNull(userDTO.getInn())) {
+            throw new ApiUserInnException(String.format("User with telephone: %s doesn't have Inn for participate in the Stock", userDTO.getTelephone()));
+        }
+        if (Objects.isNull(userDTO.getAccount())) {
+            throw new ApiUserAccountException(String.format("User with telephone: %s doesn't have account for participate in the Stock", userDTO.getTelephone()));
+        }
         if (Objects.nonNull(userDTO.getStockCityId())) {
             throw new ApiUserStockException(String.format("User with telephone: %s already participate in the stock", userDTO.getTelephone()));
         }

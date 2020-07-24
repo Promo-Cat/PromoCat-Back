@@ -16,6 +16,7 @@ import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,6 +43,8 @@ public class User extends AbstractAccount {
     private Double totalEarnings = 0.0;
     private UserStatus status;
     private Boolean termsOfUseStatus;
+    private String account;
+    private String inn;
 
     public User(String mail, City city, Double balance, StockCity stockCity) {
         this.mail = mail;
@@ -134,5 +137,19 @@ public class User extends AbstractAccount {
     @Column(name = "terms_of_use")
     public Boolean getTermsOfUseStatus() {
         return termsOfUseStatus;
+    }
+
+    @Pattern(regexp = "\\d{5}.\\d{3}.\\d{1}.\\d{11}",
+            message = "Расчетный счет должен соответствовать шаблону: XXXXX.XXX.X.XXXXXXXXXXX")
+    @Column(name = "account")
+    public String getAccount() {
+        return account;
+    }
+
+    @Pattern(regexp = "\\d{10}",
+            message = "ИНН должен соответствовать шаблону: XXXXXXXXXX")
+    @Column(name = "inn")
+    public String getInn() {
+        return inn;
     }
 }
