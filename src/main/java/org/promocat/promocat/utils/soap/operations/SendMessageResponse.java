@@ -9,7 +9,7 @@ import org.promocat.promocat.constraints.XmlField;
  */
 @Data
 @AllArgsConstructor
-public class SendMessageResponse {
+public final class SendMessageResponse {
 
     /**
      * Id сообщения.

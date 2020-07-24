@@ -11,8 +11,12 @@ import java.time.ZonedDateTime;
  */
 @Data
 @AllArgsConstructor
-public class PostUnbindPartnerResponse {
+public final class PostUnbindPartnerResponse {
 
+    /**
+     * Время отмены регистрации пользователя в PromoCat.
+     */
     @XmlField("UnregistrationTime")
     private ZonedDateTime unregistrationTime;
+
 }

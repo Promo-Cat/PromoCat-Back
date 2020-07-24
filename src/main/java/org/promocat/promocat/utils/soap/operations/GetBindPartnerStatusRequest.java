@@ -5,16 +5,16 @@ import lombok.Data;
 import org.promocat.promocat.constraints.XmlField;
 
 /**
- * @author Grankin Maxim (maximgran@gmail.com) at 11:11 24.07.2020
+ * @author Grankin Maxim (maximgran@gmail.com) at 11:40 24.07.2020
  */
 @Data
 @AllArgsConstructor
-public final class PostUnbindPartnerRequest {
+public final class GetBindPartnerStatusRequest {
 
     /**
-     * ИНН налогоплательщика.
+     * ID заявки на подключение.
      */
-    @XmlField("Inn")
-    private String inn;
+    @XmlField("Id")
+    private String id;
 
 }
