@@ -53,7 +53,7 @@ public class ApiWrongCodeHandler {
         return new ResponseEntity<>(apiException, forbidden);
     }
 
-    @ExceptionHandler(value = {ApiUserStockException.class})
+    @ExceptionHandler(value = {ApiUserInnException.class})
     public ResponseEntity<Object> handelWrongCode(ApiUserInnException e) {
         final HttpStatus forbidden = HttpStatus.FORBIDDEN;
         ApiException apiException = new ApiException(
@@ -65,7 +65,7 @@ public class ApiWrongCodeHandler {
         return new ResponseEntity<>(apiException, forbidden);
     }
 
-    @ExceptionHandler(value = {ApiUserStockException.class})
+    @ExceptionHandler(value = {ApiUserAccountException.class})
     public ResponseEntity<Object> handelWrongCode(ApiUserAccountException e) {
         final HttpStatus forbidden = HttpStatus.FORBIDDEN;
         ApiException apiException = new ApiException(
