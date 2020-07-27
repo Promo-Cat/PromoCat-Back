@@ -11,10 +11,7 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.stock.csvFile.CSVFileService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
-import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.MultiPartFileDTO;
-import org.promocat.promocat.dto.PosterDTO;
-import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
@@ -211,6 +208,13 @@ public class StockController {
     @RequestMapping(path = "/admin/stock/csvFile", method = RequestMethod.GET)
     public ResponseEntity<Resource> getCSVFile(@PathParam("name") String name) {
         return csvFileService.getFile(name);
+    }
+
+    @RequestMapping(path = "/admin/stock/delete/csvFile/{name}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteFile(@PathVariable("name") String name) {
+        CSVFileDTO file = csvFileService.findByName(name);
+        csvFileService.delete(file.getId());
+        return ResponseEntity.ok("{}");
     }
 
     // ------ Admin methods ------

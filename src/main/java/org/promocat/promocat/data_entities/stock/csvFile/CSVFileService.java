@@ -87,6 +87,27 @@ public class CSVFileService {
         return save(csvFileDTO);
     }
 
+    public CSVFileDTO findByName(String name) {
+        Optional<CSVFile> op = csvFileRepository.findByName(name);
+        if (op.isPresent()) {
+            return csvFileMapper.toDto(op.get());
+        }
+        throw new ApiServerErrorException("Some DB exception");
+    }
+
+    public CSVFileDTO findById(final Long id) {
+        Optional<CSVFile> op = csvFileRepository.findById(id);
+        if (op.isPresent()) {
+            return csvFileMapper.toDto(op.get());
+        }
+
+        throw new ApiServerErrorException("Some DB exception");
+    }
+
+    public void delete(final Long id) {
+        csvFileRepository.delete(csvFileMapper.toEntity(findById(id)));
+    }
+
     @Transactional
     public ResponseEntity<Resource> getFile(String name) {
         Optional<CSVFile> op = csvFileRepository.findByName(name);
