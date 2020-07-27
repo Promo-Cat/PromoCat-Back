@@ -42,7 +42,6 @@ public class User extends AbstractAccount {
     private Double totalDistance = 0.0;
     private Double totalEarnings = 0.0;
     private UserStatus status;
-    private Boolean termsOfUseStatus;
     private String account;
     private String inn;
 
@@ -129,14 +128,6 @@ public class User extends AbstractAccount {
     @Column(name = "status")
     public UserStatus getStatus() {
         return status;
-    }
-
-    /**
-     * Статус соглашение с пользователським соглашением.
-     */
-    @Column(name = "terms_of_use")
-    public Boolean getTermsOfUseStatus() {
-        return termsOfUseStatus;
     }
 
     @Pattern(regexp = "\\d{5}.\\d{3}.\\d{1}.\\d{11}",
