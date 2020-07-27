@@ -33,7 +33,7 @@ public final class PostCancelReceiptRequestV2 extends AbstractOperation {
      * Код причины аннулирования чека.
      */
     @XmlField("ReasonCode")
-    private ReasonCode message;
+    private String message;
 
     @Override
     public Class<? extends AbstractOperation> getResponseClass() {

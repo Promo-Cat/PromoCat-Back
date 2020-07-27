@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.constraints.XmlField;
+import org.promocat.promocat.constraints.XmlInnerObject;
 
 import java.util.List;
 
@@ -25,5 +26,6 @@ public final class NotificationsResponse {
      * Список оповещений.
      */
     @XmlField("notif")
+    @XmlInnerObject(Notif.class)
     private List<Notif> notifs;
 }

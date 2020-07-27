@@ -7,8 +7,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface XmlInnerObject {
 
-    String value();
-
-    Class<?> fieldClass();
+    Class<?> value();
 
 }

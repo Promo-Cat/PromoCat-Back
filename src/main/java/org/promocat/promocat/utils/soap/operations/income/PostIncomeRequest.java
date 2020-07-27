@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.constraints.XmlField;
+import org.promocat.promocat.constraints.XmlInnerObject;
 import org.promocat.promocat.utils.soap.attributes.IncomeType;
 import org.promocat.promocat.utils.soap.operations.AbstractOperation;
 import org.promocat.promocat.utils.soap.operations.pojo.IncomeService;
@@ -44,7 +45,7 @@ public final class PostIncomeRequest extends AbstractOperation {
      * Источник/Тип дохода.
      */
     @XmlField("IncomeType")
-    private IncomeType incomeType;
+    private String incomeType;
 
     /**
      * ИНН покупателя.
@@ -56,6 +57,7 @@ public final class PostIncomeRequest extends AbstractOperation {
      * Список услуг.
      */
     @XmlField("Services")
+    @XmlInnerObject(IncomeService.class)
     private List<IncomeService> services;
 
     /**
