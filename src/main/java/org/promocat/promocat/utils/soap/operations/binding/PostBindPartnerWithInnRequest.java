@@ -1,18 +1,23 @@
-package org.promocat.promocat.utils.soap.operations;
+package org.promocat.promocat.utils.soap.operations.binding;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.promocat.promocat.constraints.XmlField;
 import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
+import org.promocat.promocat.utils.soap.operations.AbstractOperation;
 
 import java.util.List;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 10:32 24.07.2020
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
-public final class PostBindPartnerWithInnRequest {
+@NoArgsConstructor
+public final class PostBindPartnerWithInnRequest extends AbstractOperation {
 
     /**
      * ИНН налогоплательщика.
@@ -26,4 +31,8 @@ public final class PostBindPartnerWithInnRequest {
     @XmlField("Permissions")
     private List<ConnectionPermissions> permissions;
 
+    @Override
+    public Class<? extends AbstractOperation> getResponseClass() {
+        return PostBindPartnerWithInnRequest.class;
+    }
 }

@@ -1,13 +1,14 @@
 package org.promocat.promocat.utils.soap;
 
-import com.sun.xml.bind.XmlAccessorFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.constraints.XmlField;
 import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
 import org.promocat.promocat.utils.soap.operations.AbstractOperation;
-import org.promocat.promocat.utils.soap.operations.PostBindPartnerWithPhoneRequest;
-import org.promocat.promocat.utils.soap.operations.PostBindPartnerWithPhoneResponse;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
 import org.promocat.promocat.utils.soap.operations.SendMessageResponse;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
@@ -18,19 +19,16 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -184,6 +182,15 @@ public class SoapClient {
         SoapClient client = new SoapClient();
         PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse)client.send(op);
         log.info("Post bind hue mae id {}", response.getId());
+//
+//        GetBindPartnerStatusRequest getStatusOp = new GetBindPartnerStatusRequest(
+//                response.getId()
+//        );
+//
+//        GetBindPartnerStatusResponse statusResponse = (GetBindPartnerStatusResponse)client.send(getStatusOp);
+//
+//        log.info("Result: {}", statusResponse.getResult());
+//        log.info("Inn: {}", statusResponse.getInn());
     }
 
 }
