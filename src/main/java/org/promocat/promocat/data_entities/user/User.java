@@ -141,14 +141,14 @@ public class User extends AbstractAccount {
 
     @Pattern(regexp = "\\d{5}.\\d{3}.\\d{1}.\\d{11}",
             message = "Расчетный счет должен соответствовать шаблону: XXXXX.XXX.X.XXXXXXXXXXX")
-    @Column(name = "account")
+    @Column(name = "account", unique = true)
     public String getAccount() {
         return account;
     }
 
     @Pattern(regexp = "\\d{10}",
             message = "ИНН должен соответствовать шаблону: XXXXXXXXXX")
-    @Column(name = "inn")
+    @Column(name = "inn", unique = true)
     public String getInn() {
         return inn;
     }

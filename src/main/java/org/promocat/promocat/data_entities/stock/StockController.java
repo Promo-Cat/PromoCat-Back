@@ -160,7 +160,7 @@ public class StockController {
             @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
-    @RequestMapping(path = "/api/company/stock/{id}/poster/preview", method = RequestMethod.GET)
+    @RequestMapping(path = "/data/company/stock/{id}/poster/preview", method = RequestMethod.GET)
     public ResponseEntity<Resource> getPosterPreview(@PathVariable("id") Long id,
                                                      @RequestHeader("token") String token) {
         Long companyId = companyService.findByToken(token).getId();
