@@ -30,16 +30,36 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Класс который реализует логику общения с SOAP сервисом налоговой.
+ */
 @Component
 @Slf4j
 public class SoapClient {
 
+    /**
+     * Просто строка SOAP запроса на получение временного токена.
+     */
     private static final String TOKEN_REQUEST = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"urn://x-artefacts-gnivc-ru/inplat/servin/OpenApiMessageConsumerService/types/1.0\"><soapenv:Header/><soapenv:Body><ns:GetMessageRequest><ns:Message><ns1:AuthRequest xmlns:ns1=\"urn://x-artefacts-gnivc-ru/ais3/kkt/AuthService/types/1.0\"><ns1:AuthAppInfo><ns1:MasterToken>dPymKnYFZufero6MW3wcpF8p7lgrQefCOGxTlhgwdvYo08RXzKGQqPyrzl7k0tuHgfMFtWNbgC1FpioqtnHMyQkYATlFEycH5pIb54vQNj7eBXlQyCey4Axgvf2tZNRZ</ns1:MasterToken></ns1:AuthAppInfo></ns1:AuthRequest></ns:Message></ns:GetMessageRequest></soapenv:Body></soapenv:Envelope>";
+    /**
+     * {@code URL} на который будут отправляться все запросы
+     */
     private static final String API_URL = "https://himself-ktr-api.nalog.ru:8090/ais3/smz/SmzIntegrationService";
 
+    /**
+     * Последний полученный временный токен
+     */
     private String token;
+    /**
+     * Время, когда {@code token} просрочится
+     */
     private ZonedDateTime tokenExpireTime;
 
+    /**
+     * Запрашивает у SOAP сервиса налоговой новый токен.
+     * @return Свежий токен
+     * @throws IOException
+     */
     private String getNewToken() throws IOException {
         log.info("Getting new token");
         URL url = new URL("https://himself-ktr-api.nalog.ru:8090/open-api/AuthService");
@@ -63,6 +83,11 @@ public class SoapClient {
         return parseTokenXml(content.toString());
     }
 
+    /**
+     * Достаёт из {@code xml} значение нового токена и устанавливает его значение в {@code token} и время жизни в {@code tokenExpireTime}
+     * @param xml Ответ на запрос токена в формате XML.
+     * @return новый токен из {@code xml}
+     */
     private String parseTokenXml(String xml) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -84,6 +109,11 @@ public class SoapClient {
         return null;
     }
 
+    /**
+     * Возвращает "живой" токен.
+     * Если токен, который на данный момент хранится в поле {@code token} просрочился - запрашивает новый.
+     * @return актуальный токен
+     */
     public synchronized String getToken() {
         if (token == null || tokenExpireTime.isBefore(ZonedDateTime.now())) {
             log.info("Token has expired. Getting new one.");
@@ -96,6 +126,11 @@ public class SoapClient {
         return this.token;
     }
 
+    /**
+     * Метод, который создаёт запрос к SOAP сервису и отправляет его.
+     * @param operation Объект класса-наследника {@link AbstractOperation}, который описывает необходимую операцию
+     * @return объект класса, связанного с {@code operation}
+     */
     @SneakyThrows
     public Object send(AbstractOperation operation) {
         SoapRequest request = new SoapSendMessageRequest(operation, getToken());
@@ -128,6 +163,12 @@ public class SoapClient {
         }
     }
 
+    /**
+     * Достаёт {@code messageId} из ответа на запрос {@code GetMessage}
+     * В дальнейшем этот {@code messageId} используется для получения ответа на запрос
+     * @param message Ответ сервера на запрос, в котором хранится идентификатор сообщения с ответом
+     * @return идентификатор сообщения с ответом на запрос
+     */
     private String getMessageId(SOAPMessage message) {
         NodeList messageIdNode = null;
         try {
@@ -174,6 +215,7 @@ public class SoapClient {
         return res;
     }
 
+    // tests
     public static void main(String[] args) {
         PostBindPartnerWithPhoneRequest op = new PostBindPartnerWithPhoneRequest(
                 "79062587099",

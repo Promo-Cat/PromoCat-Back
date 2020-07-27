@@ -534,7 +534,7 @@ public class CompanyController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
             @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
     })
-    @RequestMapping(path = {"admin/poster/example",
+    @RequestMapping(path = {"/admin/poster/example",
             "/api/company/poster/example"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getPosterExample() {
         MultiPartFileDTO poster = adminService.getPosterExample();

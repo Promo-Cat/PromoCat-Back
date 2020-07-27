@@ -280,6 +280,17 @@ public class StockService {
         return inactiveStocks.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
+    /**
+     * Получение всех акций с одним статусом.
+     *
+     * @param status
+     * @return Список {@ling StockDTO}.
+     */
+    public List<StockDTO> getStockByStatus(StockStatus status) {
+        List<Stock> stocks = repository.getByStatusEquals(status);
+        return stocks.stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
 //    /**
 //     * Получение всех промокодов.
 //     *

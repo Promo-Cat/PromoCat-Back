@@ -11,19 +11,16 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.stock.csvFile.CSVFileService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
-import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.MultiPartFileDTO;
-import org.promocat.promocat.dto.PosterDTO;
-import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
-import org.promocat.promocat.utils.CSVGenerator;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -46,19 +44,18 @@ public class StockController {
     private final PosterService posterService;
     private final MultiPartFileUtils multiPartFileUtils;
     private final CSVFileService csvFileService;
-    private final CSVGenerator csvGenerator;
 
     @Autowired
     public StockController(final StockService stockService,
                            final CompanyService companyService,
                            final PosterService posterService,
-                           final MultiPartFileUtils multiPartFileUtils, CSVFileService csvFileService, CSVGenerator csvGenerator) {
+                           final MultiPartFileUtils multiPartFileUtils,
+                           final CSVFileService csvFileService) {
         this.stockService = stockService;
         this.companyService = companyService;
         this.posterService = posterService;
         this.multiPartFileUtils = multiPartFileUtils;
         this.csvFileService = csvFileService;
-        this.csvGenerator = csvGenerator;
     }
 
     @ApiOperation(value = "Create stock",
@@ -160,7 +157,7 @@ public class StockController {
             @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
-    @RequestMapping(path = "/api/company/stock/{id}/poster/preview", method = RequestMethod.GET)
+    @RequestMapping(path = "/data/company/stock/{id}/poster/preview", method = RequestMethod.GET)
     public ResponseEntity<Resource> getPosterPreview(@PathVariable("id") Long id,
                                                      @RequestHeader("token") String token) {
         Long companyId = companyService.findByToken(token).getId();
@@ -202,15 +199,25 @@ public class StockController {
             notes = "Get file for this stock. file in .csv format.",
             response = String.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
-            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
             @ApiResponse(code = 404, message = "File not found", response = ApiException.class),
-            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
     @RequestMapping(path = "/admin/stock/csvFile", method = RequestMethod.GET)
     public ResponseEntity<Resource> getCSVFile(@PathParam("name") String name) {
         return csvFileService.getFile(name);
+    }
+
+    @ApiOperation(value = "Delete file",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "File not found", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
+    })
+    @RequestMapping(path = "/admin/stock/delete/csvFile/{name}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteFile(@PathVariable("name") String name) {
+        CSVFileDTO file = csvFileService.findByName(name);
+        csvFileService.delete(file.getId());
+        return ResponseEntity.ok("{}");
     }
 
     // ------ Admin methods ------
@@ -237,6 +244,22 @@ public class StockController {
 //                "Stock with id: %d is already %s", id, stock.getIsAlive() ? "activated" : "deactivated"));
 //    }
 
+    @ApiOperation(value = "Set startTime stock",
+            notes = "Setting startTIme for stock by id",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
+    })
+    @RequestMapping(path = "/admin/stock/setTime/{id}", method = RequestMethod.POST)
+    public ResponseEntity<String> setStartTime(@PathVariable("id") Long id,
+                                               @RequestParam("time")
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time) {
+        StockDTO stock = stockService.findById(id);
+        stock.setStartTime(time);
+        stockService.save(stock);
+        return ResponseEntity.ok("{}");
+    }
 
     @ApiOperation(value = "Deactivate stock.",
             notes = "Returning stock with id specified in request",
@@ -301,6 +324,20 @@ public class StockController {
     @RequestMapping(value = "/admin/stock/inactive", method = RequestMethod.GET)
     public ResponseEntity<List<StockDTO>> getAllInactiveStock() {
         return ResponseEntity.ok(stockService.getAllInactive());
+    }
+
+    @ApiOperation(value = "Get all stocks by status",
+            notes = "Getting all stocks",
+            response = StockDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/stock/status", method = RequestMethod.GET)
+    public ResponseEntity<List<StockDTO>> getStockByStatus(@RequestParam("status") StockStatus status) {
+        return ResponseEntity.ok(stockService.getStockByStatus(status));
     }
 //    @ApiOperation(value = "Set new status for stock",
 //            notes = "Set confirmed without prepay",

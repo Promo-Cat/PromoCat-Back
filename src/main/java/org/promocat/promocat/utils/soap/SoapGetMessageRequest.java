@@ -13,6 +13,9 @@ public class SoapGetMessageRequest extends SoapRequest {
         this.method = "GetMessageRequest";
     }
 
+    /**
+     * Переопределённый метод создания сообщения. Так как GetMessageRequest и SendMessageRequest немного отличаются структурой
+     */
     @Override
     public SOAPMessage createMessage() {
         try {
@@ -28,7 +31,7 @@ public class SoapGetMessageRequest extends SoapRequest {
                     .addChildElement(method, "ns")
                     .addChildElement("MessageId", "ns");
             operationBody.setTextContent(((SendMessageResponse)pojo).getMessageId());
-            getHeaders(soapMessage.getMimeHeaders());
+            setHeaders(soapMessage.getMimeHeaders());
             soapMessage.saveChanges();
             System.out.println("\n---------------REQUEST--------------\n");
             soapMessage.writeTo(System.out);
