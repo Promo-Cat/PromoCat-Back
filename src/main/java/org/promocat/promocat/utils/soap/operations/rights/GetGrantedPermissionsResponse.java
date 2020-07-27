@@ -23,7 +23,7 @@ public final class GetGrantedPermissionsResponse extends AbstractOperation {
      * Список разрешений предоставленых партнеру.
      */
     @XmlField("GrantedPermissionsList")
-    private List<ConnectionPermissions> grantedPermissionsList;
+    private List<String> grantedPermissionsList;
 
     @Override
     public Class<? extends AbstractOperation> getResponseClass() {

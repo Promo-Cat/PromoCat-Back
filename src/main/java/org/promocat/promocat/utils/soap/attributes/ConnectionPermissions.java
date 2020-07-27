@@ -3,50 +3,50 @@ package org.promocat.promocat.utils.soap.attributes;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 10:49 24.07.2020
  */
-public enum ConnectionPermissions {
+public class ConnectionPermissions {
 
     /**
      * Отражение дохода от моего имени.
      */
-    INCOME_REGISTRATION,
+    public static String INCOME_REGISTRATION = "INCOME_REGISTRATION";
 
     /**
      * Получение информации по моим налоговым начислениям.
      */
-    PAYMENT_INFORMATION,
+    public static String PAYMENT_INFORMATION = "PAYMENT_INFORMATION";
 
     /**
      * Оплата налоговых начислений от моего имени.
      */
-    TAX_PAYMENT,
+    public static String TAX_PAYMENT = "TAX_PAYMENT";
 
     /**
      * Получение информации по моим доходам
      */
-    INCOME_LIST,
+    public static String INCOME_LIST = "INCOME_LIST";
 
     /**
      * Получение сводной информации о доходе
      */
-    INCOME_SUMMARY,
+    public static String INCOME_SUMMARY = "INCOME_SUMMARY";
 
     /**
      * Корректировка сведений о моих доходах, поданных Партнером
      */
-    CANCEL_INCOME,
+    public static String CANCEL_INCOME = "CANCEL_INCOME";
 
     /**
      * Корректировка сведений о моих доходах без ограничений
      */
-    CANCEL_ANY_INCOME,
+    public static String CANCEL_ANY_INCOME = "CANCEL_ANY_INCOME";
 
     /**
      * Корректировка сведений моего профиля
      */
-    TAXPAYER_UPDATE,
+    public static String TAXPAYER_UPDATE = "TAXPAYER_UPDATE";
 
     /**
      * Управление Партнерами
      */
-    PERMISSIONS_MGMT
+    public static String PERMISSIONS_MGMT = "PERMISSIONS_MGMT";
 }

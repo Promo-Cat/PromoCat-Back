@@ -29,7 +29,7 @@ public final class PostBindPartnerWithInnRequest extends AbstractOperation {
      * Список разрешений, которые запрашиваются у налогоплательщика.
      */
     @XmlField("Permissions")
-    private List<ConnectionPermissions> permissions;
+    private List<String> permissions;
 
     @Override
     public Class<? extends AbstractOperation> getResponseClass() {

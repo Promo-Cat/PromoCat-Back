@@ -53,6 +53,7 @@ public abstract class SoapRequest {
             response = soapConnection.call(createMessage(), destinationURL);
             System.out.println("\n----------RESPONSE------------\n");
             response.writeTo(System.out);
+            System.out.println("\n");
             soapConnection.close();
             // FIXME: 23.07.2020 IOException
         } catch (SOAPException | IOException e) {
@@ -94,6 +95,7 @@ public abstract class SoapRequest {
             soapMessage.saveChanges();
             System.out.println("\n---------------REQUEST--------------\n");
             soapMessage.writeTo(System.out);
+            System.out.println("\n");
 
             return soapMessage;
         } catch (SOAPException e) {

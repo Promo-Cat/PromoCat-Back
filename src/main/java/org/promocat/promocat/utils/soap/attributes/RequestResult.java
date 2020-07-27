@@ -3,20 +3,20 @@ package org.promocat.promocat.utils.soap.attributes;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 11:05 24.07.2020
  */
-public enum RequestResult {
+public class RequestResult {
 
     /**
      * Заявка на выдачу прав рассмотрена
      */
-    COMPLETED,
+    public static String COMPLETED = "COMPLETED";
 
     /**
      * Заявка на выдачу прав отклонена
      */
-    FAILED,
+    public static String FAILED = "FAILED";
 
     /**
      * Заявка на выдачу прав находится на рассмотрении
      */
-    IN_PROGRESS
+    public static String IN_PROGRESS = "IN_PROGRESS";
 }
