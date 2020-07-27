@@ -20,6 +20,7 @@ import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -242,6 +244,22 @@ public class StockController {
 //                "Stock with id: %d is already %s", id, stock.getIsAlive() ? "activated" : "deactivated"));
 //    }
 
+    @ApiOperation(value = "Set startTime stock",
+            notes = "Setting startTIme for stock by id",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
+    })
+    @RequestMapping(path = "/admin/stock/setTime/{id}", method = RequestMethod.POST)
+    public ResponseEntity<String> setStartTime(@PathVariable("id") Long id,
+                                               @RequestParam("time")
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time) {
+        StockDTO stock = stockService.findById(id);
+        stock.setStartTime(time);
+        stockService.save(stock);
+        return ResponseEntity.ok("{}");
+    }
 
     @ApiOperation(value = "Deactivate stock.",
             notes = "Returning stock with id specified in request",
