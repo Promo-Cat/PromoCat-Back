@@ -268,20 +268,6 @@ public class UserController {
         return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
     }
 
-
-    @ApiOperation(value = "Accept terms of use", notes = "Accepting terms of use for user", response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
-            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
-    })
-    @RequestMapping(value = "/api/user/acceptTermsOfUse", method = RequestMethod.POST)
-    public ResponseEntity<String> acceptTermsOfUse(@RequestHeader("token") final String token) {
-        UserDTO user = userService.findByToken(token);
-        user.setTermsOfUseStatus(true);
-        updateUser(user, token);
-        return ResponseEntity.ok("{}");
-    }
-
     @ApiOperation(value = "Get active stocks", notes = "Getting all active stocks",
             response = StockDTO.class, responseContainer = "List")
     @ApiResponses(value = {

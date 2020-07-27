@@ -97,11 +97,6 @@ public class UserDTO extends AbstractAccountDTO {
     )
     private UserStatus status;
 
-    @ApiModelProperty(value = "Terms of use status. True if user accepted terms of use, else otherwise.",
-            dataType = "Boolean"
-    )
-    private Boolean termsOfUseStatus = false;
-
     @Pattern(regexp = "\\d{5}.\\d{3}.\\d.\\d{11}",
             message = "Расчетный счет должен соответствовать шаблону XXXXX.XXX.X.XXXXXXXXXXX")
     @ApiModelProperty(
