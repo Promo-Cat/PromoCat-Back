@@ -12,12 +12,14 @@ import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.constraints.RequiredForFull;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
 
 @ApiModel(
         value = "User",
-        description = "Object representation of user of PromoCat application."
+        description = "Object representation of user of PromoCat application." +
+                "Users mail, users city are required for full registration."
 )
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
@@ -67,7 +69,6 @@ public class UserDTO extends AbstractAccountDTO {
     @ApiModelProperty(
             value = "Users movement",
             dataType = "List of Movement entities",
-            required = true,
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -100,6 +101,24 @@ public class UserDTO extends AbstractAccountDTO {
             dataType = "Boolean"
     )
     private Boolean termsOfUseStatus = false;
+
+    @Pattern(regexp = "\\d{5}.\\d{3}.\\d.\\d{11}",
+            message = "Расчетный счет должен соответствовать шаблону XXXXX.XXX.X.XXXXXXXXXXX")
+    @ApiModelProperty(
+            value = "Users account",
+            dataType = "String"
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String account;
+
+    @Pattern(regexp = "\\d{10}",
+            message = "ИНН должен соответствовать шаблону: XXXXXXXXXX")
+    @ApiModelProperty(
+            value = "Users inn",
+            dataType = "String"
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String inn;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);

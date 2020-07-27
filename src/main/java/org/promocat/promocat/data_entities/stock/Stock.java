@@ -26,7 +26,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -47,7 +46,7 @@ public class Stock extends AbstractEntity {
     private Long duration;
     private Set<Movement> movements;
     private Set<StockCity> cities;
-    private Double panel;
+    private Double fare;
     private Double prepayment;
     private Double postpayment;
     private Poster poster;
@@ -57,8 +56,8 @@ public class Stock extends AbstractEntity {
      * Берётся из {@link Parameters} в момент создания акции.
      */
     @Column(name = "panel")
-    public Double getPanel() {
-        return panel;
+    public Double getFare() {
+        return fare;
     }
 
     // TODO docs

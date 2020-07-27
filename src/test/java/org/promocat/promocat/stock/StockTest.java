@@ -1,5 +1,6 @@
 package org.promocat.promocat.stock;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -11,6 +12,7 @@ import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.stock.StockRepository;
 import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.utils.CSVGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,12 +24,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -45,6 +46,9 @@ public class StockTest {
 
     @Autowired
     BeforeAll beforeAll;
+
+    @Autowired
+    CSVGenerator csvGenerator;
 
     @Autowired
     StockRepository stockRepository;
@@ -203,5 +207,20 @@ public class StockTest {
     public void testDeleteWithIncorrectId() throws Exception {
         this.mockMvc.perform(delete("/admin/stock/222").header("token", beforeAll.adminToken))
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetStockByStatus() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/admin/stock/status?status=ACTIVE")
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<StockDTO> stocks = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertEquals(stocks.size(), 2);
+        assertEquals(stocks.get(0).getId(), beforeAll.stock1DTO.getId());
+        assertEquals(stocks.get(1).getId(), beforeAll.stock2DTO.getId());
+        assertEquals(stocks.get(0).getName(), beforeAll.stock1DTO.getName());
+        assertEquals(stocks.get(1).getName(), beforeAll.stock2DTO.getName());
     }
 }
