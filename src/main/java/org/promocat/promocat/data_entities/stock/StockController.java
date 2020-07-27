@@ -199,10 +199,7 @@ public class StockController {
             notes = "Get file for this stock. file in .csv format.",
             response = String.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 403, message = "Not company`s stock", response = ApiException.class),
-            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
             @ApiResponse(code = 404, message = "File not found", response = ApiException.class),
-            @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
     @RequestMapping(path = "/admin/stock/csvFile", method = RequestMethod.GET)
@@ -210,6 +207,12 @@ public class StockController {
         return csvFileService.getFile(name);
     }
 
+    @ApiOperation(value = "Delete file",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "File not found", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
+    })
     @RequestMapping(path = "/admin/stock/delete/csvFile/{name}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteFile(@PathVariable("name") String name) {
         CSVFileDTO file = csvFileService.findByName(name);
