@@ -14,7 +14,7 @@ import org.promocat.promocat.utils.soap.operations.AbstractOperation;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetTaxpayerStatusRequest extends AbstractOperation {
+public final class GetTaxpayerStatusRequest extends AbstractOperation {
 
     /**
      * ИНН НП.
