@@ -302,6 +302,20 @@ public class StockController {
     public ResponseEntity<List<StockDTO>> getAllInactiveStock() {
         return ResponseEntity.ok(stockService.getAllInactive());
     }
+
+    @ApiOperation(value = "Get all stocks by status",
+            notes = "Getting all stocks",
+            response = StockDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/stock/status", method = RequestMethod.GET)
+    public ResponseEntity<List<StockDTO>> getStockByStatus(@RequestParam("status") StockStatus status) {
+        return ResponseEntity.ok(stockService.getStockByStatus(status));
+    }
 //    @ApiOperation(value = "Set new status for stock",
 //            notes = "Set confirmed without prepay",
 //            response = String.class)
