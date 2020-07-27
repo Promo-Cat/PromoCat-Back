@@ -16,7 +16,6 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
-import org.promocat.promocat.utils.CSVGenerator;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,19 +42,18 @@ public class StockController {
     private final PosterService posterService;
     private final MultiPartFileUtils multiPartFileUtils;
     private final CSVFileService csvFileService;
-    private final CSVGenerator csvGenerator;
 
     @Autowired
     public StockController(final StockService stockService,
                            final CompanyService companyService,
                            final PosterService posterService,
-                           final MultiPartFileUtils multiPartFileUtils, CSVFileService csvFileService, CSVGenerator csvGenerator) {
+                           final MultiPartFileUtils multiPartFileUtils,
+                           final CSVFileService csvFileService) {
         this.stockService = stockService;
         this.companyService = companyService;
         this.posterService = posterService;
         this.multiPartFileUtils = multiPartFileUtils;
         this.csvFileService = csvFileService;
-        this.csvGenerator = csvGenerator;
     }
 
     @ApiOperation(value = "Create stock",
