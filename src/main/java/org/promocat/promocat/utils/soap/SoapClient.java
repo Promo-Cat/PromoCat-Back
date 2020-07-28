@@ -5,12 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.constraints.XmlField;
 import org.promocat.promocat.constraints.XmlInnerObject;
 import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
+import org.promocat.promocat.utils.soap.attributes.NotificationStatus;
 import org.promocat.promocat.utils.soap.operations.AbstractOperation;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
 import org.promocat.promocat.utils.soap.operations.SendMessageResponse;
+import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsRequest;
+import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsResponse;
+import org.promocat.promocat.utils.soap.operations.pojo.NotificationsRequest;
 import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsRequest;
 import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsResponse;
 import org.springframework.stereotype.Component;
@@ -102,8 +106,8 @@ public class SoapClient {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(new InputSource(new StringReader(xml)));
 
-            NodeList token = document.getElementsByTagName("Token");
-            NodeList expireTime = document.getElementsByTagName("ExpireTime");
+            NodeList token = document.getElementsByTagName("ns2:Token");
+            NodeList expireTime = document.getElementsByTagName("ns2:ExpireTime");
             if (token.getLength() == 0) {
                 log.error("Token doesn`t present");
             }
@@ -205,7 +209,7 @@ public class SoapClient {
         if (xml.getElementsByTagName(pojoClass.getSimpleName()).getLength() == 0) {
             log.error("Response doesn`t apply presented POJO class");
             // TODO: 24.07.2020 EXCEPTION (pojoClass doesn`t same with SOAP response body type)
-            throw new RuntimeException("");
+            throw new RuntimeException(pojoClass.getSimpleName());
         }
         Object res = pojoClass.getDeclaredConstructor().newInstance();
         for (Field field : pojoClass.getDeclaredFields()) {
@@ -217,7 +221,7 @@ public class SoapClient {
                 Object value = fieldIsList ? new ArrayList<>() : null;
                 for (int i = 0; i < fieldValueInResponseNode.getLength(); i++) {
                     Object temp = field.isAnnotationPresent(XmlInnerObject.class) ?
-                            soapXmlToPOJO(xml, field.getAnnotation(XmlInnerObject.class).fieldClass()) :
+                            soapXmlToPOJO(xml, field.getAnnotation(XmlInnerObject.class).value()) :
 //                            field.isEnumConstant() ? field.set(res, Enum.valueOf());:
                             fieldValueInResponseNode.item(i).getFirstChild().getNodeValue();
                     if (fieldIsList) {
@@ -257,6 +261,16 @@ public class SoapClient {
         GetGrantedPermissionsResponse response = (GetGrantedPermissionsResponse) client.send(op);
 
         response.getGrantedPermissionsList().forEach(System.out::println);
+
+        GetNotificationsRequest op2 = new GetNotificationsRequest();
+        NotificationsRequest r = new NotificationsRequest();
+        r.setInn("471204164572");
+        r.setGetAcknowleged(true);
+        r.setGetArchived(true);
+        op2.setNotificationsRequest(List.of(r));
+        GetNotificationsResponse resp = (GetNotificationsResponse) client.send(op2);
+
+        resp.getNotificationsResponse();
     }
 
 }
