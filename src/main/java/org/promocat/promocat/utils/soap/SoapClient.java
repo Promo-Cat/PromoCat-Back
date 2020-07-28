@@ -157,7 +157,7 @@ public class SoapClient {
             responseOptional = getRequest.send(API_URL);
             if (responseOptional.isPresent()) {
                 try {
-                    return soapXmlToPOJO(responseOptional.get().getSOAPBody(), operation.getResponseClass());
+                    return soapXmlToPOJO(responseOptional.get().getSOAPBody(), operation.getResponseClass(), false);
                 } catch (SOAPException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
@@ -205,8 +205,8 @@ public class SoapClient {
      * @param pojoClass class of object that will be returned
      * @return new object with values from {@code SOAPMessage}
      */
-    public Object soapXmlToPOJO(Element xml, Class<?> pojoClass) throws SOAPException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        if (xml.getElementsByTagName(pojoClass.getSimpleName()).getLength() == 0) {
+    public Object soapXmlToPOJO(Element xml, Class<?> pojoClass, boolean inner) throws SOAPException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        if (!inner && xml.getElementsByTagName(pojoClass.getSimpleName()).getLength() == 0) {
             log.error("Response doesn`t apply presented POJO class");
             // TODO: 24.07.2020 EXCEPTION (pojoClass doesn`t same with SOAP response body type)
             throw new RuntimeException(pojoClass.getSimpleName());
@@ -221,9 +221,11 @@ public class SoapClient {
                 Object value = fieldIsList ? new ArrayList<>() : null;
                 for (int i = 0; i < fieldValueInResponseNode.getLength(); i++) {
                     Object temp = field.isAnnotationPresent(XmlInnerObject.class) ?
-                            soapXmlToPOJO(xml, field.getAnnotation(XmlInnerObject.class).value()) :
-//                            field.isEnumConstant() ? field.set(res, Enum.valueOf());:
+                            soapXmlToPOJO((Element)fieldValueInResponseNode.item(i), field.getAnnotation(XmlInnerObject.class).value(), true) :
                             fieldValueInResponseNode.item(i).getFirstChild().getNodeValue();
+                    if (field.getType() == ZonedDateTime.class) {
+                        temp = ZonedDateTime.parse((String) temp);
+                    }
                     if (fieldIsList) {
                         ((List) value).add(temp);
                     } else {
