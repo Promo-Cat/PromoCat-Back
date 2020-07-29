@@ -1,10 +1,11 @@
-package org.promocat.promocat.utils.soap.operations;
+package org.promocat.promocat.utils.soap.operations.binding;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.constraints.XmlField;
+import org.promocat.promocat.utils.soap.operations.AbstractOperation;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 11:35 24.07.2020

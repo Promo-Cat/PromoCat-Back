@@ -1,16 +1,25 @@
 package org.promocat.promocat.utils.soap;
 
-import com.sun.xml.bind.XmlAccessorFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.constraints.XmlField;
+import org.promocat.promocat.constraints.XmlInnerObject;
 import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
+import org.promocat.promocat.utils.soap.attributes.NotificationStatus;
 import org.promocat.promocat.utils.soap.operations.AbstractOperation;
-import org.promocat.promocat.utils.soap.operations.PostBindPartnerWithPhoneRequest;
-import org.promocat.promocat.utils.soap.operations.PostBindPartnerWithPhoneResponse;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
 import org.promocat.promocat.utils.soap.operations.SendMessageResponse;
+import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsRequest;
+import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsResponse;
+import org.promocat.promocat.utils.soap.operations.pojo.NotificationsRequest;
+import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsRequest;
+import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsResponse;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -25,12 +34,11 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Класс который реализует логику общения с SOAP сервисом налоговой.
@@ -59,6 +67,7 @@ public class SoapClient {
 
     /**
      * Запрашивает у SOAP сервиса налоговой новый токен.
+     *
      * @return Свежий токен
      * @throws IOException
      */
@@ -87,6 +96,7 @@ public class SoapClient {
 
     /**
      * Достаёт из {@code xml} значение нового токена и устанавливает его значение в {@code token} и время жизни в {@code tokenExpireTime}
+     *
      * @param xml Ответ на запрос токена в формате XML.
      * @return новый токен из {@code xml}
      */
@@ -96,8 +106,8 @@ public class SoapClient {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(new InputSource(new StringReader(xml)));
 
-            NodeList token = document.getElementsByTagName("Token");
-            NodeList expireTime = document.getElementsByTagName("ExpireTime");
+            NodeList token = document.getElementsByTagName("ns2:Token");
+            NodeList expireTime = document.getElementsByTagName("ns2:ExpireTime");
             if (token.getLength() == 0) {
                 log.error("Token doesn`t present");
             }
@@ -114,6 +124,7 @@ public class SoapClient {
     /**
      * Возвращает "живой" токен.
      * Если токен, который на данный момент хранится в поле {@code token} просрочился - запрашивает новый.
+     *
      * @return актуальный токен
      */
     public synchronized String getToken() {
@@ -130,6 +141,7 @@ public class SoapClient {
 
     /**
      * Метод, который создаёт запрос к SOAP сервису и отправляет его.
+     *
      * @param operation Объект класса-наследника {@link AbstractOperation}, который описывает необходимую операцию
      * @return объект класса, связанного с {@code operation}
      */
@@ -145,7 +157,7 @@ public class SoapClient {
             responseOptional = getRequest.send(API_URL);
             if (responseOptional.isPresent()) {
                 try {
-                    return soapXmlToPOJO(responseOptional.get(), operation.getResponseClass());
+                    return soapXmlToPOJO(responseOptional.get().getSOAPBody(), operation.getResponseClass(), false);
                 } catch (SOAPException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
@@ -168,6 +180,7 @@ public class SoapClient {
     /**
      * Достаёт {@code messageId} из ответа на запрос {@code GetMessage}
      * В дальнейшем этот {@code messageId} используется для получения ответа на запрос
+     *
      * @param message Ответ сервера на запрос, в котором хранится идентификатор сообщения с ответом
      * @return идентификатор сообщения с ответом на запрос
      */
@@ -187,45 +200,79 @@ public class SoapClient {
 
     /**
      * Assembly new object of type {@code pojoClass} from {@code SOAPMessage xml}
-     * @param xml given SOAP xml
+     *
+     * @param xml       given SOAP xml
      * @param pojoClass class of object that will be returned
      * @return new object with values from {@code SOAPMessage}
      */
-    public Object soapXmlToPOJO(SOAPMessage xml, Class<?> pojoClass) throws SOAPException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        if (xml.getSOAPBody().getElementsByTagName(pojoClass.getSimpleName()).getLength() == 0) {
+    public Object soapXmlToPOJO(Element xml, Class<?> pojoClass, boolean inner) throws SOAPException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        if (!inner && xml.getElementsByTagName(pojoClass.getSimpleName()).getLength() == 0) {
             log.error("Response doesn`t apply presented POJO class");
             // TODO: 24.07.2020 EXCEPTION (pojoClass doesn`t same with SOAP response body type)
-            throw new RuntimeException("");
+            throw new RuntimeException(pojoClass.getSimpleName());
         }
         Object res = pojoClass.getDeclaredConstructor().newInstance();
         for (Field field : pojoClass.getDeclaredFields()) {
             if (field.isAnnotationPresent(XmlField.class)) {
-                XmlField annotation = field.getAnnotation(XmlField.class);
-                // TODO: 24.07.2020 List support
-                NodeList fieldValueInResponseNode = xml.getSOAPBody().getElementsByTagName(annotation.value());
-                Object value = null;
-                if (fieldValueInResponseNode.getLength() != 0) {
-                    // TODO: 24.07.2020 Value doesn`t present in xml
-                    value = fieldValueInResponseNode.item(0).getFirstChild().getNodeValue();
-                }
                 field.setAccessible(true);
+                boolean fieldIsList = field.getType() == List.class;
+                XmlField annotation = field.getAnnotation(XmlField.class);
+                NodeList fieldValueInResponseNode = xml.getElementsByTagName(annotation.value());
+                Object value = fieldIsList ? new ArrayList<>() : null;
+                for (int i = 0; i < fieldValueInResponseNode.getLength(); i++) {
+                    Object temp = field.isAnnotationPresent(XmlInnerObject.class) ?
+                            soapXmlToPOJO((Element)fieldValueInResponseNode.item(i), field.getAnnotation(XmlInnerObject.class).value(), true) :
+                            fieldValueInResponseNode.item(i).getFirstChild().getNodeValue();
+                    if (field.getType() == ZonedDateTime.class) {
+                        temp = ZonedDateTime.parse((String) temp);
+                    }
+                    if (fieldIsList) {
+                        ((List) value).add(temp);
+                    } else {
+                        value = temp;
+                    }
+                }
                 field.set(res, value);
                 field.setAccessible(false);
             }
         }
-
         return res;
     }
 
     // tests
     public static void main(String[] args) {
-        PostBindPartnerWithPhoneRequest op = new PostBindPartnerWithPhoneRequest(
-                "79062587099",
-                List.of(ConnectionPermissions.INCOME_REGISTRATION)
-        );
+//        PostBindPartnerWithPhoneRequest op = new PostBindPartnerWithPhoneRequest(
+//                "79062587099",
+//                List.of("INCOME_REGISTRATION")
+//        );
         SoapClient client = new SoapClient();
-        PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse)client.send(op);
-        log.info("Post bind hue mae id {}", response.getId());
+//        PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse) client.send(op);
+//        log.info("Post bind hue mae id {}", response.getId());
+
+//        GetBindPartnerStatusRequest getStatusOp = new GetBindPartnerStatusRequest(
+//                "13396"
+//        );
+//
+//        GetBindPartnerStatusResponse statusResponse = (GetBindPartnerStatusResponse) client.send(getStatusOp);
+//
+//        log.info("Result: {}", statusResponse.getResult());
+//        log.info("Inn: {}", statusResponse.getInn());
+        GetGrantedPermissionsRequest op = new GetGrantedPermissionsRequest(
+                "471204164572"
+        );
+        GetGrantedPermissionsResponse response = (GetGrantedPermissionsResponse) client.send(op);
+
+        response.getGrantedPermissionsList().forEach(System.out::println);
+
+        GetNotificationsRequest op2 = new GetNotificationsRequest();
+        NotificationsRequest r = new NotificationsRequest();
+        r.setInn("471204164572");
+        r.setGetAcknowleged(true);
+        r.setGetArchived(true);
+        op2.setNotificationsRequest(List.of(r));
+        GetNotificationsResponse resp = (GetNotificationsResponse) client.send(op2);
+
+        resp.getNotificationsResponse();
     }
 
 }

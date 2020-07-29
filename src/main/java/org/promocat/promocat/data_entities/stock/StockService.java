@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
+import org.promocat.promocat.data_entities.receipt.ReceiptService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.dto.ReceiptDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -15,6 +17,11 @@ import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.CSVGenerator;
+import org.promocat.promocat.utils.soap.SoapClient;
+import org.promocat.promocat.utils.soap.attributes.IncomeType;
+import org.promocat.promocat.utils.soap.operations.income.PostIncomeRequestV2;
+import org.promocat.promocat.utils.soap.operations.income.PostIncomeResponseV2;
+import org.promocat.promocat.utils.soap.operations.pojo.IncomeService;
 import org.promocat.promocat.validators.StockDurationConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +33,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -51,6 +59,8 @@ public class StockService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final CSVGenerator csvGenerator;
+    private final SoapClient soapClient;
+    private final ReceiptService receiptService;
 
     @Autowired
     public StockService(final StockMapper mapper,
@@ -59,7 +69,10 @@ public class StockService {
                         final CityService cityService,
                         final ParametersService parametersService,
                         final UserRepository userRepository,
-                        final UserMapper userMapper, CSVGenerator csvGenerator) {
+                        final UserMapper userMapper,
+                        final CSVGenerator csvGenerator,
+                        final SoapClient soapClient,
+                        final ReceiptService receiptService) {
         this.mapper = mapper;
         this.repository = repository;
         this.stockCityService = stockCityService;
@@ -68,6 +81,8 @@ public class StockService {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.csvGenerator = csvGenerator;
+        this.soapClient = soapClient;
+        this.receiptService = receiptService;
     }
 
     /**
@@ -151,6 +166,7 @@ public class StockService {
                 e.getCities().stream()
                         .flatMap(x -> x.getUsers().stream())
                         .forEach(y -> {
+                            registerTaxes(y);
                             y.setStockCityId(null);
                             users.add(y);
                             userRepository.save(userMapper.toEntity(y));
@@ -171,6 +187,33 @@ public class StockService {
             stockDTO.setStatus(StockStatus.ACTIVE);
             save(stockDTO);
         }));
+    }
+
+
+    /**
+     * Отправляет оповещение в Налоговую API о зачислении юзеру средств.
+     * В ответ приходит чек, который сохраняется в БД.
+     * @param user Пользователь, которому была произведена выплата.
+     */
+    private void registerTaxes(UserDTO user) {
+
+        PostIncomeRequestV2 op = new PostIncomeRequestV2();
+        op.setCustomerInn(user.getInn());
+        op.setCustomerOrganization("PromoCat");
+        op.setIncomeType(IncomeType.FROM_LEGAL_ENTITY);
+        op.setTotalAmount(user.getBalance());
+        op.setServices(List.of(new IncomeService(user.getBalance(), "Реклама", 1L)));
+        op.setOperationTime(ZonedDateTime.now());
+        op.setRequestTime(ZonedDateTime.now());
+
+        PostIncomeResponseV2 response = (PostIncomeResponseV2) soapClient.send(op);
+
+        ReceiptDTO receipt = new ReceiptDTO();
+        receipt.setReceiptId(response.getReceiptId());
+        receipt.setReceiptLink(response.getLink());
+        receipt.setDateTime(LocalDateTime.now());
+
+        receiptService.save(receipt);
     }
 
     /**

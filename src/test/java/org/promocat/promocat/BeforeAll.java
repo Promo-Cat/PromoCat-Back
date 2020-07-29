@@ -165,7 +165,6 @@ public class BeforeAll {
         user.setMail(mail);
         user.setCity(this.city);
         user.setStatus(status);
-        user.setTermsOfUseStatus(true);
         user.setAccountType(AccountType.USER);
         if (Objects.nonNull(stockCity)) {
             user.setStockCity(stockCityRepository.findById(stockCity.getId()).get());

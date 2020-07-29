@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -82,7 +83,6 @@ public class UserDTO extends AbstractAccountDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double totalDistance;
 
-
     @ApiModelProperty(
             value = "Users total earnings",
             dataType = "Double",
@@ -97,11 +97,6 @@ public class UserDTO extends AbstractAccountDTO {
     )
     private UserStatus status;
 
-    @ApiModelProperty(value = "Terms of use status. True if user accepted terms of use, else otherwise.",
-            dataType = "Boolean"
-    )
-    private Boolean termsOfUseStatus = false;
-
     @Pattern(regexp = "\\d{5}.\\d{3}.\\d.\\d{11}",
             message = "Расчетный счет должен соответствовать шаблону XXXXX.XXX.X.XXXXXXXXXXX")
     @ApiModelProperty(
@@ -111,14 +106,17 @@ public class UserDTO extends AbstractAccountDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String account;
 
-    @Pattern(regexp = "\\d{10}",
-            message = "ИНН должен соответствовать шаблону: XXXXXXXXXX")
+    @Pattern(regexp = "\\d{12}",
+            message = "ИНН должен соответствовать шаблону: XXXXXXXXXXXX")
     @ApiModelProperty(
             value = "Users inn",
             dataType = "String"
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String inn;
+
+    @JsonIgnore
+    private String taxConnectionId;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);
