@@ -150,4 +150,12 @@ public class AdminController {
         MultiPartFileDTO termsOfUse = adminService.getTermsOfUse();
         return posterService.getResourceResponseEntity(termsOfUse);
     }
+
+    @ApiOperation(value = "Register or update PromoCat on \"Moi nalog\".",
+            notes = "Register or update PromoCat on \"Moi nalog\".", response = String.class)
+    @RequestMapping(path = "/admin/tax/register", method = {RequestMethod.PUT, RequestMethod.POST})
+    public ResponseEntity<String> registerPartner() {
+        adminService.registerPartner();
+        return ResponseEntity.ok("{}");
+    }
 }

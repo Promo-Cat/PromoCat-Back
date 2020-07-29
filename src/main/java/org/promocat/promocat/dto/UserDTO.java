@@ -83,7 +83,6 @@ public class UserDTO extends AbstractAccountDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double totalDistance;
 
-
     @ApiModelProperty(
             value = "Users total earnings",
             dataType = "Double",
@@ -107,8 +106,8 @@ public class UserDTO extends AbstractAccountDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String account;
 
-    @Pattern(regexp = "\\d{10}",
-            message = "ИНН должен соответствовать шаблону: XXXXXXXXXX")
+    @Pattern(regexp = "\\d{12}",
+            message = "ИНН должен соответствовать шаблону: XXXXXXXXXXXX")
     @ApiModelProperty(
             value = "Users inn",
             dataType = "String"
