@@ -25,8 +25,6 @@ public class Receipt extends AbstractEntity {
     private String receiptLink;
     private LocalDateTime dateTime;
 
-    @Temporal(TemporalType.DATE)
-
     @Column(name = "receipt_id")
     public String getReceiptId() {
         return receiptId;
