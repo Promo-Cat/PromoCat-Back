@@ -42,7 +42,6 @@ public class CarController {
         this.userService = userService;
     }
 
-    // TODO check user exists
     @ApiOperation(value = "Add car",
             notes = "Adds stock for company with id specified in request.",
             response = CarDTO.class,
