@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -114,6 +115,9 @@ public class UserDTO extends AbstractAccountDTO {
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String inn;
+
+    @JsonIgnore
+    private String taxConnectionId;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);

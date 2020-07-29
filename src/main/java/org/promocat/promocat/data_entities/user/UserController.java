@@ -28,6 +28,12 @@ import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
 import org.promocat.promocat.exception.user.codes.ApiUserStockException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
+import org.promocat.promocat.utils.soap.SoapClient;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
+import org.promocat.promocat.utils.soap.util.TaxUtils;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -53,19 +59,22 @@ public class UserController {
     private final StockService stockService;
     private final StockCityService stockCityService;
     private final UserBanService userBanService;
+    private final SoapClient soapClient;
 
     @Autowired
     public UserController(final UserService userService,
                           final PromoCodeActivationService promoCodeActivationService,
                           final MovementService movementService,
                           final StockService stockService,
-                          final StockCityService stockCityService, UserBanService userBanService) {
+                          final StockCityService stockCityService, UserBanService userBanService,
+                          final SoapClient soapClient) {
         this.userService = userService;
         this.promoCodeActivationService = promoCodeActivationService;
         this.movementService = movementService;
         this.stockService = stockService;
         this.stockCityService = stockCityService;
         this.userBanService = userBanService;
+        this.soapClient = soapClient;
     }
 
 //    @ApiOperation(value = "Registering user",
@@ -285,6 +294,27 @@ public class UserController {
         return ResponseEntity.ok(res);
     }
 
+    @RequestMapping(value = "/api/user/tax/registration", method = RequestMethod.POST)
+    public ResponseEntity<String> registerMyTax(@RequestHeader("token") final String token) {
+        UserDTO user = userService.findByToken(token);
+        PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse)
+                soapClient.send(new PostBindPartnerWithPhoneRequest(user.getTelephone(), TaxUtils.permissions));
+        user.setTaxConnectionId(response.getId());
+        userService.save(user);
+        return ResponseEntity.ok("{}");
+    }
+
+//    @RequestMapping(value = "/api/user/tax/accept", method = RequestMethod.POST)
+//    public ResponseEntity<String> acceptMyTaxRegistration(@RequestHeader("token") final String token) {
+//        UserDTO user = userService.findByToken(token);
+//        GetBindPartnerStatusResponse response = (GetBindPartnerStatusResponse)
+//                soapClient.send(new GetBindPartnerStatusRequest(user.getTaxConnectionId()));
+//        if (response.equals("COMPLETED")) {
+//            return ResponseEntity.ok("{}");
+//        } else {
+//
+//        }
+//    }
     // ------ Admin methods ------
 
     @ApiOperation(value = "Get user by id",

@@ -44,6 +44,7 @@ public class User extends AbstractAccount {
     private UserStatus status;
     private String account;
     private String inn;
+    private String taxConnectionId;
 
     public User(String mail, City city, Double balance, StockCity stockCity) {
         this.mail = mail;
@@ -142,5 +143,10 @@ public class User extends AbstractAccount {
     @Column(name = "inn", unique = true)
     public String getInn() {
         return inn;
+    }
+
+    @Column(name = "tax_connection_id", unique = true)
+    public String getTaxConnectionId() {
+        return taxConnectionId;
     }
 }
