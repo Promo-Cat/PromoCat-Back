@@ -26,9 +26,11 @@ import org.promocat.promocat.exception.user.codes.ApiUserAccountException;
 import org.promocat.promocat.exception.user.codes.ApiUserInnException;
 import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
 import org.promocat.promocat.exception.user.codes.ApiUserStockException;
+import org.promocat.promocat.exception.util.tax.ApiTaxRequestIdException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.soap.SoapClient;
+import org.promocat.promocat.utils.soap.attributes.RequestResult;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
@@ -38,12 +40,20 @@ import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static org.promocat.promocat.utils.soap.attributes.RequestResult.*;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -190,16 +200,20 @@ public class UserController {
                                                     @RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
         if (Objects.isNull(userDTO.getInn())) {
-            throw new ApiUserInnException(String.format("User with telephone: %s doesn't have Inn for participate in the Stock", userDTO.getTelephone()));
+            throw new ApiUserInnException(String.format("User with telephone: %s doesn't have Inn for participate" +
+                    " in the Stock", userDTO.getTelephone()));
         }
         if (Objects.isNull(userDTO.getAccount())) {
-            throw new ApiUserAccountException(String.format("User with telephone: %s doesn't have account for participate in the Stock", userDTO.getTelephone()));
+            throw new ApiUserAccountException(String.format("User with telephone: %s doesn't have account for" +
+                    " participate in the Stock", userDTO.getTelephone()));
         }
         if (Objects.nonNull(userDTO.getStockCityId())) {
-            throw new ApiUserStockException(String.format("User with telephone: %s already participate in the stock", userDTO.getTelephone()));
+            throw new ApiUserStockException(String.format("User with telephone: %s already participate" +
+                    " in the stock", userDTO.getTelephone()));
         }
         if (userDTO.getStatus() != UserStatus.FULL) {
-            throw new ApiUserStatusException(String.format("Status of user with telephone: %s doesn't allow to participate in the Stock", userDTO.getTelephone()));
+            throw new ApiUserStatusException(String.format("Status of user with telephone: %s doesn't allow" +
+                    " to participate in the Stock", userDTO.getTelephone()));
         }
         StockDTO stock = stockService.findById(stockCityService.findById(stockCityId).getStockId());
         if (userBanService.isBanned(userDTO, stock)) {
@@ -294,27 +308,34 @@ public class UserController {
         return ResponseEntity.ok(res);
     }
 
+    @ApiOperation(value = "Register user in \"Moi nalog\".", notes = "Register user in \"Moi nalog\".",
+            response = String.class)
     @RequestMapping(value = "/api/user/tax/registration", method = RequestMethod.POST)
     public ResponseEntity<String> registerMyTax(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
-        PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse)
-                soapClient.send(new PostBindPartnerWithPhoneRequest(user.getTelephone(), TaxUtils.permissions));
-        user.setTaxConnectionId(response.getId());
-        userService.save(user);
+        userService.registerMyTax(user);
         return ResponseEntity.ok("{}");
     }
 
-//    @RequestMapping(value = "/api/user/tax/accept", method = RequestMethod.POST)
-//    public ResponseEntity<String> acceptMyTaxRegistration(@RequestHeader("token") final String token) {
-//        UserDTO user = userService.findByToken(token);
-//        GetBindPartnerStatusResponse response = (GetBindPartnerStatusResponse)
-//                soapClient.send(new GetBindPartnerStatusRequest(user.getTaxConnectionId()));
-//        if (response.equals("COMPLETED")) {
-//            return ResponseEntity.ok("{}");
-//        } else {
-//
-//        }
-//    }
+    @ApiOperation(value = "Register user in \"Moi nalog\".", notes = "Register user in \"Moi nalog\".",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Wrond status", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/tax/accept", method = RequestMethod.POST)
+    public ResponseEntity<String> acceptMyTaxRegistration(@RequestHeader("token") final String token) {
+        UserDTO user = userService.findByToken(token);
+        GetBindPartnerStatusResponse result = userService.getTaxStatus(user);
+        if (COMPLETED.equals(result.getResult())) {
+            user.setInn(result.getInn());
+            userService.save(user);
+            return ResponseEntity.ok("{}");
+        } else {
+            throw new ApiTaxRequestIdException(String.format("Request status is: %s. COMPLETED required",
+                    result.getResult()));
+        }
+    }
+
     // ------ Admin methods ------
 
     @ApiOperation(value = "Get user by id",

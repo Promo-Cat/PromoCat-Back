@@ -22,5 +22,11 @@ public final class TaxUtils {
             INCOME_LIST
     );
 
-
+    public static String reformatPhone(final String phone) {
+        String newPhone = phone.replace("+", "");
+        newPhone = newPhone.replace("(", "");
+        newPhone = newPhone.replace(")", "");
+        newPhone = newPhone.replace("-", "");
+        return newPhone;
+    }
 }

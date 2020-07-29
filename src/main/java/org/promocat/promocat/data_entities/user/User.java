@@ -13,7 +13,14 @@ import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.movement.Movement;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -42,8 +49,11 @@ public class User extends AbstractAccount {
     private Double totalDistance = 0.0;
     private Double totalEarnings = 0.0;
     private UserStatus status;
+    @RequiredForFull
     private String account;
+    @RequiredForFull
     private String inn;
+    @RequiredForFull
     private String taxConnectionId;
 
     public User(String mail, City city, Double balance, StockCity stockCity) {
@@ -58,17 +68,14 @@ public class User extends AbstractAccount {
      * Имя пользователя.
      */
     @Email
-//    @NotBlank(message = "Почта не может быть пустой")
     @Column(name = "mail", unique = true)
     public String getMail() {
         return mail;
     }
 
-    // TODO: 12.07.2020 NotBlank NotNull убрал, что с ними делаем?
     /**
      * Город пользователя.
      */
-//    @NotNull(message = "Город не может быть пустой")
     @ManyToOne
     @JoinColumn(name = "city")
     public City getCity() {
@@ -125,12 +132,21 @@ public class User extends AbstractAccount {
         return totalDistance;
     }
 
+    /**
+     * Статус пользователя.
+     * {@code FULl} если пользователь указал все обязательные поля.
+     * {@code JUST_REGISTERED} если пользователь указал не все обязательные поля.
+     * {@code BANNED} если пользователь забанен
+     */
     @Enumerated
     @Column(name = "status")
     public UserStatus getStatus() {
         return status;
     }
 
+    /**
+     * Расчетный счет.
+     */
     @Pattern(regexp = "\\d{5}.\\d{3}.\\d{1}.\\d{11}",
             message = "Расчетный счет должен соответствовать шаблону: XXXXX.XXX.X.XXXXXXXXXXX")
     @Column(name = "account", unique = true)
@@ -138,13 +154,19 @@ public class User extends AbstractAccount {
         return account;
     }
 
-    @Pattern(regexp = "\\d{10}",
-            message = "ИНН должен соответствовать шаблону: XXXXXXXXXX")
+    /**
+     * ИНН
+     */
+    @Pattern(regexp = "\\d{12}",
+            message = "ИНН должен соответствовать шаблону: XXXXXXXXXXXX")
     @Column(name = "inn", unique = true)
     public String getInn() {
         return inn;
     }
 
+    /**
+     * ID подключения к Мой налог.
+     */
     @Column(name = "tax_connection_id", unique = true)
     public String getTaxConnectionId() {
         return taxConnectionId;
