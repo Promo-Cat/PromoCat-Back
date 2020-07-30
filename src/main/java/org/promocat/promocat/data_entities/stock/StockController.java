@@ -203,7 +203,7 @@ public class StockController {
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
     @RequestMapping(path = "/admin/stock/csvFile", method = RequestMethod.GET)
-    public ResponseEntity<Resource> getCSVFile(@PathParam("name") String name) {
+    public ResponseEntity<Resource> getCSVFile(@PathParam("name") final String name) {
         return csvFileService.getFile(name);
     }
 
@@ -251,8 +251,8 @@ public class StockController {
             @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
-    @RequestMapping(path = "/admin/stock/setTime/{id}", method = RequestMethod.POST)
-    public ResponseEntity<String> setStartTime(@PathVariable("id") Long id,
+    @RequestMapping(path = "/admin/stock/startTime/{id}", method = RequestMethod.POST)
+    public ResponseEntity<String> setStartTime(@PathVariable("id") final Long id,
                                                @RequestParam("time")
                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time) {
         StockDTO stock = stockService.findById(id);

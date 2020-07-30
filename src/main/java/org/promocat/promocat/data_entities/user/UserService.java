@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.user;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
@@ -10,8 +11,8 @@ import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
-import org.promocat.promocat.exception.util.tax.ApiTaxRequestIdException;
 import org.promocat.promocat.mapper.UserMapper;
+import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.JwtReader;
 import org.promocat.promocat.utils.PaymentService;
 import org.promocat.promocat.utils.soap.SoapClient;
@@ -20,6 +21,7 @@ import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusR
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
 import org.promocat.promocat.utils.soap.util.TaxUtils;
+import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +69,23 @@ public class UserService {
     public UserDTO save(final UserDTO dto) {
         log.info("Saving user with telephone: {}", dto.getTelephone());
         return userMapper.toDto(userRepository.save(userMapper.toEntity(dto)));
+    }
+
+    /**
+     * Обновление пользователя.
+     *
+     * @param oldUser старые данные.
+     * @param newUser новые данные.
+     * @return обновленный пользователь.
+     */
+    public UserDTO update(final UserDTO oldUser, final UserDTO newUser) {
+        newUser.setTelephone(oldUser.getTelephone());
+        EntityUpdate.copyNonNullProperties(newUser, oldUser);
+        if (oldUser.getStatus() == UserStatus.JUST_REGISTERED &&
+                RequiredForFullConstraintValidator.check(oldUser)) {
+            oldUser.setStatus(UserStatus.FULL);
+        }
+        return save(oldUser);
     }
 
     /**
@@ -193,11 +212,12 @@ public class UserService {
                 soapClient.send(new PostBindPartnerWithPhoneRequest(
                         TaxUtils.reformatPhone(user.getTelephone()), TaxUtils.permissions));
         user.setTaxConnectionId(response.getId());
-        save(user);
+        update(user, user);
     }
 
     /**
      * Получение статуса подключения пользователя.
+     *
      * @param user пользоваетель.
      */
     public GetBindPartnerStatusResponse getTaxStatus(final UserDTO user) {
