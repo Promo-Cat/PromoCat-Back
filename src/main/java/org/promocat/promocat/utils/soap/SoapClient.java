@@ -4,9 +4,12 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.constraints.XmlField;
 import org.promocat.promocat.constraints.XmlInnerObject;
+import org.promocat.promocat.exception.soap.SoapException;
+import org.promocat.promocat.exception.soap.SoapResponseClassException;
 import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
 import org.promocat.promocat.utils.soap.attributes.NotificationStatus;
 import org.promocat.promocat.utils.soap.operations.AbstractOperation;
+import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
@@ -208,8 +211,11 @@ public class SoapClient {
     public Object soapXmlToPOJO(Element xml, Class<?> pojoClass, boolean inner) throws SOAPException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         if (!inner && xml.getElementsByTagName(pojoClass.getSimpleName()).getLength() == 0) {
             log.error("Response doesn`t apply presented POJO class");
-            // TODO: 24.07.2020 EXCEPTION (pojoClass doesn`t same with SOAP response body type)
-            throw new RuntimeException(pojoClass.getSimpleName());
+            try {
+                return soapXmlToPOJO(xml, SmzPlatformError.class, false);
+            } catch (SoapException e) {
+                throw new SoapResponseClassException(pojoClass.getSimpleName());
+            }
         }
         Object res = pojoClass.getDeclaredConstructor().newInstance();
         for (Field field : pojoClass.getDeclaredFields()) {
@@ -221,8 +227,11 @@ public class SoapClient {
                 Object value = fieldIsList ? new ArrayList<>() : null;
                 for (int i = 0; i < fieldValueInResponseNode.getLength(); i++) {
                     Object temp = field.isAnnotationPresent(XmlInnerObject.class) ?
-                            soapXmlToPOJO((Element)fieldValueInResponseNode.item(i), field.getAnnotation(XmlInnerObject.class).value(), true) :
-                            fieldValueInResponseNode.item(i).getFirstChild().getNodeValue();
+                            soapXmlToPOJO((Element) fieldValueInResponseNode.item(i), field.getAnnotation(XmlInnerObject.class).value(), true) :
+                            fieldValueInResponseNode.item(i).getFirstChild() == null ?
+                                    null :
+                                    fieldValueInResponseNode.item(i).getFirstChild().getNodeValue();
+
                     if (field.getType() == ZonedDateTime.class) {
                         temp = ZonedDateTime.parse((String) temp);
                     }
@@ -266,13 +275,13 @@ public class SoapClient {
 
         GetNotificationsRequest op2 = new GetNotificationsRequest();
         NotificationsRequest r = new NotificationsRequest();
-        r.setInn("471204164572");
+        r.setInn("");
         r.setGetAcknowleged(true);
         r.setGetArchived(true);
         op2.setNotificationsRequest(List.of(r));
-        GetNotificationsResponse resp = (GetNotificationsResponse) client.send(op2);
+        SmzPlatformError resp = (SmzPlatformError) client.send(op2);
 
-        resp.getNotificationsResponse();
+        resp.getArgs();
     }
 
 }
