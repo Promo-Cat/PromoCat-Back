@@ -38,9 +38,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class User extends AbstractAccount {
 
-    @RequiredForFull
     private String mail;
-    @RequiredForFull
     private City city;
     private Double balance = 0.0;
     private Set<Car> cars = new HashSet<>();
@@ -49,11 +47,8 @@ public class User extends AbstractAccount {
     private Double totalDistance = 0.0;
     private Double totalEarnings = 0.0;
     private UserStatus status;
-    @RequiredForFull
     private String account;
-    @RequiredForFull
     private String inn;
-    @RequiredForFull
     private String taxConnectionId;
 
     public User(String mail, City city, Double balance, StockCity stockCity) {
