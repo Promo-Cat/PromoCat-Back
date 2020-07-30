@@ -121,15 +121,9 @@ public class UserController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO user,
-                                              @RequestHeader final String token) {
+                                              @RequestHeader("token") final String token) {
         UserDTO actualUser = userService.findByToken(token);
-        if (actualUser.getStatus() == UserStatus.JUST_REGISTERED &&
-                RequiredForFullConstraintValidator.check(user)) {
-            user.setStatus(UserStatus.FULL);
-        }
-        user.setTelephone(actualUser.getTelephone());
-        EntityUpdate.copyNonNullProperties(user, actualUser);
-        return ResponseEntity.ok(userService.save(actualUser));
+        return ResponseEntity.ok(userService.update(actualUser, user));
     }
 
     @ApiOperation(value = "Get authorized user",
@@ -328,7 +322,7 @@ public class UserController {
         GetBindPartnerStatusResponse result = userService.getTaxStatus(user);
         if (COMPLETED.equals(result.getResult())) {
             user.setInn(result.getInn());
-            userService.save(user);
+            userService.update(user, user);
             return ResponseEntity.ok("{}");
         } else {
             throw new ApiTaxRequestIdException(String.format("Request status is: %s. COMPLETED required",
