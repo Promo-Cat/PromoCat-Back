@@ -159,7 +159,7 @@ public class BeforeAll {
      *
      * @return UserDTO.
      */
-    public UserDTO createUser(String telephone, String mail, StockCityDTO stockCity, UserStatus status) {
+    public UserDTO createUser(String telephone, StockCityDTO stockCity, UserStatus status) {
         User user = new User();
         user.setTelephone(telephone);
         user.setCity(this.city);
@@ -276,8 +276,8 @@ public class BeforeAll {
         distance = new DistanceDTO(LocalDate.now(), 5.5);
 
         // Добавление пользователей + токены.
-        user1DTO = createUser("+7(111)111-11-11", "qwert@mail.ru", stockCity1DTO, UserStatus.FULL);
-        user2DTO = createUser("+7(222)222-22-22", "asdfg@mail.ru", stockCity2DTO, UserStatus.FULL);
+        user1DTO = createUser("+7(111)111-11-11", stockCity1DTO, UserStatus.FULL);
+        user2DTO = createUser("+7(222)222-22-22", stockCity2DTO, UserStatus.FULL);
 
         user1Token = getToken(AccountType.USER, "+7(111)111-11-11");
         user2Token = getToken(AccountType.USER, "+7(222)222-22-22");
