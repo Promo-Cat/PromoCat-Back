@@ -16,6 +16,7 @@ import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,27 @@ public class StockController {
         StockDTO res = stockService.create(stock);
         company.setCurrentStockId(res.getId());
         companyService.save(company);
+        return ResponseEntity.ok(res);
+    }
+
+
+    @ApiOperation(value = "Update stock",
+            notes = "Updates stock for company.",
+            response = StockDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
+            @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(path = "/api/company/stock", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<StockDTO> updateStock(@Valid @RequestBody StockDTO stock,
+                                             @RequestHeader("token") String token) {
+        CompanyDTO company = companyService.findByToken(token);
+        StockDTO oldStock = stockService.findById(company.getCurrentStockId());
+        EntityUpdate.copyNonNullProperties(stock, oldStock);
+        oldStock.setCompanyId(company.getId());
+        StockDTO res = stockService.save(oldStock);
         return ResponseEntity.ok(res);
     }
 
