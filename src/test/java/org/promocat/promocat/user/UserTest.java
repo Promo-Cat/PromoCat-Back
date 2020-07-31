@@ -114,7 +114,6 @@ public class UserTest {
 
         assertEquals(beforeAll.user1DTO.getId(), that.getId());
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
-        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
         assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
@@ -128,7 +127,6 @@ public class UserTest {
     @Test
     public void testUpdateUser() throws Exception {
         UserDTO user = new UserDTO();
-        user.setMail("my@mail.ru");
         user.setTelephone(beforeAll.user1DTO.getTelephone());
         user.setCityId(1L);
         this.mockMvc.perform(post("/api/user").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -141,7 +139,6 @@ public class UserTest {
 
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
 
-        assertEquals(that.getMail(), "my@mail.ru");
         assertEquals(that.getStatus(), UserStatus.FULL);
     }
 
@@ -158,7 +155,6 @@ public class UserTest {
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
         assertEquals(beforeAll.user1DTO.getId(), that.getId());
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
-        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
         assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
@@ -211,7 +207,6 @@ public class UserTest {
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
         assertEquals(beforeAll.user1DTO.getId(), that.getId());
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
-        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
         assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
@@ -254,7 +249,6 @@ public class UserTest {
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
         assertEquals(beforeAll.user1DTO.getId(), that.getId());
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
-        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
         assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
