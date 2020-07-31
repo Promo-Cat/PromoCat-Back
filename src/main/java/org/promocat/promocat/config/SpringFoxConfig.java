@@ -92,6 +92,20 @@ public class SpringFoxConfig {
                 .useDefaultResponseMessages(false);
     }
 
+    @Bean
+    public Docket data() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .paths(PathSelectors.ant("/data/**"))
+                .apis(RequestHandlerSelectors.basePackage("org.promocat.promocat.data_entities"))
+                .build()
+                .groupName("data")
+                .tags(new Tag(COMPANY, "Company controller"))
+                .tags(new Tag(STOCK, "Stock controller"))
+                .apiInfo(apiDetails())
+                .useDefaultResponseMessages(false);
+    }
+
     private ApiInfo apiDetails() {
         return new ApiInfo(
                 "PromoCat application API",
