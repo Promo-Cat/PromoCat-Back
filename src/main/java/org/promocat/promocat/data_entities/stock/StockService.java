@@ -154,7 +154,7 @@ public class StockService {
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
-            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
+            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day - 1L), day);
             stocks.forEach(e -> {
                 e.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
                 Path path = Paths.get(PATH, e.getName() + e.getId().toString() + ".csv");

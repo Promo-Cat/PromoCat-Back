@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.company;
 
+import io.jsonwebtoken.lang.Collections;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -541,7 +542,7 @@ public class CompanyController {
         return posterService.getResourceResponseEntity(poster);
     }
 
-    @ApiOperation(value = "Get poster preview example", notes = "Returning example of poster (.pdf)",
+    @ApiOperation(value = "Get poster preview example", notes = "Returning example of poster (.png)",
             response = Resource.class)
     @ApiResponses(value = {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),

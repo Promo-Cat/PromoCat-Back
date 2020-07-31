@@ -11,11 +11,16 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.stock.csvFile.CSVFileService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.CSVFileDTO;
+import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.MultiPartFileDTO;
+import org.promocat.promocat.dto.PosterDTO;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +28,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -86,6 +97,27 @@ public class StockController {
         StockDTO res = stockService.create(stock);
         company.setCurrentStockId(res.getId());
         companyService.save(company);
+        return ResponseEntity.ok(res);
+    }
+
+
+    @ApiOperation(value = "Update stock",
+            notes = "Updates stock for company.",
+            response = StockDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
+            @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(path = "/api/company/stock", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<StockDTO> updateStock(@Valid @RequestBody StockDTO stock,
+                                             @RequestHeader("token") String token) {
+        CompanyDTO company = companyService.findByToken(token);
+        StockDTO oldStock = stockService.findById(company.getCurrentStockId());
+        EntityUpdate.copyNonNullProperties(stock, oldStock);
+        oldStock.setCompanyId(company.getId());
+        StockDTO res = stockService.save(oldStock);
         return ResponseEntity.ok(res);
     }
 
@@ -158,16 +190,10 @@ public class StockController {
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
     @RequestMapping(path = "/data/company/stock/{id}/poster/preview", method = RequestMethod.GET)
-    public ResponseEntity<Resource> getPosterPreview(@PathVariable("id") Long id,
-                                                     @RequestHeader("token") String token) {
-        Long companyId = companyService.findByToken(token).getId();
-        if (companyService.isOwner(companyId, id)) {
-            StockDTO stock = stockService.findById(id);
-            MultiPartFileDTO posterPreview = posterService.getPosterPreview(posterService.findById(stock.getPosterId()));
-            return posterService.getResourceResponseEntity(posterPreview);
-        } else {
-            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
-        }
+    public ResponseEntity<Resource> getPosterPreview(@PathVariable("id") final Long id) {
+        StockDTO stock = stockService.findById(id);
+        MultiPartFileDTO posterPreview = posterService.getPosterPreview(posterService.findById(stock.getPosterId()));
+        return posterService.getResourceResponseEntity(posterPreview);
     }
 
     @ApiOperation(value = "Delete poster",
@@ -203,7 +229,7 @@ public class StockController {
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
     @RequestMapping(path = "/admin/stock/csvFile", method = RequestMethod.GET)
-    public ResponseEntity<Resource> getCSVFile(@PathParam("name") String name) {
+    public ResponseEntity<Resource> getCSVFile(@PathParam("name") final String name) {
         return csvFileService.getFile(name);
     }
 
@@ -251,8 +277,8 @@ public class StockController {
             @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
-    @RequestMapping(path = "/admin/stock/setTime/{id}", method = RequestMethod.POST)
-    public ResponseEntity<String> setStartTime(@PathVariable("id") Long id,
+    @RequestMapping(path = "/admin/stock/startTime/{id}", method = RequestMethod.POST)
+    public ResponseEntity<String> setStartTime(@PathVariable("id") final Long id,
                                                @RequestParam("time")
                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time) {
         StockDTO stock = stockService.findById(id);
