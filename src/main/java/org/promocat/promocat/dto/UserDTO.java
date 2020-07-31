@@ -12,7 +12,6 @@ import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.constraints.RequiredForFull;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,22 +19,13 @@ import java.util.Set;
 @ApiModel(
         value = "User",
         description = "Object representation of user of PromoCat application." +
-                "Users mail, users city, INN and account are required for full registration."
+                "Users city, INN and account are required for full registration."
 )
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
 @AllArgsConstructor
 @ToString
 public class UserDTO extends AbstractAccountDTO {
-
-    @ApiModelProperty(
-            value = "Users mail",
-            dataType = "String",
-            allowableValues = "Standard email format."
-    )
-    @Email
-    @RequiredForFull
-    private String mail;
 
     @ApiModelProperty(
             value = "Users city",

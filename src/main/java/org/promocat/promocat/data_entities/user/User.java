@@ -38,7 +38,6 @@ import java.util.Set;
 @NoArgsConstructor
 public class User extends AbstractAccount {
 
-    private String mail;
     private City city;
     private Double balance = 0.0;
     private Set<Car> cars = new HashSet<>();
@@ -51,21 +50,11 @@ public class User extends AbstractAccount {
     private String inn;
     private String taxConnectionId;
 
-    public User(String mail, City city, Double balance, StockCity stockCity) {
-        this.mail = mail;
+    public User(City city, Double balance, StockCity stockCity) {
         this.city = city;
         this.balance = balance;
         this.stockCity = stockCity;
         this.setAccountType(AccountType.USER);
-    }
-
-    /**
-     * Имя пользователя.
-     */
-    @Email
-    @Column(name = "mail", unique = true)
-    public String getMail() {
-        return mail;
     }
 
     /**
