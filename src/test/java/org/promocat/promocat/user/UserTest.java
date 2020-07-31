@@ -289,7 +289,7 @@ public class UserTest {
 
     @Test
     public void testMoveWithoutStock() throws Exception {
-        UserDTO user = beforeAll.createUser("+7(213)123-22-22", "mail@mail.ru", null, UserStatus.FULL);
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.FULL);
         String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
 
         this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -300,7 +300,7 @@ public class UserTest {
 
     @Test
     public void testSetUserStockCity() throws Exception {
-        UserDTO user = beforeAll.createUser("+7(213)123-22-22", "mail@mail.ru", null, UserStatus.JUST_REGISTERED);
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.JUST_REGISTERED);
         String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
 
         this.mockMvc.perform(post("/api/user/stock/" + beforeAll.stockCity1DTO.getId())
