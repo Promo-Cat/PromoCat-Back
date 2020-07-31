@@ -162,7 +162,6 @@ public class BeforeAll {
     public UserDTO createUser(String telephone, String mail, StockCityDTO stockCity, UserStatus status) {
         User user = new User();
         user.setTelephone(telephone);
-        user.setMail(mail);
         user.setCity(this.city);
         user.setStatus(status);
         user.setAccountType(AccountType.USER);
