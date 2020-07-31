@@ -11,7 +11,11 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.stock.csvFile.CSVFileService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.CSVFileDTO;
+import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.MultiPartFileDTO;
+import org.promocat.promocat.dto.PosterDTO;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
@@ -23,7 +27,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -158,16 +168,10 @@ public class StockController {
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
     @RequestMapping(path = "/data/company/stock/{id}/poster/preview", method = RequestMethod.GET)
-    public ResponseEntity<Resource> getPosterPreview(@PathVariable("id") Long id,
-                                                     @RequestHeader("token") String token) {
-        Long companyId = companyService.findByToken(token).getId();
-        if (companyService.isOwner(companyId, id)) {
-            StockDTO stock = stockService.findById(id);
-            MultiPartFileDTO posterPreview = posterService.getPosterPreview(posterService.findById(stock.getPosterId()));
-            return posterService.getResourceResponseEntity(posterPreview);
-        } else {
-            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
-        }
+    public ResponseEntity<Resource> getPosterPreview(@PathVariable("id") final Long id) {
+        StockDTO stock = stockService.findById(id);
+        MultiPartFileDTO posterPreview = posterService.getPosterPreview(posterService.findById(stock.getPosterId()));
+        return posterService.getResourceResponseEntity(posterPreview);
     }
 
     @ApiOperation(value = "Delete poster",
