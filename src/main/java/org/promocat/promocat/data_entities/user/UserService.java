@@ -210,7 +210,7 @@ public class UserService {
     public void registerMyTax(final UserDTO user) {
         PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse)
                 soapClient.send(new PostBindPartnerWithPhoneRequest(
-                        TaxUtils.reformatPhone(user.getTelephone()), TaxUtils.permissions));
+                        TaxUtils.reformatPhone(user.getTelephone()), TaxUtils.PERMISSIONS));
         user.setTaxConnectionId(response.getId());
         update(user, user);
     }

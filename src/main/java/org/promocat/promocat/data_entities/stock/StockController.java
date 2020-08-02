@@ -115,6 +115,9 @@ public class StockController {
                                              @RequestHeader("token") String token) {
         CompanyDTO company = companyService.findByToken(token);
         StockDTO oldStock = stockService.findById(company.getCurrentStockId());
+        if (stock.getPosterId() == 0L) {
+            stock.setPosterId(oldStock.getPosterId());
+        }
         EntityUpdate.copyNonNullProperties(stock, oldStock);
         oldStock.setCompanyId(company.getId());
         StockDTO res = stockService.save(oldStock);
@@ -243,6 +246,13 @@ public class StockController {
     public ResponseEntity<String> deleteFile(@PathVariable("name") String name) {
         CSVFileDTO file = csvFileService.findByName(name);
         csvFileService.delete(file.getId());
+        return ResponseEntity.ok("{}");
+    }
+
+    @RequestMapping(path = "/admin/stock/{id}/finish", method = RequestMethod.POST)
+    public ResponseEntity<String> endUpStockById(@PathVariable("id") Long stockId) {
+        StockDTO stock = stockService.findById(stockId);
+        stockService.endUpStock(stock);
         return ResponseEntity.ok("{}");
     }
 

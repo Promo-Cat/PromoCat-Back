@@ -22,6 +22,7 @@ import org.promocat.promocat.utils.soap.attributes.IncomeType;
 import org.promocat.promocat.utils.soap.operations.income.PostIncomeRequestV2;
 import org.promocat.promocat.utils.soap.operations.income.PostIncomeResponseV2;
 import org.promocat.promocat.utils.soap.operations.pojo.IncomeService;
+import org.promocat.promocat.utils.soap.util.TaxUtils;
 import org.promocat.promocat.validators.StockDurationConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -156,26 +157,30 @@ public class StockService {
             log.info("Clear stock with end time after: {}", day);
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day - 1L), day);
             stocks.forEach(e -> {
-                e.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
-                Path path = Paths.get(PATH, e.getName() + e.getId().toString() + ".csv");
-                save(e);
-                if (Objects.isNull(e.getCities())) {
-                    return;
-                }
-                List<UserDTO> users = new ArrayList<>();
-                e.getCities().stream()
-                        .flatMap(x -> x.getUsers().stream())
-                        .forEach(y -> {
-                            registerTaxes(y);
-                            y.setStockCityId(null);
-                            users.add(y);
-                            userRepository.save(userMapper.toEntity(y));
-                        });
-                csvGenerator.generate(path, users);
-                File file = path.toFile();
-                file.delete();
+                endUpStock(e);
             });
         }
+    }
+
+    public void endUpStock(StockDTO stockDTO) {
+        stockDTO.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
+        Path path = Paths.get(PATH, stockDTO.getName() + stockDTO.getId().toString() + ".csv");
+        save(stockDTO);
+        if (Objects.isNull(stockDTO.getCities())) {
+            return;
+        }
+        List<UserDTO> users = new ArrayList<>();
+        stockDTO.getCities().stream()
+                .flatMap(x -> x.getUsers().stream())
+                .forEach(y -> {
+                    registerTaxes(y);
+                    y.setStockCityId(null);
+                    users.add(y);
+                    userRepository.save(userMapper.toEntity(y));
+                });
+        csvGenerator.generate(path, users);
+        File file = path.toFile();
+        file.delete();
     }
 
     @Scheduled(cron = "0 0 0 * * *")
@@ -198,13 +203,15 @@ public class StockService {
     private void registerTaxes(UserDTO user) {
 
         PostIncomeRequestV2 op = new PostIncomeRequestV2();
-        op.setCustomerInn(user.getInn());
-        op.setCustomerOrganization("PromoCat");
+        op.setInn(user.getInn());
+        op.setCustomerOrganization(TaxUtils.PROMOCAT_NAME);
         op.setIncomeType(IncomeType.FROM_LEGAL_ENTITY);
         op.setTotalAmount(user.getBalance());
         op.setServices(List.of(new IncomeService(user.getBalance(), "Реклама", 1L)));
-        op.setOperationTime(ZonedDateTime.now());
-        op.setRequestTime(ZonedDateTime.now());
+        ZonedDateTime now = ZonedDateTime.now();
+        op.setOperationTime(now.minusHours(3));
+        op.setRequestTime(now.minusHours(3));
+        op.setCustomerInn(TaxUtils.PROMOCAT_INN);
 
         PostIncomeResponseV2 response = (PostIncomeResponseV2) soapClient.send(op);
 

@@ -221,15 +221,15 @@ public class AdminService {
      */
     public void registerPartner() {
         PostPlatformRegistrationRequest request = new PostPlatformRegistrationRequest();
-        request.setPartnerName(promoCatName);
+        request.setPartnerName(PROMOCAT_NAME);
         request.setPartnerType("PARTNER");
         request.setPartnerConnectable("true");
-        request.setInn(promoCatInn);
-        request.setPartnerDescription(promoCatDescription);
-        request.setPartnersText(promoCatText);
-        request.setTransitionLink(promoCatTransitionLink);
-        request.setPhone(promoCatPhone);
-        request.setPartnerImage(promoCatLogo);
+        request.setInn(PROMOCAT_INN);
+        request.setPartnerDescription(PROMOCAT_DESCRIPTION);
+        request.setPartnersText(PROMOCAT_TEXT);
+        request.setTransitionLink(PROMOCAT_TRANSITION_LINK);
+        request.setPhone(PROMOCAT_PHONE);
+        request.setPartnerImage(PROMOCAT_LOGO);
     }
 
     /**
