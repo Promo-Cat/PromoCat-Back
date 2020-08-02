@@ -6,6 +6,7 @@ import org.promocat.promocat.constraints.XmlField;
 import org.promocat.promocat.constraints.XmlInnerObject;
 import org.promocat.promocat.exception.soap.SoapException;
 import org.promocat.promocat.exception.soap.SoapResponseClassException;
+import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
 import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
 import org.promocat.promocat.utils.soap.attributes.NotificationStatus;
 import org.promocat.promocat.utils.soap.operations.AbstractOperation;
@@ -160,7 +161,11 @@ public class SoapClient {
             responseOptional = getRequest.send(API_URL);
             if (responseOptional.isPresent()) {
                 try {
-                    return soapXmlToPOJO(responseOptional.get().getSOAPBody(), operation.getResponseClass(), false);
+                    Object res = soapXmlToPOJO(responseOptional.get().getSOAPBody(), operation.getResponseClass(), false);
+                    if (res instanceof SmzPlatformError) {
+                        throw new SoapSmzPlatformErrorException((SmzPlatformError) res);
+                    }
+                    return res;
                 } catch (SOAPException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {

@@ -7,7 +7,12 @@ import org.promocat.promocat.constraints.XmlInnerObject;
 import javax.xml.soap.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Slf4j
@@ -145,6 +150,18 @@ public abstract class SoapRequest {
 //                    XmlInnerObject innerObjectAnnotation = declaredField.getAnnotation(XmlInnerObject.class);
                     insertPojoFields(target.addChildElement(annotation.value()),
                             fieldValue);
+                } else if (fieldValue instanceof ZonedDateTime) {
+                    target.addChildElement(annotation.value()).addTextNode(
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                                    .format((ZonedDateTime)fieldValue) + "Z"
+                    );
+                } else if (fieldValue instanceof Double) {
+                    DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+                    otherSymbols.setDecimalSeparator('.');
+                    target.addChildElement(annotation.value()).addTextNode(
+                            new DecimalFormat("#0.00", otherSymbols).format(fieldValue)
+                    );
+                    log.info("DOUBLE VALUE {}", new DecimalFormat("#0.00").format(fieldValue));
                 } else {
                     target.addChildElement(annotation.value()).addTextNode(fieldValue.toString());
                 }

@@ -47,7 +47,7 @@ public class StockDTO extends AbstractDTO {
             accessMode = AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Set<StockCityDTO> cities = new HashSet<>();
+    private Set<StockCityDTO> cities;
 
     @ApiModelProperty(value = "Start time of stock", dataType = "Local date time")
     private LocalDateTime startTime;
