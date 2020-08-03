@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 @Slf4j
 public class ApiCompanyExceptionHandler {
     @ExceptionHandler(value = {ApiCompanyNotFoundException.class})
-    public ResponseEntity<Object> handleNonexistentCar(ApiCompanyNotFoundException e) {
+    public ResponseEntity<Object> handleNonexistentCompany(ApiCompanyNotFoundException e) {
         final HttpStatus notFound = HttpStatus.NOT_FOUND;
         ApiException apiException = new ApiException(
                 e.getMessage(),
@@ -25,6 +25,19 @@ public class ApiCompanyExceptionHandler {
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
         log.error("Company not found: " + e.getMessage());
+        return new ResponseEntity<>(apiException, notFound);
+    }
+
+
+    @ExceptionHandler(value = {ApiCompanyStatusException.class})
+    public ResponseEntity<Object> handleWrongCompanyStatus(ApiCompanyStatusException e) {
+        final HttpStatus notFound = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                notFound,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Wrong company status: " + e.getMessage());
         return new ResponseEntity<>(apiException, notFound);
     }
 }
