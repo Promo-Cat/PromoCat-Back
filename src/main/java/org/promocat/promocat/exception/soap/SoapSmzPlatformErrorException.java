@@ -10,5 +10,6 @@ public class SoapSmzPlatformErrorException extends SoapException {
 
     public SoapSmzPlatformErrorException(SmzPlatformError message) {
         super(message.getMessage());
+        this.error = message;
     }
 }

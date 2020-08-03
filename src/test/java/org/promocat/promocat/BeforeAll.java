@@ -18,7 +18,7 @@ import org.promocat.promocat.data_entities.movement.MovementRepository;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.parameters.ParametersRepository;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
-import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationRepository;
+import org.promocat.promocat.data_entities.stock_activation.StockActivationRepository;
 import org.promocat.promocat.data_entities.stock.StockRepository;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityRepository;
@@ -71,7 +71,7 @@ public class BeforeAll {
     PromoCodeRepository promoCodeRepository;
 
     @Autowired
-    PromoCodeActivationRepository promoCodeActivationRepository;
+    StockActivationRepository stockActivationRepository;
 
     @Autowired
     StockRepository stockRepository;
@@ -148,7 +148,7 @@ public class BeforeAll {
         companyRepository.deleteAll();
         movementRepository.deleteAll();
         promoCodeRepository.deleteAll();
-        promoCodeActivationRepository.deleteAll();
+        stockActivationRepository.deleteAll();
         stockRepository.deleteAll();
         stockCityRepository.deleteAll();
         create();
