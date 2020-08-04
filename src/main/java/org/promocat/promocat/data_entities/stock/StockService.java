@@ -157,13 +157,13 @@ public class StockService {
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
-//            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day - 1L), day);
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day - 1L), day);
             stocks.forEach(this::endUpStock);
         }
+        log.info("Scheduled task finished.");
     }
 
-    @Scheduled(cron = "20 9 12 * * *")
+    @Scheduled(cron = "0 28 12 * * *")
     public void test() {
         checkAlive();
     }
