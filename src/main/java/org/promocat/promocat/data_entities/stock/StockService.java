@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.stock;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
@@ -29,17 +30,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +47,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableScheduling
 @Service
+@Transactional
 public class StockService {
 
     @Value("${data.codes.files}")
@@ -129,6 +129,7 @@ public class StockService {
         }
     }
 
+
     /**
      * Получение просроченных акций.
      *
@@ -140,9 +141,13 @@ public class StockService {
     public List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
         log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
                 time, days);
-        List<Stock> stocks = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, StockStatus.ACTIVE);
-
-        return stocks.stream().map(mapper::toDto).collect(Collectors.toList());
+        Set<Stock> stocks = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, StockStatus.ACTIVE);
+        return stocks.stream()
+                .peek(e -> {
+                    e.setCities(new HashSet<>(e.getCities()));
+                })
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -152,12 +157,13 @@ public class StockService {
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
+//            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day - 1L), day);
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day - 1L), day);
             stocks.forEach(this::endUpStock);
         }
     }
 
-    @Scheduled(cron = "0 54 10 * * *")
+    @Scheduled(cron = "20 4 12 * * *")
     public void test() {
         checkAlive();
     }
