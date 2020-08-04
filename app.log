@@ -2691,3 +2691,38 @@ Caused by: org.postgresql.util.PSQLException: Соединение уже был
 	at com.zaxxer.hikari.pool.HikariProxyConnection.rollback(HikariProxyConnection.java)
 	at org.hibernate.resource.jdbc.internal.AbstractLogicalConnectionImplementor.rollback(AbstractLogicalConnectionImplementor.java:116)
 	... 26 common frames omitted
+"2020-08-04 12:24:40 [main] INFO  o.p.promocat.PromoCatApplication - Starting PromoCatApplication on DESKTOP-TV2B8IC with PID 14196 (D:\JavaProjects\PromoCat-Back\target\classes started by Роман in D:\JavaProjects\PromoCat-Back)
+""2020-08-04 12:24:40 [main] INFO  o.p.promocat.PromoCatApplication - The following profiles are active: production
+""2020-08-04 12:24:42 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+""2020-08-04 12:24:42 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 157ms. Found 16 JPA repository interfaces.
+""2020-08-04 12:24:43 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration' of type [org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+""2020-08-04 12:24:43 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'objectPostProcessor' of type [org.springframework.security.config.annotation.configuration.AutowireBeanFactoryObjectPostProcessor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+""2020-08-04 12:24:43 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@56b1e527' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+""2020-08-04 12:24:43 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration' of type [org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+""2020-08-04 12:24:43 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+""2020-08-04 12:24:43 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8889 (https)
+""2020-08-04 12:24:43 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+""2020-08-04 12:24:43 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.33]
+""2020-08-04 12:24:43 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+""2020-08-04 12:24:44 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+""2020-08-04 12:24:44 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.4.12.Final
+""2020-08-04 12:24:44 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+""2020-08-04 12:24:44 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+""2020-08-04 12:24:45 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+""2020-08-04 12:24:45 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL9Dialect
+""2020-08-04 12:24:48 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+""2020-08-04 12:24:48 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+""2020-08-04 12:24:49 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+""2020-08-04 12:24:52 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 15 endpoint(s) beneath base path '/actuator'
+""2020-08-04 12:24:52 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/auth/**'], []
+""2020-08-04 12:24:52 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/swagger-ui.html#/**'], []
+""2020-08-04 12:24:52 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/h2-console/**'], []
+""2020-08-04 12:24:52 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/data/**'], []
+""2020-08-04 12:24:52 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4704b66a, org.springframework.security.web.context.SecurityContextPersistenceFilter@2dd25088, org.springframework.security.web.header.HeaderWriterFilter@780ccdc9, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7bec83d5, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6fad6743, org.promocat.promocat.security.SecurityFilter@3a3f1703, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@70edffdb, org.springframework.security.web.session.SessionManagementFilter@73e4ecb, org.springframework.security.web.access.ExceptionTranslationFilter@3c7b040f, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@633e4742]
+""2020-08-04 12:24:52 [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+""2020-08-04 12:24:53 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService 'taskScheduler'
+""2020-08-04 12:24:55 [main] INFO  o.p.promocat.utils.SetupDataLoader - Trying to find any admin in DB...
+""2020-08-04 12:24:56 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8889 (https) with context path ''
+""2020-08-04 12:24:56 [main] INFO  o.p.promocat.PromoCatApplication - Started PromoCatApplication in 15.96 seconds (JVM running for 17.057)
+""2020-08-04 12:24:56 [RMI TCP Connection(6)-192.168.1.67] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+"
