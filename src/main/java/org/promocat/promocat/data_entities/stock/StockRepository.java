@@ -6,13 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
  */
 public interface StockRepository extends JpaRepository<Stock, Long> {
 
-    List<Stock> getByStartTimeLessThanAndDurationEqualsAndStatusEquals(LocalDateTime time, Long days, StockStatus status);
+    Set<Stock> getByStartTimeLessThanAndDurationEqualsAndStatusEquals(LocalDateTime time, Long days, StockStatus status);
     List<Stock> getByStatusEquals(StockStatus status);
     List<Stock> getByStatusIsNot(StockStatus status);
     List<Stock> getByStartTimeLessThanAndStatusEquals(LocalDateTime time, StockStatus status);
