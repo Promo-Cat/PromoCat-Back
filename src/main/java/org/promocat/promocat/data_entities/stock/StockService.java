@@ -137,7 +137,7 @@ public class StockService {
      * @return список прросроченных акций. {@link StockDTO}
      */
     @Transactional
-    private List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
+    public List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
         log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
                 time, days);
         List<Stock> stocks = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, StockStatus.ACTIVE);
@@ -157,7 +157,7 @@ public class StockService {
         }
     }
 
-    @Scheduled(cron = "0 51 10 * * *")
+    @Scheduled(cron = "0 54 10 * * *")
     public void test() {
         checkAlive();
     }
