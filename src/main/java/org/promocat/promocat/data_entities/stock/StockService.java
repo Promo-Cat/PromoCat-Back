@@ -206,7 +206,7 @@ public class StockService {
         op.setCustomerOrganization(TaxUtils.PROMOCAT_NAME);
         op.setIncomeType(IncomeType.FROM_LEGAL_ENTITY);
         op.setTotalAmount(user.getBalance());
-        op.setServices(List.of(new IncomeService(user.getBalance(), "Реклама", 1L)));
+        op.setServices(List.of(new IncomeService(user.getBalance(), TaxUtils.TAX_SERVICE_DESCRIPTION, 1L)));
         ZonedDateTime now = ZonedDateTime.now();
         op.setOperationTime(now.minusHours(3));
         op.setRequestTime(now.minusHours(3));

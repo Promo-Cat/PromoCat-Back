@@ -17,7 +17,10 @@ import org.promocat.promocat.dto.MultiPartFileDTO;
 import org.promocat.promocat.dto.PosterDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.company.ApiCompanyStatusException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
+import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
+import org.promocat.promocat.exception.stock.ApiStockTimeException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
@@ -39,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -55,6 +59,7 @@ public class StockController {
     private final PosterService posterService;
     private final MultiPartFileUtils multiPartFileUtils;
     private final CSVFileService csvFileService;
+    private final LocalDate now = LocalDate.now();
 
     @Autowired
     public StockController(final StockService stockService,
@@ -75,22 +80,27 @@ public class StockController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
+            @ApiResponse(code = 400, message = "Old stock start time", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Company account isn`t fully filled", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Previous stock isn't ended", response = ApiException.class),
             @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock,
-                                             @RequestHeader("token") String token) {
+                                             @RequestHeader("token") final String token) {
+        if (stock.getStartTime().toLocalDate().compareTo(now) < 0) {
+            throw new ApiStockTimeException("Cannot create stock with day before today.");
+        }
         CompanyDTO company = companyService.findByToken(token);
         StockDTO companyCurrentStock = company.getCurrentStockId() == 0L ? null : stockService.findById(company.getCurrentStockId());
         if (companyCurrentStock != null
                 && companyCurrentStock.getStatus() != StockStatus.STOCK_IS_OVER_WITH_POSTPAY
                 && companyCurrentStock.getStatus() != StockStatus.BAN) {
-            // TODO: 18.07.2020 exception (previous stock isn`t ended)
-            throw new RuntimeException("Previous stock isn`t ended. Unable to create new one");
+            throw new ApiStockActivationStatusException("Previous stock isn`t ended. Unable to create new one");
         }
         if (company.getCompanyStatus() != CompanyStatus.FULL) {
-            throw new RuntimeException("Company account isn`t fully filled");
+            throw new ApiCompanyStatusException("Company account isn`t fully filled");
         }
         stock.setCompanyId(company.getId());
         stock.setStatus(StockStatus.POSTER_NOT_CONFIRMED);
@@ -107,14 +117,22 @@ public class StockController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
+            @ApiResponse(code = 400, message = "Old stock start time", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Active stock cannot be updated", response = ApiException.class),
             @ApiResponse(code = 415, message = "Not acceptable media type", response = ApiException.class),
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> updateStock(@Valid @RequestBody StockDTO stock,
-                                             @RequestHeader("token") String token) {
+                                             @RequestHeader("token") final String token) {
+        if (stock.getStartTime().toLocalDate().compareTo(now) < 0) {
+            throw new ApiStockTimeException("Cannot update stock with day before today.");
+        }
         CompanyDTO company = companyService.findByToken(token);
         StockDTO oldStock = stockService.findById(company.getCurrentStockId());
+        if (oldStock.getStatus().ordinal() >= 3) {
+            throw new ApiStockActivationStatusException("Cannot update active stock");
+        }
         if (stock.getPosterId() == 0L) {
             stock.setPosterId(oldStock.getPosterId());
         }
