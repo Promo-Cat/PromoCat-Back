@@ -30,6 +30,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -135,6 +136,7 @@ public class StockService {
      * @param days длительность акции
      * @return список прросроченных акций. {@link StockDTO}
      */
+    @Transactional
     private List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
         log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
                 time, days);
@@ -155,7 +157,7 @@ public class StockService {
         }
     }
 
-    @Scheduled(cron = "0 47 10 * * *")
+    @Scheduled(cron = "0 51 10 * * *")
     public void test() {
         checkAlive();
     }
