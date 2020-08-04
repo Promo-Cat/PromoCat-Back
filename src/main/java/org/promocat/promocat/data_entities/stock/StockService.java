@@ -163,7 +163,7 @@ public class StockService {
         log.info("Scheduled task finished.");
     }
 
-    @Scheduled(cron = "0 28 12 * * *")
+    @Scheduled(cron = "30 31 12 * * *")
     public void test() {
         checkAlive();
     }
