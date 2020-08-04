@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -106,5 +108,9 @@ public class CarService {
         UserDTO user = userService.findById(userId);
         CarDTO car = findById(carId);
         return car.getUserId().equals(user.getId());
+    }
+
+    public Set<CarDTO> getAllCarsByUserId(final Long userId) {
+        return carRepository.findAllByUserId(userId).stream().map(carMapper::toDto).collect(Collectors.toSet());
     }
 }

@@ -12,10 +12,10 @@ import java.util.Optional;
  */
 public interface StockRepository extends JpaRepository<Stock, Long> {
 
-    Optional<List<Stock>> getByStartTimeLessThanAndDurationEqualsAndStatusEquals(LocalDateTime time, Long days, StockStatus status);
+    List<Stock> getByStartTimeLessThanAndDurationEqualsAndStatusEquals(LocalDateTime time, Long days, StockStatus status);
     List<Stock> getByStatusEquals(StockStatus status);
     List<Stock> getByStatusIsNot(StockStatus status);
-    Optional<List<Stock>> getByStartTimeLessThanAndStatusEquals(LocalDateTime time, StockStatus status);
+    List<Stock> getByStartTimeLessThanAndStatusEquals(LocalDateTime time, StockStatus status);
 
     Optional<Stock> findById(Long id);
 

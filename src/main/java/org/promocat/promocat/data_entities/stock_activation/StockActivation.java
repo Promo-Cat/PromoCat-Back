@@ -1,11 +1,11 @@
-package org.promocat.promocat.data_entities.promocode_activation;
+package org.promocat.promocat.data_entities.stock_activation;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
-import org.promocat.promocat.data_entities.promo_code.PromoCode;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 import org.promocat.promocat.data_entities.user.User;
 
 import javax.persistence.Column;
@@ -21,11 +21,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "promocode_activation")
-public class PromoCodeActivation extends AbstractEntity {
+public class StockActivation extends AbstractEntity {
 
 
     private User user;
-    private PromoCode promoCode;
+    private StockCity stockCity;
     private LocalDateTime date;
 
     @ManyToOne
@@ -35,9 +35,9 @@ public class PromoCodeActivation extends AbstractEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "promo_code_id")
-    public PromoCode getPromoCode() {
-        return promoCode;
+    @JoinColumn(name = "stock_city_id")
+    public StockCity getStockCity() {
+        return stockCity;
     }
 
     @Column(name = "date")

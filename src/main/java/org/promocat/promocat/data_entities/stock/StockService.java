@@ -138,14 +138,9 @@ public class StockService {
     private List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
         log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
                 time, days);
-        Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, StockStatus.ACTIVE);
-        List<StockDTO> result = new ArrayList<>();
-        if (optional.isPresent()) {
-            for (Stock stock : optional.get()) {
-                result.add(mapper.toDto(stock));
-            }
-        }
-        return result;
+        List<Stock> stocks = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, StockStatus.ACTIVE);
+
+        return stocks.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     /**
@@ -156,10 +151,13 @@ public class StockService {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
             List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day - 1L), day);
-            stocks.forEach(e -> {
-                endUpStock(e);
-            });
+            stocks.forEach(this::endUpStock);
         }
+    }
+
+    @Scheduled(cron = "0 47 10 * * *")
+    public void test() {
+        checkAlive();
     }
 
     public void endUpStock(StockDTO stockDTO) {
@@ -185,19 +183,20 @@ public class StockService {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void updateStockStatus() {
-        Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
+        List<Stock> stocks = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
                 StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
-        optional.ifPresent(stocks -> stocks.forEach(e -> {
+        stocks.forEach(e -> {
             StockDTO stockDTO = mapper.toDto(e);
             stockDTO.setStatus(StockStatus.ACTIVE);
             save(stockDTO);
-        }));
+        });
     }
 
 
     /**
      * Отправляет оповещение в Налоговую API о зачислении юзеру средств.
      * В ответ приходит чек, который сохраняется в БД.
+     *
      * @param user Пользователь, которому была произведена выплата.
      */
     private void registerTaxes(UserDTO user) {
@@ -207,7 +206,7 @@ public class StockService {
         op.setCustomerOrganization(TaxUtils.PROMOCAT_NAME);
         op.setIncomeType(IncomeType.FROM_LEGAL_ENTITY);
         op.setTotalAmount(user.getBalance());
-        op.setServices(List.of(new IncomeService(user.getBalance(), "Реклама", 1L)));
+        op.setServices(List.of(new IncomeService(user.getBalance(), TaxUtils.TAX_SERVICE_DESCRIPTION, 1L)));
         ZonedDateTime now = ZonedDateTime.now();
         op.setOperationTime(now.minusHours(3));
         op.setRequestTime(now.minusHours(3));

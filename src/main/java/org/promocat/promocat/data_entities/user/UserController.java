@@ -9,7 +9,7 @@ import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
-import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
+import org.promocat.promocat.data_entities.stock_activation.StockActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user_ban.UserBanService;
@@ -28,15 +28,8 @@ import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
 import org.promocat.promocat.exception.user.codes.ApiUserStockException;
 import org.promocat.promocat.exception.util.tax.ApiTaxRequestIdException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
-import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.soap.SoapClient;
-import org.promocat.promocat.utils.soap.attributes.RequestResult;
-import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
-import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
-import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
-import org.promocat.promocat.utils.soap.util.TaxUtils;
-import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +57,7 @@ import static org.promocat.promocat.utils.soap.attributes.RequestResult.*;
 public class UserController {
 
     private final UserService userService;
-    private final PromoCodeActivationService promoCodeActivationService;
+    private final StockActivationService stockActivationService;
     private final MovementService movementService;
     private final StockService stockService;
     private final StockCityService stockCityService;
@@ -73,13 +66,13 @@ public class UserController {
 
     @Autowired
     public UserController(final UserService userService,
-                          final PromoCodeActivationService promoCodeActivationService,
+                          final StockActivationService stockActivationService,
                           final MovementService movementService,
                           final StockService stockService,
                           final StockCityService stockCityService, UserBanService userBanService,
                           final SoapClient soapClient) {
         this.userService = userService;
-        this.promoCodeActivationService = promoCodeActivationService;
+        this.stockActivationService = stockActivationService;
         this.movementService = movementService;
         this.stockService = stockService;
         this.stockCityService = stockCityService;
@@ -216,6 +209,7 @@ public class UserController {
         if (stock.getStatus() != StockStatus.ACTIVE) {
             throw new ApiStockActivationStatusException("Stock isn`t active now");
         }
+        stockActivationService.create(userDTO, stockCityId);
         return ResponseEntity.ok(userService.setUserStockCity(userDTO, stockCityId));
     }
 
@@ -282,7 +276,7 @@ public class UserController {
     @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
     public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
-        return ResponseEntity.ok(promoCodeActivationService.getStocksByUserId(userDTO.getId()));
+        return ResponseEntity.ok(stockActivationService.getStocksByUserId(userDTO.getId()));
     }
 
     @ApiOperation(value = "Get active stocks", notes = "Getting all active stocks",
