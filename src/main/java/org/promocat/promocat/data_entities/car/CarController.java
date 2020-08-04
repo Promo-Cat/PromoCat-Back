@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Set;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -105,5 +106,11 @@ public class CarController {
     @RequestMapping(path = "/admin/car/{id}", method = RequestMethod.GET)
     public ResponseEntity<CarDTO> getCarById(@PathVariable("id") final Long id) {
         return ResponseEntity.ok(carService.findById(id));
+    }
+
+    @RequestMapping(path = "/api/user/cars", method = RequestMethod.GET)
+    public ResponseEntity<Set<CarDTO>> getAllCarsByUser(@RequestHeader("token") String token) {
+        UserDTO user = userService.findByToken(token);
+        return ResponseEntity.ok(user.getCars());
     }
 }
