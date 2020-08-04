@@ -4,15 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.promocat.promocat.data_entities.AbstractEntity;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.promocat.promocat.attributes.CompanyStatus;
+import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.stock.Stock;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.Set;
@@ -26,103 +25,74 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Company extends AbstractEntity {
+public class Company extends AbstractAccount {
 
-    private String organization_name;
-    private String supervisor_first_name;
-    private String supervisor_second_name;
-    private String supervisor_patronymic;
-    private String ogrn;
+    private String organizationName;
     private String inn;
-    private String telephone;
     private String mail;
-    private String city;
     private Set<Stock> stocks;
+    private Stock currentStock;
+    private Boolean verified;
+    private CompanyStatus companyStatus;
 
     /**
      * Имя организации.
      */
-    @NotBlank(message = "Имя организации не может быть пустым.")
+//    @NotBlank(message = "Имя организации не может быть пустым.")
     @Column(name = "organization_name", unique = true)
-    public String getOrganization_name() {
-        return organization_name;
-    }
-
-    /**
-     * Имя руководителя.
-     */
-    @NotBlank(message = "Имя руководителя не может быть пустым.")
-    @Column(name = "supervisor_first_name")
-    public String getSupervisor_first_name() {
-        return supervisor_first_name;
-    }
-
-    /**
-     * Фамилия руководителя.
-     */
-    @NotBlank(message = "Фамилия руководителя не может быть пустой.")
-    @Column(name = "supervisor_second_name")
-    public String getSupervisor_second_name() {
-        return supervisor_second_name;
-    }
-    /**
-     * Отчество руководителя.
-     */
-    @Column(name = "supervisor_patronymic")
-    public String getSupervisor_patronymic() {
-        return supervisor_patronymic;
-    }
-
-    /**
-     * ОГРН компании.
-     */
-    @NotBlank(message = "ОГРН организации не может быть пустым.")
-    @Column(name = "ogrn")
-    public String getOgrn() {
-        return ogrn;
+    public String getOrganizationName() {
+        return organizationName;
     }
 
     /**
      * ИНН компании.
      */
-    @NotBlank(message = "ИНН организации не может быть пустым.")
+//    @NotBlank(message = "ИНН организации не может быть пустым.")
+    @Pattern(regexp = "\\d{10}", message = "ИНН задан неверно, должен состоять из 10 цифр. " +
+            "Работа ведется только с Юр лицами")
     @Column(name = "inn")
     public String getInn() {
         return inn;
     }
 
     /**
-     * Телефон руководителя.
-     */
-    @NotBlank(message = "Телефон не может быть пустым.")
-    @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}",
-            message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
-    @Column(name = "telephone", unique = true)
-    public String getTelephone() {
-        return telephone;
-    }
-
-    /**
      * Почта руководителя.
      */
-    //TODO regexp mail
-    @NotBlank(message = "Имя почты не может быть пустым.")
+    @Email
+//    @NotBlank(message = "Имя почты не может быть пустым.")
     @Column(name = "mail", unique = true)
     public String getMail() {
         return mail;
     }
 
     /**
-     * Город.
+     * Набор акций, которые принадлежат компании.
      */
-    @NotBlank(message = "Город не может быть пустым.")
-    @Column(name = "city")
-    public String getCity() {
-        return city;
-    }
-
-    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Cascade({CascadeType.REMOVE, CascadeType.SAVE_UPDATE})
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     public Set<Stock> getStocks() {
         return stocks;
+    }
+
+    /**
+     *
+     */
+    @Column(name = "verified")
+    public Boolean isVerified() { return verified; }
+
+    /**
+     * Статус учётной записи комании
+     */
+    @Enumerated
+    @Column(name = "company_status")
+    public CompanyStatus getCompanyStatus() {
+        return companyStatus;
+    }
+
+//    @Cascade(CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "current_stock_id", referencedColumnName = "id")
+    public Stock getCurrentStock() {
+        return currentStock;
     }
 }

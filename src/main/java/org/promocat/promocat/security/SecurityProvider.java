@@ -1,6 +1,6 @@
 package org.promocat.promocat.security;
 
-import org.promocat.promocat.data_entities.user.UserService;
+import org.promocat.promocat.util_entities.TokenService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
@@ -17,10 +17,10 @@ import java.util.Optional;
 @Component
 public class SecurityProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    private final UserService userService;
+    private final TokenService tokenService;
 
-    public SecurityProvider(final UserService userService) {
-        this.userService = userService;
+    public SecurityProvider(final TokenService tokenService) {
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class SecurityProvider extends AbstractUserDetailsAuthenticationProvider 
         return Optional
                 .ofNullable(token)
                 .map(String::valueOf)
-                .flatMap(userService::findByToken)
+                .flatMap(tokenService::findByToken)
                 .orElseThrow(() -> new UsernameNotFoundException("Cannot find user with authentication token=" + token));
     }
 }

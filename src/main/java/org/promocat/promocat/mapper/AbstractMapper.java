@@ -5,19 +5,20 @@ import org.modelmapper.ModelMapper;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.dto.AbstractDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 11:42 14.05.2020
  */
-public abstract class AbstractMapper<E extends AbstractEntity, D extends AbstractDTO> implements Mapper<E, D>  {
+public abstract class AbstractMapper<E extends AbstractEntity, D extends AbstractDTO> implements Mapper<E, D> {
 
     @Autowired
-    ModelMapper mapper;
+    private ModelMapper mapper;
 
-    private Class<E> entityClass;
-    private Class<D> dtoClass;
+    private final Class<E> entityClass;
+    private final Class<D> dtoClass;
 
     AbstractMapper(Class<E> entityClass, Class<D> dtoClass) {
         this.entityClass = entityClass;

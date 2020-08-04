@@ -1,8 +1,7 @@
 package org.promocat.promocat.exception.media_type;
 
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.exception.ApiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -15,10 +14,9 @@ import java.time.ZonedDateTime;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 14:33 07.05.2020
  */
+@Slf4j
 @ControllerAdvice
 public class ApiMediaTypeExceptionHandler {
-
-    private static Logger logger = LoggerFactory.getLogger(ApiMediaTypeExceptionHandler.class);
 
     @ExceptionHandler(value = {HttpMediaTypeNotSupportedException.class})
     public ResponseEntity<Object> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotSupportedException e) {
@@ -28,7 +26,7 @@ public class ApiMediaTypeExceptionHandler {
                 unsupportedMediaType,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        logger.error("Wrong media type from user: " + e.getMessage());
+        log.error("Wrong media type from user: " + e.getMessage());
         return new ResponseEntity<>(apiException, unsupportedMediaType);
     }
 }

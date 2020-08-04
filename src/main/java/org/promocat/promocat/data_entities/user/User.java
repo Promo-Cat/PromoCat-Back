@@ -4,20 +4,27 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.promocat.promocat.data_entities.AbstractEntity;
+import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.constraints.RequiredForFull;
+import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
-import org.promocat.promocat.data_entities.promo_code.PromoCode;
+import org.promocat.promocat.data_entities.city.City;
+import org.promocat.promocat.data_entities.movement.Movement;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,82 +36,123 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends AbstractEntity {
+public class User extends AbstractAccount {
 
-    private String name;
-    private String city;
-    private String telephone;
-    private String token;
-    private Long balance;
-    private Set<Car> cars;
-    private PromoCode promo_code;
+    private City city;
+    private Double balance = 0.0;
+    private Set<Car> cars = new HashSet<>();
+    private Set<Movement> movements = new HashSet<>();
+    private StockCity stockCity;
+    private Double totalDistance = 0.0;
+    private Double totalEarnings = 0.0;
+    private UserStatus status;
+    private String account;
+    private String inn;
+    private String taxConnectionId;
 
-    public User(String name, String city, String telephone, Long balance) {
-        this.name = name;
+    public User(City city, Double balance, StockCity stockCity) {
         this.city = city;
-        this.telephone = telephone;
         this.balance = balance;
-    }
-
-    /**
-     * Имя пользователя.
-     */
-    @NotBlank(message = "Имя не может быть пустым")
-    @Column(name = "name")
-    public String getName() {
-        return name;
+        this.stockCity = stockCity;
+        this.setAccountType(AccountType.USER);
     }
 
     /**
      * Город пользователя.
      */
-    @NotBlank(message = "Город не может быть пустой")
-    @Column(name = "city")
-    public String getCity() {
+    @ManyToOne
+    @JoinColumn(name = "city")
+    public City getCity() {
         return city;
-    }
-
-    /**
-     * Телефон пользователя.
-     */
-    @NotBlank(message = "Телефон не может быть пустым")
-    @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}",
-            message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
-    @Column(name = "telephone", unique = true)
-    public String getTelephone() {
-        return telephone;
-    }
-
-    /**
-     * Уникальный токен для подключенного пользователя.
-     */
-    @Column(name = "token", unique = true)
-    public String getToken() {
-        return token;
     }
 
     /**
      * Баланс пользователя.
      */
-    @NotNull(message = "Баланс не может быть не задан")
+    @Min(0)
     @Column(name = "balance")
-    public Long getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
     /**
      * Автомобили пользователя.
      */
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public Set<Car> getCars() {
         return cars;
     }
 
     /**
+     * Передвижения пользователя участвующего в акции.
+     */
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    public Set<Movement> getMovements() {
+        return movements;
+    }
+
+    /**
      * Действующий промокод.
      */
-    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    public PromoCode getPromo_code() {
-        return promo_code;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stock_city_id")
+    public StockCity getStockCity() {
+        return stockCity;
+    }
+
+    /**
+     * Общий заработок пользователя за все время.
+     */
+    @Column(name = "total_earnings")
+    public Double getTotalEarnings() {
+        return totalEarnings;
+    }
+
+    /**
+     * Общее расстояние, которое проехал пользователь за все время.
+     */
+    @Column(name = "total_distance")
+    public Double getTotalDistance() {
+        return totalDistance;
+    }
+
+    /**
+     * Статус пользователя.
+     * {@code FULl} если пользователь указал все обязательные поля.
+     * {@code JUST_REGISTERED} если пользователь указал не все обязательные поля.
+     * {@code BANNED} если пользователь забанен
+     */
+    @Enumerated
+    @Column(name = "status")
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Расчетный счет.
+     */
+    @Pattern(regexp = "\\d{5}.\\d{3}.\\d{1}.\\d{11}",
+            message = "Расчетный счет должен соответствовать шаблону: XXXXX.XXX.X.XXXXXXXXXXX")
+    @Column(name = "account", unique = true)
+    public String getAccount() {
+        return account;
+    }
+
+    /**
+     * ИНН
+     */
+    @Pattern(regexp = "\\d{12}",
+            message = "ИНН должен соответствовать шаблону: XXXXXXXXXXXX")
+    @Column(name = "inn", unique = true)
+    public String getInn() {
+        return inn;
+    }
+
+    /**
+     * ID подключения к Мой налог.
+     */
+    @Column(name = "tax_connection_id", unique = true)
+    public String getTaxConnectionId() {
+        return taxConnectionId;
     }
 }

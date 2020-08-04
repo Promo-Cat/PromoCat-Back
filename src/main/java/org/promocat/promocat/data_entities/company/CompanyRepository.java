@@ -1,9 +1,29 @@
 package org.promocat.promocat.data_entities.company;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.promocat.promocat.data_entities.AbstractAccountRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
  */
-public interface CompanyRepository extends JpaRepository<Company, Long> {
+@Repository
+public interface CompanyRepository extends AbstractAccountRepository<Company> {
+
+    Optional<Company> findByToken(String token);
+
+    Optional<Company> findByTelephone(String telephone);
+
+    Optional<Company> findByOrganizationName(String organizationName);
+
+    Optional<Company> findByMail(String mail);
+
+    List<Company> findAllByInn(String inn);
+
+    List<Company> findAllByInnAndVerified(String inn, boolean verified);
+
 }
+
+

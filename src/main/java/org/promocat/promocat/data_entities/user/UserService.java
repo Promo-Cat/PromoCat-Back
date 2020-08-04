@@ -1,136 +1,227 @@
 package org.promocat.promocat.data_entities.user;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRecord;
-import org.promocat.promocat.data_entities.login_attempt.LoginAttemptRepository;
-import org.promocat.promocat.data_entities.login_attempt.dto.LoginAttemptDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.data_entities.movement.MovementService;
+import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
+import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.mapper.UserMapper;
+import org.promocat.promocat.utils.EntityUpdate;
+import org.promocat.promocat.utils.JwtReader;
+import org.promocat.promocat.utils.PaymentService;
+import org.promocat.promocat.utils.soap.SoapClient;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
+import org.promocat.promocat.utils.soap.util.TaxUtils;
+import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
  */
 @Service
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
-    private final LoginAttemptRepository loginAttemptRepository;
-    private final UserMapper mapper;
-    @Value("${jwt.key}")
-    private String jwt_key;
+    private final UserMapper userMapper;
+    private final StockService stockService;
+    private final MovementService movementService;
+    private final StockCityService stockCityService;
+    private final PaymentService paymentService;
+    private final SoapClient soapClient;
 
     @Autowired
     public UserService(final UserRepository userRepository,
-                       final LoginAttemptRepository loginAttemptRepository,
-                       final UserMapper mapper) {
+                       final UserMapper mapper,
+                       final StockService stockService,
+                       final MovementService movementService,
+                       final StockCityService stockCityService,
+                       final PaymentService paymentService,
+                       final SoapClient soapClient) {
         this.userRepository = userRepository;
-        this.mapper = mapper;
-        this.loginAttemptRepository = loginAttemptRepository;
-
+        this.userMapper = mapper;
+        this.stockService = stockService;
+        this.soapClient = soapClient;
+        this.movementService = movementService;
+        this.stockCityService = stockCityService;
+        this.paymentService = paymentService;
     }
-
-    public UserDTO save(UserDTO dto) {
-        return mapper.toDto(userRepository.save(mapper.toEntity(dto)));
-    }
-
 
     /**
-     * Возвращает токен для авторизации. Вызывать после проверки подтверждения авторизации.
+     * Сохраняет пользователя в БД.
      *
-     * @param telephone телефон юзера, которому выдаётся токен
-     * @return токен, присвоенный записи юзера
-     * @throws UsernameNotFoundException если пользователь с заданным номером не найден в БД
+     * @param dto объектное представление пользователя, полученное с фронта.
+     * @return Представление пользователя, сохраненное в БД. {@link UserDTO}
      */
-    public String getToken(String telephone) throws UsernameNotFoundException {
-        Optional<User> userFromDB = userRepository.getByTelephone(telephone);
-        // TODO: Тесты
-        // TODO: Может заменить UUID на JWT
-        if (userFromDB.isPresent()) {
-            User user = userFromDB.get();
-            String token = generateToken(mapper.toDto(user));
-            user.setToken(token);
-            userRepository.save(user);
-            return token;
-        } else {
-            throw new UsernameNotFoundException("User with number " + telephone + " don`t presented in database");
+    public UserDTO save(final UserDTO dto) {
+        log.info("Saving user with telephone: {}", dto.getTelephone());
+        return userMapper.toDto(userRepository.save(userMapper.toEntity(dto)));
+    }
+
+    /**
+     * Обновление пользователя.
+     *
+     * @param oldUser старые данные.
+     * @param newUser новые данные.
+     * @return обновленный пользователь.
+     */
+    public UserDTO update(final UserDTO oldUser, final UserDTO newUser) {
+        newUser.setTelephone(oldUser.getTelephone());
+        EntityUpdate.copyNonNullProperties(newUser, oldUser);
+        if (oldUser.getStatus() == UserStatus.JUST_REGISTERED &&
+                RequiredForFullConstraintValidator.check(oldUser)) {
+            oldUser.setStatus(UserStatus.FULL);
         }
+        return save(oldUser);
     }
 
     /**
+     * Находит пользователя в БД по id.
      *
-     * @param userDTO
-     * @return
+     * @param id id пользователя
+     * @return объект класса UserDTO, содержащий все необходимые данные о пользователе.
+     * @throws ApiUserNotFoundException если не найден пользователь с таким id.
      */
-    private String generateToken(UserDTO userDTO) {
-        Map<String, Object> tokenData = new HashMap<>();
-        tokenData.put("telephone", userDTO.getTelephone());
-        tokenData.put("account_type", "user");
-        tokenData.put("token_create_time", new Date().getTime());
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.YEAR, 1);
-        tokenData.put("token_expiration_date", calendar.getTime());
-        JwtBuilder jwtBuilder = Jwts.builder();
-        jwtBuilder.setExpiration(calendar.getTime());
-        jwtBuilder.setClaims(tokenData);
-        return jwtBuilder.compact();
-    }
-
-
-    /**
-     * Проверяет код пришедший на телефон.
-     *
-     * @param attempt DTO хранящий код, который получил юзер и специальный ключ
-     * @return true - если всё совпадает и можно выдавать токен
-     */
-    public Optional<User> checkLoginAttemptCode(LoginAttemptDTO attempt) {
-        LoginAttemptRecord loginAttemptRecord = loginAttemptRepository.getByAuthorizationKey(attempt.getAuthorization_key());
-        if (loginAttemptRecord.getPhoneCode().equals(attempt.getCode())) {
-            return userRepository.getByTelephone(loginAttemptRecord.getTelephone());
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Находит пользователя в БД по токену.
-     *
-     * @param token токен
-     * @return объект класса User, соответствующий пользователю
-     * @throws UsernameNotFoundException если токен не найден в БД
-     */
-    public Optional<org.springframework.security.core.userdetails.User> findByToken(String token) throws UsernameNotFoundException {
-        Optional<User> userRecord = userRepository.getByToken(token);
-        if (userRecord.isPresent()) {
-            User user1 = userRecord.get();
-            org.springframework.security.core.userdetails.User user = new org.springframework.security.core.userdetails.User(user1.getTelephone(), "", true, true,
-                    true, true, AuthorityUtils.createAuthorityList("user"));
-            return Optional.of(user);
-        } else {
-            throw new UsernameNotFoundException("Token is not found in db.");
-        }
-    }
-
-    // TODO Javadoc
-    public UserDTO findById(Long id) {
-//        Optional<User> user = userRepository.findById(id);
-//        return mapper.toDto(user.get());
+    public UserDTO findById(final Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
-            return mapper.toDto(user.get());
+            log.info("Found user with id: {}", id);
+            return userMapper.toDto(user.get());
         } else {
-            throw new UsernameNotFoundException(String.format("No user with such id: %d in db.", id));
+            log.warn("No such user with id: {}", id);
+            throw new ApiUserNotFoundException(String.format("No user with such id: %d in db.", id));
         }
+    }
+
+    /**
+     * Находит пользователя в БД по номеру телефона.
+     *
+     * @param telephone номер телефона, соответствующий шаблону +X(XXX)XXX-XX-XX
+     * @return объект класса UserDTO, содержащий все необходимые данные о пользователе.
+     * @throws ApiUserNotFoundException если не найден пользователь с таким номером телефона или формат задан не верно.
+     */
+    public UserDTO findByTelephone(final String telephone) {
+        Optional<User> user = userRepository.getByTelephone(telephone);
+        if (user.isPresent()) {
+            log.info("Found user with telephone: {}", telephone);
+            return userMapper.toDto(user.get());
+        } else {
+            log.warn("No such user with telephone: {}", telephone);
+            throw new ApiUserNotFoundException(String.format("No user with such telephone: %s in db.", telephone));
+        }
+    }
+
+    /**
+     * Удаляет юзера по id из БД.
+     *
+     * @param id id удаляемого юзера
+     */
+    public void deleteById(final Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            log.info("User with id {} deleted from DB", id);
+        } else {
+            log.warn("Attempt to delete user with id {}, who doesn`t exist in DB", id);
+            throw new ApiUserNotFoundException(String.format("User with id %d not found", id));
+        }
+    }
+
+    /**
+     * Поиск пользователя по токену.
+     *
+     * @param token уникальный токен.
+     * @return Представление пользователя, сохраненное в БД. {@link UserDTO}
+     */
+    public UserDTO findByToken(final String token) {
+        JwtReader jwtReader = new JwtReader(token);
+        String telephone = jwtReader.getValue("telephone");
+        return userMapper.toDto(userRepository.getByTelephone(telephone)
+                .orElseThrow(() -> new ApiUserNotFoundException(String.format("User with %s token not found", token))));
+    }
+
+    /**
+     * Получение акции, в которой участвует пользователь.
+     *
+     * @param user объектное представление пользователя.
+     * @return Объектное представление акции. {@link StockDTO}
+     */
+    public StockDTO getUsersCurrentStock(final UserDTO user) {
+        return stockService.findById(stockCityService
+                .findById(user.getStockCityId())
+                .getStockId());
+    }
+
+    /**
+     * Все передвижения пользвателя на протяжении акции.
+     *
+     * @param user объектное представление пользователя.
+     * @return Список передвижений пользователя. {@link MovementDTO}
+     */
+    public List<MovementDTO> getUserStatistics(final UserDTO user) {
+        return movementService.findByUserAndStock(user, getUsersCurrentStock(user));
+    }
+
+    /**
+     * Заработок денег пользователем.
+     *
+     * @param user     объектное представление пользователя.
+     * @param distance дистанция, которую проехал пользователь.
+     * @return Заработанное количество денег.
+     */
+    public double earnMoney(final UserDTO user, final Double distance) {
+        Double earnedMoney = paymentService.distanceToMoney(distance);
+        log.info("User with id {} earned {} money", user.getId(), earnedMoney);
+        user.setBalance(user.getBalance() + earnedMoney);
+        user.setTotalEarnings(user.getTotalEarnings() + earnedMoney);
+        save(user);
+        return earnedMoney;
+    }
+
+    // TODO: 21.06.2020 Проверки для активации акции и сохранение для статистики
+    public UserDTO setUserStockCity(final UserDTO user, final Long stockCityId) {
+        StockCityDTO stockCity = stockCityService.findById(stockCityId);
+        user.setStockCityId(stockCity.getId());
+        return save(user);
+    }
+
+    public boolean existsByTelephone(final String telephone) {
+        return userRepository.getByTelephone(telephone).isPresent();
+    }
+
+
+    /**
+     * Регистрация пользователя в Мой налог.
+     *
+     * @param user пользователь, который хочет подключиться к Мой налог.
+     */
+    public void registerMyTax(final UserDTO user) {
+        PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse)
+                soapClient.send(new PostBindPartnerWithPhoneRequest(
+                        TaxUtils.reformatPhone(user.getTelephone()), TaxUtils.PERMISSIONS));
+        user.setTaxConnectionId(response.getId());
+        update(user, user);
+    }
+
+    /**
+     * Получение статуса подключения пользователя.
+     *
+     * @param user пользоваетель.
+     */
+    public GetBindPartnerStatusResponse getTaxStatus(final UserDTO user) {
+        return ((GetBindPartnerStatusResponse)
+                soapClient.send(new GetBindPartnerStatusRequest(user.getTaxConnectionId())));
     }
 }

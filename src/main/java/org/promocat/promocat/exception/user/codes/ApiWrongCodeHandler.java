@@ -1,8 +1,7 @@
 package org.promocat.promocat.exception.user.codes;
 
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.exception.ApiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,20 +13,67 @@ import java.time.ZonedDateTime;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 18:48 09.05.2020
  */
+@Slf4j
 @ControllerAdvice
 public class ApiWrongCodeHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(ApiWrongCodeHandler.class);
-
     @ExceptionHandler(value = {ApiWrongCodeException.class})
-    public ResponseEntity<Object> handleNonexistentUser(ApiWrongCodeException e) {
+    public ResponseEntity<Object> handleWrongCode(ApiWrongCodeException e) {
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 badRequest,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        logger.error("Wrong code from user: " + e.getMessage());
+        log.error("Wrong code from user: " + e.getMessage());
         return new ResponseEntity<>(apiException, badRequest);
+    }
+
+    @ExceptionHandler(value = {ApiUserStatusException.class})
+    public ResponseEntity<Object> handelWrongCode(ApiUserStatusException e) {
+        final HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                forbidden,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("User status doesn't allow to participate in the stock from user: " + e.getMessage());
+        return new ResponseEntity<>(apiException, forbidden);
+    }
+
+    @ExceptionHandler(value = {ApiUserStockException.class})
+    public ResponseEntity<Object> handelWrongCode(ApiUserStockException e) {
+        final HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                forbidden,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Wrong stock for user: " + e.getMessage());
+        return new ResponseEntity<>(apiException, forbidden);
+    }
+
+    @ExceptionHandler(value = {ApiUserInnException.class})
+    public ResponseEntity<Object> handelWrongCode(ApiUserInnException e) {
+        final HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                forbidden,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Wrong inn for user: " + e.getMessage());
+        return new ResponseEntity<>(apiException, forbidden);
+    }
+
+    @ExceptionHandler(value = {ApiUserAccountException.class})
+    public ResponseEntity<Object> handelWrongCode(ApiUserAccountException e) {
+        final HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                forbidden,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Wrong account for user: " + e.getMessage());
+        return new ResponseEntity<>(apiException, forbidden);
     }
 }

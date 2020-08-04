@@ -1,5 +1,6 @@
 package org.promocat.promocat.config;
 
+import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.security.SecurityFilter;
 import org.promocat.promocat.security.SecurityProvider;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +31,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
-            new AntPathRequestMatcher("/api/**")
+            new AntPathRequestMatcher("/api/**"),
+            new AntPathRequestMatcher("/data/examples/admin/**"),
+            new AntPathRequestMatcher("/admin/**")
+    );
+
+    private static final RequestMatcher ADMIN_URLS = new OrRequestMatcher(
+            new AntPathRequestMatcher("/data/examples/admin/**"),
+            new AntPathRequestMatcher("/admin/**")
+    );
+
+    private static final RequestMatcher USER_URLS = new OrRequestMatcher(
+            new AntPathRequestMatcher("/api/user/**")
+    );
+
+    private static final RequestMatcher COMPANY_URLS = new OrRequestMatcher(
+            new AntPathRequestMatcher("/api/company/**")
     );
 
 
@@ -52,7 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(final WebSecurity webSecurity) {
-        webSecurity.ignoring().antMatchers("/auth/**", "/swagger-ui.html#/**", "/h2-console/**");
+        webSecurity.ignoring().antMatchers("/auth/**", "/swagger-ui.html#/**", "/h2-console/**", "/data/**");
     }
 
     @Override
@@ -66,6 +82,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationProvider(provider)
                 .addFilterBefore(authenticationFilter(), AnonymousAuthenticationFilter.class)
                 .authorizeRequests()
+                .requestMatchers(ADMIN_URLS)
+                .hasAuthority("ROLE_" + AccountType.ADMIN.getType().toUpperCase())
+                .requestMatchers(USER_URLS)
+                .hasAuthority("ROLE_" + AccountType.USER.getType().toUpperCase())
+                .requestMatchers(COMPANY_URLS)
+                .hasAuthority("ROLE_" + AccountType.COMPANY.getType().toUpperCase())
                 .requestMatchers(PROTECTED_URLS)
                 .authenticated()
                 .and()

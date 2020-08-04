@@ -5,18 +5,17 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.data_entities.AbstractEntity;
-import org.promocat.promocat.data_entities.stock.Stock;
-import org.promocat.promocat.data_entities.user.User;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -29,34 +28,52 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class PromoCode extends AbstractEntity {
 
-    private String promo_code;
-    private Stock stock;
-    private User user;
+    private String promoCode;
+    private Boolean isActive;
+    private LocalDateTime activeDate;
+    private LocalDateTime deactivateDate;
+    private StockCity stockCity;
 
     /**
      * Промокод.
      */
-    @NotBlank(message = "Промокод не может быть пустым")
-    @Column(name = "promo_code")
-    public String getPromo_code() {
-        return promo_code;
+    @NotBlank(message = "Промокод не может быть пустым.")
+    @Column(name = "promo_code", unique = true)
+    public String getPromoCode() {
+        return promoCode;
     }
 
     /**
-     * Id акции.
+     * Активность промокода
      */
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "stock_id")
-    public Stock getStock() {
-        return stock;
+    @Column(columnDefinition = "boolean default false", name = "is_active")
+    public Boolean getIsActive() {
+        return isActive;
     }
 
     /**
-     * Пользователь, у которого активен данный промокод.
+     * Дата активации промокода.
      */
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    public User getUser() {
-        return user;
+    @NotNull(message = "Дата активации промокода не может быть пустой.")
+    @Column(name = "active_date")
+    public LocalDateTime getActiveDate() {
+        return activeDate;
+    }
+
+    /**
+     * Дата деактивации промокода.
+     */
+    @Column(name = "deactivate_date")
+    public LocalDateTime getDeactivateDate() {
+        return deactivateDate;
+    }
+
+    /**
+     * Город где активен промокод.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stock_city_id")
+    public StockCity getStockCity() {
+        return stockCity;
     }
 }

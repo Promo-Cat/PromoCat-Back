@@ -1,25 +1,118 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.constraints.RequiredForFull;
 
+import javax.validation.constraints.Pattern;
+import java.util.HashSet;
 import java.util.Set;
 
+@ApiModel(
+        value = "User",
+        description = "Object representation of user of PromoCat application." +
+                "Users city, INN and account are required for full registration."
+)
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserDTO extends AbstractDTO {
+public class UserDTO extends AbstractAccountDTO {
 
-    private String name;
-    private String telephone;
-    private String token;
-    private String city;
-    private Long balance;
-    private Set<CarDTO> cars;
-    private PromoCodeDTO promoCodeDTO;
+    @ApiModelProperty(
+            value = "Users city",
+            dataType = "String"
+    )
+    @RequiredForFull
+    private Long cityId;
+
+    @ApiModelProperty(
+            value = "Users balance",
+            dataType = "Long"
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Double balance;
+
+    @ApiModelProperty(
+            value = "Users cars",
+            dataType = "Set",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Set<CarDTO> cars = new HashSet<>();
+
+    @ApiModelProperty(
+            value = "Id of current users stock city",
+            dataType = "Long",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Long stockCityId;
+
+    @ApiModelProperty(
+            value = "Users movement",
+            dataType = "List of Movement entities",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Set<MovementDTO> movements = new HashSet<>();
+
+    @ApiModelProperty(
+            value = "Users total distance",
+            dataType = "Double",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Double totalDistance;
+
+    @ApiModelProperty(
+            value = "Users total earnings",
+            dataType = "Double",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Double totalEarnings;
+
+    @ApiModelProperty(
+            value = "Users status",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private UserStatus status;
+
+    @Pattern(regexp = "\\d{5}.\\d{3}.\\d.\\d{11}",
+            message = "Расчетный счет должен соответствовать шаблону XXXXX.XXX.X.XXXXXXXXXXX")
+    @ApiModelProperty(
+            value = "Users account",
+            dataType = "String"
+    )
+    @RequiredForFull
+    private String account;
+
+    @Pattern(regexp = "\\d{12}",
+            message = "ИНН должен соответствовать шаблону: XXXXXXXXXXXX")
+    @ApiModelProperty(
+            value = "Users inn",
+            dataType = "String",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @RequiredForFull
+    private String inn;
+
+    @JsonIgnore
+    @RequiredForFull
+    private String taxConnectionId;
+
+    public UserDTO() {
+        this.setAccountType(AccountType.USER);
+    }
 }
