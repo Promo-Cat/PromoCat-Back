@@ -163,7 +163,7 @@ public class StockService {
         }
     }
 
-    @Scheduled(cron = "20 4 12 * * *")
+    @Scheduled(cron = "20 9 12 * * *")
     public void test() {
         checkAlive();
     }
