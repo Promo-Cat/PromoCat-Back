@@ -163,11 +163,6 @@ public class StockService {
         log.info("Scheduled task finished.");
     }
 
-    @Scheduled(cron = "30 31 12 * * *")
-    public void test() {
-        checkAlive();
-    }
-
     public void endUpStock(StockDTO stockDTO) {
         stockDTO.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
         Path path = Paths.get(PATH, stockDTO.getName() + stockDTO.getId().toString() + ".csv");

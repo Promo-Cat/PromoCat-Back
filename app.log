@@ -2725,4 +2725,15 @@ Caused by: org.postgresql.util.PSQLException: Соединение уже был
 ""2020-08-04 12:24:56 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8889 (https) with context path ''
 ""2020-08-04 12:24:56 [main] INFO  o.p.promocat.PromoCatApplication - Started PromoCatApplication in 15.96 seconds (JVM running for 17.057)
 ""2020-08-04 12:24:56 [RMI TCP Connection(6)-192.168.1.67] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Clear stock with end time after: 1
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Trying to find records which start time less than time and duration equals to days. Time: 2020-08-04T12:28:00.040811. Days: 1
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Clear stock with end time after: 7
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Trying to find records which start time less than time and duration equals to days. Time: 2020-07-29T12:28:00.092814500. Days: 7
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Clear stock with end time after: 14
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Trying to find records which start time less than time and duration equals to days. Time: 2020-07-22T12:28:00.124813800. Days: 14
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Clear stock with end time after: 21
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Trying to find records which start time less than time and duration equals to days. Time: 2020-07-15T12:28:00.157814. Days: 21
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Clear stock with end time after: 28
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Trying to find records which start time less than time and duration equals to days. Time: 2020-07-08T12:28:00.189817800. Days: 28
+""2020-08-04 12:28:00 [scheduling-1] INFO  o.p.p.d.stock.StockService - Scheduled task finished.
 "
