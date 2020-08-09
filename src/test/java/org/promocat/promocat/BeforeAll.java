@@ -168,7 +168,7 @@ public class BeforeAll {
         user.setTelephone(telephone);
         user.setCity(this.city);
         user.setStatus(status);
-        user.setInn(Generator.generate("%%%%%%%%%%"));
+        user.setInn(Generator.generate("%%%%%%%%%%%%"));
         user.setAccount(Generator.generate("%%%%%.%%%.%.%%%%%%%%%%%"));
         user.setAccountType(AccountType.USER);
         if (Objects.nonNull(stockCity)) {

@@ -22,7 +22,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.util.NestedServletException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -132,7 +131,7 @@ public class StockTest {
         assertEquals(stock.getName(), that.getName());
     }
 
-    @Test(expected = NestedServletException.class)
+    @Test
     public void testSaveStockWithoutCorrectStatus() throws Exception {
 
         this.mockMvc.perform(post("/api/company/stock")
@@ -254,7 +253,7 @@ public class StockTest {
     @Test
     public void testSetStartTimeStock() throws Exception {
         LocalDateTime time = LocalDateTime.now();
-        this.mockMvc.perform(post("/admin/stock/setTime/" + beforeAll.stock1DTO.getId())
+        this.mockMvc.perform(post("/admin/stock/startTime/" + beforeAll.stock1DTO.getId())
                 .header("token", beforeAll.adminToken)
                 .param("time", time.toString()))
                 .andExpect(status().isOk());

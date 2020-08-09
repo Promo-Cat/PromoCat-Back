@@ -99,7 +99,6 @@ public class UserTest {
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
 
         assertEquals(user.getTelephone(), that.getTelephone());
-        assertEquals(that.getStatus(), UserStatus.JUST_REGISTERED);
         assertEquals(that.getAccountType(), AccountType.USER);
     }
 
@@ -129,7 +128,6 @@ public class UserTest {
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
-        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
     }
@@ -145,14 +143,6 @@ public class UserTest {
         this.mockMvc.perform(post("/api/user").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(status().isOk());
-
-        MvcResult result = this.mockMvc.perform(get("/admin/user/" + beforeAll.user1DTO.getId()).header("token", beforeAll.adminToken))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
-
-        assertEquals(that.getStatus(), UserStatus.FULL);
     }
 
     /**
@@ -170,7 +160,6 @@ public class UserTest {
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
-        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
     }
 
     /**
@@ -222,7 +211,6 @@ public class UserTest {
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
-        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
     }
 
 
@@ -264,7 +252,6 @@ public class UserTest {
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
-        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
     }
 
     /**
@@ -313,7 +300,7 @@ public class UserTest {
 
     @Test
     public void testMoveWithoutCar() throws Exception {
-        UserDTO user = beforeAll.createUser("+7(213)123-22-22", "mail@mail.ru", beforeAll.stockCity1DTO, UserStatus.JUST_REGISTERED);
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", beforeAll.stockCity1DTO, UserStatus.JUST_REGISTERED);
         user.setCars(null);
         String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
 
@@ -342,7 +329,7 @@ public class UserTest {
 
     @Test
     public void testSetUserWithoutInnStockCity() throws Exception {
-        UserDTO user = beforeAll.createUser("+7(213)123-22-22", "mail@mail.ru", null, UserStatus.JUST_REGISTERED);
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.JUST_REGISTERED);
         user.setInn(null);
         String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
 
@@ -353,7 +340,7 @@ public class UserTest {
 
     @Test
     public void testSetUserWithoutAccountStockCity() throws Exception {
-        UserDTO user = beforeAll.createUser("+7(213)123-22-22", "mail@mail.ru", null, UserStatus.JUST_REGISTERED);
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.JUST_REGISTERED);
         user.setAccount(null);
         String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
 
@@ -364,7 +351,7 @@ public class UserTest {
 
     @Test
     public void testSetUserWithoutCorrectStatusStockCity() throws Exception {
-        UserDTO user = beforeAll.createUser("+7(213)123-22-22", "mail@mail.ru", null, UserStatus.JUST_REGISTERED);
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.JUST_REGISTERED);
         user.setStatus(UserStatus.JUST_REGISTERED);
         String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
 
