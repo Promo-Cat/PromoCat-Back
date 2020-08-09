@@ -3,21 +3,28 @@ package org.promocat.promocat.data_entities.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.UserStatus;
-import org.promocat.promocat.constraints.RequiredForFull;
 import org.promocat.promocat.data_entities.movement.MovementService;
-import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.mapper.UserMapper;
+import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.JwtReader;
 import org.promocat.promocat.utils.PaymentService;
+import org.promocat.promocat.utils.soap.SoapClient;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
+import org.promocat.promocat.utils.soap.util.TaxUtils;
+import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,23 +38,23 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final StockService stockService;
-    private final PromoCodeService promoCodeService;
     private final MovementService movementService;
     private final StockCityService stockCityService;
     private final PaymentService paymentService;
+    private final SoapClient soapClient;
 
     @Autowired
     public UserService(final UserRepository userRepository,
                        final UserMapper mapper,
                        final StockService stockService,
-                       final PromoCodeService promoCodeService,
                        final MovementService movementService,
                        final StockCityService stockCityService,
-                       final PaymentService paymentService) {
+                       final PaymentService paymentService,
+                       final SoapClient soapClient) {
         this.userRepository = userRepository;
         this.userMapper = mapper;
         this.stockService = stockService;
-        this.promoCodeService = promoCodeService;
+        this.soapClient = soapClient;
         this.movementService = movementService;
         this.stockCityService = stockCityService;
         this.paymentService = paymentService;
@@ -62,6 +69,23 @@ public class UserService {
     public UserDTO save(final UserDTO dto) {
         log.info("Saving user with telephone: {}", dto.getTelephone());
         return userMapper.toDto(userRepository.save(userMapper.toEntity(dto)));
+    }
+
+    /**
+     * Обновление пользователя.
+     *
+     * @param oldUser старые данные.
+     * @param newUser новые данные.
+     * @return обновленный пользователь.
+     */
+    public UserDTO update(final UserDTO oldUser, final UserDTO newUser) {
+        newUser.setTelephone(oldUser.getTelephone());
+        EntityUpdate.copyNonNullProperties(newUser, oldUser);
+        if (oldUser.getStatus() == UserStatus.JUST_REGISTERED &&
+                RequiredForFullConstraintValidator.check(oldUser)) {
+            oldUser.setStatus(UserStatus.FULL);
+        }
+        return save(oldUser);
     }
 
     /**
@@ -177,4 +201,27 @@ public class UserService {
         return userRepository.getByTelephone(telephone).isPresent();
     }
 
+
+    /**
+     * Регистрация пользователя в Мой налог.
+     *
+     * @param user пользователь, который хочет подключиться к Мой налог.
+     */
+    public void registerMyTax(final UserDTO user) {
+        PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse)
+                soapClient.send(new PostBindPartnerWithPhoneRequest(
+                        TaxUtils.reformatPhone(user.getTelephone()), TaxUtils.PERMISSIONS));
+        user.setTaxConnectionId(response.getId());
+        update(user, user);
+    }
+
+    /**
+     * Получение статуса подключения пользователя.
+     *
+     * @param user пользоваетель.
+     */
+    public GetBindPartnerStatusResponse getTaxStatus(final UserDTO user) {
+        return ((GetBindPartnerStatusResponse)
+                soapClient.send(new GetBindPartnerStatusRequest(user.getTaxConnectionId())));
+    }
 }

@@ -10,6 +10,8 @@ import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.AdminMapper;
 import org.promocat.promocat.utils.MultiPartFileUtils;
+import org.promocat.promocat.utils.soap.SoapClient;
+import org.promocat.promocat.utils.soap.operations.application_registration.PostPlatformRegistrationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.promocat.promocat.utils.soap.util.TaxUtils.*;
+
 @Service
 @Slf4j
 public class AdminService {
@@ -32,7 +36,7 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final AdminMapper adminMapper;
     private final MultiPartFileUtils multiPartFileUtils;
-
+    private final SoapClient soapClient;
 
     @Value("${data.resources.admin.examples}")
     private String PATH;
@@ -40,10 +44,12 @@ public class AdminService {
     @Autowired
     public AdminService(final AdminRepository adminRepository,
                         final AdminMapper adminMapper,
-                        final MultiPartFileUtils multiPartFileUtils) {
+                        final MultiPartFileUtils multiPartFileUtils,
+                        final SoapClient soapClient) {
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
         this.multiPartFileUtils = multiPartFileUtils;
+        this.soapClient = soapClient;
     }
 
     /**
@@ -208,6 +214,22 @@ public class AdminService {
     public MultiPartFileDTO getTermsOfUse() {
         Path pathToTermsOfUse = Paths.get(PATH, "terms_of_use.pdf");
         return createMultiPartFileFromPath(pathToTermsOfUse);
+    }
+
+    /**
+     * Регистрация партнера в сервисе Мой налог.
+     */
+    public void registerPartner() {
+        PostPlatformRegistrationRequest request = new PostPlatformRegistrationRequest();
+        request.setPartnerName(PROMOCAT_NAME);
+        request.setPartnerType("PARTNER");
+        request.setPartnerConnectable("true");
+        request.setInn(PROMOCAT_INN);
+        request.setPartnerDescription(PROMOCAT_DESCRIPTION);
+        request.setPartnersText(PROMOCAT_TEXT);
+        request.setTransitionLink(PROMOCAT_TRANSITION_LINK);
+        request.setPhone(PROMOCAT_PHONE);
+        request.setPartnerImage(PROMOCAT_LOGO);
     }
 
     /**

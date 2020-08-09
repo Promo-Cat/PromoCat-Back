@@ -9,13 +9,13 @@ import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.movement.MovementService;
-import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationService;
+import org.promocat.promocat.data_entities.stock_activation.StockActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
-import org.promocat.promocat.dto.PromoCodeActivationDTO;
+import org.promocat.promocat.dto.StockActivationDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.*;
 import org.promocat.promocat.exception.ApiException;
@@ -45,7 +45,7 @@ public class CompanyController {
 
     private final CompanyService companyService;
     private final StockService stockService;
-    private final PromoCodeActivationService promoCodeActivationService;
+    private final StockActivationService stockActivationService;
     private final MovementService movementService;
     private final UserService userService;
     private final AdminService adminService;
@@ -55,7 +55,7 @@ public class CompanyController {
     @Autowired
     public CompanyController(final CompanyService companyService,
                              final StockService stockService,
-                             final PromoCodeActivationService promoCodeActivationService,
+                             final StockActivationService stockActivationService,
                              final MovementService movementService,
                              final UserService userService,
                              final AdminService adminService,
@@ -63,7 +63,7 @@ public class CompanyController {
                              final TokenService tokenService) {
         this.companyService = companyService;
         this.stockService = stockService;
-        this.promoCodeActivationService = promoCodeActivationService;
+        this.stockActivationService = stockActivationService;
         this.movementService = movementService;
         this.userService = userService;
         this.adminService = adminService;
@@ -166,12 +166,16 @@ public class CompanyController {
     })
     @RequestMapping(path = {"/api/company/stock/{stockId}/promoCodeActivation/summary",
             "/admin/statistic/company/stock/{stockId}/promoCodeActivation/summary"}, method = RequestMethod.GET)
-    public ResponseEntity<Long> getSummaryPromoCodeActivation(@PathVariable("stockId") Long stockId,
+    public ResponseEntity<String> getSummaryPromoCodeActivation(@PathVariable("stockId") Long stockId,
                                                               @RequestParam(value = "companyId", required = false) Long companyId,
                                                               @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
-            return ResponseEntity.ok(promoCodeActivationService.getSummaryCountByStock(stockId));
+            return ResponseEntity.ok(
+                    "{ count: "
+                            + stockActivationService.getSummaryCountByStock(stockId)
+                            + "}"
+            );
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
@@ -195,7 +199,7 @@ public class CompanyController {
                                                              @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
-            return ResponseEntity.ok(promoCodeActivationService.getCountByCityAndStock(cityId, stockId));
+            return ResponseEntity.ok(stockActivationService.getCountByCityAndStock(cityId, stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
@@ -203,7 +207,7 @@ public class CompanyController {
 
     @ApiOperation(value = "Get total number of activated promo-codes in all cities.",
             notes = "Getting all activated promo-codes for each city individually.",
-            response = PromoCodeActivationDTO.class,
+            response = StockActivationDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 403, message = "Stock is not owned by this company.", response = ApiException.class),
@@ -219,7 +223,7 @@ public class CompanyController {
             @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
-            return ResponseEntity.ok(promoCodeActivationService.getCountForEveryCityByStock(stockId));
+            return ResponseEntity.ok(stockActivationService.getCountForEveryCityByStock(stockId));
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
@@ -541,7 +545,7 @@ public class CompanyController {
         return posterService.getResourceResponseEntity(poster);
     }
 
-    @ApiOperation(value = "Get poster preview example", notes = "Returning example of poster (.pdf)",
+    @ApiOperation(value = "Get poster preview example", notes = "Returning example of poster (.png)",
             response = Resource.class)
     @ApiResponses(value = {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),

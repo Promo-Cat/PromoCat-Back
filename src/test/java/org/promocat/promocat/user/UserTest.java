@@ -127,7 +127,6 @@ public class UserTest {
 
         assertEquals(beforeAll.user1DTO.getId(), that.getId());
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
-        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
         assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
@@ -141,7 +140,6 @@ public class UserTest {
     @Test
     public void testUpdateUser() throws Exception {
         UserDTO user = new UserDTO();
-        user.setMail("my@mail.ru");
         user.setTelephone(beforeAll.user1DTO.getTelephone());
         user.setCityId(1L);
         this.mockMvc.perform(post("/api/user").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -154,7 +152,6 @@ public class UserTest {
 
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
 
-        assertEquals(that.getMail(), "my@mail.ru");
         assertEquals(that.getStatus(), UserStatus.FULL);
     }
 
@@ -171,7 +168,6 @@ public class UserTest {
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
         assertEquals(beforeAll.user1DTO.getId(), that.getId());
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
-        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
         assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
@@ -224,7 +220,6 @@ public class UserTest {
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
         assertEquals(beforeAll.user1DTO.getId(), that.getId());
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
-        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
         assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
@@ -267,7 +262,6 @@ public class UserTest {
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
         assertEquals(beforeAll.user1DTO.getId(), that.getId());
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
-        assertEquals(beforeAll.user1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
         assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
@@ -308,7 +302,7 @@ public class UserTest {
 
     @Test
     public void testMoveWithoutStock() throws Exception {
-        UserDTO user = beforeAll.createUser("+7(213)123-22-22", "mail@mail.ru", null, UserStatus.FULL);
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.FULL);
         String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
 
         this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -331,7 +325,7 @@ public class UserTest {
 
     @Test
     public void testSetUserStockCity() throws Exception {
-        UserDTO user = beforeAll.createUser("+7(213)123-22-22", "mail@mail.ru", null, UserStatus.JUST_REGISTERED);
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.JUST_REGISTERED);
         String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
 
         this.mockMvc.perform(post("/api/user/stock/" + beforeAll.stockCity1DTO.getId())

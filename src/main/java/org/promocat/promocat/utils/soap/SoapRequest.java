@@ -2,11 +2,17 @@ package org.promocat.promocat.utils.soap;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.constraints.XmlField;
+import org.promocat.promocat.constraints.XmlInnerObject;
 
 import javax.xml.soap.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Slf4j
@@ -53,6 +59,7 @@ public abstract class SoapRequest {
             response = soapConnection.call(createMessage(), destinationURL);
             System.out.println("\n----------RESPONSE------------\n");
             response.writeTo(System.out);
+            System.out.println("\n");
             soapConnection.close();
             // FIXME: 23.07.2020 IOException
         } catch (SOAPException | IOException e) {
@@ -89,11 +96,12 @@ public abstract class SoapRequest {
                         .addChildElement(operation, "", "urn://x-artefacts-gnivc-ru/ais3/SMZ/SmzPartnersIntegrationService/types/1.0");
             }
 
-            insertPojoFields(operationBody);
+            insertPojoFields(operationBody, pojo);
             setHeaders(soapMessage.getMimeHeaders());
             soapMessage.saveChanges();
             System.out.println("\n---------------REQUEST--------------\n");
             soapMessage.writeTo(System.out);
+            System.out.println("\n");
 
             return soapMessage;
         } catch (SOAPException e) {
@@ -121,18 +129,39 @@ public abstract class SoapRequest {
      * Сериализует объект {@code pojo} и добавляет все его поля, помеченные аннотацией {@link XmlField} в тело запроса
      * @param target Тело запроса, в которое помещаются поля {@code pojo}
      */
-    protected void insertPojoFields(SOAPElement target) throws SOAPException, IllegalAccessException {
-        for (Field declaredField : pojo.getClass().getDeclaredFields()) {
+    protected void insertPojoFields(SOAPElement target, Object obj) throws SOAPException, IllegalAccessException {
+        for (Field declaredField : obj.getClass().getDeclaredFields()) {
             if (declaredField.isAnnotationPresent(XmlField.class)) {
                 XmlField annotation = declaredField.getAnnotation(XmlField.class);
                 declaredField.setAccessible(true);
-                Object fieldValue = declaredField.get(pojo);
-                declaredField.setAccessible(false);
+                Object fieldValue = declaredField.get(obj);
+//                declaredField.setAccessible(false);
                 if (fieldValue instanceof List) {
                     List fieldValueList = (List) fieldValue;
                     for (Object el : fieldValueList) {
-                        target.addChildElement(annotation.value()).addTextNode(el.toString());
+                        if (declaredField.isAnnotationPresent(XmlInnerObject.class)){
+                            insertPojoFields(target.addChildElement(annotation.value()),
+                                    el);
+                        } else {
+                            target.addChildElement(annotation.value()).addTextNode(el.toString());
+                        }
                     }
+                } else if (declaredField.isAnnotationPresent(XmlInnerObject.class)) {
+//                    XmlInnerObject innerObjectAnnotation = declaredField.getAnnotation(XmlInnerObject.class);
+                    insertPojoFields(target.addChildElement(annotation.value()),
+                            fieldValue);
+                } else if (fieldValue instanceof ZonedDateTime) {
+                    target.addChildElement(annotation.value()).addTextNode(
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                                    .format((ZonedDateTime)fieldValue) + "Z"
+                    );
+                } else if (fieldValue instanceof Double) {
+                    DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+                    otherSymbols.setDecimalSeparator('.');
+                    target.addChildElement(annotation.value()).addTextNode(
+                            new DecimalFormat("#0.00", otherSymbols).format(fieldValue)
+                    );
+                    log.info("DOUBLE VALUE {}", new DecimalFormat("#0.00").format(fieldValue));
                 } else {
                     target.addChildElement(annotation.value()).addTextNode(fieldValue.toString());
                 }

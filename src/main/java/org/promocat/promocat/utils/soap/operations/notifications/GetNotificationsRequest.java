@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.constraints.XmlField;
+import org.promocat.promocat.constraints.XmlInnerObject;
 import org.promocat.promocat.utils.soap.operations.AbstractOperation;
 import org.promocat.promocat.utils.soap.operations.pojo.NotificationsRequest;
 
@@ -23,6 +24,7 @@ public final class GetNotificationsRequest extends AbstractOperation {
      * Лист требуемых оповещений. Не более 1000.
      */
     @XmlField("notificationsRequest")
+    @XmlInnerObject(NotificationsRequest.class)
     private List<NotificationsRequest> notificationsRequest;
 
     @Override

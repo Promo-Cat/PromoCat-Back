@@ -18,7 +18,7 @@ import org.promocat.promocat.data_entities.movement.MovementRepository;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.parameters.ParametersRepository;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeRepository;
-import org.promocat.promocat.data_entities.promocode_activation.PromoCodeActivationRepository;
+import org.promocat.promocat.data_entities.stock_activation.StockActivationRepository;
 import org.promocat.promocat.data_entities.stock.StockRepository;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityRepository;
@@ -72,7 +72,7 @@ public class BeforeAll {
     PromoCodeRepository promoCodeRepository;
 
     @Autowired
-    PromoCodeActivationRepository promoCodeActivationRepository;
+    StockActivationRepository stockActivationRepository;
 
     @Autowired
     StockRepository stockRepository;
@@ -152,7 +152,7 @@ public class BeforeAll {
         companyRepository.deleteAll();
         movementRepository.deleteAll();
         promoCodeRepository.deleteAll();
-        promoCodeActivationRepository.deleteAll();
+        stockActivationRepository.deleteAll();
         stockRepository.deleteAll();
         stockCityRepository.deleteAll();
         create();
@@ -163,10 +163,9 @@ public class BeforeAll {
      *
      * @return UserDTO.
      */
-    public UserDTO createUser(String telephone, String mail, StockCityDTO stockCity, UserStatus status) {
+    public UserDTO createUser(String telephone, StockCityDTO stockCity, UserStatus status) {
         User user = new User();
         user.setTelephone(telephone);
-        user.setMail(mail);
         user.setCity(this.city);
         user.setStatus(status);
         user.setInn(Generator.generate("%%%%%%%%%%"));
@@ -298,8 +297,8 @@ public class BeforeAll {
         distance = new DistanceDTO(LocalDate.now(), 5.5);
 
         // Добавление пользователей + токены.
-        user1DTO = createUser("+7(111)111-11-11", "qwert@mail.ru", stockCity1DTO, UserStatus.FULL);
-        user2DTO = createUser("+7(222)222-22-22", "asdfg@mail.ru", stockCity2DTO, UserStatus.FULL);
+        user1DTO = createUser("+7(111)111-11-11", stockCity1DTO, UserStatus.FULL);
+        user2DTO = createUser("+7(222)222-22-22", stockCity2DTO, UserStatus.FULL);
 
         user1Token = getToken(AccountType.USER, "+7(111)111-11-11");
         user2Token = getToken(AccountType.USER, "+7(222)222-22-22");

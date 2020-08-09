@@ -16,7 +16,7 @@ public final class NotificationsRequest {
     /**
      * ИНН НП.
      */
-    @XmlField("Inn")
+    @XmlField("inn")
     private String inn;
 
     /**

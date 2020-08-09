@@ -1,12 +1,12 @@
-package org.promocat.promocat.data_entities.promocode_activation;
+package org.promocat.promocat.data_entities.stock_activation;
 
 import org.promocat.promocat.data_entities.stock.StockService;
-import org.promocat.promocat.dto.PromoCodeActivationDTO;
+import org.promocat.promocat.dto.StockActivationDTO;
 import org.promocat.promocat.dto.PromoCodeDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
-import org.promocat.promocat.mapper.PromoCodeActivationMapper;
+import org.promocat.promocat.mapper.StockActivationMapper;
 import org.promocat.promocat.mapper.StockMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,20 +16,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PromoCodeActivationService {
+public class StockActivationService {
 
-    private final PromoCodeActivationRepository promoCodeActivationRepository;
-    private final PromoCodeActivationMapper promoCodeActivationMapper;
+    private final StockActivationRepository stockActivationRepository;
+    private final StockActivationMapper stockActivationMapper;
     private final StockService stockService;
     private final StockMapper stockMapper;
 
     @Autowired
-    public PromoCodeActivationService(final PromoCodeActivationRepository promoCodeActivationRepository,
-                                      final PromoCodeActivationMapper promoCodeActivationMapper,
-                                      final StockService stockService,
-                                      final StockMapper stockMapper) {
-        this.promoCodeActivationRepository = promoCodeActivationRepository;
-        this.promoCodeActivationMapper = promoCodeActivationMapper;
+    public StockActivationService(final StockActivationRepository stockActivationRepository,
+                                  final StockActivationMapper stockActivationMapper,
+                                  final StockService stockService,
+                                  final StockMapper stockMapper) {
+        this.stockActivationRepository = stockActivationRepository;
+        this.stockActivationMapper = stockActivationMapper;
         this.stockService = stockService;
         this.stockMapper = stockMapper;
     }
@@ -39,14 +39,14 @@ public class PromoCodeActivationService {
      *
      * @param user      объектное представление пользователя. {@link UserDTO}
      * @param promoCode объектное представление промокода. {@link PromoCodeDTO}
-     * @return Сущность активированного промокода. {@link PromoCodeActivationDTO}
+     * @return Сущность активированного промокода. {@link StockActivationDTO}
      */
-    public PromoCodeActivationDTO create(final UserDTO user, final PromoCodeDTO promoCode) {
-        PromoCodeActivationDTO res = new PromoCodeActivationDTO();
-        res.setPromoCodeId(promoCode.getId());
+    public StockActivationDTO create(final UserDTO user, final Long stockCityId) {
+        StockActivationDTO res = new StockActivationDTO();
+        res.setStockCityId(stockCityId);
         res.setUserId(user.getId());
         res.setActivationDate(LocalDateTime.now());
-        return promoCodeActivationMapper.toDto(promoCodeActivationRepository.save(promoCodeActivationMapper.toEntity(res)));
+        return stockActivationMapper.toDto(stockActivationRepository.save(stockActivationMapper.toEntity(res)));
     }
 
     /**
@@ -56,9 +56,9 @@ public class PromoCodeActivationService {
      * @return Список акций пользователя. {@link StockDTO}
      */
     public List<StockDTO> getStocksByUserId(final Long id) {
-        return promoCodeActivationRepository.getAllByUserId(id)
+        return stockActivationRepository.getAllByUserId(id)
                 .stream()
-                .map(x -> stockMapper.toDto(x.getPromoCode().getStockCity().getStock()))
+                .map(x -> stockMapper.toDto(x.getStockCity().getStock()))
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +70,7 @@ public class PromoCodeActivationService {
      * @return Количество активированных промокодов в городе у акции.
      */
     public Long getCountByCityAndStock(final Long cityId, final Long stockId) {
-        return promoCodeActivationRepository.countByCityAndStock(cityId, stockId);
+        return stockActivationRepository.countByCityAndStock(cityId, stockId);
     }
 
     /**
@@ -80,7 +80,7 @@ public class PromoCodeActivationService {
      * @return Суммарное количество активированных промокодов у акции.
      */
     public Long getSummaryCountByStock(final Long stockId) {
-        return promoCodeActivationRepository.countAllByStock(stockId);
+        return stockActivationRepository.countAllByStock(stockId);
     }
 
     /**

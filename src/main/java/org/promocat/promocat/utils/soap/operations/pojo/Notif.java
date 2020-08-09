@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.promocat.promocat.constraints.XmlField;
+import org.promocat.promocat.constraints.XmlInnerObject;
 import org.promocat.promocat.utils.soap.attributes.NotificationStatus;
 
 import java.time.ZonedDateTime;
@@ -38,7 +39,7 @@ public final class Notif {
      * Статус оповещения.
      */
     @XmlField("status")
-    private NotificationStatus status;
+    private String status;
 
     /**
      * Дата создания.

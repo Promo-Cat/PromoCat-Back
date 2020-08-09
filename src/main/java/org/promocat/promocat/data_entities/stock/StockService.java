@@ -2,11 +2,14 @@ package org.promocat.promocat.data_entities.stock;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
+import org.promocat.promocat.data_entities.receipt.ReceiptService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.dto.ReceiptDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -15,21 +18,27 @@ import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.CSVGenerator;
+import org.promocat.promocat.utils.soap.SoapClient;
+import org.promocat.promocat.utils.soap.attributes.IncomeType;
+import org.promocat.promocat.utils.soap.operations.income.PostIncomeRequestV2;
+import org.promocat.promocat.utils.soap.operations.income.PostIncomeResponseV2;
+import org.promocat.promocat.utils.soap.operations.pojo.IncomeService;
+import org.promocat.promocat.utils.soap.util.TaxUtils;
 import org.promocat.promocat.validators.StockDurationConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +47,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableScheduling
 @Service
+@Transactional
 public class StockService {
 
     @Value("${data.codes.files}")
@@ -51,6 +61,8 @@ public class StockService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final CSVGenerator csvGenerator;
+    private final SoapClient soapClient;
+    private final ReceiptService receiptService;
 
     @Autowired
     public StockService(final StockMapper mapper,
@@ -59,7 +71,10 @@ public class StockService {
                         final CityService cityService,
                         final ParametersService parametersService,
                         final UserRepository userRepository,
-                        final UserMapper userMapper, CSVGenerator csvGenerator) {
+                        final UserMapper userMapper,
+                        final CSVGenerator csvGenerator,
+                        final SoapClient soapClient,
+                        final ReceiptService receiptService) {
         this.mapper = mapper;
         this.repository = repository;
         this.stockCityService = stockCityService;
@@ -68,6 +83,8 @@ public class StockService {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.csvGenerator = csvGenerator;
+        this.soapClient = soapClient;
+        this.receiptService = receiptService;
     }
 
     /**
@@ -112,6 +129,7 @@ public class StockService {
         }
     }
 
+
     /**
      * Получение просроченных акций.
      *
@@ -119,17 +137,17 @@ public class StockService {
      * @param days длительность акции
      * @return список прросроченных акций. {@link StockDTO}
      */
-    private List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
+    @Transactional
+    public List<StockDTO> getByTime(final LocalDateTime time, final Long days) {
         log.info("Trying to find records which start time less than time and duration equals to days. Time: {}. Days: {}",
                 time, days);
-        Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, StockStatus.ACTIVE);
-        List<StockDTO> result = new ArrayList<>();
-        if (optional.isPresent()) {
-            for (Stock stock : optional.get()) {
-                result.add(mapper.toDto(stock));
-            }
-        }
-        return result;
+        Set<Stock> stocks = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, StockStatus.ACTIVE);
+        return stocks.stream()
+                .peek(e -> {
+                    e.setCities(new HashSet<>(e.getCities()));
+                })
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -139,38 +157,72 @@ public class StockService {
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
-            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day), day);
-            stocks.forEach(e -> {
-                e.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
-                Path path = Paths.get(PATH, e.getName() + e.getId().toString() + ".csv");
-                save(e);
-                if (Objects.isNull(e.getCities())) {
-                    return;
-                }
-                List<UserDTO> users = new ArrayList<>();
-                e.getCities().stream()
-                        .flatMap(x -> x.getUsers().stream())
-                        .forEach(y -> {
-                            y.setStockCityId(null);
-                            users.add(y);
-                            userRepository.save(userMapper.toEntity(y));
-                        });
-                csvGenerator.generate(path, users);
-                File file = path.toFile();
-                file.delete();
-            });
+            List<StockDTO> stocks = getByTime(LocalDateTime.now().minusDays(day - 1L), day);
+            stocks.forEach(this::endUpStock);
         }
+        log.info("Scheduled task finished.");
+    }
+
+    public void endUpStock(StockDTO stockDTO) {
+        stockDTO.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
+        Path path = Paths.get(PATH, stockDTO.getName() + stockDTO.getId().toString() + ".csv");
+        save(stockDTO);
+        if (Objects.isNull(stockDTO.getCities())) {
+            return;
+        }
+        List<UserDTO> users = new ArrayList<>();
+        stockDTO.getCities().stream()
+                .flatMap(x -> x.getUsers().stream())
+                .forEach(y -> {
+                    registerTaxes(y);
+                    y.setStockCityId(null);
+                    users.add(y);
+                    userRepository.save(userMapper.toEntity(y));
+                });
+        csvGenerator.generate(path, users);
+        File file = path.toFile();
+        file.delete();
     }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void updateStockStatus() {
-        Optional<List<Stock>> optional = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
+        List<Stock> stocks = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
                 StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
-        optional.ifPresent(stocks -> stocks.forEach(e -> {
+        stocks.forEach(e -> {
             StockDTO stockDTO = mapper.toDto(e);
             stockDTO.setStatus(StockStatus.ACTIVE);
             save(stockDTO);
-        }));
+        });
+    }
+
+
+    /**
+     * Отправляет оповещение в Налоговую API о зачислении юзеру средств.
+     * В ответ приходит чек, который сохраняется в БД.
+     *
+     * @param user Пользователь, которому была произведена выплата.
+     */
+    private void registerTaxes(UserDTO user) {
+
+        PostIncomeRequestV2 op = new PostIncomeRequestV2();
+        op.setInn(user.getInn());
+        op.setCustomerOrganization(TaxUtils.PROMOCAT_NAME);
+        op.setIncomeType(IncomeType.FROM_LEGAL_ENTITY);
+        op.setTotalAmount(user.getBalance());
+        op.setServices(List.of(new IncomeService(user.getBalance(), TaxUtils.TAX_SERVICE_DESCRIPTION, 1L)));
+        ZonedDateTime now = ZonedDateTime.now();
+        op.setOperationTime(now.minusHours(3));
+        op.setRequestTime(now.minusHours(3));
+        op.setCustomerInn(TaxUtils.PROMOCAT_INN);
+
+        PostIncomeResponseV2 response = (PostIncomeResponseV2) soapClient.send(op);
+
+        ReceiptDTO receipt = new ReceiptDTO();
+        receipt.setReceiptId(response.getReceiptId());
+        receipt.setReceiptLink(response.getLink());
+        receipt.setDateTime(LocalDateTime.now());
+
+        receiptService.save(receipt);
     }
 
     /**

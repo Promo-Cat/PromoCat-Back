@@ -52,4 +52,17 @@ public class ApiStockExceptionHandler {
         log.error("Poster not found: " + e.getMessage());
         return new ResponseEntity<>(apiException, notFound);
     }
+
+
+    @ExceptionHandler(value = {ApiStockTimeException.class})
+    public ResponseEntity<Object> handleWrongTimeForStock(ApiStockTimeException e) {
+        final HttpStatus notFound = HttpStatus.BAD_REQUEST;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                notFound,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Stock time not valid: " + e.getMessage());
+        return new ResponseEntity<>(apiException, notFound);
+    }
 }

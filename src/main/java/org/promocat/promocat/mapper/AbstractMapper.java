@@ -5,6 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.promocat.promocat.data_entities.AbstractEntity;
 import org.promocat.promocat.dto.AbstractDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 

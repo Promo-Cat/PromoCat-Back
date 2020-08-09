@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,7 +12,6 @@ import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.constraints.RequiredForFull;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +19,7 @@ import java.util.Set;
 @ApiModel(
         value = "User",
         description = "Object representation of user of PromoCat application." +
-                "Users mail, users city are required for full registration."
+                "Users city, INN and account are required for full registration."
 )
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Data
@@ -28,21 +28,10 @@ import java.util.Set;
 public class UserDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
-            value = "Users mail",
-            dataType = "String",
-            allowableValues = "Standard email format."
-    )
-    @Email
-    @RequiredForFull
-//    @NotBlank(message = "Почта не может быть пустой")
-    private String mail;
-
-    @ApiModelProperty(
             value = "Users city",
             dataType = "String"
     )
     @RequiredForFull
-//    @NotNull(message = "ID города не может быть пустой")
     private Long cityId;
 
     @ApiModelProperty(
@@ -62,8 +51,10 @@ public class UserDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
             value = "Id of current users stock city",
-            dataType = "Long"
+            dataType = "Long",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long stockCityId;
 
     @ApiModelProperty(
@@ -82,7 +73,6 @@ public class UserDTO extends AbstractAccountDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double totalDistance;
 
-
     @ApiModelProperty(
             value = "Users total earnings",
             dataType = "Double",
@@ -95,6 +85,7 @@ public class UserDTO extends AbstractAccountDTO {
             value = "Users status",
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UserStatus status;
 
     @Pattern(regexp = "\\d{5}.\\d{3}.\\d.\\d{11}",
@@ -103,17 +94,23 @@ public class UserDTO extends AbstractAccountDTO {
             value = "Users account",
             dataType = "String"
     )
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @RequiredForFull
     private String account;
 
-    @Pattern(regexp = "\\d{10}",
-            message = "ИНН должен соответствовать шаблону: XXXXXXXXXX")
+    @Pattern(regexp = "\\d{12}",
+            message = "ИНН должен соответствовать шаблону: XXXXXXXXXXXX")
     @ApiModelProperty(
             value = "Users inn",
-            dataType = "String"
+            dataType = "String",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @RequiredForFull
     private String inn;
+
+    @JsonIgnore
+    @RequiredForFull
+    private String taxConnectionId;
 
     public UserDTO() {
         this.setAccountType(AccountType.USER);

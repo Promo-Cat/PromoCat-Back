@@ -21,7 +21,7 @@ public final class GetBindPartnerStatusResponse extends AbstractOperation {
      * Результат запроса.
      */
     @XmlField("Result")
-    private RequestResult result;
+    private String result;
 
     /**
      * ИНН налогоплательщика.

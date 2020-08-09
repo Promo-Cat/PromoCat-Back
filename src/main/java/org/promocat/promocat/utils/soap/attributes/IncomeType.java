@@ -3,20 +3,20 @@ package org.promocat.promocat.utils.soap.attributes;
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 12:08 27.07.2020
  */
-public enum IncomeType {
+public class IncomeType {
 
     /**
      * Доход от Физического Лица.
      */
-    FROM_INDIVIDUAL,
+    public static String FROM_INDIVIDUAL = "FROM_INDIVIDUAL";
 
     /**
      * Доход от Юридического Лица.
      */
-    FROM_LEGAL_ENTITY,
+    public static String FROM_LEGAL_ENTITY = "FROM_LEGAL_ENTITY";
 
     /**
      * Доход от Иностранной Организации.
      */
-    FROM_FOREIGN_AGENCY
+    public static String FROM_FOREIGN_AGENCY = "FROM_FOREIGN_AGENCY";
 }

@@ -59,14 +59,11 @@ public class CSVFileService {
      * Загрузка файла.
      *
      * @param file     файловое представление файла.
-     * @param fileId уникальный идентификатор файла. Если равен {@code null}, то добавляется новый.
-     * @return представление файла в БД. {@link MultiPartFileDTO}
      * @throws ApiFileFormatException  если не получилось сохранить файл.
      * @throws ApiServerErrorException если не получилось привести файл к {@link java.sql.Blob}
      */
-    public CSVFileDTO loadFile(final File file, final Long fileId) {
+    public void loadFile(final File file) {
         CSVFileDTO csvFileDTO = new CSVFileDTO();
-        csvFileDTO.setId(fileId);
         csvFileDTO.setName(file.getName());
         try (FileInputStream input = new FileInputStream(file)) {
             MultipartFile multipartFile = new MockMultipartFile("fileItem",
@@ -84,7 +81,7 @@ public class CSVFileService {
             log.error("Couldn't write in file");
             throw new ApiServerErrorException("Problems with setting file");
         }
-        return save(csvFileDTO);
+        save(csvFileDTO);
     }
 
     public CSVFileDTO findByName(String name) {
