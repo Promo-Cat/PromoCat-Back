@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.util.NestedServletException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -91,7 +92,7 @@ public class StockTest {
         stock.setName("test");
         stock.setStartTime(LocalDateTime.now());
 
-        MvcResult result = this.mockMvc.perform(post("/api/company/stock").header("token", beforeAll.company1Token).contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = this.mockMvc.perform(post("/api/company/stock").header("token", beforeAll.company2Token).contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(stock)))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -101,7 +102,7 @@ public class StockTest {
         assertNotNull(that.getId());
         assertEquals(stock.getStartTime(), that.getStartTime());
         assertEquals(StockStatus.POSTER_NOT_CONFIRMED, that.getStatus());
-        assertEquals(beforeAll.company1DTO.getId(), that.getCompanyId());
+        assertEquals(beforeAll.company2DTO.getId(), that.getCompanyId());
         assertEquals(Long.valueOf(14), that.getDuration());
         assertEquals(stock.getName(), that.getName());
     }
@@ -116,7 +117,7 @@ public class StockTest {
         stock.setStartTime(LocalDateTime.now());
         stock.setDuration(7L);
 
-        MvcResult result = this.mockMvc.perform(post("/api/company/stock").header("token", beforeAll.company1Token).contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = this.mockMvc.perform(post("/api/company/stock").header("token", beforeAll.company2Token).contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(stock)))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -126,10 +127,38 @@ public class StockTest {
         assertNotNull(that.getId());
         assertEquals(stock.getStartTime(), that.getStartTime());
         assertEquals(StockStatus.POSTER_NOT_CONFIRMED, that.getStatus());
-        assertEquals(beforeAll.company1DTO.getId(), that.getCompanyId());
+        assertEquals(beforeAll.company2DTO.getId(), that.getCompanyId());
         assertEquals(stock.getDuration(), that.getDuration());
         assertEquals(stock.getName(), that.getName());
     }
+
+    @Test(expected = NestedServletException.class)
+    public void testSaveStockWithoutCorrectStatus() throws Exception {
+
+        this.mockMvc.perform(post("/api/company/stock")
+                .header("token", beforeAll.company1Token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(beforeAll.stock1DTO)))
+                .andExpect(status().is4xxClientError());
+    }
+
+//    TODO раскоментить после пулла с фиксом маппера
+//    @Test
+//    public void testSaveStockWithIncorrectCompany() throws Exception {
+//        StockDTO stock = new StockDTO();
+//        stock.setName("test");
+//        stock.setStartTime(LocalDateTime.now());
+//        stock.setDuration(7L);
+//
+//        beforeAll.company1DTO.setCompanyStatus(CompanyStatus.JUST_REGISTERED);
+//        beforeAll.updateCompany(beforeAll.company1DTO);
+//
+//        this.mockMvc.perform(post("/api/company/stock")
+//                .header("token", beforeAll.company1Token)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(this.mapper.writeValueAsString(stock)))
+//                .andExpect(status().is4xxClientError());
+//    }
 
     /**
      * Изменение статуса акции по некорректному ID.
@@ -217,10 +246,36 @@ public class StockTest {
                 .andReturn();
 
         List<StockDTO> stocks = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        assertEquals(stocks.size(), 2);
+        assertEquals(stocks.size(), 1);
         assertEquals(stocks.get(0).getId(), beforeAll.stock1DTO.getId());
-        assertEquals(stocks.get(1).getId(), beforeAll.stock2DTO.getId());
         assertEquals(stocks.get(0).getName(), beforeAll.stock1DTO.getName());
-        assertEquals(stocks.get(1).getName(), beforeAll.stock2DTO.getName());
+    }
+
+    @Test
+    public void testSetStartTimeStock() throws Exception {
+        LocalDateTime time = LocalDateTime.now();
+        this.mockMvc.perform(post("/admin/stock/setTime/" + beforeAll.stock1DTO.getId())
+                .header("token", beforeAll.adminToken)
+                .param("time", time.toString()))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get("/admin/stock/" + beforeAll.stock1DTO.getId())
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        StockDTO stock = mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
+        assertEquals(stock.getStartTime(), time);
+    }
+
+    @Test
+    public void testGetAllInactiveStocks() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/admin/stock/inactive")
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<StockDTO> stocks = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertEquals(stocks.size(), 1);
     }
 }

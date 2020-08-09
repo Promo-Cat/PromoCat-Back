@@ -32,6 +32,7 @@ import org.promocat.promocat.dto.pojo.TokenDTO;
 import org.promocat.promocat.mapper.*;
 import org.promocat.promocat.util_entities.TokenService;
 import org.promocat.promocat.utils.AccountRepositoryManager;
+import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -113,6 +114,9 @@ public class BeforeAll {
     MovementMapper movementMapper;
 
     @Autowired
+    StockMapper stockMapper;
+
+    @Autowired
     StockService stockService;
 
     @Autowired
@@ -165,6 +169,8 @@ public class BeforeAll {
         user.setMail(mail);
         user.setCity(this.city);
         user.setStatus(status);
+        user.setInn(Generator.generate("%%%%%%%%%%"));
+        user.setAccount(Generator.generate("%%%%%.%%%.%.%%%%%%%%%%%"));
         user.setAccountType(AccountType.USER);
         if (Objects.nonNull(stockCity)) {
             user.setStockCity(stockCityRepository.findById(stockCity.getId()).get());
@@ -220,10 +226,10 @@ public class BeforeAll {
         return companyMapper.toDto(company);
     }
 
-    private StockDTO createStock(String name, CompanyDTO company) {
+    private StockDTO createStock(String name, CompanyDTO company, StockStatus status) {
         StockDTO stock = new StockDTO();
         stock.setCompanyId(company.getId());
-        stock.setStatus(StockStatus.ACTIVE);
+        stock.setStatus(status);
         stock.setDuration(7L);
         stock.setStartTime(LocalDateTime.now());
         stock.setName(name);
@@ -237,6 +243,14 @@ public class BeforeAll {
         stockCity.setNumberOfPromoCodes(10L);
 
         return stockCityMapper.toDto(stockCityRepository.save(stockCityMapper.toEntity(stockCity)));
+    }
+
+    public void updateStock(StockDTO stock) {
+        stock1DTO = stockMapper.toDto(stockRepository.save(stockMapper.toEntity(stock)));
+    }
+
+    public void updateCompany(CompanyDTO company) {
+        company1DTO = companyMapper.toDto(companyRepository.save(companyMapper.toEntity(company)));
     }
 
     /**
@@ -266,8 +280,15 @@ public class BeforeAll {
         company2Token = getToken(AccountType.COMPANY, company2DTO.getTelephone());
 
         // Добавление акций.
-        stock1DTO = createStock("company1", company1DTO);
-        stock2DTO = createStock("company2", company2DTO);
+        stock1DTO = createStock("company1", company1DTO, StockStatus.ACTIVE);
+        company1DTO.setCurrentStockId(stock1DTO.getId());
+        stock2DTO = createStock("company2", company2DTO, StockStatus.STOCK_IS_OVER_WITH_POSTPAY);
+        company2DTO.setCurrentStockId(stock2DTO.getId());
+
+        companyRepository.save(companyMapper.toEntity(company1DTO));
+        companyRepository.save(companyMapper.toEntity(company2DTO));
+        company1Token = getToken(AccountType.COMPANY, company1DTO.getTelephone());
+        company2Token = getToken(AccountType.COMPANY, company2DTO.getTelephone());
 
         // Добавление городов к акциям.
         stockCity1DTO = addStockCity(stock1DTO, city.getId());
