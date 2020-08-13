@@ -12,5 +12,4 @@ public class StockCostDTO {
 
     private Double prepayment;
     private Double driversPayment;
-
 }

@@ -54,7 +54,7 @@ public class UserBanService {
             throw new ApiStockCityNotFoundException(String.format("Stock for user with telephone: %s not found. " +
                     "Can't ban", userDTO.getTelephone()));
         }
-        StockDTO stock = stockService.findById(stockCity.getId());
+        StockDTO stock = stockService.findById(stockCity.getStockId());
         UserBanDTO userBan = new UserBanDTO();
         userBan.setStockId(stock.getId());
         userBan.setUserId(userDTO.getId());
