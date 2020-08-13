@@ -141,24 +141,6 @@ public class StockTest {
                 .andExpect(status().is4xxClientError());
     }
 
-//    TODO раскоментить после пулла с фиксом маппера
-//    @Test
-//    public void testSaveStockWithIncorrectCompany() throws Exception {
-//        StockDTO stock = new StockDTO();
-//        stock.setName("test");
-//        stock.setStartTime(LocalDateTime.now());
-//        stock.setDuration(7L);
-//
-//        beforeAll.company1DTO.setCompanyStatus(CompanyStatus.JUST_REGISTERED);
-//        beforeAll.updateCompany(beforeAll.company1DTO);
-//
-//        this.mockMvc.perform(post("/api/company/stock")
-//                .header("token", beforeAll.company1Token)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(this.mapper.writeValueAsString(stock)))
-//                .andExpect(status().is4xxClientError());
-//    }
-
     /**
      * Изменение статуса акции по некорректному ID.
      *

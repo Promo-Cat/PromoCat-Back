@@ -3,40 +3,18 @@ package org.promocat.promocat.data_entities.promo_code;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.promocat.promocat.config.GeneratorConfig;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.dto.PromoCodeDTO;
-import org.promocat.promocat.dto.StockCityDTO;
-import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.promo_code.ApiPromoCodeNotFoundException;
-import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.PromoCodeMapper;
-import org.promocat.promocat.utils.EmailSender;
-import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import javax.mail.MessagingException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -49,16 +27,14 @@ public class PromoCodeService {
     private final PromoCodeMapper mapper;
     private final PromoCodeRepository repository;
     private final CityService cityService;
-    private final EmailSender emailSender;
 
-    @Value("${data.codes.files}")
-    private String PATH;
+//    @Value("${data.codes.files}")
+//    private String PATH;
 
     @Autowired
-    public PromoCodeService(final PromoCodeMapper mapper, final PromoCodeRepository repository, final EmailSender emailSender, final CityService cityService) {
+    public PromoCodeService(final PromoCodeMapper mapper, final PromoCodeRepository repository, final CityService cityService) {
         this.mapper = mapper;
         this.repository = repository;
-        this.emailSender = emailSender;
         this.cityService = cityService;
     }
 
@@ -189,25 +165,25 @@ public class PromoCodeService {
 //        }
 //
 //    }
-
-    /**
-     * Генерация промо-кодов для акции.
-     *
-     * @param stockId айди акции.
-     * @return Массив из сгенерированных промокодов. {@link PromoCodeDTO}
-     */
-    private Set<PromoCodeDTO> generate(Long stockId, StockCityDTO city) {
-        log.info("Generating {} promo-codes to stock: {} .....", city.getNumberOfPromoCodes(), stockId);
-        Set<PromoCodeDTO> codes = new HashSet<>();
-        while (codes.size() != city.getNumberOfPromoCodes()) {
-            String code = Generator.generate(GeneratorConfig.CODE);
-            if (!repository.existsByPromoCode(code)) {
-                PromoCodeDTO promoCode = new PromoCodeDTO(code, false, LocalDateTime.now(), null, city.getId());
-                codes.add(save(promoCode));
-            }
-        }
-        return codes;
-    }
+//
+//    /**
+//     * Генерация промо-кодов для акции.
+//     *
+//     * @param stockId айди акции.
+//     * @return Массив из сгенерированных промокодов. {@link PromoCodeDTO}
+//     */
+//    private Set<PromoCodeDTO> generate(Long stockId, StockCityDTO city) {
+//        log.info("Generating {} promo-codes to stock: {} .....", city.getNumberOfPromoCodes(), stockId);
+//        Set<PromoCodeDTO> codes = new HashSet<>();
+//        while (codes.size() != city.getNumberOfPromoCodes()) {
+//            String code = Generator.generate(GeneratorConfig.CODE);
+//            if (!repository.existsByPromoCode(code)) {
+//                PromoCodeDTO promoCode = new PromoCodeDTO(code, false, LocalDateTime.now(), null, city.getId());
+//                codes.add(save(promoCode));
+//            }
+//        }
+//        return codes;
+//    }
 
 //    /**
 //     * Сохранение промокодов к ациии.
@@ -226,21 +202,21 @@ public class PromoCodeService {
 //        }
 //        return stock;
 //    }
-
-    /**
-     * Изменение активности промокода по его id.
-     *
-     * @param id промокода.
-     */
-    public void setActive(Long id, Boolean active) {
-        log.info("Update active promo-code: {}", id);
-        Optional<PromoCode> res = repository.findById(id);
-        if (res.isPresent()) {
-            PromoCodeDTO promoCode = mapper.toDto(res.get());
-            promoCode.setIsActive(active);
-            save(promoCode);
-        }
-    }
+//
+//    /**
+//     * Изменение активности промокода по его id.
+//     *
+//     * @param id промокода.
+//     */
+//    public void setActive(Long id, Boolean active) {
+//        log.info("Update active promo-code: {}", id);
+//        Optional<PromoCode> res = repository.findById(id);
+//        if (res.isPresent()) {
+//            PromoCodeDTO promoCode = mapper.toDto(res.get());
+//            promoCode.setIsActive(active);
+//            save(promoCode);
+//        }
+//    }
 
     // TODO javadocs
     @Scheduled(cron = "59 59 23 3 * *")
