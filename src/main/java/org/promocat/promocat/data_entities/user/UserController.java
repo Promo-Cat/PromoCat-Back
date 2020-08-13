@@ -29,8 +29,10 @@ import org.promocat.promocat.exception.user.codes.ApiUserStockException;
 import org.promocat.promocat.exception.util.tax.ApiTaxRequestIdException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.soap.SoapClient;
+import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -321,6 +323,22 @@ public class UserController {
         } else {
             throw new ApiTaxRequestIdException(String.format("Request status is: %s. COMPLETED required",
                     result.getResult()));
+        }
+    }
+
+    @ApiOperation(value = "Check user`s bind status in \"Moi nalog\".", notes = "Check user`s bind status in \"Moi nalog\".",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 500, message = "User doesn`t binded to PromoCat in \"Moi nalog\"", response = SmzPlatformError.class)
+    })
+    @RequestMapping(value = "/api/user/tax/status", method = RequestMethod.GET)
+    public ResponseEntity<String> checkUserBindStatus(@RequestHeader("token") final String token) {
+        UserDTO user = userService.findByToken(token);
+        if (userService.isUserBinded(user)) {
+            return ResponseEntity.ok("{}");
+        } else {
+            // TODO: 13.08.2020 Другой ответ
+            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).build();
         }
     }
 
