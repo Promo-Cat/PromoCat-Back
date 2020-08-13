@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 /**
  * @author maksimgrankin
@@ -48,6 +49,7 @@ public class Car extends AbstractEntity {
      */
     @NotBlank(message = "Номер не может быть пустым.")
     @Column(name = "number")
+    @Pattern(regexp = "[АВЕКМНОРСТУХ]\\d{3}[АВЕКМНОРСТУХ]{2}", message = "Номер автомобиля задан некорректно.")
     public String getNumber() {
         return number;
     }
@@ -57,6 +59,7 @@ public class Car extends AbstractEntity {
      */
     @NotBlank(message = "Регион не может быть пустым.")
     @Column(name = "region")
+    @Pattern(regexp = "\\d{2,3}", message = "Регион автомобиля задан некорректно.")
     public String getRegion() {
         return region;
     }

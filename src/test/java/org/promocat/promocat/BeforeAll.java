@@ -304,7 +304,7 @@ public class BeforeAll {
         user2Token = getToken(AccountType.USER, "+7(222)222-22-22");
 
         // Добавление машины пользователю.
-        car1DTO = createCar(user1DTO, "A777XY", "26");
-        car2DTO = createCar(user2DTO, "I222TT", "09");
+        car1DTO = createCar(user1DTO, "А777ХУ", "26");
+        car2DTO = createCar(user2DTO, "О222ТТ", "09");
     }
 }
