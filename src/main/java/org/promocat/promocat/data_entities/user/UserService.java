@@ -16,10 +16,13 @@ import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.JwtReader;
 import org.promocat.promocat.utils.PaymentService;
 import org.promocat.promocat.utils.soap.SoapClient;
+import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
+import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsResponse;
+import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsRequest;
 import org.promocat.promocat.utils.soap.util.TaxUtils;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -223,5 +226,20 @@ public class UserService {
     public GetBindPartnerStatusResponse getTaxStatus(final UserDTO user) {
         return ((GetBindPartnerStatusResponse)
                 soapClient.send(new GetBindPartnerStatusRequest(user.getTaxConnectionId())));
+    }
+
+    public boolean isUserBinded(final UserDTO user) {
+        GetGrantedPermissionsRequest op = new GetGrantedPermissionsRequest();
+        op.setInn(user.getInn());
+        Object respObj = soapClient.send(op);
+        if (respObj instanceof SmzPlatformError
+                && ((SmzPlatformError)respObj).getCode().equals("TAXPAYER_UNBOUND")) {
+            user.setInn(null);
+            user.setStatus(UserStatus.JUST_REGISTERED);
+            log.info("User with inn {} unbinded and now have UserStatus.JUST_REGISTERED", user.getInn());
+            return false;
+        } else {
+            return true;
+        }
     }
 }

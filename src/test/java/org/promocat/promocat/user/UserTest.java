@@ -1,5 +1,6 @@
 package org.promocat.promocat.user;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -9,12 +10,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.BeforeAll;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
+import org.promocat.promocat.dto.pojo.StockWithStockCityDTO;
 import org.promocat.promocat.dto.pojo.TokenDTO;
 import org.promocat.promocat.exception.login.token.ApiTokenNotFoundException;
+import org.promocat.promocat.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +30,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -47,6 +54,12 @@ public class UserTest {
 
     @Autowired
     BeforeAll beforeAll;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    UserMapper userMapper;
 
     private ObjectMapper mapper;
 
@@ -86,7 +99,6 @@ public class UserTest {
         UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
 
         assertEquals(user.getTelephone(), that.getTelephone());
-        assertEquals(that.getStatus(), UserStatus.JUST_REGISTERED);
         assertEquals(that.getAccountType(), AccountType.USER);
     }
 
@@ -116,7 +128,6 @@ public class UserTest {
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
-        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
     }
@@ -132,14 +143,6 @@ public class UserTest {
         this.mockMvc.perform(post("/api/user").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(status().isOk());
-
-        MvcResult result = this.mockMvc.perform(get("/admin/user/" + beforeAll.user1DTO.getId()).header("token", beforeAll.adminToken))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        UserDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
-
-        assertEquals(that.getStatus(), UserStatus.FULL);
     }
 
     /**
@@ -157,7 +160,6 @@ public class UserTest {
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
-        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
     }
 
     /**
@@ -209,7 +211,6 @@ public class UserTest {
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
-        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
     }
 
 
@@ -251,7 +252,6 @@ public class UserTest {
         assertEquals(beforeAll.user1DTO.getCityId(), that.getCityId());
         assertEquals(beforeAll.user1DTO.getTelephone(), that.getTelephone());
         assertEquals(beforeAll.user1DTO.getAccountType(), that.getAccountType());
-        assertEquals(beforeAll.user1DTO.getStatus(), that.getStatus());
     }
 
     /**
@@ -299,6 +299,18 @@ public class UserTest {
     }
 
     @Test
+    public void testMoveWithoutCar() throws Exception {
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", beforeAll.stockCity1DTO, UserStatus.JUST_REGISTERED);
+        user.setCars(null);
+        String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
+
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", token))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
     public void testSetUserStockCity() throws Exception {
         UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.JUST_REGISTERED);
         String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
@@ -313,5 +325,82 @@ public class UserTest {
         this.mockMvc.perform(post("/api/user/stock/" + beforeAll.stockCity2DTO.getId())
                 .header("token", beforeAll.user1Token))
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testSetUserWithoutInnStockCity() throws Exception {
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.JUST_REGISTERED);
+        user.setInn(null);
+        String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
+
+        this.mockMvc.perform(post("/api/user/stock/" + beforeAll.stockCity1DTO.getId())
+                .header("token", token))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testSetUserWithoutAccountStockCity() throws Exception {
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.JUST_REGISTERED);
+        user.setAccount(null);
+        String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
+
+        this.mockMvc.perform(post("/api/user/stock/" + beforeAll.stockCity1DTO.getId())
+                .header("token", token))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testSetUserWithoutCorrectStatusStockCity() throws Exception {
+        UserDTO user = beforeAll.createUser("+7(213)123-22-22", null, UserStatus.JUST_REGISTERED);
+        user.setStatus(UserStatus.JUST_REGISTERED);
+        String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
+
+        this.mockMvc.perform(post("/api/user/stock/" + beforeAll.stockCity1DTO.getId())
+                .header("token", token))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testSetUserInactiveStockCity() throws Exception {
+        beforeAll.stock1DTO.setStatus(StockStatus.POSTER_NOT_CONFIRMED);
+        beforeAll.updateStock(beforeAll.stock1DTO);
+
+        this.mockMvc.perform(post("/api/user/stock/" + beforeAll.stockCity1DTO.getId())
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetStatistics() throws Exception {
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        beforeAll.distance.setDate(beforeAll.distance.getDate().plusDays(1));
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get("/api/user/statistics")
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<MovementDTO> movements = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertEquals(movements.size(), 2);
+    }
+
+    @Test
+    public void testGetAllActiveStocks() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/api/user/activeStocks")
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<StockWithStockCityDTO> actives = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertEquals(actives.size(), 1);
+        assertEquals(actives.get(0).getStockName(), beforeAll.stock1DTO.getName());
     }
 }

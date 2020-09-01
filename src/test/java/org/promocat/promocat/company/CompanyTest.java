@@ -1,12 +1,18 @@
 package org.promocat.promocat.company;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.promocat.promocat.BeforeAll;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
+import org.promocat.promocat.dto.pojo.DistanceWithCityDTO;
+import org.promocat.promocat.dto.pojo.StockCostDTO;
 import org.promocat.promocat.exception.login.token.ApiTokenNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,7 +24,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,9 +47,15 @@ public class CompanyTest {
     @Autowired
     BeforeAll beforeAll;
 
+    private ObjectMapper mapper;
+
     @Before
     public void clean() {
         beforeAll.init();
+
+        mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     /**
@@ -181,20 +196,20 @@ public class CompanyTest {
                 .andExpect(status().is4xxClientError());
     }
 
-//    /**
-//     * Удаление компании по ID.
-//     *
-//     * @throws Exception Не удалось найти удаленную компанию, ошибка 404.
-//     */
-//    @Test
-//    public void testDeleteCompanyById() throws Exception {
-//        this.mockMvc.perform(delete("/admin/company?id=" + beforeAll.company1DTO.getId()).header("token", beforeAll.adminToken))
-//                .andExpect(status().isOk());
-//
-//        this.mockMvc.perform(get("/admin/company/" + beforeAll.company1DTO.getId())
-//                .header("token", beforeAll.adminToken))
-//                .andExpect(status().is4xxClientError());
-//    }
+    /**
+     * Удаление компании по ID.
+     *
+     * @throws Exception Не удалось найти удаленную компанию, ошибка 404.
+     */
+    @Test
+    public void testDeleteCompanyById() throws Exception {
+        this.mockMvc.perform(delete("/admin/company?id=" + beforeAll.company1DTO.getId()).header("token", beforeAll.adminToken))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/admin/company/" + beforeAll.company1DTO.getId())
+                .header("token", beforeAll.adminToken))
+                .andExpect(status().is4xxClientError());
+    }
 
     /**
      * Удаление компании по несуществующему ID.
@@ -257,336 +272,183 @@ public class CompanyTest {
         assertEquals(that.getOrganizationName(), "test0");
     }
 
-//    @Test
-//    public void testUpdateCompanyByAdminToken() throws Exception {
-//        CompanyDTO company = new CompanyDTO();
-//        company.setTelephone("+7(456)456-22-22");
-//        company.setMail("bnm@mail.ru");
-//        company.setOrganizationName("test0");
-//        company.setId(beforeAll.company1DTO.getId());
-//        company.setAccountType(AccountType.COMPANY);
-//        company.setInn(beforeAll.company1DTO.getInn());
-//        company.setVerified(beforeAll.company1DTO.getVerified());
-//
-//        this.mockMvc.perform(post("/admin/company").contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(new ObjectMapper().writeValueAsString(company))
-//                .header("token", beforeAll.adminToken))
-//                .andExpect(status().isOk());
-//
-//        MvcResult result = this.mockMvc.perform(get("/api/company").header("token", beforeAll.company1Token))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        CompanyDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
-//        assertEquals(that.getId(), beforeAll.company1DTO.getId());
-//        assertEquals(that.getVerified(), beforeAll.company1DTO.getVerified());
-//        assertEquals(that.getTelephone(), "+7(456)456-22-22");
-//        assertEquals(that.getMail(), "bnm@mail.ru");
-//        assertEquals(that.getOrganizationName(), "test0");
-//    }
+    @Test
+    public void testGetMovementsByStock() throws Exception {
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
 
-//    @Test
-//    public void testCompanyAndIncorrectStock() throws Exception {
-//        ObjectMapper mapper = new ObjectMapper();
-//        mapper.registerModule(new JavaTimeModule());
-//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//
-//        CompanyDTO company1 = save("yzzzb", "96");
-//        CompanyDTO company2 = save("qwerty", "41");
-//
-//        MvcResult key = this.mockMvc.perform(get("/auth/company/login?telephone=" + company1.getTelephone()))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
-//                + new ObjectMapper().readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
-//                + "&code=1337")).andExpect(status().isOk())
-//                .andReturn();
-//        String tokenCompany1 = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-//        key = this.mockMvc.perform(get("/auth/company/login?telephone=" + company2.getTelephone()))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
-//                + new ObjectMapper().readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
-//                + "&code=1337")).andExpect(status().isOk())
-//                .andReturn();
-//        String tokenCompany2 = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-//
-//        StockDTO stock1 = new StockDTO();
-//        stock1.setName("www");
-//        stock1.setStartTime(LocalDateTime.now());
-//        stock1.setDuration(7L);
-//        stock1.setCompanyId(company1.getId());
-//
-//        MvcResult result = this.mockMvc.perform(post("/api/company/stock").header("token", tokenCompany1).contentType(MediaType.APPLICATION_JSON)
-//                .content(mapper.writeValueAsString(stock1)))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        stock1 = mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
-//
-//        StockDTO stock2 = new StockDTO();
-//        stock2.setName("ghj");
-//        stock2.setStartTime(LocalDateTime.now());
-//        stock2.setDuration(7L);
-//        stock2.setCompanyId(company2.getId());
-//
-//        result = this.mockMvc.perform(post("/api/company/stock").header("token", tokenCompany2).contentType(MediaType.APPLICATION_JSON)
-//                .content(mapper.writeValueAsString(stock2)))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        stock2 = mapper.readValue(result.getResponse().getContentAsString(), StockDTO.class);
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + stock1.getId() + "/promoCodeActivation/summary").header("token", tokenCompany2))
-//                .andExpect(status().is4xxClientError());
-//        this.mockMvc.perform(get("/api/company/stock/" + stock2.getId() + "/promoCodeActivation/summary").header("token", tokenCompany1))
-//                .andExpect(status().is4xxClientError());
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + stock1.getId() + "/promoCodeActivation/byCity").header("token", tokenCompany2))
-//                .andExpect(status().is4xxClientError());
-//        this.mockMvc.perform(get("/api/company/stock/" + stock2.getId() + "/promoCodeActivation/byCity").header("token", tokenCompany1))
-//                .andExpect(status().is4xxClientError());
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + stock1.getId() + "/statistic/total").header("token", tokenCompany2))
-//                .andExpect(status().is4xxClientError());
-//        this.mockMvc.perform(get("/api/company/stock/" + stock2.getId() + "/statistic/total").header("token", tokenCompany1))
-//                .andExpect(status().is4xxClientError());
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + stock1.getId() + "/statistic/byCity").header("token", tokenCompany2))
-//                .andExpect(status().is4xxClientError());
-//        this.mockMvc.perform(get("/api/company/stock/" + stock2.getId() + "/statistic/byCity").header("token", tokenCompany1))
-//                .andExpect(status().is4xxClientError());
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + stock1.getId() + "/movements/forEachDay/summary").header("token", tokenCompany2))
-//                .andExpect(status().is4xxClientError());
-//        this.mockMvc.perform(get("/api/company/stock/" + stock2.getId() + "/movements/forEachDay/summary").header("token", tokenCompany1))
-//                .andExpect(status().is4xxClientError());
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + stock1.getId() + "/movements/forEachDay").header("token", tokenCompany2))
-//                .andExpect(status().is4xxClientError());
-//        this.mockMvc.perform(get("/api/company/stock/" + stock2.getId() + "/movements/forEachDay").header("token", tokenCompany1))
-//                .andExpect(status().is4xxClientError());
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + stock1.getId() + "/movements/summary").header("token", tokenCompany2))
-//                .andExpect(status().is4xxClientError());
-//        this.mockMvc.perform(get("/api/company/stock/" + stock2.getId() + "/movements/summary").header("token", tokenCompany1))
-//                .andExpect(status().is4xxClientError());
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + stock1.getId() + "/movements/summary/byCity").header("token", tokenCompany2))
-//                .andExpect(status().is4xxClientError());
-//        this.mockMvc.perform(get("/api/company/stock/" + stock2.getId() + "/movements/summary/byCity").header("token", tokenCompany1))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    private StockDTO generate() throws Exception {
-//        CompanyDTO company = new CompanyDTO();
-//        company.setOrganizationName("I");
-//        company.setTelephone("+7(999)243-26-49");
-//        company.setInn("1111111111");
-//        company.setMail("wqfqw@mail.ru");
-//        company.setId(1L);
-//        this.mockMvc.perform(post("/auth/register/company").contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(mapper.writeValueAsString(company)))
-//                .andExpect(status().isOk());
-//        MvcResult key = this.mockMvc.perform(get("/auth/company/login?telephone=+7(999)243-26-49"))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
-//                + mapper.readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
-//                + "&code=1337")).andExpect(status().isOk())
-//                .andReturn();
-//        String token = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-//
-//        MvcResult cityR = this.mockMvc.perform(put("/data/examples/admin/city/active?city=Змеиногорск").header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        CityDTO city = mapper.readValue(cityR.getResponse().getContentAsString(), CityDTO.class);
-//
-//        StockDTO stock = new StockDTO();
-//        stock.setName("www");
-//        stock.setStartTime(LocalDateTime.now());
-//        stock.setDuration(7L);
-//        stock.setCompanyId(company.getId());
-//
-//        MvcResult stockR = this.mockMvc.perform(post("/api/company/stock").header("token", token).contentType(MediaType.APPLICATION_JSON)
-//                .content(mapper.writeValueAsString(stock)))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        stock = mapper.readValue(stockR.getResponse().getContentAsString(), StockDTO.class);
-//
-//        StockCityDTO stockCity = new StockCityDTO();
-//        stockCity.setStockId(stock.getId());
-//        stockCity.setNumberOfPromoCodes(10L);
-//        stockCity.setCityId(city.getId());
-//
-//        this.mockMvc.perform(post("/api/company/stock/city").header("token", token)
-//                .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(stockCity)))
-//                .andExpect(status().isOk());
-//
-//        this.mockMvc.perform(post("/data/examples/admin/company/stock/generate/" + stock.getId()).header("token", adminToken))
-//                .andExpect(status().isOk());
-//
-//        return stock;
-//    }
-//
-//    @Test
-//    public void testGetSummaryPromoCodeActivation() throws Exception {
-//        UserDTO user = new UserDTO();
-//        user.setMail("I");
-//        user.setCityId(2L);
-//        user.setTelephone("+7(693)222-22-22");
-//        MvcResult result = this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(new ObjectMapper().writeValueAsString(user)))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        user = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
-//
-//        MvcResult keyR = this.mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey=" +
-//                new ObjectMapper().readValue(keyR.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey() + "&code=1337"))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-//
-//        StockDTO stock = generate();
-//        result = this.mockMvc.perform(get("/data/examples/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
-//        String[] codes = new String[code.size()];
-//        int ind = 0;
-//        for (Object o : code.toArray()) {
-//            codes[ind++] = ((PromoCodeDTO) o).getPromoCode();
-//        }
-//
-//        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[0]).header("token", userToken))
-//                .andExpect(status().isOk());
-//        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[1]).header("token", userToken))
-//                .andExpect(status().isOk());
-//        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[2]).header("token", userToken))
-//                .andExpect(status().isOk());
-//        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[3]).header("token", userToken))
-//                .andExpect(status().isOk());
-//
-//        result = this.mockMvc.perform(get("/data/examples/admin/company/" + stock.getCompanyId()).header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        CompanyDTO company = mapper.readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
-//        MvcResult key = this.mockMvc.perform(get("/auth/company/login?telephone=" + company.getTelephone()))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
-//                + new ObjectMapper().readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
-//                + "&code=1337")).andExpect(status().isOk())
-//                .andReturn();
-//        String companyToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-//
-//        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/promoCodeActivation/summary").header("token", companyToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        Long count = mapper.readValue(result.getResponse().getContentAsString(), Long.class);
-//        assertEquals(count, Long.valueOf(4));
-//    }
-//
-//    //TODO запросы в самом конце
-//    @Test
-//    public void testGetPromoCodes() throws Exception {
-//        UserDTO user = new UserDTO();
-//        user.setMail("I");
-//        user.setCityId(2L);
-//        user.setTelephone("+7(693)720-22-22");
-//        MvcResult result = this.mockMvc.perform(post("/auth/user/register").contentType(MediaType.APPLICATION_JSON_VALUE)
-//                .content(new ObjectMapper().writeValueAsString(user)))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        user = new ObjectMapper().readValue(result.getResponse().getContentAsString(), UserDTO.class);
-//
-//        MvcResult keyR = this.mockMvc.perform(get("/auth/user/login?telephone=" + user.getTelephone()))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        MvcResult tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey=" +
-//                new ObjectMapper().readValue(keyR.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey() + "&code=1337"))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        String userToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-//
-//        StockDTO stock = generate();
-//        result = this.mockMvc.perform(get("/data/examples/admin/stock/promoCode/" + stock.getId()).header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        Set<PromoCodeDTO> code = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
-//        String[] codes = new String[code.size()];
-//        int ind = 0;
-//        for (Object o : code.toArray()) {
-//            codes[ind++] = ((PromoCodeDTO) o).getPromoCode();
-//        }
-//
-//        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[0]).header("token", userToken))
-//                .andExpect(status().isOk());
-//        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[1]).header("token", userToken))
-//                .andExpect(status().isOk());
-//        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[2]).header("token", userToken))
-//                .andExpect(status().isOk());
-//        this.mockMvc.perform(post("/api/user/promo-code?promo-code=" + codes[3]).header("token", userToken))
-//                .andExpect(status().isOk());
-//
-//        result = this.mockMvc.perform(get("/data/examples/admin/company/" + stock.getCompanyId()).header("token", adminToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        CompanyDTO company = mapper.readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
-//        MvcResult key = this.mockMvc.perform(get("/auth/company/login?telephone=" + company.getTelephone()))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        tokenR = this.mockMvc.perform(get("/auth/token?authorizationKey="
-//                + new ObjectMapper().readValue(key.getResponse().getContentAsString(), AuthorizationKeyDTO.class).getAuthorizationKey()
-//                + "&code=1337")).andExpect(status().isOk())
-//                .andReturn();
-//        String companyToken = new ObjectMapper().readValue(tokenR.getResponse().getContentAsString(), TokenDTO.class).getToken();
-//
-//        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/promoCodeActivation/byCity").header("token", companyToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        List<PromoCodeActivationStatisticDTO> activeCodes = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>(){});
-//        PromoCodeActivationStatisticDTO active = activeCodes.get(0);
-//
-//        assertEquals(active.getCityId(), Long.valueOf(10));
-//        assertEquals(active.getNumberOfPromoCodes(), Long.valueOf(4));
-//
-//        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/promoCodeActivation/byCity/10").header("token", companyToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        Long counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
-//        assertEquals(counts, Long.valueOf(4));
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + (stock.getId() + 1) + "/promoCodeActivation/byCity/10").header("token", companyToken))
-//                .andExpect(status().is4xxClientError());
-//
-//        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/promoCodeActivation/byCity/12").header("token", companyToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
-//        assertEquals(counts, Long.valueOf(0));
-//
-//        result = this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/statistic/byCity/10").header("token", companyToken))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        counts = new ObjectMapper().readValue(result.getResponse().getContentAsString(), Long.class);
-//        assertEquals(counts, Long.valueOf(10));
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + (stock.getId() + 1) + "/statistic/byCity/10").header("token", companyToken))
-//                .andExpect(status().is4xxClientError());
-//
-//        this.mockMvc.perform(get("/api/company/stock/" + stock.getId() + "/statistic/byCity/12").header("token", companyToken))
-//                .andExpect(status().is4xxClientError());
-//    }
+        beforeAll.distance.setDate(beforeAll.distance.getDate().plusDays(1));
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/forEachDay/summary", beforeAll.stock1DTO.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<DistanceDTO> distances = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertEquals(distances.size(), 2);
+    }
+
+    @Test
+    public void testGetMovementsWithIncorrectStock() throws Exception {
+        this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/forEachDay/summary", beforeAll.stock2DTO.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetMovementsByStockForEveryCity() throws Exception {
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/forEachDay", beforeAll.stock1DTO.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<DistanceWithCityDTO> distances = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertEquals(distances.size(), 1);
+        assertEquals(distances.get(0).getCityId(), beforeAll.city.getId());
+    }
+
+    @Test
+    public void testGetMovementsByStockForEveryCityWithIncorrectStock() throws Exception {
+        this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/forEachDay", beforeAll.stock2DTO.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetMovementsByStockAndCity() throws Exception {
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/forEachDay/byCity/%d",
+                beforeAll.stock1DTO.getId(), beforeAll.city.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<DistanceWithCityDTO> distances = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertEquals(distances.size(), 1);
+        assertEquals(distances.get(0).getCityId(), beforeAll.city.getId());
+    }
+
+    @Test
+    public void testGetMovementsByStockAndCityWithIncorrectStock() throws Exception {
+        this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/forEachDay/byCity/%d",
+                beforeAll.stock2DTO.getId(), beforeAll.city.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetMovementsSummaryByStock() throws Exception {
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/summary", beforeAll.stock1DTO.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        DistanceDTO distance = mapper.readValue(result.getResponse().getContentAsString(), DistanceDTO.class);
+        assertEquals(distance.getDistance(), Double.valueOf(5.5));
+    }
+
+    @Test
+    public void testGetMovementsSummaryByStockWithIncorrectStock() throws Exception {
+        this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/summary", beforeAll.stock2DTO.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetMovementsSummaryByStockAndCity() throws Exception {
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/summary/byCity/%d",
+                beforeAll.stock1DTO.getId(), beforeAll.city.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        DistanceWithCityDTO distance = mapper.readValue(result.getResponse().getContentAsString(), DistanceWithCityDTO.class);
+        assertEquals(distance.getCityId(), beforeAll.city.getId());
+    }
+
+    @Test
+    public void testGetMovementsSummaryByStockAndCityWithIncorrectStock() throws Exception {
+        this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/summary/byCity/%d",
+                beforeAll.stock2DTO.getId(), beforeAll.city.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetMovementsSummaryByStockForEachCity() throws Exception {
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/summary/byCity", beforeAll.stock1DTO.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<DistanceWithCityDTO> distances = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertEquals(distances.size(), 1);
+        assertEquals(distances.get(0).getCityId(), beforeAll.city.getId());
+    }
+
+    @Test
+    public void testGetMovementsSummaryByStockForEachCityWithIncorrectStock() throws Exception {
+        this.mockMvc.perform(get(String.format("/api/company/stock/%d/movements/summary/byCity", beforeAll.stock2DTO.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testGetStockCost() throws Exception {
+        this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(beforeAll.distance))
+                .header("token", beforeAll.user1Token))
+                .andExpect(status().isOk());
+
+        MvcResult result = this.mockMvc.perform(get(String.format("/api/company/stock/%d/cost", beforeAll.stock1DTO.getId()))
+                .header("token", beforeAll.company1Token)
+                .param("companyId", beforeAll.company1DTO.getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        StockCostDTO distances = new ObjectMapper().readValue(result.getResponse().getContentAsString(), StockCostDTO.class);
+        assertNotNull(distances.getDriversPayment());
+    }
 }

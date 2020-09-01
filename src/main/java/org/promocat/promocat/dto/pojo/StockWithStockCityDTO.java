@@ -1,11 +1,12 @@
 package org.promocat.promocat.dto.pojo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 
 @Data
+@NoArgsConstructor
 public class StockWithStockCityDTO {
 
     private Long stockId;

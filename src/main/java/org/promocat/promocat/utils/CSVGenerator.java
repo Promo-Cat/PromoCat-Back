@@ -28,9 +28,7 @@ public class CSVGenerator {
 
     public void generate(Path path, List<UserDTO> users) {
         StringBuilder result = new StringBuilder();
-        users.forEach(e -> {
-            result.append(e.getAccount()).append(",,,,").append(e.getBalance()).append('\n');
-        });
+        users.forEach(e -> result.append(e.getAccount()).append(",,,,").append(e.getBalance()).append('\n'));
 
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(path.toString()));
@@ -41,7 +39,7 @@ public class CSVGenerator {
             }
             writer.close();
             File file = new File(path.toString());
-            csvFIleService.loadFile(file, 1L);
+            csvFIleService.loadFile(file);
         } catch (IOException e) {
             log.error("Couldn't write");
         }
