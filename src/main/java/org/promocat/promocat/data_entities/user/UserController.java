@@ -253,6 +253,9 @@ public class UserController {
         return ResponseEntity.ok(movement);
     }
 
+    @ApiOperation(value = "Get user`s current stock",
+            notes = "Get user`s current stock",
+            response = SimpleStockDTO.class)
     @RequestMapping(value = "/api/user/stock", method = RequestMethod.GET)
     public ResponseEntity<SimpleStockDTO> getCurrentUserStock(@RequestHeader("token") String token) {
         UserDTO userDTO = userService.findByToken(token);
