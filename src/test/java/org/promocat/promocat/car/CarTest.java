@@ -19,9 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -64,6 +62,22 @@ public class CarTest {
     }
 
     /**
+     * Добавление машины с некорректным номером.
+     *
+     * @throws Exception Машина не сохраняется, ошибка 400.
+     */
+    @Test
+    public void testSaveCarWithIncorrectNumber() throws Exception {
+        CarDTO car = new CarDTO();
+        car.setRegion("26");
+        car.setNumber("А133Н8");
+
+        this.mockMvc.perform(post("/api/user/car").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(car)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
      * Добавление машины без региона.
      *
      * @throws Exception Машина не сохранятеся, ошибка 400.
@@ -71,7 +85,23 @@ public class CarTest {
     @Test
     public void testSaveCarWithoutRegion() throws Exception {
         CarDTO car = new CarDTO();
-        car.setNumber("awfawfaf");
+        car.setNumber("А374РО");
+
+        this.mockMvc.perform(post("/api/user/car").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(new ObjectMapper().writeValueAsString(car)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    /**
+     * Добавление машины с некорруктным регионом.
+     *
+     * @throws Exception Машина не сохранятеся, ошибка 400.
+     */
+    @Test
+    public void testSaveCarWithIncorrectRegion() throws Exception {
+        CarDTO car = new CarDTO();
+        car.setNumber("А822ЕН");
+        car.setRegion("y7");
 
         this.mockMvc.perform(post("/api/user/car").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(new ObjectMapper().writeValueAsString(car)))
@@ -84,7 +114,7 @@ public class CarTest {
     @Test
     public void testSaveCarWithAllCorrect() throws Exception {
         CarDTO car = new CarDTO();
-        car.setNumber("awfawfaf");
+        car.setNumber("А785НО");
         car.setRegion("26");
 
         MvcResult result = this.mockMvc.perform(post("/api/user/car").header("token", beforeAll.user1Token).contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -94,7 +124,6 @@ public class CarTest {
 
         CarDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
         assertNotNull(that.getId());
-        assertEquals(car.getNumber(), that.getNumber());
         assertEquals(car.getRegion(), that.getRegion());
         assertEquals(that.getUserId(), beforeAll.user1DTO.getId());
     }
@@ -120,7 +149,6 @@ public class CarTest {
                 .andReturn();
 
         CarDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
-        assertEquals(beforeAll.car1DTO.getNumber(), that.getNumber());
         assertEquals(beforeAll.car1DTO.getRegion(), that.getRegion());
         assertEquals(beforeAll.car1DTO.getUserId(), that.getUserId());
         assertEquals(beforeAll.car1DTO.getId(), that.getId());
@@ -137,7 +165,6 @@ public class CarTest {
                 .andReturn();
 
         CarDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDTO.class);
-        assertEquals(beforeAll.car1DTO.getNumber(), that.getNumber());
         assertEquals(beforeAll.car1DTO.getRegion(), that.getRegion());
         assertEquals(beforeAll.car1DTO.getUserId(), that.getUserId());
         assertEquals(beforeAll.car1DTO.getId(), that.getId());

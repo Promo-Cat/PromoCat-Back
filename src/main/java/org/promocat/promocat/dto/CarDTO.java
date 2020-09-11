@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @ApiModel(
         value = "Car",
@@ -33,6 +33,7 @@ public class CarDTO extends AbstractDTO {
             required = true
     )
     @NotBlank(message = "Номер не может быть пустым.")
+    @Pattern(regexp = "[АВЕКМНОРСТУХ]\\d{3}[АВЕКМНОРСТУХ]{2}", message = "Номер автомобиля задан некорректно.")
     private String number;
 
     @ApiModelProperty(
@@ -41,5 +42,6 @@ public class CarDTO extends AbstractDTO {
             required = true
     )
     @NotBlank(message = "Регион не может быть пустым.")
+    @Pattern(regexp = "\\d{2,3}", message = "Регион автомобиля задан некорректно.")
     private String region;
 }
