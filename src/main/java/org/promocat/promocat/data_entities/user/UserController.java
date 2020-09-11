@@ -17,6 +17,7 @@ import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
+import org.promocat.promocat.dto.pojo.SimpleStockDTO;
 import org.promocat.promocat.dto.pojo.StockWithStockCityDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.car.ApiCarNotFoundException;
@@ -250,6 +251,23 @@ public class UserController {
         user.getMovements().remove(movement);
         user.getMovements().add(movement);
         return ResponseEntity.ok(movement);
+    }
+
+    @RequestMapping(value = "/api/user/stock", method = RequestMethod.GET)
+    public ResponseEntity<SimpleStockDTO> getCurrentUserStock(@RequestHeader("token") String token) {
+        UserDTO userDTO = userService.findByToken(token);
+        StockDTO stockDTO = stockService.findById(
+                stockCityService.findById(
+                        userDTO.getStockCityId()
+                ).getStockId()
+        );
+        SimpleStockDTO resultPojo = new SimpleStockDTO();
+        resultPojo.setDuration(stockDTO.getDuration());
+        resultPojo.setFare(stockDTO.getFare());
+        resultPojo.setName(stockDTO.getName());
+        resultPojo.setStartTime(stockDTO.getStartTime());
+        resultPojo.setId(stockDTO.getId());
+        return ResponseEntity.ok(resultPojo);
     }
 
     @ApiOperation(value = "Get user statistics",
