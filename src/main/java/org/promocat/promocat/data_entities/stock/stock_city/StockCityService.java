@@ -53,7 +53,7 @@ public class StockCityService {
      */
     public StockCityDTO findById(final Long id) {
         if (id == null) {
-            return null;
+            throw new ApiStockCityNotFoundException(String.format("No such stockCity: %d", id));
         }
         Optional<StockCity> stockCity = stockCityRepository.findById(id);
         if (stockCity.isPresent()) {
