@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,11 +50,15 @@ public class MultiPartFileUtils {
         try (final PDDocument document = PDDocument.load(pdfFile)) {
             PDFRenderer pdfRenderer = new PDFRenderer(document);
             BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
+            BufferedImage resizedImage = new BufferedImage(bim.getWidth() / 10, bim.getHeight() / 10, bim.getType());
+            Graphics2D g2d = resizedImage.createGraphics();
+            g2d.drawImage(bim, 0, 0, bim.getWidth() / 10, bim.getHeight() / 10, null);
+            g2d.dispose();
             File file = new File(PATH + Generator.generate(GeneratorConfig.FILE_NAME) + ".png");
             if (file.createNewFile()) {
                 log.info("New image {} created", file.getAbsolutePath());
             }
-            ImageIO.write(bim, "png", file);
+            ImageIO.write(resizedImage, "png", file);
             return file;
         } catch (IOException e) {
             throw new ApiFileFormatException("Exception while trying to create pdf document" + e);
