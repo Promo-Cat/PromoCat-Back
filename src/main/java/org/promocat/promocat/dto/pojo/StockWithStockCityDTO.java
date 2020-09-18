@@ -13,10 +13,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class StockWithStockCityDTO {
 
+    @ApiModelProperty(value = "Stock id", dataType = "Long")
     private Long stockId;
-//    private Long previewId;
+
+    @ApiModelProperty(value = "Stock City id", dataType = "Long")
     private Long stockCityId;
+
+    @ApiModelProperty(value = "Stock name", dataType = "Long")
     private String stockName;
+
     @ApiModelProperty(value = "Start time of stock", dataType = "Local date time")
     private LocalDateTime startTime;
 
