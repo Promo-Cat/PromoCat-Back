@@ -58,8 +58,7 @@ public class UserBanService {
         UserBanDTO userBan = new UserBanDTO();
         userBan.setStockId(stock.getId());
         userBan.setUserId(userDTO.getId());
-        // TODO: 20.07.2020 Получить заработок за акцию
-        userBan.setBannedEarnings(111.0);
+        userBan.setBannedEarnings(userService.getUserSummaryStatisticsInCurrentStock(userDTO).getSummary());
         userDTO.setStockCityId(null);
         userService.save(userDTO);
         return save(userBan);
