@@ -1,5 +1,6 @@
 package org.promocat.promocat.dto.pojo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SimpleStockDTO extends AbstractDTO {
 
 
@@ -42,5 +44,6 @@ public class SimpleStockDTO extends AbstractDTO {
     @StockDurationConstraint
     private Long duration = 14L;
 
-
+    @ApiModelProperty(value = "Is user banned in stock", dataType = "boolean")
+    private Boolean banned = true;
 }

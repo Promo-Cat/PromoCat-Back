@@ -261,18 +261,20 @@ public class UserController {
     public ResponseEntity<SimpleStockDTO> getCurrentUserStock(@RequestHeader("token") String token) {
         UserDTO userDTO = userService.findByToken(token);
         StockDTO stockDTO;
+        SimpleStockDTO resultPojo = new SimpleStockDTO();
         if (userDTO.getStockCityId() == null) {
             stockDTO = userBanService
                     .getLastBannedStockForUser(userDTO)
                     .orElseThrow(() -> new ApiStockCityNotFoundException("There is no active stock for user"));
+            resultPojo.setBanned(true);
         } else {
             stockDTO = stockService.findById(
                     stockCityService.findById(
                             userDTO.getStockCityId()
                     ).getStockId()
             );
+            resultPojo.setBanned(false);
         }
-        SimpleStockDTO resultPojo = new SimpleStockDTO();
         resultPojo.setDuration(stockDTO.getDuration());
         resultPojo.setFare(stockDTO.getFare());
         resultPojo.setName(stockDTO.getName());
