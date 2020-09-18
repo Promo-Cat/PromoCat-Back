@@ -311,9 +311,12 @@ public class UserController {
     public ResponseEntity<List<StockWithStockCityDTO>> getAllActiveStocks(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
         List<StockWithStockCityDTO> res = stockService.getAllActiveStocks().stream()
-                .map(e -> new StockWithStockCityDTO(e, e.getCities().stream()
-                        .filter(x -> x.getCityId().equals(user.getCityId()))
-                        .findFirst().orElse(null)))
+                .map(
+                        e -> new StockWithStockCityDTO(e, e.getCities().stream()
+                                .filter(x -> x.getCityId().equals(user.getCityId()))
+                                .findFirst().orElse(null)
+                        )
+                )
                 .filter(e -> e.getStockCityId() != null)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(res);
@@ -364,7 +367,6 @@ public class UserController {
     }
 
     // ------ Admin methods ------
-
     @ApiOperation(value = "Get user by id",
             notes = "Returning user, whose id specified in params",
             response = UserDTO.class)
