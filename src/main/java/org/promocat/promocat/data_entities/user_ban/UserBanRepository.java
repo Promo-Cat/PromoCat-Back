@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface UserBanRepository extends JpaRepository<UserBan, Long> {
 
     Optional<UserBan> getAllByUserIdAndStockId(Long userId, Long stockId);
+
     List<UserBan> getAllByUserId(Long userId);
 
+    List<UserBan> getAllByUserIdOrderByBanDateTime(Long userId);
 }

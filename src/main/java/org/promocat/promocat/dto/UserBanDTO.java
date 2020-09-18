@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @ApiModel(
         value = "User ban",
         description = "Object representation of user ban in one stock of PromoCat application."
@@ -35,5 +37,14 @@ public class UserBanDTO extends AbstractDTO {
             required = true
     )
     private Double bannedEarnings;
+
+    @ApiModelProperty(
+            value = "Date when user banned is stock",
+            dataType = "Local date time",
+            required = true
+    )
+    private LocalDateTime banDateTime = LocalDateTime.now();
+
+
 
 }
