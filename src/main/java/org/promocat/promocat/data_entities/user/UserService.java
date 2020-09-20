@@ -10,6 +10,7 @@ import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.EntityUpdate;
@@ -21,7 +22,6 @@ import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusR
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
-import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsResponse;
 import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsRequest;
 import org.promocat.promocat.utils.soap.util.TaxUtils;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
@@ -178,6 +178,19 @@ public class UserService {
     }
 
     /**
+     * Суммарные передвижения пользователя на протяжении акции.
+     *
+     * @param user объектное представление пользователя.
+     * @return Суммарные передвижения пользователя на протяжении акции.
+     */
+    public UserStockEarningStatisticDTO getUserSummaryStatisticsInCurrentStock(final UserDTO user) {
+        return getUserStatistics(user).stream()
+                .map(x -> new UserStockEarningStatisticDTO(x.getDistance(), x.getEarnings()))
+                .reduce(new UserStockEarningStatisticDTO(0.0, 0.0),
+                        (a, b) -> new UserStockEarningStatisticDTO(a.getDistance() + b.getDistance(), a.getSummary() + b.getSummary()));
+    }
+
+    /**
      * Заработок денег пользователем.
      *
      * @param user     объектное представление пользователя.
@@ -233,7 +246,7 @@ public class UserService {
         op.setInn(user.getInn());
         Object respObj = soapClient.send(op);
         if (respObj instanceof SmzPlatformError
-                && ((SmzPlatformError)respObj).getCode().equals("TAXPAYER_UNBOUND")) {
+                && ((SmzPlatformError) respObj).getCode().equals("TAXPAYER_UNBOUND")) {
             user.setInn(null);
             user.setStatus(UserStatus.JUST_REGISTERED);
             log.info("User with inn {} unbinded and now have UserStatus.JUST_REGISTERED", user.getInn());

@@ -9,15 +9,17 @@ import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
-import org.promocat.promocat.data_entities.stock_activation.StockActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
+import org.promocat.promocat.data_entities.stock_activation.StockActivationService;
 import org.promocat.promocat.data_entities.user_ban.UserBanService;
 import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
+import org.promocat.promocat.dto.pojo.SimpleStockDTO;
 import org.promocat.promocat.dto.pojo.StockWithStockCityDTO;
+import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.car.ApiCarNotFoundException;
 import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
@@ -48,7 +50,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.promocat.promocat.utils.soap.attributes.RequestResult.*;
+import static org.promocat.promocat.utils.soap.attributes.RequestResult.COMPLETED;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -252,6 +254,36 @@ public class UserController {
         return ResponseEntity.ok(movement);
     }
 
+    @ApiOperation(value = "Get user`s current stock",
+            notes = "Get user`s current stock",
+            response = SimpleStockDTO.class)
+    @RequestMapping(value = "/api/user/stock", method = RequestMethod.GET)
+    public ResponseEntity<SimpleStockDTO> getCurrentUserStock(@RequestHeader("token") String token) {
+        UserDTO userDTO = userService.findByToken(token);
+        StockDTO stockDTO;
+        SimpleStockDTO resultPojo = new SimpleStockDTO();
+        if (userDTO.getStockCityId() == null) {
+            stockDTO = userBanService
+                    .getLastBannedStockForUser(userDTO)
+                    .orElseThrow(() -> new ApiStockCityNotFoundException("There is no active stock for user"));
+            resultPojo.setBanned(true);
+        } else {
+            stockDTO = stockService.findById(
+                    stockCityService.findById(
+                            userDTO.getStockCityId()
+                    ).getStockId()
+            );
+            resultPojo.setBanned(false);
+        }
+        resultPojo.setDuration(stockDTO.getDuration());
+        resultPojo.setFare(stockDTO.getFare());
+        resultPojo.setName(stockDTO.getName());
+        resultPojo.setStartTime(stockDTO.getStartTime());
+        resultPojo.setId(stockDTO.getId());
+        resultPojo.setStatus(stockDTO.getStatus());
+        return ResponseEntity.ok(resultPojo);
+    }
+
     @ApiOperation(value = "Get user statistics",
             notes = "Gets user statistics for all days of participation in the stock. Returns List of Movements.",
             response = MovementDTO.class,
@@ -259,11 +291,26 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
             @ApiResponse(code = 403, message = "Wrong token", response = ApiException.class),
+            @ApiResponse(code = 404, message = "No current stock", response = ApiException.class),
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/statistics", method = RequestMethod.GET)
     public ResponseEntity<List<MovementDTO>> getStatistics(@RequestHeader("token") final String token) {
         return ResponseEntity.ok(userService.getUserStatistics(userService.findByToken(token)));
+    }
+
+    @ApiOperation(value = "Get user statistics in current stock",
+            notes = "Gets user summary statistics for all days of participation in the stock.",
+            response = UserStockEarningStatisticDTO.class)
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Wrong token", response = ApiException.class),
+            @ApiResponse(code = 404, message = "No current stock", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/summaryStatistics", method = RequestMethod.GET)
+    public ResponseEntity<UserStockEarningStatisticDTO> getSummaryStatistics(@RequestHeader("token") final String token) {
+        return ResponseEntity.ok(userService.getUserSummaryStatisticsInCurrentStock(userService.findByToken(token)));
     }
 
     @ApiOperation(value = "Get the history of stocks.",
@@ -290,9 +337,12 @@ public class UserController {
     public ResponseEntity<List<StockWithStockCityDTO>> getAllActiveStocks(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
         List<StockWithStockCityDTO> res = stockService.getAllActiveStocks().stream()
-                .map(e -> new StockWithStockCityDTO(e, e.getCities().stream()
-                        .filter(x -> x.getCityId().equals(user.getCityId()))
-                        .findFirst().orElse(null)))
+                .map(
+                        e -> new StockWithStockCityDTO(e, e.getCities().stream()
+                                .filter(x -> x.getCityId().equals(user.getCityId()))
+                                .findFirst().orElse(null)
+                        )
+                )
                 .filter(e -> e.getStockCityId() != null)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(res);
@@ -343,7 +393,6 @@ public class UserController {
     }
 
     // ------ Admin methods ------
-
     @ApiOperation(value = "Get user by id",
             notes = "Returning user, whose id specified in params",
             response = UserDTO.class)

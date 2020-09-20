@@ -38,6 +38,7 @@ public class StockDTO extends AbstractDTO {
     private String name;
 
     @ApiModelProperty(value = "Stock activation status", accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private StockStatus status;
 
     @ApiModelProperty(value = "Company id", dataType = "Long")
