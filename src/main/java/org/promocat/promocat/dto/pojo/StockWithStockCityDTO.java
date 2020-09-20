@@ -21,6 +21,8 @@ public class StockWithStockCityDTO {
 
     @ApiModelProperty(value = "Stock name", dataType = "Long")
     private String stockName;
+
+    @ApiModelProperty(value = "Amount of posters", dataType = "Long")
     private Long amountOfPosters;
 
     @ApiModelProperty(value = "Start time of stock", dataType = "Local date time")
