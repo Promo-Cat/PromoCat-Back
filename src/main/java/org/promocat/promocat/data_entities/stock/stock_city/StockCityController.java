@@ -83,4 +83,24 @@ public class StockCityController {
     public ResponseEntity<StockCityDTO> findById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(stockCityService.findById(id));
     }
+
+    @ApiOperation(
+            value = "Reduce amount of posters.",
+            notes = "Reduce posters.",
+            response = StockCityDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "No such stockCity",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/company/stock_city/{id}/{count}", method = RequestMethod.POST)
+    public ResponseEntity<String> reducePosters(@PathVariable("id") Long id, @PathVariable("count") Long count) {
+        StockCityDTO stockCity = stockCityService.findById(id);
+        stockCity.setNumberOfPromoCodes(stockCity.getNumberOfPromoCodes() - count);
+        stockCityService.save(stockCity);
+        return ResponseEntity.ok("{}");
+    }
 }
