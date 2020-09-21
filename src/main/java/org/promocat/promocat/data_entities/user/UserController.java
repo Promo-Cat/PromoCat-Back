@@ -261,17 +261,27 @@ public class UserController {
     @RequestMapping(value = "/api/user/stock", method = RequestMethod.GET)
     public ResponseEntity<SimpleStockDTO> getCurrentUserStock(@RequestHeader("token") String token) {
         UserDTO userDTO = userService.findByToken(token);
-        StockDTO stockDTO = stockService.findById(
-                stockCityService.findById(
-                        userDTO.getStockCityId()
-                ).getStockId()
-        );
+        StockDTO stockDTO;
         SimpleStockDTO resultPojo = new SimpleStockDTO();
+        if (userDTO.getStockCityId() == null) {
+            stockDTO = userBanService
+                    .getLastBannedStockForUser(userDTO)
+                    .orElseThrow(() -> new ApiStockCityNotFoundException("There is no active stock for user"));
+            resultPojo.setBanned(true);
+        } else {
+            stockDTO = stockService.findById(
+                    stockCityService.findById(
+                            userDTO.getStockCityId()
+                    ).getStockId()
+            );
+            resultPojo.setBanned(false);
+        }
         resultPojo.setDuration(stockDTO.getDuration());
         resultPojo.setFare(stockDTO.getFare());
         resultPojo.setName(stockDTO.getName());
         resultPojo.setStartTime(stockDTO.getStartTime());
         resultPojo.setId(stockDTO.getId());
+        resultPojo.setStatus(stockDTO.getStatus());
         return ResponseEntity.ok(resultPojo);
     }
 
@@ -328,9 +338,12 @@ public class UserController {
     public ResponseEntity<List<StockWithStockCityDTO>> getAllActiveStocks(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
         List<StockWithStockCityDTO> res = stockService.getAllActiveStocks().stream()
-                .map(e -> new StockWithStockCityDTO(e, e.getCities().stream()
-                        .filter(x -> x.getCityId().equals(user.getCityId()))
-                        .findFirst().orElse(null)))
+                .map(
+                        e -> new StockWithStockCityDTO(e, e.getCities().stream()
+                                .filter(x -> x.getCityId().equals(user.getCityId()))
+                                .findFirst().orElse(null)
+                        )
+                )
                 .filter(e -> e.getStockCityId() != null)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(res);
@@ -395,7 +408,6 @@ public class UserController {
     }
 
     // ------ Admin methods ------
-
     @ApiOperation(value = "Get user by id",
             notes = "Returning user, whose id specified in params",
             response = UserDTO.class)

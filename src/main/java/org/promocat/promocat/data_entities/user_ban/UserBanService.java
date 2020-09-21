@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.user_ban;
 
+import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.UserService;
@@ -12,7 +13,11 @@ import org.promocat.promocat.mapper.UserBanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserBanService {
@@ -39,6 +44,7 @@ public class UserBanService {
         return userBanMapper.toDto(userBanRepository.save(userBanMapper.toEntity(userBanDTO)));
     }
 
+    // TODO: DTO бы вернуть (не делаю сейчас ибо тесты слетят)
     public UserBan findById(Long id) {
         return userBanRepository.findById(id).orElseThrow();
     }
@@ -59,6 +65,7 @@ public class UserBanService {
         userBan.setStockId(stock.getId());
         userBan.setUserId(userDTO.getId());
         userBan.setBannedEarnings(userService.getUserSummaryStatisticsInCurrentStock(userDTO).getSummary());
+        userBan.setBanDateTime(LocalDateTime.now());
         userDTO.setStockCityId(null);
         userService.save(userDTO);
         return save(userBan);
@@ -76,5 +83,10 @@ public class UserBanService {
      */
     public boolean isBanned(UserDTO userDTO, StockDTO stockDTO) {
         return userBanRepository.getAllByUserIdAndStockId(userDTO.getId(), stockDTO.getId()).isPresent();
+    }
+
+    public Optional<StockDTO> getLastBannedStockForUser(UserDTO userDTO) {
+        List<UserBan> bans = userBanRepository.getAllByUserIdOrderByBanDateTime(userDTO.getId());
+        return bans.size() == 0 ? Optional.empty() : Optional.of(stockService.findById(bans.get(0).getStock().getId()));
     }
 }
