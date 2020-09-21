@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.user;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.TaxUserStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.stock.StockService;
@@ -241,18 +242,28 @@ public class UserService {
                 soapClient.send(new GetBindPartnerStatusRequest(user.getTaxConnectionId())));
     }
 
-    public boolean isUserBinded(final UserDTO user) {
+    public TaxUserStatus isUserBinded(final UserDTO user) {
         GetGrantedPermissionsRequest op = new GetGrantedPermissionsRequest();
         op.setInn(user.getInn());
         Object respObj = soapClient.send(op);
-        if (respObj instanceof SmzPlatformError
-                && ((SmzPlatformError) respObj).getCode().equals("TAXPAYER_UNBOUND")) {
+        if (respObj instanceof SmzPlatformError) {
+            String errorCode = ((SmzPlatformError) respObj).getCode();
             user.setInn(null);
             user.setStatus(UserStatus.JUST_REGISTERED);
-            log.info("User with inn {} unbinded and now have UserStatus.JUST_REGISTERED", user.getInn());
-            return false;
-        } else {
-            return true;
+            switch (errorCode) {
+                case "TAXPAYER_UNBOUND":
+                    log.info("User with inn {} unbinded and now have UserStatus.JUST_REGISTERED", user.getInn());
+                    return TaxUserStatus.TAXPAYER_UNBOUND;
+                case "FAILED":
+                    log.info("User with telephone {} rejected connection request", user.getTelephone());
+                    return TaxUserStatus.FAILED;
+                case "IN_PROGRESS":
+                    log.info("User with telephone {} has not yet accepted the connection request", user.getTelephone());
+                    return TaxUserStatus.IN_PROGRESS;
+            }
         }
+
+        log.info("User with inn {} accepted the connection request", user.getInn());
+        return TaxUserStatus.COMPLETED;
     }
 }

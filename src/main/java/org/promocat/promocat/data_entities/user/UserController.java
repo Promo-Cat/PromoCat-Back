@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.StockStatus;
+import org.promocat.promocat.attributes.TaxUserStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.movement.MovementService;
@@ -379,16 +380,30 @@ public class UserController {
     @ApiOperation(value = "Check user`s bind status in \"Moi nalog\".", notes = "Check user`s bind status in \"Moi nalog\".",
             response = String.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "User doesn`t binded to PromoCat in \"Moi nalog\"", response = SmzPlatformError.class)
+            @ApiResponse(code = 406, message = "User status not completed in \"Moi nalog\"", response = SmzPlatformError.class)
     })
     @RequestMapping(value = "/api/user/tax/status", method = RequestMethod.GET)
     public ResponseEntity<String> checkUserBindStatus(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
-        if (userService.isUserBinded(user)) {
+        TaxUserStatus status = userService.isUserBinded(user);
+        if (status == TaxUserStatus.COMPLETED) {
             return ResponseEntity.ok("{}");
         } else {
-            // TODO: 13.08.2020 Другой ответ
-            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).build();
+            String message;
+            switch (status) {
+                case IN_PROGRESS:
+                    message = "User has not yet accepted the connection request";
+                    break;
+                case FAILED:
+                    message = "User rejected connection request";
+                    break;
+                case TAXPAYER_UNBOUND:
+                    message = "User unbinded";
+                    break;
+                default:
+                    message = "Something gone wrong, try later";
+            }
+            throw new ApiTaxRequestIdException(message);
         }
     }
 
