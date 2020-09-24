@@ -6,22 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.attributes.UserStatus;
-import org.promocat.promocat.constraints.RequiredForFull;
 import org.promocat.promocat.data_entities.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.movement.Movement;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.Email;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import java.util.HashSet;
@@ -133,7 +124,7 @@ public class User extends AbstractAccount {
      */
     @Pattern(regexp = "\\d{5}.\\d{3}.\\d{1}.\\d{11}",
             message = "Расчетный счет должен соответствовать шаблону: XXXXX.XXX.X.XXXXXXXXXXX")
-    @Column(name = "account", unique = true)
+    @Column(name = "account")
     public String getAccount() {
         return account;
     }
