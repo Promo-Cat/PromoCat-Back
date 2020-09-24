@@ -100,7 +100,6 @@ public class StockTest {
 
         assertNotNull(that.getId());
         assertEquals(stock.getStartTime(), that.getStartTime());
-        assertEquals(StockStatus.POSTER_NOT_CONFIRMED, that.getStatus());
         assertEquals(beforeAll.company2DTO.getId(), that.getCompanyId());
         assertEquals(Long.valueOf(14), that.getDuration());
         assertEquals(stock.getName(), that.getName());
@@ -125,7 +124,6 @@ public class StockTest {
 
         assertNotNull(that.getId());
         assertEquals(stock.getStartTime(), that.getStartTime());
-        assertEquals(StockStatus.POSTER_NOT_CONFIRMED, that.getStatus());
         assertEquals(beforeAll.company2DTO.getId(), that.getCompanyId());
         assertEquals(stock.getDuration(), that.getDuration());
         assertEquals(stock.getName(), that.getName());
@@ -191,7 +189,6 @@ public class StockTest {
         assertEquals(beforeAll.stock1DTO.getCompanyId(), that.getCompanyId());
         assertEquals(beforeAll.stock1DTO.getStartTime(), that.getStartTime());
         assertEquals(beforeAll.stock1DTO.getId(), that.getId());
-        assertEquals(beforeAll.stock1DTO.getStatus(), that.getStatus());
     }
 
 //    /**
