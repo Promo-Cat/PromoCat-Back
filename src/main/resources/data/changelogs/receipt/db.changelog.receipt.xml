@@ -15,6 +15,4 @@
             <column name="receipt_link" type="varchar(255)"/>
         </createTable>
     </changeSet>
-
-
 </databaseChangeLog>
