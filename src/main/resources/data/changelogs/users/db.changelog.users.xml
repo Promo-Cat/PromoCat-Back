@@ -6,7 +6,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="02-10-2020-1" author="Maxim Grankin">
-        <createTable tableName="admin">
+        <createTable tableName="users">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
                 Id
@@ -15,8 +15,10 @@
                 <constraints nullable="false"/>
                 Тип аккаунта
             </column>
-            <column name="telephone" type="varchar(255)">Телефон</column>
-            <column name="token" type="varchar(512)">Токен</column>
+            <column name="account" type="varchar(255)">Расчетный счет</column>
+            <column name="status" type="integer">Статус пользователя</column>
+            <column name="total_distance" type="double precision">Суммарная дистанция</column>
+            <column name="total_earnings" type="double precision">Суммарный заработок</column>
         </createTable>
     </changeSet>
 </databaseChangeLog>
