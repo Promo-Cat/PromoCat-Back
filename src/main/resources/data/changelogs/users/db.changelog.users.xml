@@ -16,13 +16,13 @@
                 Тип аккаунта
             </column>
             <column name="account" type="varchar(23)">Расчетный счет</column>
-            <column name="inn" type="varchar(12)">
+            <column name="inn" type="varchar(20)">
                 <constraints unique="true"/>
                 ИНН
             </column>
             <column name="token" type="varchar(512)">
                 <constraints unique="true"/>
-                Токе
+                Токеn
             </column>
             <column name="telephone" type="varchar(255)">
                 <constraints unique="true"/>

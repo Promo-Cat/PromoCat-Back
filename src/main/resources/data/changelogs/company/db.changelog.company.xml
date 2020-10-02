@@ -15,14 +15,32 @@
                 <constraints nullable="false"/>
                 Тип аккаунта
             </column>
-            <column name="telephone" type="varchar(255)">Телефон</column>
-            <column name="token" type="varchar(512)">Токен</column>
-            <column name="organizationName" type="varchar(255)">Имя организации</column>
-            <column name="inn" type="varchar(10)">ИНН</column>
-            <column name="mail" type="varchar(255)">Почта</column>
+            <column name="telephone" type="varchar(255)">
+                <constraints unique="true"/>
+                Телефон
+            </column>
+            <column name="token" type="varchar(512)">
+                <constraints unique="true"/>
+                Токен
+            </column>
+            <column name="organizationName" type="varchar(255)">
+                <constraints unique="true"/>
+                Имя организации
+            </column>
+            <column name="inn" type="varchar(20)">ИНН</column>
+            <column name="mail" type="varchar(255)">
+                <constraints unique="true"/>
+                Почта
+            </column>
             <column name="verified" type="boolean">Верефикация</column>
             <column name="company_status" type="integer">Статус компании</column>
+            <column name="current_stock_id" type="bigint">Текущая акция</column>
         </createTable>
+
+        <addForeignKeyConstraint baseTableName="company" baseColumnNames="current_stock_id"
+                                 constraintName="fkoi5aq2bm82091ubh15kfj29m1"
+                                 referencedTableName="stock"
+                                 referencedColumnNames="id"/>
     </changeSet>
 
 
