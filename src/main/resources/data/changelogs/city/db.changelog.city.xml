@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="02-10-2020-1" author="Maxim Grankin">
+        <createTable tableName="city">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+                Id
+            </column>
+            <column name="active" type="boolean">Активность города</column>
+            <column name="address" type="varchar(255)">Полный адрес</column>
+            <column name="city" type="varchar(255)">Город</column>
+            <column name="country" type="varchar(255)">Страна</column>
+            <column name="geo_lat" type="varchar(255)">Широта</column>
+            <column name="geo_lon" type="varchar(255)">Долгота</column>
+            <column name="population" type="varchar(255)">Население</column>
+            <column name="postal_code" type="varchar(255)">Индекс</column>
+            <column name="region" type="varchar(255)">Регион</column>
+            <column name="timezone" type="varchar(255)">Часовой пояс</column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

@@ -10,5 +10,6 @@
     <include file="data/changelogs/poster/db.changelog.poster.xml"/>
     <include file="data/changelogs/parameters/db.changelog.parameters.xml"/>
     <include file="data/changelogs/admin/db.changelog.admin.xml"/>
+    <include file="data/changelogs/city/db.changelog.city.xml"/>
 
 </databaseChangeLog>
