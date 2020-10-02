@@ -14,5 +14,7 @@
     <include file="data/changelogs/admin/db.changelog.admin.xml"/>
     <include file="data/changelogs/city/db.changelog.city.xml"/>
     <include file="data/changelogs/users/db.changelog.users.xml"/>
+    <include file="data/changelogs/csv/db.changelog.csv_file.xml"/>
+    <include file="data/changelogs/login_attempt/db.changelog.login_attempt.xml"/>
 
 </databaseChangeLog>
