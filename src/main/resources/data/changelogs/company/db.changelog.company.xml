@@ -11,6 +11,11 @@
                 <constraints primaryKey="true" nullable="false"/>
                 Id
             </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="02-10-2020-2" author="Danil Lyskin">
+        <createTable tableName="company">
             <column name="account_type" type="integer">
                 <constraints nullable="false"/>
                 Тип аккаунта
