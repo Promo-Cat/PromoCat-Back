@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="02-10-2020-1" author="Maxim Grankin">
+        <createTable tableName="login_attempt">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+                Id
+            </column>
+            <column name="account_type" type="integer">Тип аккаунта</column>
+            <column name="authorization_key" type="varchar(50)">
+                <constraints nullable="false"/>
+                Ключ авторизации
+            </column>
+            <column name="phone_code" type="varchar(4)">
+                <constraints nullable="false"/>
+                Код для авторизации
+            </column>
+            <column name="telephone" type="varchar(20)">
+                <constraints nullable="false"/>
+                Телефон
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
