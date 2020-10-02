@@ -22,6 +22,9 @@ public class StockWithStockCityDTO {
     @ApiModelProperty(value = "Stock name", dataType = "Long")
     private String stockName;
 
+    @ApiModelProperty(value = "Amount of posters", dataType = "Long")
+    private Long amountOfPosters;
+
     @ApiModelProperty(value = "Start time of stock", dataType = "Local date time")
     private LocalDateTime startTime;
 
@@ -35,6 +38,7 @@ public class StockWithStockCityDTO {
 
     public StockWithStockCityDTO(StockDTO stock, StockCityDTO stockCity) {
         this.stockId = stock.getId();
+        this.amountOfPosters = stockCity.getNumberOfPromoCodes();
 //        this.previewId = stock.getPosterId();
         this.stockName = stock.getName();
         this.stockCityId = stockCity == null ? null : stockCity.getId();

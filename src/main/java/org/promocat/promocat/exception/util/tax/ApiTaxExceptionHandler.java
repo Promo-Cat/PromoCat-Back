@@ -30,4 +30,16 @@ public class ApiTaxExceptionHandler {
         return new ResponseEntity<>(apiException, badRequest);
     }
 
+
+    @ExceptionHandler(value = {ApiTaxUserStatusException.class})
+    public ResponseEntity<Object> handleTaxUserStatusError(ApiTaxUserStatusException e) {
+        final HttpStatus badRequest = HttpStatus.NOT_ACCEPTABLE;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                badRequest,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Tax user status error: " + e.getMessage());
+        return new ResponseEntity<>(apiException, badRequest);
+    }
 }
