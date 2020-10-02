@@ -23,4 +23,5 @@
     <include file="data/changelogs/users/db.changelog.users.xml"/>
     <include file="data/changelogs/user_ban/db.changelog.user_ban.xml"/>
 
+    <include file="data/changelogs/receipt/db.changelog.receipt.xml"/>
 </databaseChangeLog>
