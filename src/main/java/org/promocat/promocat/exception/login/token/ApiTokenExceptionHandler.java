@@ -16,9 +16,11 @@ import java.time.ZonedDateTime;
 @ControllerAdvice
 @Slf4j
 public class ApiTokenExceptionHandler {
+
+
     @ExceptionHandler(value = {ApiTokenNotFoundException.class})
     public ResponseEntity<Object> handleNonexistentToken(ApiTokenNotFoundException e) {
-        final HttpStatus notFound = HttpStatus.NOT_FOUND;
+        final HttpStatus notFound = HttpStatus.UNAUTHORIZED;
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 notFound,

@@ -19,6 +19,8 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
 
     Optional<Movement> findByUserAndDate(User user, LocalDate date);
 
+    void deleteAllByUserIdAndStockId(Long userId, Long stockId);
+
     //    @Query(
 //            value = "select sum(m.earnings) as earnings, sum(m.panel) as panel, (m.earnings - m.panel) as income from movement m where stock_id=?1 and user_id=?2 group by m.date",
 //            nativeQuery = true
