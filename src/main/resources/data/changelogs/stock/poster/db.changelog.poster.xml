@@ -11,13 +11,13 @@
                 <constraints primaryKey="true" nullable="false"/>
                 Id постера
             </column>
-            <column name="data_type_poster" type="varchar(255)">Тип постера.</column>
-            <column name="file_name_poster" type="varchar(255)">Имя постера.</column>
-            <column name="poster" type="blob">Байтовое представление постера.</column>
+            <column name="data_type_poster" type="varchar(255)"/>
+            <column name="file_name_poster" type="varchar(255)"/>
+            <column name="poster" type="bytea"/>
 
-            <column name="data_type_preview" type="varchar(255)">Тип превью постера.</column>
-            <column name="file_name_preview" type="varchar(255)">Имя превью постера.</column>
-            <column name="preview" type="blob">Байтовое представление превью постера.</column>
+            <column name="data_type_preview" type="varchar(255)"/>
+            <column name="file_name_preview" type="varchar(255)"/>
+            <column name="preview" type="bytea"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

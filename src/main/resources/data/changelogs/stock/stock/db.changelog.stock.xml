@@ -9,26 +9,29 @@
         <createTable tableName="stock">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-                Id
             </column>
-            <column name="name" type="varchar(255)">Имя</column>
-            <column name="duration" type="bigint">Продолжительность</column>
-            <column name="panel" type="double precision">Комиссия</column>
-            <column name="postpayment" type="double precision">Постоплата</column>
-            <column name="prepayment" type="double precision">Предоплата</column>
-            <column name="start_time" type="timestap">Время начала</column>
-            <column name="status" type="integer">Статус</column>
-            <column name="company_id" type="bigint">Id компании, которой пренадлежит акция</column>
-            <column name="poster_id" type="bigint">Id постера</column>
         </createTable>
-
-        <addForeignKeyConstraint baseTableName="stock" baseColumnNames="company_id"
-                                 constraintName="fk9r297vk0rghnrccw09x0qybfj"
-                                 referencedTableName="company"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="stock" baseColumnNames="poster_id"
-                                 constraintName="fkd9db0wgx6gy6ty7rd3ff5skok"
-                                 referencedTableName="poster"
-                                 referencedColumnNames="id"/>
     </changeSet>
+
+<!--    <changeSet id="02-10-2020-2" author="Maxim Grankin">-->
+<!--        <addColumn tableName="stock">-->
+<!--            <column name="name" type="varchar(255)">Имя</column>-->
+<!--            <column name="duration" type="bigint">Продолжительность</column>-->
+<!--            <column name="panel" type="double precision">Комиссия</column>-->
+<!--            <column name="postpayment" type="double precision">Постоплата</column>-->
+<!--            <column name="prepayment" type="double precision">Предоплата</column>-->
+<!--            <column name="start_time" type="timestamp">Время начала</column>-->
+<!--            <column name="status" type="integer">Статус</column>-->
+<!--            <column name="company_id" type="bigint">Id компании, которой пренадлежит акция</column>-->
+<!--            <column name="poster_id" type="bigint">Id постера</column>-->
+<!--        </addColumn>-->
+<!--        <addForeignKeyConstraint baseTableName="stock" baseColumnNames="company_id"-->
+<!--                                 constraintName="fk9r297vk0rghnrccw09x0qybfj"-->
+<!--                                 referencedTableName="company"-->
+<!--                                 referencedColumnNames="id"/>-->
+<!--        <addForeignKeyConstraint baseTableName="stock" baseColumnNames="poster_id"-->
+<!--                                 constraintName="fkd9db0wgx6gy6ty7rd3ff5skok"-->
+<!--                                 referencedTableName="poster"-->
+<!--                                 referencedColumnNames="id"/>-->
+<!--    </changeSet>-->
 </databaseChangeLog>

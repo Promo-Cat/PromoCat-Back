@@ -9,24 +9,28 @@
         <createTable tableName="movement">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-                Id
             </column>
             <column name="date" type="date">
                 <constraints nullable="false"/>
-                Дата
             </column>
             <column name="distance" type="double precision">
                 <constraints nullable="false"/>
-                Дистанция
             </column>
             <column name="earnings" type="double precision">
                 <constraints nullable="false"/>
-                Заработок
             </column>
         </createTable>
+    </changeSet>
+
+    <changeSet id="02-10-2020-2" author="Maxim Grankin">
+
+        <addColumn tableName="movement">
+            <column name="user_id" type="bigint"/>
+            <column name="stock_id" type="bigint"/>
+        </addColumn>
         <sql>
-            ALTER TABLE movement ADD CONSTRAINT distance CHECK (balance &gt;=0)
-            ALTER TABLE movement ADD CONSTRAINT earnings CHECK (balance &gt;=0)
+            ALTER TABLE movement ADD CONSTRAINT distance CHECK (distance &gt;=0);
+            ALTER TABLE movement ADD CONSTRAINT earnings CHECK (earnings &gt;=0)
         </sql>
 
         <addForeignKeyConstraint baseTableName="movement" baseColumnNames="stock_id"
@@ -38,6 +42,5 @@
                                  referencedTableName="users"
                                  referencedColumnNames="id"/>
     </changeSet>
-
 
 </databaseChangeLog>

@@ -9,11 +9,10 @@
         <createTable tableName="parameters">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-                Id
             </column>
-            <column name="fare" type="double precision">Коммиссия</column>
-            <column name="postpayment" type="double precision">Постоплата</column>
-            <column name="prepayment" type="double precision">Предоплата</column>
+            <column name="fare" type="double precision"/>
+            <column name="postpayment" type="double precision"/>
+            <column name="prepayment" type="double precision"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>
