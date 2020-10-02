@@ -9,14 +9,12 @@
         <createTable tableName="admin">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-                Id
             </column>
             <column name="account_type" type="integer">
                 <constraints nullable="false"/>
-                Тип аккаунта
             </column>
-            <column name="telephone" type="varchar(255)">Телефон</column>
-            <column name="token" type="varchar(512)">Токен</column>
+            <column name="telephone" type="varchar(255)"/>
+            <column name="token" type="varchar(512)"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

@@ -9,36 +9,29 @@
         <createTable tableName="users">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-                Id
             </column>
             <column name="account_type" type="integer">
                 <constraints nullable="false"/>
-                Тип аккаунта
             </column>
-            <column name="account" type="varchar(23)">Расчетный счет</column>
+            <column name="account" type="varchar(23)"/>
             <column name="inn" type="varchar(20)">
                 <constraints unique="true"/>
-                ИНН
             </column>
             <column name="token" type="varchar(512)">
                 <constraints unique="true"/>
-                Токеn
             </column>
             <column name="telephone" type="varchar(255)">
                 <constraints unique="true"/>
-                Телефон
             </column>
-            <column name="status" type="integer">Статус пользователя</column>
+            <column name="status" type="integer"/>
             <column name="tax_connection_id" type="integer">
                 <constraints unique="true"/>
-                Id подключения к налоговой
             </column>
-            <column name="total_distance" type="double precision">Суммарная дистанция</column>
-            <column name="total_earnings" type="double precision">Суммарный заработок</column>
-            <column name="stock_city_id" type="bigint">Id города в которой проходит акция</column>
-            <column name="city" type="bigint">Id города пользователя</column>
+            <column name="total_distance" type="double precision"/>
+            <column name="total_earnings" type="double precision"/>
+            <column name="stock_city_id" type="bigint"/>
+            <column name="city" type="bigint"/>
             <column name="balance" type="double precision">
-                Баланс
             </column>
         </createTable>
         <sql>

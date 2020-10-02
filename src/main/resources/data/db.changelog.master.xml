@@ -21,6 +21,6 @@
     <include file="data/changelogs/stock/stock_city/db.changelog.stock_city.xml"/>
 
     <include file="data/changelogs/users/db.changelog.users.xml"/>
-    <include file="data/changelogs/movement/db.changelog.movement.xml"/>
+    <include file="data/changelogs/user_ban/db.changelog.user_ban.xml"/>
 
 </databaseChangeLog>

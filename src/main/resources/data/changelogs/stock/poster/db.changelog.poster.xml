@@ -9,15 +9,14 @@
         <createTable tableName="poster">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-                Id постера
             </column>
             <column name="data_type_poster" type="varchar(255)"/>
             <column name="file_name_poster" type="varchar(255)"/>
-            <column name="poster" type="bytea"/>
+            <column name="poster" type="oid"/>
 
             <column name="data_type_preview" type="varchar(255)"/>
             <column name="file_name_preview" type="varchar(255)"/>
-            <column name="preview" type="bytea"/>
+            <column name="preview" type="oid"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

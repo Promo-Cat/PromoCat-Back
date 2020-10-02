@@ -9,13 +9,11 @@
         <createTable tableName="csv_file">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-                Id
             </column>
             <column name="file" type="oid">
                 <constraints nullable="false"/>
-                CSV файл
             </column>
-            <column name="name" type="varchar(255)">Имя файла</column>
+            <column name="name" type="varchar(255)"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

@@ -13,36 +13,31 @@
         </createTable>
     </changeSet>
 
-<!--    <changeSet id="02-10-2020-2" author="Maxim Grankin">-->
-<!--        <addColumn tableName="company">-->
-<!--            <column name="account_type" type="integer">-->
-<!--                <constraints nullable="false"/>-->
-<!--                Тип аккаунта-->
-<!--            </column>-->
-<!--            <column name="telephone" type="varchar(255)">-->
-<!--                <constraints unique="true"/>-->
-<!--                Телефон-->
-<!--            </column>-->
-<!--            <column name="token" type="varchar(512)">-->
-<!--                <constraints unique="true"/>-->
-<!--                Токен-->
-<!--            </column>-->
-<!--            <column name="organizationName" type="varchar(255)">-->
-<!--                <constraints unique="true"/>-->
-<!--                Имя организации-->
-<!--            </column>-->
-<!--            <column name="inn" type="varchar(20)">ИНН</column>-->
-<!--            <column name="mail" type="varchar(255)">-->
-<!--                <constraints unique="true"/>-->
-<!--                Почта-->
-<!--            </column>-->
-<!--            <column name="verified" type="boolean">Верефикация</column>-->
-<!--            <column name="company_status" type="integer">Статус компании</column>-->
-<!--            <column name="current_stock_id" type="bigint">Текущая акция</column>-->
-<!--        </addColumn>-->
-<!--        <addForeignKeyConstraint baseTableName="company" baseColumnNames="current_stock_id"-->
-<!--                                 constraintName="fkoi5aq2bm82091ubh15kfj29m1"-->
-<!--                                 referencedTableName="stock"-->
-<!--                                 referencedColumnNames="id"/>-->
-<!--    </changeSet>-->
+    <changeSet id="02-10-2020-2" author="Maxim Grankin">
+        <addColumn tableName="company">
+            <column name="account_type" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="telephone" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="token" type="varchar(512)">
+                <constraints unique="true"/>
+            </column>
+            <column name="organizationName" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="inn" type="varchar(20)"/>
+            <column name="mail" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="verified" type="boolean"/>
+            <column name="company_status" type="integer"/>
+            <column name="current_stock_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="company" baseColumnNames="current_stock_id"
+                                 constraintName="fkoi5aq2bm82091ubh15kfj29m1"
+                                 referencedTableName="stock"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>

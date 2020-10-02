@@ -6,7 +6,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="02-10-2020-1" author="Danil Lyskin">
-        <createTable tableName="movement">
+        <createTable tableName="user_ban">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -14,7 +14,7 @@
     </changeSet>
 
     <changeSet id="02-10-2020-2" author="Danil Lyskin">
-        <addColumn tableName="movement">
+        <addColumn tableName="user_ban">
             <column name="date" type="date">
                 <constraints nullable="false"/>
             </column>
@@ -27,23 +27,16 @@
             <column name="stock_id" type="bigint"/>
             <column name="user_id" type="bigint"/>
         </addColumn>
-    </changeSet>
 
-    <changeSet id="02-10-2020-3" author="Maxim Grankin">
-
-        <sql>
-            ALTER TABLE movement ADD CONSTRAINT distance CHECK (distance &gt;=0);
-            ALTER TABLE movement ADD CONSTRAINT earnings CHECK (earnings &gt;=0)
-        </sql>
-
-        <addForeignKeyConstraint baseTableName="movement" baseColumnNames="stock_id"
+        <addForeignKeyConstraint baseTableName="user_ban" baseColumnNames="stock_id"
                                  constraintName="fkkj31ntb3w3nwpopf4iykdulvu"
                                  referencedTableName="stock"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="movement" baseColumnNames="user_id"
+        <addForeignKeyConstraint baseTableName="user_ban" baseColumnNames="user_id"
                                  constraintName="fkk0rm0x6ltbbvognho3xas4sqa"
                                  referencedTableName="users"
                                  referencedColumnNames="id"/>
     </changeSet>
+
 
 </databaseChangeLog>

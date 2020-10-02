@@ -13,21 +13,19 @@
         </createTable>
     </changeSet>
 
-<!--    <changeSet id="02-10-2020-2" author="Maxim Grankin">-->
-<!--        <addColumn tableName="stock_city">-->
-<!--            <column name="number_of_promo_codes" type="bigint">-->
-<!--                Количество постеров/промокодов у акции-->
-<!--            </column>-->
-<!--            <column name="city_id" type="bigint">Id города акции</column>-->
-<!--            <column name="stock_id" type="bigint">Id акции</column>-->
-<!--        </addColumn>-->
-<!--        <addForeignKeyConstraint baseTableName="stock_city" baseColumnNames="city_id"-->
-<!--                                 constraintName="fkpu5twbb05y0eoyrjr8ev6rcbd"-->
-<!--                                 referencedTableName="city"-->
-<!--                                 referencedColumnNames="id"/>-->
-<!--        <addForeignKeyConstraint baseTableName="stock_city" baseColumnNames="stock_id"-->
-<!--                                 constraintName="fkqwed4es6vgvci3pjdjccbl2ug"-->
-<!--                                 referencedTableName="stock"-->
-<!--                                 referencedColumnNames="id"/>-->
-<!--    </changeSet>-->
+    <changeSet id="02-10-2020-2" author="Maxim Grankin">
+        <addColumn tableName="stock_city">
+            <column name="number_of_promo_codes" type="bigint"/>
+            <column name="city_id" type="bigint"/>
+            <column name="stock_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="stock_city" baseColumnNames="city_id"
+                                 constraintName="fkpu5twbb05y0eoyrjr8ev6rcbd"
+                                 referencedTableName="city"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="stock_city" baseColumnNames="stock_id"
+                                 constraintName="fkqwed4es6vgvci3pjdjccbl2ug"
+                                 referencedTableName="stock"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>
