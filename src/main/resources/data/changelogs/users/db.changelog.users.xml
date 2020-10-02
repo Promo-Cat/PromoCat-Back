@@ -38,10 +38,12 @@
             <column name="stock_city_id" type="bigint">Id города в которой проходит акция</column>
             <column name="city" type="bigint">Id города пользователя</column>
             <column name="balance" type="double precision">
-                <constraints checkConstraint="CHECK (balance &gt;=0)"/>
                 Баланс
             </column>
         </createTable>
+        <sql>
+            ALTER TABLE users ADD CONSTRAINT balance CHECK (balance &gt;=0)
+        </sql>
         <addForeignKeyConstraint baseTableName="users" baseColumnNames="stock_city_id"
                                  constraintName="fk1q0l4a3t1mls9a64b2h988f6o"
                                  referencedTableName="stock_city"
