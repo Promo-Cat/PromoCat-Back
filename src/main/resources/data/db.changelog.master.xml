@@ -7,9 +7,12 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <include file="data/changelogs/poster/db.changelog.poster.xml"/>
+    <include file="data/changelogs/stock/poster/db.changelog.poster.xml"/>
+    <include file="data/changelogs/stock/stock_city/db.changelog.stock_city.xml"/>
+
     <include file="data/changelogs/parameters/db.changelog.parameters.xml"/>
     <include file="data/changelogs/admin/db.changelog.admin.xml"/>
     <include file="data/changelogs/city/db.changelog.city.xml"/>
+    <include file="data/changelogs/users/db.changelog.users.xml"/>
 
 </databaseChangeLog>
