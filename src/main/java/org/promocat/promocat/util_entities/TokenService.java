@@ -80,7 +80,7 @@ public class TokenService {
             SecurityUser user = new SecurityUser(user1.getTelephone(), user1.getAccountType());
             return Optional.of(user);
         } else {
-            throw new ApiTokenNotFoundException("Token not found in db.");
+            return Optional.empty();
         }
     }
 

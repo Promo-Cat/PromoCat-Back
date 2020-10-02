@@ -35,7 +35,6 @@ import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -316,7 +315,7 @@ public class UserController {
 
     @ApiOperation(value = "Get the history of stocks.",
             notes = "Getting the history of all stocks in which the user participated.",
-            response = StockDTO.class,
+            response = SimpleStockDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
@@ -324,9 +323,9 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/stocks", method = RequestMethod.GET)
-    public ResponseEntity<List<StockDTO>> getUserStocks(@RequestHeader("token") final String token) {
+    public ResponseEntity<List<SimpleStockDTO>> getUserStocks(@RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
-        return ResponseEntity.ok(stockActivationService.getStocksByUserId(userDTO.getId()));
+        return ResponseEntity.ok(stockActivationService.getStocksByUser(userDTO));
     }
 
     @ApiOperation(value = "Get active stocks", notes = "Getting all active stocks",

@@ -18,6 +18,7 @@ import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -169,5 +170,11 @@ public class MovementService {
         stockCostDTO.setPrepayment(paymentService.getPrepayment(stock));
         // TODO: 06.06.2020  тесты
         return stockCostDTO;
+    }
+
+    @Transactional
+    public void deleteAllMovementsForUserInStock(final Long userId,
+                                                 final Long stockId) {
+        movementRepository.deleteAllByUserIdAndStockId(userId, stockId);
     }
 }

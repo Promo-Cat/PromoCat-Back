@@ -1,6 +1,6 @@
 package org.promocat.promocat.data_entities.user_ban;
 
-import org.promocat.promocat.data_entities.stock.Stock;
+import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.UserService;
@@ -12,8 +12,8 @@ import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.mapper.UserBanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -27,17 +27,21 @@ public class UserBanService {
     private final StockService stockService;
     private final UserBanMapper userBanMapper;
     private final UserService userService;
+    private final MovementService movementService;
 
     @Autowired
     public UserBanService(final UserBanRepository userBanRepository,
                           final StockCityService stockCityService,
                           final StockService stockService,
-                          final UserBanMapper userBanMapper, UserService userService) {
+                          final UserBanMapper userBanMapper,
+                          final UserService userService,
+                          final MovementService movementService) {
         this.userBanRepository = userBanRepository;
         this.stockCityService = stockCityService;
         this.stockService = stockService;
         this.userBanMapper = userBanMapper;
         this.userService = userService;
+        this.movementService = movementService;
     }
 
     public UserBanDTO save(UserBanDTO userBanDTO) {
@@ -61,11 +65,16 @@ public class UserBanService {
                     "Can't ban", userDTO.getTelephone()));
         }
         StockDTO stock = stockService.findById(stockCity.getStockId());
+        // TODO разобраться, как лучше удалять (удаляется внутри одной транзакции, и у юзера всё ломается)
+//        movementService.deleteAllMovementsForUserInStock(userDTO.getId(), stock.getId());
         UserBanDTO userBan = new UserBanDTO();
         userBan.setStockId(stock.getId());
         userBan.setUserId(userDTO.getId());
         userBan.setBannedEarnings(userService.getUserSummaryStatisticsInCurrentStock(userDTO).getSummary());
         userBan.setBanDateTime(LocalDateTime.now());
+        // Получаем актуального юзера, так как у него изменились movements
+        userDTO = userService.findById(userDTO.getId());
+//        userDTO.setMovements(null);
         userDTO.setStockCityId(null);
         userService.save(userDTO);
         return save(userBan);
