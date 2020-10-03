@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="02-10-2020-1" author="Danil Lyskin">
+        <createTable tableName="movement">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="distance" type="double precision">
+                <constraints nullable="false"/>
+            </column>
+            <column name="earnings" type="double precision">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stock_id" type="bigint"/>
+            <column name="user_id" type="bigint"/>
+        </createTable>
+        <sql>
+            ALTER TABLE movement ADD CONSTRAINT distance CHECK (distance &gt;=0);
+            ALTER TABLE movement ADD CONSTRAINT earnings CHECK (earnings &gt;=0)
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="02-10-2020-3" author="Maxim Grankin">
+        <addForeignKeyConstraint baseTableName="movement" baseColumnNames="stock_id"
+                                 constraintName="fkkj31ntb3w3nwpopf4iykdulvu"
+                                 referencedTableName="stock"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="movement" baseColumnNames="user_id"
+                                 constraintName="fkk0rm0x6ltbbvognho3xas4sqa"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

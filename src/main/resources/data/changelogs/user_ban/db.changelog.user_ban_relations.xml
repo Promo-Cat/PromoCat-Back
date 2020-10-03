@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="03-10-2020-1" author="Maxim Grankin">
+        <addForeignKeyConstraint baseTableName="user_ban" baseColumnNames="stock_id"
+                                 constraintName="fkkj31ntb3w3nwpopf4iykdulvu"
+                                 referencedTableName="stock"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="user_ban" baseColumnNames="user_id"
+                                 constraintName="fkk0rm0x6ltbbvognho3xas4sqa"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+
+</databaseChangeLog>
