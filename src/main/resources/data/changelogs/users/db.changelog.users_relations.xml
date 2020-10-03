@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="03-10-2020-1" author="Maxim Grankin">
+        <addForeignKeyConstraint baseTableName="users" baseColumnNames="stock_city_id"
+                                 constraintName="fk1q0l4a3t1mls9a64b2h988f6o"
+                                 referencedTableName="stock_city"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="users" baseColumnNames="city"
+                                 constraintName="fkcs9whtendqffwjvjel7jybj2m"
+                                 referencedTableName="city"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

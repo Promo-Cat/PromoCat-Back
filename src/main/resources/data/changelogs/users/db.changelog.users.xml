@@ -37,13 +37,5 @@
         <sql>
             ALTER TABLE users ADD CONSTRAINT balance CHECK (balance &gt;=0)
         </sql>
-        <addForeignKeyConstraint baseTableName="users" baseColumnNames="stock_city_id"
-                                 constraintName="fk1q0l4a3t1mls9a64b2h988f6o"
-                                 referencedTableName="stock_city"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="users" baseColumnNames="city"
-                                 constraintName="fkcs9whtendqffwjvjel7jybj2m"
-                                 referencedTableName="city"
-                                 referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>

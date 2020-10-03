@@ -10,11 +10,6 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="02-10-2020-2" author="Danil Lyskin">
-        <addColumn tableName="movement">
             <column name="date" type="date">
                 <constraints nullable="false"/>
             </column>
@@ -26,16 +21,15 @@
             </column>
             <column name="stock_id" type="bigint"/>
             <column name="user_id" type="bigint"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="02-10-2020-3" author="Maxim Grankin">
-
+        </createTable>
         <sql>
             ALTER TABLE movement ADD CONSTRAINT distance CHECK (distance &gt;=0);
             ALTER TABLE movement ADD CONSTRAINT earnings CHECK (earnings &gt;=0)
         </sql>
+    </changeSet>
 
+
+    <changeSet id="02-10-2020-3" author="Maxim Grankin">
         <addForeignKeyConstraint baseTableName="movement" baseColumnNames="stock_id"
                                  constraintName="fkkj31ntb3w3nwpopf4iykdulvu"
                                  referencedTableName="stock"
