@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-1">
+        <createTable tableName="user_ban">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="user_ban_pkey"/>
+            </column>
+            <column name="ban_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="banned_earnings" type="FLOAT8"/>
+            <column name="stock_id" type="BIGINT"/>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-2">
+        <createTable tableName="car">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="car_pkey"/>
+            </column>
+            <column name="number" type="VARCHAR(255)"/>
+            <column name="region" type="VARCHAR(255)"/>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-3">
+        <createTable tableName="movement">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="movement_pkey"/>
+            </column>
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="distance" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="earnings" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stock_id" type="BIGINT"/>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-4">
+        <createTable tableName="users">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="users_pkey"/>
+            </column>
+            <column name="account_type" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="telephone" type="VARCHAR(255)"/>
+            <column name="token" type="VARCHAR(512)"/>
+            <column name="account" type="VARCHAR(255)"/>
+            <column name="balance" type="FLOAT8"/>
+            <column name="inn" type="VARCHAR(255)"/>
+            <column name="status" type="INTEGER"/>
+            <column name="tax_connection_id" type="VARCHAR(255)"/>
+            <column name="total_distance" type="FLOAT8"/>
+            <column name="total_earnings" type="FLOAT8"/>
+            <column name="city" type="BIGINT"/>
+            <column name="stock_city_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-5">
+        <createTable tableName="promo_code">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="promo_code_pkey"/>
+            </column>
+            <column name="active_date" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deactivate_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column defaultValueBoolean="false" name="is_active" type="BOOLEAN"/>
+            <column name="promo_code" type="VARCHAR(255)"/>
+            <column name="stock_city_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-6">
+        <createTable tableName="parameters">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="parameters_pkey"/>
+            </column>
+            <column name="fare" type="FLOAT8"/>
+            <column name="postpayment" type="FLOAT8"/>
+            <column name="prepayment" type="FLOAT8"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-7">
+        <createTable tableName="poster">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="poster_pkey"/>
+            </column>
+            <column name="poster" type="OID"/>
+            <column name="preview" type="OID"/>
+            <column name="data_type_poster" type="VARCHAR(255)"/>
+            <column name="data_type_preview" type="VARCHAR(255)"/>
+            <column name="file_name_poster" type="VARCHAR(255)"/>
+            <column name="file_name_preview" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-8">
+        <createTable tableName="stock">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="stock_pkey"/>
+            </column>
+            <column name="duration" type="BIGINT"/>
+            <column name="panel" type="FLOAT8"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="postpayment" type="FLOAT8"/>
+            <column name="prepayment" type="FLOAT8"/>
+            <column name="start_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="status" type="INTEGER"/>
+            <column name="company_id" type="BIGINT"/>
+            <column name="poster_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-9">
+        <createTable tableName="company">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="company_pkey"/>
+            </column>
+            <column name="account_type" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="telephone" type="VARCHAR(255)"/>
+            <column name="token" type="VARCHAR(512)"/>
+            <column name="company_status" type="INTEGER"/>
+            <column name="inn" type="VARCHAR(255)"/>
+            <column name="mail" type="VARCHAR(255)"/>
+            <column name="organization_name" type="VARCHAR(255)"/>
+            <column name="verified" type="BOOLEAN"/>
+            <column name="current_stock_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-10">
+        <createTable tableName="promocode_activation">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="promocode_activation_pkey"/>
+            </column>
+            <column name="date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="stock_city_id" type="BIGINT"/>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-11">
+        <createTable tableName="login_attempt">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="login_attempt_pkey"/>
+            </column>
+            <column name="account_type" type="INTEGER"/>
+            <column name="authorization_key" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone_code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="telephone" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-12">
+        <createTable tableName="stock_city">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="stock_city_pkey"/>
+            </column>
+            <column name="number_of_promo_codes" type="BIGINT"/>
+            <column name="city_id" type="BIGINT"/>
+            <column name="stock_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-13">
+        <createTable tableName="admin">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="admin_pkey"/>
+            </column>
+            <column name="account_type" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="telephone" type="VARCHAR(255)"/>
+            <column name="token" type="VARCHAR(512)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-14">
+        <createTable tableName="csv_file">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="csv_file_pkey"/>
+            </column>
+            <column name="file" type="OID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-15">
+        <createTable tableName="receipt">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="receipt_pkey"/>
+            </column>
+            <column name="time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="receipt_id" type="VARCHAR(255)"/>
+            <column name="receipt_link" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-16">
+        <createTable tableName="city">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="city_pkey"/>
+            </column>
+            <column name="active" type="BOOLEAN"/>
+            <column name="address" type="VARCHAR(255)"/>
+            <column name="city" type="VARCHAR(255)"/>
+            <column name="country" type="VARCHAR(255)"/>
+            <column name="geo_lat" type="VARCHAR(255)"/>
+            <column name="geo_lon" type="VARCHAR(255)"/>
+            <column name="population" type="VARCHAR(255)"/>
+            <column name="postal_code" type="VARCHAR(255)"/>
+            <column name="region" type="VARCHAR(255)"/>
+            <column name="timezone" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-17">
+        <createIndex indexName="ukkqlb7dsxkx1055j8h7t2a0y0k" tableName="car" unique="true">
+            <column name="number"/>
+            <column name="region"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-18">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="promocode_activation"
+                                 constraintName="fkq2m4l1dqx4mcpwrbh4uacv9i0" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-19">
+        <createIndex indexName="uk_kh5714iig58q66nj1o5ex4fii" tableName="users" unique="true">
+            <column name="inn"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-20">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="movement"
+                                 constraintName="fkk0rm0x6ltbbvognho3xas4sqa" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-21">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="car"
+                                 constraintName="fkc2osr9qmb46vr8pjyps6weii0" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-22">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_ban"
+                                 constraintName="fke08iud5ovyks2qcv5fi0wnwsb" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-23">
+        <createIndex indexName="uk_af44yue4uh61eqwe6jjyqwvla" tableName="users" unique="true">
+            <column name="token"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-24">
+        <createIndex indexName="uk_lb7vukicxe5e3yo1o6te91l2x" tableName="users" unique="true">
+            <column name="tax_connection_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-25">
+        <createIndex indexName="uk_2p58gbqhxvue2igoderm0gh2c" tableName="users" unique="true">
+            <column name="telephone"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-26">
+        <createIndex indexName="uk_6kjt8oolu1ahxyi9pr3qligtl" tableName="promo_code" unique="true">
+            <column name="promo_code"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-27">
+        <addForeignKeyConstraint baseColumnNames="poster_id" baseTableName="stock"
+                                 constraintName="fkd9db0wgx6gy6ty7rd3ff5skok" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="poster" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-28">
+        <addForeignKeyConstraint baseColumnNames="stock_id" baseTableName="movement"
+                                 constraintName="fkkj31ntb3w3nwpopf4iykdulvu" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="stock" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-29">
+        <addForeignKeyConstraint baseColumnNames="stock_id" baseTableName="user_ban"
+                                 constraintName="fkmi2oj6kcqll5u63yknf6y18bj" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="stock" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-30">
+        <addForeignKeyConstraint baseColumnNames="current_stock_id" baseTableName="company"
+                                 constraintName="fkoi5aq2bm82091ubh15kfj29m1" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="stock" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-31">
+        <addUniqueConstraint columnNames="mail" constraintName="uk_3p68bfr8mvl8qovh9ptly8e1" tableName="company"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-32">
+        <addForeignKeyConstraint baseColumnNames="company_id" baseTableName="stock"
+                                 constraintName="fk9r297vk0rghnrccw09x0qybfj" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="company" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-33">
+        <addUniqueConstraint columnNames="telephone" constraintName="uk_etgb9ui7ovlrto9ptwvlg2mr2" tableName="company"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-34">
+        <addUniqueConstraint columnNames="token" constraintName="uk_q07v32xltcbucc7mkbrnpt78k" tableName="company"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-35">
+        <addUniqueConstraint columnNames="organization_name" constraintName="uk_o0x00rql17u98aa8n589okd5g"
+                             tableName="company"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-36">
+        <createIndex indexName="uk_slv1mkpdn598ga46mopo7mmv9" tableName="login_attempt" unique="true">
+            <column name="authorization_key"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-37">
+        <addForeignKeyConstraint baseColumnNames="stock_id" baseTableName="stock_city"
+                                 constraintName="fkqwed4es6vgvci3pjdjccbl2ug" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="stock" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-38">
+        <createIndex indexName="uk_fcu8w56qlnl9b9vmlg6ovn1u8" tableName="admin" unique="true">
+            <column name="token"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-39">
+        <createIndex indexName="uk_1eu8geuxibe4dahfkq9rc4r95" tableName="admin" unique="true">
+            <column name="telephone"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-40">
+        <addForeignKeyConstraint baseColumnNames="city_id" baseTableName="stock_city"
+                                 constraintName="fkpu5twbb05y0eoyrjr8ev6rcbd" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="city" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-41">
+        <addForeignKeyConstraint baseColumnNames="city" baseTableName="users"
+                                 constraintName="fkcs9whtendqffwjvjel7jybj2m" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="city" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-42">
+        <addForeignKeyConstraint baseColumnNames="stock_city_id" baseTableName="users"
+                                 constraintName="fk1q0l4a3t1mls9a64b2h988f6o" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="stock_city" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-43">
+        <addForeignKeyConstraint baseColumnNames="stock_city_id" baseTableName="promo_code"
+                                 constraintName="fk8tcbsaumnu439i2xx9wqyo1j6" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="stock_city" validate="true"/>
+    </changeSet>
+    <changeSet author="maksimgrankin (generated)" id="1602013039373-44">
+        <addForeignKeyConstraint baseColumnNames="stock_city_id" baseTableName="promocode_activation"
+                                 constraintName="fklr4pos3kt04hdu7ahx478wkpf" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="stock_city" validate="true"/>
+    </changeSet>
+</databaseChangeLog>
