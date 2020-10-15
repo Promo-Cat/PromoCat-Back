@@ -79,12 +79,12 @@ public class ParametersService {
         if (parametersRepository.existsById(1L)) {
             return false;
         } else {
-            Parameters parameters = new Parameters();
+            ParametersDTO parameters = new ParametersDTO();
             parameters.setFare(DEFAULT_PANEL_VALUE);
             parameters.setPostpayment(DEFAULT_POSTPAYMENT_VALUE);
             parameters.setPrepayment(DEFAULT_PREPAYMENT_VALUE);
             parameters.setId(1L);
-            parametersRepository.save(parameters);
+            save(parameters);
             return true;
         }
     }

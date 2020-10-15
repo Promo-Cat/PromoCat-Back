@@ -18,12 +18,13 @@ import java.sql.Blob;
  * Created by Danil Lyskin at 12:46 24.07.2020
  */
 @Entity
-@Table(name = "csvFile")
+@Table(name = "csv_file")
 @EqualsAndHashCode(of = {}, callSuper = true)
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CSVFile extends AbstractEntity {
+
     private Blob file;
     private String name;
 
