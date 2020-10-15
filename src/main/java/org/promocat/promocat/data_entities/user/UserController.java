@@ -338,10 +338,19 @@ public class UserController {
         UserDTO user = userService.findByToken(token);
         List<StockWithStockCityDTO> res = stockService.getAllActiveStocks().stream()
                 .map(
-                        e -> new StockWithStockCityDTO(e, e.getCities().stream()
-                                .filter(x -> x.getCityId().equals(user.getCityId()))
-                                .findFirst().orElse(null)
-                        )
+                        e -> {
+                            StockWithStockCityDTO d = new StockWithStockCityDTO(e, e.getCities().stream()
+                                    .filter(x -> x.getCityId().equals(user.getCityId()))
+                                    .findFirst().orElse(null)
+                            );
+                            d.setAmountOfPosters(
+                                    d.getAmountOfPosters() - stockActivationService.getCountByCityAndStock(
+                                            stockCityService.findById(d.getStockCityId()).getCityId(),
+                                            d.getStockId()
+                                    )
+                            );
+                            return d;
+                        }
                 )
                 .filter(e -> e.getStockCityId() != null)
                 .collect(Collectors.toList());
