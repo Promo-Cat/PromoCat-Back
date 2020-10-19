@@ -12,6 +12,8 @@
             <column name="code" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="valid_until" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="active" type="BOOLEAN"/>
         </createTable>
     </changeSet>
     <changeSet id="stock-activation-code-users-fk" author="r.devyatilov">

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @ApiModel(value = "StockActivationCodeDTO", description = "Object representation stock activation code.")
 @EqualsAndHashCode(of = {}, callSuper = true)
@@ -27,5 +28,11 @@ public class StockActivationCodeDTO extends AbstractDTO {
     @ApiModelProperty(value = "Code", dataType = "String", required = true)
     @NotNull(message = "Code не может быть пустым.")
     private String code;
+
+    @ApiModelProperty(value = "Active", dataType = "Boolean", required = true)
+    private Boolean active = false;
+
+    @ApiModelProperty(value = "Time which code is valid", dataType = "LocalDateTime", required = false)
+    private LocalDateTime validUntil;
 
 }

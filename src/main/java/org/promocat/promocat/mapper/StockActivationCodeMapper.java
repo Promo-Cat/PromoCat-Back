@@ -6,10 +6,12 @@ import org.promocat.promocat.data_entities.stock_activation_code.StockActivation
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.StockActivationCodeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Objects;
 
+@Component
 public class StockActivationCodeMapper extends AbstractMapper<StockActivationCode, StockActivationCodeDTO> {
 
     private final ModelMapper mapper;
@@ -60,7 +62,7 @@ public class StockActivationCodeMapper extends AbstractMapper<StockActivationCod
 
     @Override
     void mapSpecificFields(StockActivationCodeDTO source, StockActivationCode destination) {
-        destination.setStockCity(stockCityRepository.findById(source.getStockCityId()).orElse(null));
-        destination.setUser(userRepository.findById(source.getUserId()).orElse(null));
+        destination.setStockCity(stockCityRepository.findById(Objects.requireNonNullElse(source.getStockCityId(), -1L)).orElse(null));
+        destination.setUser(userRepository.findById(Objects.requireNonNullElse(source.getUserId(), -1L)).orElse(null));
     }
 }
