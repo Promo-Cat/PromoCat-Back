@@ -14,14 +14,15 @@
             </column>
         </createTable>
     </changeSet>
-
     <changeSet id="stock-activation-code-users-fk" author="r.devyatilov">
+<!--        TODO: change id -->
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="stock_activation_code"
                                  constraintName="stock_activation_code__users_fk" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="users" validate="true"/>
     </changeSet>
     <changeSet id="stock-activation-code-stock-city-fk" author="r.devyatilov">
+<!--        TODO: change id -->
         <addForeignKeyConstraint baseColumnNames="stock_city_id" baseTableName="stock_activation_code"
                                  constraintName="stock_activation_code__stock_city__fk" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
