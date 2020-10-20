@@ -1,11 +1,12 @@
 package org.promocat.promocat.data_entities.stock_activation_code;
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.data_entities.user.User;
+import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.StockActivationCodeDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.mapper.StockActivationCodeMapper;
-import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -24,11 +24,14 @@ public class StockActivationCodeService {
 
     private final StockActivationCodeMapper stockActivationCodeMapper;
     private final StockActivationCodeRepository stockActivationCodeRepository;
+    private final UserRepository userRepository;
 
     public StockActivationCodeService(final StockActivationCodeMapper stockActivationCodeMapper,
-                                      final StockActivationCodeRepository stockActivationCodeRepository) {
+                                      final StockActivationCodeRepository stockActivationCodeRepository,
+                                      final UserRepository userRepository) {
         this.stockActivationCodeMapper = stockActivationCodeMapper;
         this.stockActivationCodeRepository = stockActivationCodeRepository;
+        this.userRepository = userRepository;
     }
 
     public StockActivationCodeDTO save(StockActivationCodeDTO dto) {
@@ -84,6 +87,33 @@ public class StockActivationCodeService {
         return codes;
     }
 
+    /**
+     * Проверяет код на валидность (активен ли) и применяет акцию к юзеру в соответствии с кодом.
+     * @param code код
+     * @return {@code true} - если код валидный и {@code false} иначе
+     */
+    public boolean checkCode(String code) {
+        Optional<StockActivationCode> entityOptional = stockActivationCodeRepository.findByCode(code);
+        if (entityOptional.isPresent()) {
+            StockActivationCode entity = entityOptional.get();
+            if (!entity.getActive()) {
+                return false;
+            }
+            User user = entity.getUser();
+            user.setStockCity(entity.getStockCity());
+            entity.setActive(false);
+            save(stockActivationCodeMapper.toDto(entity));
+            userRepository.save(user);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public StockActivationCodeDTO findByCode(String code) {
+        return stockActivationCodeMapper.toDto(stockActivationCodeRepository.findByCode(code).orElseThrow());
+    }
+
     @Scheduled(cron = "0 0/3 * * * *")
     private void deactivateInvalidCodes() {
         log.info("[Scheduled] Deactivating codes");
@@ -94,5 +124,4 @@ public class StockActivationCodeService {
         ).size();
         log.info("Deactivated {} codes", count);
     }
-
 }

@@ -5,11 +5,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StockActivationCodeRepository extends JpaRepository<StockActivationCode, Long> {
 
-    StockActivationCode getByCode(String code);
+    Optional<StockActivationCode> findByCode(String code);
     List<StockActivationCode> getAllByActiveFalse();
     List<StockActivationCode> getAllByValidUntilBefore(LocalDateTime time);
 

@@ -13,10 +13,9 @@ import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.stock_activation.StockActivationService;
+import org.promocat.promocat.data_entities.stock_activation_code.StockActivationCodeService;
 import org.promocat.promocat.data_entities.user_ban.UserBanService;
-import org.promocat.promocat.dto.MovementDTO;
-import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.SimpleStockDTO;
 import org.promocat.promocat.dto.pojo.StockWithStockCityDTO;
@@ -67,6 +66,7 @@ public class UserController {
     private final StockCityService stockCityService;
     private final UserBanService userBanService;
     private final SoapClient soapClient;
+    private final StockActivationCodeService stockActivationCodeService;
 
     @Autowired
     public UserController(final UserService userService,
@@ -74,7 +74,8 @@ public class UserController {
                           final MovementService movementService,
                           final StockService stockService,
                           final StockCityService stockCityService, UserBanService userBanService,
-                          final SoapClient soapClient) {
+                          final SoapClient soapClient,
+                          final StockActivationCodeService stockActivationCodeService) {
         this.userService = userService;
         this.stockActivationService = stockActivationService;
         this.movementService = movementService;
@@ -82,6 +83,7 @@ public class UserController {
         this.stockCityService = stockCityService;
         this.userBanService = userBanService;
         this.soapClient = soapClient;
+        this.stockActivationCodeService = stockActivationCodeService;
     }
 
 //    @ApiOperation(value = "Registering user",
@@ -187,8 +189,8 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/stock/{stockCityId}", method = RequestMethod.POST)
-    public ResponseEntity<UserDTO> setUserStockCity(@PathVariable("stockCityId") final Long stockCityId,
-                                                    @RequestHeader("token") final String token) {
+    public ResponseEntity<StockActivationCodeDTO> setUserStockCity(@PathVariable("stockCityId") final Long stockCityId,
+                                                               @RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
         if (Objects.isNull(userDTO.getInn())) {
             throw new ApiUserInnException(String.format("User with telephone: %s doesn't have Inn for participate" +
@@ -206,7 +208,8 @@ public class UserController {
             throw new ApiUserStatusException(String.format("Status of user with telephone: %s doesn't allow" +
                     " to participate in the Stock", userDTO.getTelephone()));
         }
-        StockDTO stock = stockService.findById(stockCityService.findById(stockCityId).getStockId());
+        StockCityDTO stockCity = stockCityService.findById(stockCityId);
+        StockDTO stock = stockService.findById(stockCity.getStockId());
         if (userBanService.isBanned(userDTO, stock)) {
             throw new ApiUserStockException(String.format("User with number %s is banned in that stock", userDTO.getTelephone()));
         }
@@ -214,7 +217,7 @@ public class UserController {
             throw new ApiStockActivationStatusException("Stock isn`t active now");
         }
         stockActivationService.create(userDTO, stockCityId);
-        return ResponseEntity.ok(userService.setUserStockCity(userDTO, stockCityId));
+        return ResponseEntity.ok(stockActivationCodeService.get(userDTO, stockCity));
     }
 
     @ApiOperation(value = "Add user movement.",
