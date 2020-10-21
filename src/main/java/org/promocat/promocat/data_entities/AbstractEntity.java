@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +26,7 @@ public abstract class AbstractEntity implements Serializable {
     Long id;
 
     @Id
+    @Generated(GenerationTime.ALWAYS)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;

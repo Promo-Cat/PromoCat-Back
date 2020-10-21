@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="21.10.2020-01" author="r.devyatilov">
+        <createTable tableName="stock_activation_code">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="stock_activation_code_pkey"/>
+            </column>
+            <column name="stock_city_id" type="BIGINT"/>
+            <column name="user_id" type="BIGINT"/>
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valid_until" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="active" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="21.10.2020-02" author="r.devyatilov">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="stock_activation_code"
+                                 constraintName="stock_activation_code__users_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet id="21.10.2020-03" author="r.devyatilov">
+        <addForeignKeyConstraint baseColumnNames="stock_city_id" baseTableName="stock_activation_code"
+                                 constraintName="stock_activation_code__stock_city__fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="stock_city" validate="true"/>
+    </changeSet>
+</databaseChangeLog>
