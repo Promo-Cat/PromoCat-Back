@@ -5,6 +5,8 @@ import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.data_entities.admin.Admin;
 import org.promocat.promocat.data_entities.admin.AdminRepository;
 import org.promocat.promocat.data_entities.city.CityService;
+import org.promocat.promocat.data_entities.stock_activation_code.StockActivationCodeRepository;
+import org.promocat.promocat.data_entities.stock_activation_code.StockActivationCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -32,12 +34,18 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     private final CityService cityService;
     private final AdminRepository adminRepository;
+    private final StockActivationCodeRepository stockActivationCodeRepository;
+    private final StockActivationCodeService stockActivationCodeService;
 
     @Autowired
     public SetupDataLoader(final CityService cityService,
-                           final AdminRepository adminRepository) {
+                           final AdminRepository adminRepository,
+                           final StockActivationCodeRepository stockActivationCodeRepository,
+                           final StockActivationCodeService stockActivationCodeService) {
         this.cityService = cityService;
         this.adminRepository = adminRepository;
+        this.stockActivationCodeRepository = stockActivationCodeRepository;
+        this.stockActivationCodeService = stockActivationCodeService;
     }
 
     /**
@@ -52,6 +60,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         }
         createAdminIfNotFound();
         loadCitiesIfNeed();
+        createCodesIfNeed();
         alreadySetup = true;
     }
 
@@ -72,6 +81,16 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private void loadCitiesIfNeed() {
         if (cityService.needToLoad() && NEED_TO_AUTOLOAD_CITIES) {
             cityService.loadFromFile(Paths.get(CITIES_FILE));
+        }
+    }
+
+    /**
+     * Создаёт коды (активации акции), если надо
+     * Идея такая, что у нас есть n кодов заранее
+     */
+    private void createCodesIfNeed() {
+        if (stockActivationCodeRepository.count() == 0) {
+            stockActivationCodeService.createCodes();
         }
     }
 }
