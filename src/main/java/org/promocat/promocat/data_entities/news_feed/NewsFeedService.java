@@ -36,7 +36,7 @@ public class NewsFeedService {
      * Сохранение новости в БД.
      *
      * @param dto объектное представление новости.
-     * @return представление комании в БД. {@link NewsFeedDTO}
+     * @return представление новости в БД. {@link NewsFeedDTO}
      */
     public NewsFeedDTO save(final NewsFeedDTO dto) {
         log.info("Trying to save news with name: {}", dto.getName());
