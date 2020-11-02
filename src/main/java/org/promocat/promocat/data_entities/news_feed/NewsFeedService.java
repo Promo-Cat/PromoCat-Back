@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by Danil Lyskin at 21:13 31.10.2020
@@ -41,8 +41,7 @@ public class NewsFeedService {
     public NewsFeedDTO save(final NewsFeedDTO dto) {
         log.info("Trying to save news with name: {}", dto.getName());
 
-        NewsFeed news = newsFeedMapper.toEntity(dto);
-        return newsFeedMapper.toDto(newsFeedRepository.save(news));
+        return newsFeedMapper.toDto(newsFeedRepository.save(newsFeedMapper.toEntity(dto)));
     }
 
     /**
@@ -69,7 +68,7 @@ public class NewsFeedService {
      *
      * @param id новости.
      */
-    public void deleteById(Long id) {
+    public void deleteById(final Long id) {
         newsFeedRepository.deleteById(id);
     }
 
@@ -80,16 +79,8 @@ public class NewsFeedService {
      * @return массив представлений новости в БД. {@link NewsFeedDTO}
      */
     public List<NewsFeedDTO> findByType(final String type) {
-        Optional<List<NewsFeed>> news = newsFeedRepository.findAllByType(AccountType.of(type));
+        List<NewsFeed> news = newsFeedRepository.findAllByType(AccountType.of(type));
 
-        List<NewsFeedDTO> newsDTO = new ArrayList<>();
-        if (news.isPresent()) {
-            log.info("Found news with type: {}", type);
-            news.get().forEach(x -> {
-                    newsDTO.add(newsFeedMapper.toDto(x));
-            });
-            return newsDTO;
-        }
-        return newsDTO;
+        return news.stream().map(newsFeedMapper::toDto).collect(Collectors.toList());
     }
 }

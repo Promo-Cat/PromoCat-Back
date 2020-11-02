@@ -16,5 +16,5 @@ public interface NewsFeedRepository extends JpaRepository<NewsFeed, Long> {
 
     Optional<NewsFeed> findById(Long id);
 
-    Optional<List<NewsFeed>> findAllByType(AccountType type);
+    List<NewsFeed> findAllByType(AccountType type);
 }
