@@ -35,6 +35,7 @@ public class SpringFoxConfig {
     public static final String MOVEMENT = "Movement";
     public static final String USER_BAN = "User ban";
     public static final String PARAMETERS = "Parameters";
+    public static final String NEWS_FEED = "News feed";
 
     @Bean
     public Docket api() {
@@ -49,6 +50,7 @@ public class SpringFoxConfig {
                 .tags(new Tag(STOCK, "Stock controller"))
                 .tags(new Tag(STOCK_CITY, "Stock and city controller"))
                 .tags(new Tag(MOVEMENT, "Movement controller"))
+                .tags(new Tag(NEWS_FEED, "News feed controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
     }
@@ -88,6 +90,7 @@ public class SpringFoxConfig {
                 .tags(new Tag(ADMIN, "Admin controller"))
                 .tags(new Tag(USER_BAN, "UserBan controller"))
                 .tags(new Tag(PARAMETERS, "Parameters controller"))
+                .tags(new Tag(NEWS_FEED, "News feed controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
     }
