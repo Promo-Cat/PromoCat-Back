@@ -57,8 +57,10 @@ public class NewsFeed extends AbstractEntity {
 
     /**
      * Тип новости.
-     * USER - новость для пользователей.
-     * COMPANY - новость для компаний.
+     *
+     * {@code USER} - новость для пользователей.
+     *
+     * {@code COMPANY} - новость для компаний.
      */
     @NotNull(message = "тип аккаунта должен быть задан")
     @Column(name = "type")

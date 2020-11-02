@@ -69,6 +69,7 @@ public class NewsFeedService {
      * @param id новости.
      */
     public void deleteById(final Long id) {
+        log.info("Delete news with id: {}", id);
         newsFeedRepository.deleteById(id);
     }
 
