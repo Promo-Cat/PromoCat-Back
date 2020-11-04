@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.attributes.CarVerifyingStatus;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -44,4 +45,15 @@ public class CarDTO extends AbstractDTO {
     @NotBlank(message = "Регион не может быть пустым.")
     @Pattern(regexp = "\\d{2,3}", message = "Регион автомобиля задан некорректно.")
     private String region;
+
+    @ApiModelProperty(
+            value = "Car verifying status",
+            dataType = "String",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    private CarVerifyingStatus verifyingStatus;
+
+    private Long stsId;
+
+    private Long photoId;
 }

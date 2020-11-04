@@ -5,10 +5,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.CarVerifyingStatus;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.attributes.TaxUserStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.car.CarService;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
@@ -67,15 +69,18 @@ public class UserController {
     private final UserBanService userBanService;
     private final SoapClient soapClient;
     private final StockActivationCodeService stockActivationCodeService;
+    private final CarService carService;
 
     @Autowired
     public UserController(final UserService userService,
                           final StockActivationService stockActivationService,
                           final MovementService movementService,
                           final StockService stockService,
-                          final StockCityService stockCityService, UserBanService userBanService,
+                          final StockCityService stockCityService,
+                          final UserBanService userBanService,
                           final SoapClient soapClient,
-                          final StockActivationCodeService stockActivationCodeService) {
+                          final StockActivationCodeService stockActivationCodeService,
+                          final CarService carService) {
         this.userService = userService;
         this.stockActivationService = stockActivationService;
         this.movementService = movementService;
@@ -84,6 +89,7 @@ public class UserController {
         this.userBanService = userBanService;
         this.soapClient = soapClient;
         this.stockActivationCodeService = stockActivationCodeService;
+        this.carService = carService;
     }
 
 //    @ApiOperation(value = "Registering user",
@@ -208,6 +214,12 @@ public class UserController {
             throw new ApiUserStatusException(String.format("Status of user with telephone: %s doesn't allow" +
                     " to participate in the Stock", userDTO.getTelephone()));
         }
+        if (Objects.isNull(userDTO.getCarId())) {
+            throw new ApiUserStatusException("User doesn`t have a car.\nVerified car is required to take partition in stock.");
+        }
+        if (carService.findById(userDTO.getCarId()).getVerifyingStatus() != CarVerifyingStatus.VERIFIED) {
+            throw new ApiUserStatusException("Car is not verified");
+        }
         StockCityDTO stockCity = stockCityService.findById(stockCityId);
         StockDTO stock = stockService.findById(stockCity.getStockId());
         if (userBanService.isBanned(userDTO, stock)) {
@@ -237,7 +249,7 @@ public class UserController {
         if (Objects.isNull(user.getStockCityId())) {
             throw new ApiStockCityNotFoundException(String.format("User with telephone: %s doesn't have stock", user.getTelephone()));
         }
-        if (user.getCars().size() == 0) {
+        if (user.getCarId() == null) {
             throw new ApiCarNotFoundException(String.format("User with telephone: %s doesn't have car for move", user.getTelephone()));
         }
         user.setTotalDistance(user.getTotalDistance() + distanceDTO.getDistance());

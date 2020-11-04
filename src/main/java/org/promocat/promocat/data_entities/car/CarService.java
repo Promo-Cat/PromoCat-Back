@@ -3,16 +3,29 @@ package org.promocat.promocat.data_entities.car;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.CarVerifyingStatus;
 import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.CarDTO;
+import org.promocat.promocat.dto.FileDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.car.ApiCarNotFoundException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.CarMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -62,23 +75,17 @@ public class CarService {
     }
 
     /**
-     * Поиск автомобиля по гос. номеру.
+     * Поиск автомобилей по гос. номеру.
      *
      * @param number номер автомобиля.
      * @param region регион автомобиля.
-     * @return представление автомобиля, хранящееся в БД. {@link CarDTO}
-     * @throws ApiCarNotFoundException если не найден автомобиль в БД.
+     * @return представления автомобилей, хранящиеся в БД. {@link CarDTO}
      */
-    public CarDTO findByNumberAndRegion(final String number, final String region) {
-        Optional<Car> car = carRepository.findByNumberAndRegion(number, region);
-        if (car.isPresent()) {
-            log.info("Found car by number: [{}] and region: [{}]", number, region);
-            return carMapper.toDto(car.get());
-        } else {
-            log.warn("No such car with number: [{}] and region: [{}]", number, region);
-            throw new ApiCarNotFoundException(String.format(
-                    "No car with such number: %s, region: %s, in database.", number, region));
-        }
+    public Set<CarDTO> findByNumberAndRegion(final String number, final String region) {
+        Set<Car> cars = carRepository.findAllByNumberAndRegion(number, region);
+        return cars.stream()
+                .map(carMapper::toDto)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -112,5 +119,40 @@ public class CarService {
 
     public Set<CarDTO> getAllCarsByUserId(final Long userId) {
         return carRepository.findAllByUserId(userId).stream().map(carMapper::toDto).collect(Collectors.toSet());
+    }
+
+    public CarDTO verifyCar(CarDTO carDTO) {
+        carDTO.setVerifyingStatus(CarVerifyingStatus.VERIFIED);
+        carRepository
+                .findAllByNumberAndRegion(carDTO.getNumber(), carDTO.getRegion())
+                .stream()
+                .filter(x -> !x.getId().equals(carDTO.getId()))
+                .forEach(carRepository::delete);
+        return save(carDTO);
+    }
+
+    public List<CarDTO> getAllNotVerifiedCars() {
+        return carRepository
+                .findAllByVerifyingStatus(CarVerifyingStatus.PROCESSING)
+                .stream()
+                .map(carMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    // TODO: 04.11.2020 Вытащить отсюда, или юзнуть из PosterService
+    @Transactional
+    public ResponseEntity<Resource> getResourceResponseEntity(FileDTO byCarId) {
+        Blob blob = byCarId.getFile();
+        try {
+            byte[] bytes = blob.getBytes(1, (int) blob.length());
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(byCarId.getDataType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + byCarId.getFileName() + "\"")
+                    .body(new ByteArrayResource(bytes));
+        } catch (SQLException e) {
+            log.error(e.getLocalizedMessage());
+            throw new ApiServerErrorException("Some problems with file download.");
+        }
     }
 }

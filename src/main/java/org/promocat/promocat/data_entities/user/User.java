@@ -31,7 +31,7 @@ public class User extends AbstractAccount {
 
     private City city;
     private Double balance = 0.0;
-    private Set<Car> cars = new HashSet<>();
+    private Car car;
     private Set<Movement> movements = new HashSet<>();
     private StockCity stockCity;
     private Double totalDistance = 0.0;
@@ -69,9 +69,10 @@ public class User extends AbstractAccount {
     /**
      * Автомобили пользователя.
      */
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public Set<Car> getCars() {
-        return cars;
+    @OneToOne
+    @JoinColumn(name = "car_id")
+    public Car getCar() {
+        return car;
     }
 
     /**
