@@ -22,7 +22,7 @@ public class File extends AbstractEntity {
     private String fileName;
 
     /**
-     * Фото автомобиля для фотоконтроля.
+     * Файл в байтовом представлении.
      */
     @Lob
     @Column(name = "file")
@@ -30,11 +30,17 @@ public class File extends AbstractEntity {
         return file;
     }
 
+    /**
+     * Тип загруженного файла
+     */
     @Column(name = "data_type")
     public String getDataType() {
         return dataType;
     }
 
+    /**
+     * Имя загруженного файла
+     */
     @Column(name = "file_name")
     public String getFileName() {
         return fileName;

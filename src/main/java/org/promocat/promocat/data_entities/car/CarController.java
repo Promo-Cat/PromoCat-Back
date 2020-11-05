@@ -25,6 +25,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -186,7 +187,14 @@ public class CarController {
             "/admin/car/{id}/photo"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getPhoto(@RequestHeader("token") String token,
                                              @PathVariable("id") Long carId) {
-        // TODO: 04.11.2020 Check is user own car
+        boolean isUser = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
+        if (isUser) {
+            UserDTO user = userService.findByToken(token);
+            if (!user.getCarId().equals(carId)) {
+                throw new ApiForbiddenException("It`s not your car");
+            }
+        }
         return carService.getResourceResponseEntity(carPhotoService.findByCarId(carId));
     }
 
@@ -197,6 +205,14 @@ public class CarController {
             "/admin/car/{id}/sts"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getSts(@RequestHeader("token") String token,
                                            @PathVariable("id") Long carId) {
+        boolean isUser = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
+        if (isUser) {
+            UserDTO user = userService.findByToken(token);
+            if (user.getCarId() == null || !user.getCarId().equals(carId)) {
+                throw new ApiForbiddenException("It`s not your car");
+            }
+        }
         return carService.getResourceResponseEntity(stsService.findByCarId(carId));
     }
 
