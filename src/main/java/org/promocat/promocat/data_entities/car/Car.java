@@ -6,16 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.promocat.promocat.attributes.CarVerifyingStatus;
 import org.promocat.promocat.data_entities.AbstractEntity;
+import org.promocat.promocat.data_entities.car.car_photo.CarPhoto;
+import org.promocat.promocat.data_entities.car.sts.Sts;
 import org.promocat.promocat.data_entities.user.User;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -23,7 +20,7 @@ import javax.validation.constraints.Pattern;
  * @author maksimgrankin
  */
 @Entity
-@Table(name = "car", indexes = {@Index(columnList = "number,region", unique = true)})
+@Table(name = "car")
 @EqualsAndHashCode(of = {}, callSuper = true)
 @AllArgsConstructor
 @Setter
@@ -33,6 +30,9 @@ public class Car extends AbstractEntity {
     private User user;
     private String number;
     private String region;
+    private CarVerifyingStatus verifyingStatus = CarVerifyingStatus.PROCESSING;
+    private CarPhoto carPhoto;
+    private Sts sts;
 
     /**
      * Пользователь, у которого данный автомобиль.
@@ -62,5 +62,29 @@ public class Car extends AbstractEntity {
     @Pattern(regexp = "\\d{2,3}", message = "Регион автомобиля задан некорректно.")
     public String getRegion() {
         return region;
+    }
+
+    /**
+     * Статус проверки подленности авто.
+     * @see CarVerifyingStatus
+     */
+    @Enumerated
+    @Column(name = "verifying_status")
+    public CarVerifyingStatus getVerifyingStatus() {
+        return verifyingStatus;
+    }
+
+    @Cascade({ CascadeType.ALL })
+    @OneToOne
+    @JoinColumn(name = "car_photo_id")
+    public CarPhoto getCarPhoto() {
+        return carPhoto;
+    }
+
+    @Cascade({ CascadeType.ALL })
+    @OneToOne
+    @JoinColumn(name = "sts_id")
+    public Sts getSts() {
+        return sts;
     }
 }
