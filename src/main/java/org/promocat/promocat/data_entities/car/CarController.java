@@ -191,7 +191,7 @@ public class CarController {
                 .anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
         if (isUser) {
             UserDTO user = userService.findByToken(token);
-            if (!user.getCarId().equals(carId)) {
+            if (user.getCarId() == null || !user.getCarId().equals(carId)) {
                 throw new ApiForbiddenException("It`s not your car");
             }
         }
