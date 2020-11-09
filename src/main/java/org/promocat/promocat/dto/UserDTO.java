@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.CarVerifyingStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.constraints.RequiredForFull;
 
@@ -42,12 +43,12 @@ public class UserDTO extends AbstractAccountDTO {
     private Double balance;
 
     @ApiModelProperty(
-            value = "Users cars",
-            dataType = "Set",
+            value = "Id of users car",
+            dataType = "Long",
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Set<CarDTO> cars = new HashSet<>();
+    private Long carId;
 
     @ApiModelProperty(
             value = "Id of current users stock city",

@@ -301,7 +301,7 @@ public class UserTest {
     @Test
     public void testMoveWithoutCar() throws Exception {
         UserDTO user = beforeAll.createUser("+7(213)123-22-22", beforeAll.stockCity1DTO, UserStatus.JUST_REGISTERED);
-        user.setCars(null);
+        user.setCarId(null);
         String token = beforeAll.getToken(AccountType.USER, user.getTelephone());
 
         this.mockMvc.perform(post("/api/user/move").contentType(MediaType.APPLICATION_JSON_VALUE)
