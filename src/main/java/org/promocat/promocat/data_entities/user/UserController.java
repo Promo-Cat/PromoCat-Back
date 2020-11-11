@@ -477,7 +477,7 @@ public class UserController {
     @RequestMapping(value = "/api/user/token/{id}", method = RequestMethod.POST)
     public ResponseEntity<String> addToken(@PathVariable("id") final Long id, @RequestParam("token") final String token) {
         UserDTO dto = userService.findById(id);
-        dto.setToken(token);
+        dto.setGoogleToken(token);
         userService.save(dto);
 
         return ResponseEntity.ok("{}");
@@ -493,7 +493,7 @@ public class UserController {
     @RequestMapping(value = "/api/user/token/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteToken(@PathVariable("id") final Long id) {
         UserDTO dto = userService.findById(id);
-        dto.setToken(null);
+        dto.setGoogleToken(null);
         userService.save(dto);
 
         return ResponseEntity.ok("{}");

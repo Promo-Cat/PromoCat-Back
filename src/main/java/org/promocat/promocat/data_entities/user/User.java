@@ -40,7 +40,7 @@ public class User extends AbstractAccount {
     private String account;
     private String inn;
     private String taxConnectionId;
-    private String token;
+    private String googleToken;
 
     public User(City city, Double balance, StockCity stockCity) {
         this.city = city;
@@ -152,8 +152,8 @@ public class User extends AbstractAccount {
     /**
      * Token устройства пользователя для уведомлений.
      */
-    @Column(name = "token", unique = true)
-    public String getToken() {
-        return token;
+    @Column(name = "google_token", unique = true)
+    public String getGoogleToken() {
+        return googleToken;
     }
 }

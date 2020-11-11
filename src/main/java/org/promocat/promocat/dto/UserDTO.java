@@ -113,7 +113,7 @@ public class UserDTO extends AbstractAccountDTO {
             dataType = "String"
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String token;
+    private String googleToken;
 
     @JsonIgnore
     @RequiredForFull
