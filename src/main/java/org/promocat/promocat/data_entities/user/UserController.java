@@ -467,5 +467,35 @@ public class UserController {
         return ResponseEntity.ok(userService.findByTelephone(telephone));
     }
 
+    @ApiOperation(value = "Set user's token",
+            notes = "Set user's token for notification",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/token/{id}", method = RequestMethod.POST)
+    public ResponseEntity<String> addToken(@PathVariable("id") final Long id, @RequestParam("token") final String token) {
+        UserDTO dto = userService.findById(id);
+        dto.setToken(token);
+        userService.save(dto);
 
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Delete user's token",
+            notes = "Delete user's token for notification",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/token/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteToken(@PathVariable("id") final Long id) {
+        UserDTO dto = userService.findById(id);
+        dto.setToken(null);
+        userService.save(dto);
+
+        return ResponseEntity.ok("{}");
+    }
 }
