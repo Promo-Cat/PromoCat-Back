@@ -45,8 +45,8 @@ public class ParametersController {
     @ApiResponses(value = {@ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)})
     @RequestMapping(path = {
             "/admin/parameters",
-            "/user/parameters",
-            "/company/parameters"
+            "/api/user/parameters",
+            "/api/company/parameters"
     }, method = RequestMethod.GET)
     public ResponseEntity<ParametersDTO> getParameters() {
         ParametersDTO parameters = parametersService.getParameters();
