@@ -13,10 +13,7 @@ import org.promocat.promocat.exception.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -46,7 +43,11 @@ public class ParametersController {
             response = ParametersDTO.class
     )
     @ApiResponses(value = {@ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)})
-    @RequestMapping(path = "/admin/parameters", method = RequestMethod.GET)
+    @RequestMapping(path = {
+            "/admin/parameters",
+            "/user/parameters",
+            "/company/parameters"
+    }, method = RequestMethod.GET)
     public ResponseEntity<ParametersDTO> getParameters() {
         ParametersDTO parameters = parametersService.getParameters();
         return ResponseEntity.ok(parameters);
