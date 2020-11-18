@@ -29,6 +29,7 @@ import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -110,6 +111,30 @@ public class StockController {
         return ResponseEntity.ok(res);
     }
 
+    @ApiOperation(value = "Get stock by id",
+            notes = "Returning stock with id specified in request",
+            response = StockDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Stock not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class),
+            @ApiResponse(code = 403,
+                    message = "Company is not owner of stock",
+                    response = ApiException.class)
+    })
+    @RequestMapping(path = "/api/company/stock/{id}", method = RequestMethod.GET)
+    public ResponseEntity<StockDTO> getStockById(@RequestHeader("token") String token,
+                                                 @PathVariable("id") Long id) {
+        CompanyDTO companyDTO = companyService.findByToken(token);
+        if (companyService.isOwner(companyDTO.getId(), id)) {
+            return ResponseEntity.ok(stockService.findById(id));
+        } else {
+            throw new ApiForbiddenException("It`s not your stock.");
+        }
+    }
 
     @ApiOperation(value = "Update stock",
             notes = "Updates stock for company.",
@@ -345,7 +370,7 @@ public class StockController {
                     response = ApiException.class)
     })
     @RequestMapping(path = "/admin/stock/{id}", method = RequestMethod.GET)
-    public ResponseEntity<StockDTO> getStockById(@PathVariable("id") Long id) {
+    public ResponseEntity<StockDTO> getStockByIdAdmin(@PathVariable("id") Long id) {
         return ResponseEntity.ok(stockService.findById(id));
     }
 
