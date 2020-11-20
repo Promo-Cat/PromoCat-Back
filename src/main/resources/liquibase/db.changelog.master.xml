@@ -9,4 +9,6 @@
     <include file="liquibase/car/sts/db.changelog.sts.photo.create.xml"/>
     <include file="liquibase/news_feed/db.changelog.news_feed.xml"/>
     <include file="liquibase/user/db.changelog.user.xml"/>
+    <include file="liquibase/company/db.changelog.company.xml"/>
+    <include file="liquibase/admin/db.changelog.admin.xml"/>
 </databaseChangeLog>
