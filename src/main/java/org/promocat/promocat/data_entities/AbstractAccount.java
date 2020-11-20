@@ -22,9 +22,11 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 public abstract class AbstractAccount extends AbstractEntity {
 
-    String token;
-    String telephone;
-    AccountType accountType;
+    protected String token;
+    protected String telephone;
+    protected AccountType accountType;
+    protected String googleToken;
+
 
     /**
      * Токен закрепленный за аккаунтом
@@ -52,5 +54,13 @@ public abstract class AbstractAccount extends AbstractEntity {
     @Column(name = "account_type")
     public AccountType getAccountType() {
         return accountType;
+    }
+
+    /**
+     * Token устройства пользователя для уведомлений.
+     */
+    @Column(name = "google_token", unique = true)
+    public String getGoogleToken() {
+        return googleToken;
     }
 }

@@ -108,12 +108,6 @@ public class UserDTO extends AbstractAccountDTO {
     @RequiredForFull
     private String inn;
 
-    @ApiModelProperty(
-            value = "Users token for notification",
-            dataType = "String"
-    )
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String googleToken;
 
     @JsonIgnore
     @RequiredForFull
