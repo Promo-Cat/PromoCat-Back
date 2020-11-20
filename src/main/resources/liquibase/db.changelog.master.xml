@@ -8,4 +8,5 @@
     <include file="liquibase/car/car_photo/db.changelog.car.photo.create.xml"/>
     <include file="liquibase/car/sts/db.changelog.sts.photo.create.xml"/>
     <include file="liquibase/news_feed/db.changelog.news_feed.xml"/>
+    <include file="liquibase/user/db.changelog.user.xml"/>
 </databaseChangeLog>
