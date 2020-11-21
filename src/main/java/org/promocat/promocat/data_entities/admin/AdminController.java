@@ -186,7 +186,7 @@ public class AdminController {
     @RequestMapping(value = "/admin/notification/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> sendNotificationToCompany(@RequestBody final CompanyDTO company,
                                                          @RequestBody final NotificationDTO notif) {
-        firebaseNotificationManager.sendNotificationToUser(notif, company);
+        firebaseNotificationManager.sendNotificationToCompany(notif, company);
 
         return ResponseEntity.ok("{}");
     }
