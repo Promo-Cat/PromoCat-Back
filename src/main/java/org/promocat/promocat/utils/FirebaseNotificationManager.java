@@ -1,0 +1,77 @@
+package org.promocat.promocat.utils;
+
+import com.google.firebase.messaging.*;
+import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.dto.pojo.NotificationDTO;
+import org.promocat.promocat.dto.UserDTO;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Slf4j
+@Component
+public class FirebaseNotificationManager {
+
+    // TODO: 20.11.2020 ошибки
+    public String sendNotificationByTopic(NotificationDTO notif, String topic) {
+        try {
+            return FirebaseMessaging.getInstance().send(
+                    Message.builder()
+                            .setNotification(Notification.builder()
+                                    .setTitle(notif.getTitle())
+                                    .setBody(notif.getBody())
+                                    .build())
+                            .setTopic(topic)
+                            .build()
+            );
+        } catch (FirebaseMessagingException e) {
+            log.error("Не получилось отправить сообщение {} с topic {} ", notif, topic);
+            return "FAILED";
+        }
+    }
+
+    public String sendNotificationToUser(NotificationDTO notif, UserDTO userDTO) {
+        try {
+            return FirebaseMessaging.getInstance().send(
+                    Message.builder()
+                            .setNotification(Notification.builder()
+                                    .setTitle(notif.getTitle())
+                                    .setBody(notif.getBody())
+                                    .build())
+                            .setToken(userDTO.getGoogleToken())
+                            .build()
+            );
+        } catch (FirebaseMessagingException e) {
+            log.error("Не получилось отправить сообщение {} юзеру с id {} ", notif, userDTO.getId());
+            return "FAILED";
+        }
+    }
+
+    public int subscribeUserOnTopic(UserDTO userDTO, String topic) {
+        try {
+            TopicManagementResponse response = FirebaseMessaging.getInstance().subscribeToTopic(
+                    List.of(userDTO.getGoogleToken()),
+                    topic
+            );
+            return response.getSuccessCount();
+        } catch (FirebaseMessagingException e) {
+            log.error("Не получилось подписать пользователя с id {} на topic {}", userDTO.getId(), topic);
+            return 0;
+        }
+
+    }
+
+    public int unsubscribeUserFromTopic(UserDTO userDTO, String topic) {
+        try {
+            TopicManagementResponse response = FirebaseMessaging.getInstance().unsubscribeFromTopic(
+                    List.of(userDTO.getGoogleToken()),
+                    topic
+            );
+            return response.getSuccessCount();
+        } catch (FirebaseMessagingException e) {
+            log.error("Не получилось отписать пользователя с id {} от topic {}", userDTO.getId(), topic);
+            return 0;
+        }
+    }
+
+}
