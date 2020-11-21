@@ -9,10 +9,13 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.dto.AdminDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
+import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.TelephoneDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.FirebaseNotificationManager;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +41,17 @@ public class AdminController {
     private final AdminService adminService;
     private final PosterService posterService;
     private final MultiPartFileUtils multiPartFileUtils;
+    private final FirebaseNotificationManager firebaseNotificationManager;
 
     @Autowired
     public AdminController(final AdminService adminService,
                            final PosterService posterService,
-                           final MultiPartFileUtils multiPartFileUtils) {
+                           final MultiPartFileUtils multiPartFileUtils,
+                           final FirebaseNotificationManager firebaseNotificationManager) {
         this.adminService = adminService;
         this.posterService = posterService;
         this.multiPartFileUtils = multiPartFileUtils;
+        this.firebaseNotificationManager = firebaseNotificationManager;
     }
 
     @ApiOperation(value = "Add new admin.",
@@ -156,6 +162,43 @@ public class AdminController {
     @RequestMapping(path = "/admin/tax/register", method = {RequestMethod.PUT, RequestMethod.POST})
     public ResponseEntity<String> registerPartner() {
         adminService.registerPartner();
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Send notification to user")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/notification/user", method = RequestMethod.POST)
+    public ResponseEntity<String> sendNotificationToUser(@RequestBody final UserDTO user,
+                                                          @RequestBody final NotificationDTO notif) {
+        firebaseNotificationManager.sendNotificationToUser(notif, user);
+
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Send notification by topic for news")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/notification/topic/news", method = RequestMethod.POST)
+    public ResponseEntity<String> sendNotificationByTopicForNews() {
+
+
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Send notification by topic for stock")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/notification/topic/stock", method = RequestMethod.POST)
+    public ResponseEntity<String> sendNotificationByTopicForStock() {
+
+
         return ResponseEntity.ok("{}");
     }
 }
