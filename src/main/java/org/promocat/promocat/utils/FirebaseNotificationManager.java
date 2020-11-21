@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.exception.notification.ApiNotificationSendException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class FirebaseNotificationManager {
             );
         } catch (FirebaseMessagingException e) {
             log.error("Не получилось отправить сообщение {} с topic {} ", notif, topic);
-            return "FAILED";
+            throw new ApiNotificationSendException(String.format("Couldn't send notification for topic: %s", topic));
         }
     }
 
@@ -44,7 +45,7 @@ public class FirebaseNotificationManager {
             );
         } catch (FirebaseMessagingException e) {
             log.error("Не получилось отправить сообщение {} юзеру с id {} ", notif, userDTO.getId());
-            return "FAILED";
+            throw new ApiNotificationSendException(String.format("Couldn't send notification to user with id: %d", userDTO.getId()));
         }
     }
 
@@ -61,7 +62,7 @@ public class FirebaseNotificationManager {
             );
         } catch (FirebaseMessagingException e) {
             log.error("Не получилось отправить сообщение {} юзеру с id {} ", notif, company.getId());
-            return "FAILED";
+            throw new ApiNotificationSendException(String.format("Couldn't send notification to company with id: %d", company.getId()));
         }
     }
 
