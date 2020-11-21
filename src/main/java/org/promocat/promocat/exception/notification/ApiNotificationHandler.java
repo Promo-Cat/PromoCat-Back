@@ -41,4 +41,16 @@ public class ApiNotificationHandler {
         log.error("Couldn't send notification: " + e.getMessage());
         return new ResponseEntity<>(apiException, forbidden);
     }
+
+    @ExceptionHandler(value = {ApiSubscribeTopicException.class})
+    public ResponseEntity<Object> handleFailedSubscribe(ApiTopicAccountTypeException e) {
+        final HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                forbidden,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Couldn't subscribe/unsubscribe on topic: " + e.getMessage());
+        return new ResponseEntity<>(apiException, forbidden);
+    }
 }
