@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 public class ApiNewsFeedExceptionHandler {
 
     @ExceptionHandler(value = {ApiNewsFeedNotFoundException.class})
-    public ResponseEntity<Object> handleNonexistentCompany(ApiNewsFeedNotFoundException e) {
+    public ResponseEntity<Object> handleNonexistentNews(ApiNewsFeedNotFoundException e) {
         final HttpStatus notFound = HttpStatus.NOT_FOUND;
         ApiException apiException = new ApiException(
                 e.getMessage(),

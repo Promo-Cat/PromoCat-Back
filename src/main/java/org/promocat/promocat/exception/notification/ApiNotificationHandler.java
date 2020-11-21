@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 public class ApiNotificationHandler {
 
     @ExceptionHandler(value = {ApiTopicAccountTypeException.class})
-    public ResponseEntity<Object> handleNonexistentCompany(ApiTopicAccountTypeException e) {
+    public ResponseEntity<Object> handleIncorrectType(ApiTopicAccountTypeException e) {
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         ApiException apiException = new ApiException(
                 e.getMessage(),
@@ -28,5 +28,17 @@ public class ApiNotificationHandler {
         );
         log.error("Incorrect type for notification: " + e.getMessage());
         return new ResponseEntity<>(apiException, badRequest);
+    }
+
+    @ExceptionHandler(value = {ApiNotificationSendException.class})
+    public ResponseEntity<Object> handleFailedSend(ApiTopicAccountTypeException e) {
+        final HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                forbidden,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Couldn't send notification: " + e.getMessage());
+        return new ResponseEntity<>(apiException, forbidden);
     }
 }
