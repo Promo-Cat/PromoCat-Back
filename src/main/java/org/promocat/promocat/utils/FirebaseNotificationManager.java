@@ -6,6 +6,7 @@ import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.notification.ApiNotificationSendException;
+import org.promocat.promocat.exception.notification.ApiSubscribeTopicException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -75,7 +76,7 @@ public class FirebaseNotificationManager {
             return response.getSuccessCount();
         } catch (FirebaseMessagingException e) {
             log.error("Не получилось подписать пользователя с id {} на topic {}", userDTO.getId(), topic);
-            return 0;
+            throw new ApiSubscribeTopicException(String.format("Couldn't subscribe user with id: %d on topic: %s", userDTO.getId(), topic));
         }
 
     }
@@ -89,7 +90,7 @@ public class FirebaseNotificationManager {
             return response.getSuccessCount();
         } catch (FirebaseMessagingException e) {
             log.error("Не получилось отписать пользователя с id {} от topic {}", userDTO.getId(), topic);
-            return 0;
+            throw new ApiSubscribeTopicException(String.format("Couldn't unsubscribe user with id: %d on topic: %s", userDTO.getId(), topic));
         }
     }
 
