@@ -15,7 +15,6 @@ import java.util.List;
 @Component
 public class FirebaseNotificationManager {
 
-    // TODO: 20.11.2020 ошибки
     public String sendNotificationByTopic(NotificationDTO notif, String topic) {
         try {
             return FirebaseMessaging.getInstance().send(
