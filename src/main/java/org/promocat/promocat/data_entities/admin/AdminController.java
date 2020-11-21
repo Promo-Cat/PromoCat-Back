@@ -158,4 +158,28 @@ public class AdminController {
         adminService.registerPartner();
         return ResponseEntity.ok("{}");
     }
+
+    @ApiOperation(value = "Send notification by topic")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/notification/topic", method = RequestMethod.POST)
+    public ResponseEntity<String> sendNotificationByTopic() {
+
+
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Send notification by token")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/notification/token", method = RequestMethod.POST)
+    public ResponseEntity<String> sendNotificationByToken() {
+
+
+        return ResponseEntity.ok("{}");
+    }
 }
