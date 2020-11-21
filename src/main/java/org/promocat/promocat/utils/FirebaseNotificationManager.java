@@ -2,6 +2,7 @@ package org.promocat.promocat.utils;
 
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,23 @@ public class FirebaseNotificationManager {
             );
         } catch (FirebaseMessagingException e) {
             log.error("Не получилось отправить сообщение {} юзеру с id {} ", notif, userDTO.getId());
+            return "FAILED";
+        }
+    }
+
+    public String sendNotificationToCompany(NotificationDTO notif, CompanyDTO company) {
+        try {
+            return FirebaseMessaging.getInstance().send(
+                    Message.builder()
+                            .setNotification(Notification.builder()
+                                    .setTitle(notif.getTitle())
+                                    .setBody(notif.getBody())
+                                    .build())
+                            .setToken(company.getGoogleToken())
+                            .build()
+            );
+        } catch (FirebaseMessagingException e) {
+            log.error("Не получилось отправить сообщение {} юзеру с id {} ", notif, company.getId());
             return "FAILED";
         }
     }

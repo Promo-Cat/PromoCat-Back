@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 public class TopicGenerator {
 
     private static final String NEW_STOCK_USER_TOPIC = "NEW_STOCK_USER";
-    private static final String NEWS_FEED_POST_TOPIC = "NEWS_FEED";
+    private static final String NEWS_USER_FEED_POST_TOPIC = "NEWS_USER_FEED";
+    private static final String NEWS_COMPANY_FEED_POST_TOPIC = "NEWS_COMPANY_FEED";
     private static final String STOCK_USER_TOPIC_PREFIX = "STOCK_USER_";
     private static final String STOCK_COMPANY_TOPIC_PREFIX = "STOCK_STATUS_";
     private static final String NEW_STOCK_ADMIN_TOPIC = "NEW_STOCK_ADMIN";
@@ -16,8 +17,12 @@ public class TopicGenerator {
         return NEW_STOCK_USER_TOPIC;
     }
 
-    public String getNewsFeedTopic() {
-        return NEWS_FEED_POST_TOPIC;
+    public String getNewsFeedTopicForUser() {
+        return NEWS_USER_FEED_POST_TOPIC;
+    }
+
+    public String getNewsFeedTopicForCompany() {
+        return NEWS_COMPANY_FEED_POST_TOPIC;
     }
 
     public String getStockTopicForUser(StockDTO stock) {
