@@ -1,10 +1,21 @@
 package org.promocat.promocat.dto.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Not;
+import org.promocat.promocat.utils.InMemoryNotificationLoader;
+import org.promocat.promocat.utils.NotificationLoader;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
+import java.util.regex.Pattern;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Slf4j
 public class NotificationDTO {
 
     private String title;
@@ -14,51 +25,63 @@ public class NotificationDTO {
         return new NotificationDTO().new Builder();
     }
 
-    @Slf4j
+
+    /**
+     * Пример использования билдера.
+     */
+    public static void main(String[] args) {
+        NotificationDTO notif = NotificationDTO.newBuilder()
+                .getNotification(NotificationLoader.NotificationType.NEW_STOCK)
+                .set(Map.ofEntries(
+                        Map.entry("stock_name", "бёргеры")
+//                        Map.entry("company_name", "бк")
+                ))
+                .build();
+
+        System.out.println(notif);
+    }
+
     public class Builder {
 
         private String currentEditable = null;
 
-        public static final String KEY_PREFIX = "{%";
-        public static final String KEY_SUFFIX = "%}";
+        private final NotificationLoader loader = new InMemoryNotificationLoader();
+
+        public static final String KEY_PREFIX = "%";
+        public static final String KEY_SUFFIX = "%";
 
         private Builder() {
-
         }
 
-        public Builder title() {
-            if (currentEditable != null) {
-                NotificationDTO.this.body = currentEditable;
-            }
-            currentEditable = NotificationDTO.this.title;
-            return NotificationDTO.Builder.this;
+        public Builder getNotification(NotificationLoader.NotificationType type) {
+            NotificationDTO notificationPattern = loader.getNotification(type);
+
+            NotificationDTO.this.title = notificationPattern.title;
+            NotificationDTO.this.body = notificationPattern.body;
+
+            return Builder.this;
         }
 
-        public Builder body() {
-            if (currentEditable != null) {
-                NotificationDTO.this.title = currentEditable;
-            }
-            currentEditable = NotificationDTO.this.body;
-            return NotificationDTO.Builder.this;
+        public Builder set(Map<String, String> entries) {
+            entries.forEach(this::set);
+            return Builder.this;
         }
 
         public Builder set(String key, String value) {
-            if (key == null) {
-                log.error("Set key is null");
-                return NotificationDTO.Builder.this;
-            }
-            if (value == null) {
-                log.error("Set value for key {} is null", key);
-                return NotificationDTO.Builder.this;
-            }
+            NotificationDTO.this.title =
+                    NotificationDTO.this.title.replaceAll(getKeyPattern(key), value);
+            NotificationDTO.this.body =
+                    NotificationDTO.this.body.replaceAll(getKeyPattern(key), value);
 
-            currentEditable = currentEditable.replaceAll(getKeyPattern(key), value);
-
-            return NotificationDTO.Builder.this;
+            return Builder.this;
         }
 
         public NotificationDTO build() {
-
+            Pattern marksPattern = Pattern.compile(getKeyPattern("[\\S]+"));
+            if (marksPattern.matcher(NotificationDTO.this.title).find() ||
+                marksPattern.matcher(NotificationDTO.this.body).find()) {
+                log.warn("Not all keys in pattern were filled.");
+            }
             return NotificationDTO.this;
         }
 
