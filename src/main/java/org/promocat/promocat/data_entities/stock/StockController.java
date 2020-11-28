@@ -32,6 +32,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -212,17 +213,21 @@ public class StockController {
             @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
-    @RequestMapping(path = "/api/company/stock/{id}/poster", method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{id}/poster",
+            "/admin/company/stock/{id}/poster"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getPoster(@PathVariable("id") Long id,
                                               @RequestHeader("token") String token) {
-        Long companyId = companyService.findByToken(token).getId();
-        if (companyService.isOwner(companyId, id)) {
-            StockDTO stock = stockService.findById(id);
-            PosterDTO poster = posterService.findById(stock.getPosterId());
-            return posterService.getResourceResponseEntity(posterService.getPoster(poster));
-        } else {
-            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
+        boolean isCompany = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ROLE_COMPANY"));
+        StockDTO stock = stockService.findById(id);
+        PosterDTO poster = posterService.findById(stock.getPosterId());
+        if (isCompany) {
+            Long companyId = companyService.findByToken(token).getId();
+            if (!companyService.isOwner(companyId, id)) {
+                throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
+            }
         }
+        return posterService.getResourceResponseEntity(posterService.getPoster(poster));
     }
 
     @ApiOperation(value = "Get posters preview",
