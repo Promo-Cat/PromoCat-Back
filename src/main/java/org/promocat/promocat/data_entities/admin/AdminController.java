@@ -236,4 +236,39 @@ public class AdminController {
 
         return ResponseEntity.ok("{}");
     }
+
+    @ApiOperation(value = "Set admin's token",
+            notes = "Set admin's token for notification",
+            response = AdminDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Admin not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/token", method = RequestMethod.POST)
+    public ResponseEntity<AdminDTO> addToken(@RequestHeader("token") final String token) {
+        AdminDTO dto = adminService.findByToken(token);
+        if (dto.getGoogleToken() != null) {
+            adminService.unsubscribeAdminFromDefaultTopics(dto);
+        }
+        dto.setGoogleToken(token);
+        adminService.subscribeAdminOnDefaultTopics(dto);
+        return ResponseEntity.ok(adminService.save(dto));
+    }
+
+    @ApiOperation(value = "Delete admin's token",
+            notes = "Delete admin's token for notification",
+            response = AdminDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Admin not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/token", method = RequestMethod.DELETE)
+    public ResponseEntity<AdminDTO> deleteToken(@RequestHeader("token") final String token) {
+        AdminDTO dto = adminService.findByToken(token);
+        if (dto.getGoogleToken() != null) {
+            adminService.unsubscribeAdminFromDefaultTopics(dto);
+        }
+        dto.setGoogleToken(null);
+        return ResponseEntity.ok(adminService.save(dto));
+    }
 }

@@ -4,12 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.dto.AdminDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.admin.ApiAdminAlreadyExistsException;
 import org.promocat.promocat.exception.admin.ApiAdminNotFoundException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.AdminMapper;
+import org.promocat.promocat.utils.FirebaseNotificationManager;
 import org.promocat.promocat.utils.MultiPartFileUtils;
+import org.promocat.promocat.utils.TopicGenerator;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.application_registration.PostPlatformRegistrationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,8 @@ public class AdminService {
     private final AdminMapper adminMapper;
     private final MultiPartFileUtils multiPartFileUtils;
     private final SoapClient soapClient;
+    private final TopicGenerator topicGenerator;
+    private final FirebaseNotificationManager firebaseNotificationManager;
 
     @Value("${data.resources.admin.examples}")
     private String PATH;
@@ -45,11 +50,15 @@ public class AdminService {
     public AdminService(final AdminRepository adminRepository,
                         final AdminMapper adminMapper,
                         final MultiPartFileUtils multiPartFileUtils,
-                        final SoapClient soapClient) {
+                        final SoapClient soapClient,
+                        final TopicGenerator topicGenerator,
+                        final FirebaseNotificationManager firebaseNotificationManager) {
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
         this.multiPartFileUtils = multiPartFileUtils;
         this.soapClient = soapClient;
+        this.topicGenerator = topicGenerator;
+        this.firebaseNotificationManager = firebaseNotificationManager;
     }
 
     /**
@@ -61,6 +70,10 @@ public class AdminService {
     public boolean isAdmin(final String telephone) {
         log.info("Requested do account with telephone {} has permissions", telephone);
         return adminRepository.existsByTelephone(telephone);
+    }
+
+    public AdminDTO save(AdminDTO adminDTO) {
+        return adminMapper.toDto(adminRepository.save(adminMapper.toEntity(adminDTO)));
     }
 
     /**
@@ -106,6 +119,10 @@ public class AdminService {
         record.setTelephone(telephone);
         log.info("New admin added to DB");
         return adminMapper.toDto(adminRepository.save(record));
+    }
+
+    public AdminDTO findByToken(String token) {
+        return adminMapper.toDto(adminRepository.getByToken(token).orElseThrow());
     }
 
     /**
@@ -293,5 +310,29 @@ public class AdminService {
         } else {
             log.warn("Old {} was not deleted", file.toString());
         }
+    }
+
+    public void subscribeAdminOnDefaultTopics(AdminDTO user) {
+        if (user.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to subscribe user on topics. But user has no google token.");
+        }
+        subscribeAdminOnTopic(user, topicGenerator.getNewStockTopicForAdmin());
+    }
+
+    public void unsubscribeAdminFromDefaultTopics(AdminDTO user) {
+        if (user.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to unsubscribe user from topics. But user has no google token.");
+        }
+        unsubscribeAdminFromTopic(user, topicGenerator.getNewStockTopicForAdmin());
+    }
+
+    public void subscribeAdminOnTopic(AdminDTO user, String topic) {
+        log.info("Subscribing user with id {} to topic {}", user.getId(), topic);
+        firebaseNotificationManager.subscribeAccountOnTopic(user, topic);
+    }
+
+    public void unsubscribeAdminFromTopic(AdminDTO user, String topic) {
+        log.info("Unsubscribing user with id {} from topic {}", user.getId(), topic);
+        firebaseNotificationManager.unsubscribeAccountFromTopic(user, topic);
     }
 }
