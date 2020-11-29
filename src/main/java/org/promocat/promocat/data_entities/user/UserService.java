@@ -13,10 +13,9 @@ import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.UserMapper;
-import org.promocat.promocat.utils.EntityUpdate;
-import org.promocat.promocat.utils.JwtReader;
-import org.promocat.promocat.utils.PaymentService;
+import org.promocat.promocat.utils.*;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
@@ -46,6 +45,8 @@ public class UserService {
     private final StockCityService stockCityService;
     private final PaymentService paymentService;
     private final SoapClient soapClient;
+    private final FirebaseNotificationManager firebaseNotificationManager;
+    private final TopicGenerator topicGenerator;
 
     @Autowired
     public UserService(final UserRepository userRepository,
@@ -54,7 +55,9 @@ public class UserService {
                        final MovementService movementService,
                        final StockCityService stockCityService,
                        final PaymentService paymentService,
-                       final SoapClient soapClient) {
+                       final SoapClient soapClient,
+                       final FirebaseNotificationManager firebaseNotificationManager,
+                       final TopicGenerator topicGenerator) {
         this.userRepository = userRepository;
         this.userMapper = mapper;
         this.stockService = stockService;
@@ -62,6 +65,8 @@ public class UserService {
         this.movementService = movementService;
         this.stockCityService = stockCityService;
         this.paymentService = paymentService;
+        this.firebaseNotificationManager = firebaseNotificationManager;
+        this.topicGenerator = topicGenerator;
     }
 
     /**
@@ -265,5 +270,31 @@ public class UserService {
 
         log.info("User with inn {} accepted the connection request", user.getInn());
         return TaxUserStatus.COMPLETED;
+    }
+
+    public void subscribeUserOnDefaultTopics(UserDTO user) {
+        if (user.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to subscribe user on topics. But user has no google token.");
+        }
+        subscribeUserOnTopic(user, topicGenerator.getNewStockTopicForUser());
+        subscribeUserOnTopic(user, topicGenerator.getNewsFeedTopicForUser());
+    }
+
+    public void unsubscribeUserFromDefaultTopics(UserDTO user) {
+        if (user.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to unsubscribe user from topics. But user has no google token.");
+        }
+        unsubscribeUserFromTopic(user, topicGenerator.getNewsFeedTopicForUser());
+        unsubscribeUserFromTopic(user, topicGenerator.getNewStockTopicForUser());
+    }
+
+    public void subscribeUserOnTopic(UserDTO user, String topic) {
+        log.info("Subscribing user with id {} to topic {}", user.getId(), topic);
+        firebaseNotificationManager.subscribeUserOnTopic(user, topic);
+    }
+
+    public void unsubscribeUserFromTopic(UserDTO user, String topic) {
+        log.info("Unsubscribing user with id {} from topic {}", user.getId(), topic);
+        firebaseNotificationManager.unsubscribeUserFromTopic(user, topic);
     }
 }
