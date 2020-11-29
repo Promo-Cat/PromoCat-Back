@@ -37,7 +37,6 @@ import javax.websocket.server.PathParam;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -51,8 +50,6 @@ public class StockController {
     private final CompanyService companyService;
     private final PosterService posterService;
     private final MultiPartFileUtils multiPartFileUtils;
-    private final StockRepository repository;
-    private final StockMapper stockMapper;
     private final CSVFileService csvFileService;
     private final LocalDate now = LocalDate.now();
 
@@ -69,8 +66,6 @@ public class StockController {
         this.posterService = posterService;
         this.multiPartFileUtils = multiPartFileUtils;
         this.csvFileService = csvFileService;
-        this.repository = stockRepository;
-        this.stockMapper = stockMapper;
     }
 
     @ApiOperation(value = "Create stock",
@@ -419,16 +414,5 @@ public class StockController {
     @RequestMapping(value = "/admin/stock/status", method = RequestMethod.GET)
     public ResponseEntity<List<StockDTO>> getStockByStatus(@RequestParam("status") StockStatus status) {
         return ResponseEntity.ok(stockService.getStockByStatus(status));
-    }
-
-    @RequestMapping(value = "/admin/stocks/get", method = RequestMethod.GET)
-    public ResponseEntity<List<StockDTO>> stocks() {
-        //int year, int month, int dayOfMonth, int hour, int minute
-        List<Stock> stocks = repository.getByStartTimeLessThanEqualAndStatusEquals(LocalDateTime.of(2020, 11, 29, 16, 0),
-                StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
-
-        return ResponseEntity.ok(stocks.stream().map(x -> {
-            return stockMapper.toDto(x);
-        }).collect(Collectors.toList()));
     }
 }
