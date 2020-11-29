@@ -69,11 +69,11 @@ public class JsonNotificationLoader implements NotificationLoader {
     public void updateJsonFile() {
         log.info("Update Json file for templates");
         FirebaseTemplates.getTemplate();
+        updateStorage();
     }
 
     @Override
     public NotificationDTO getNotification(NotificationType type) {
-        updateStorage();
         return storage.get(type);
     }
 }

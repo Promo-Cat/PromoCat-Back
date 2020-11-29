@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Not;
 import org.promocat.promocat.utils.InMemoryNotificationLoader;
 import org.promocat.promocat.utils.NotificationLoader;
+import org.promocat.promocat.utils.TopicGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -21,36 +22,19 @@ public class NotificationDTO {
     private String title;
     private String body;
 
-    public static Builder newBuilder() {
-        return new NotificationDTO().new Builder();
-    }
-
-
-    /**
-     * Пример использования билдера.
-     */
-    public static void main(String[] args) {
-        NotificationDTO notif = NotificationDTO.newBuilder()
-                .getNotification(NotificationLoader.NotificationType.NEW_STOCK)
-                .set(Map.ofEntries(
-                        Map.entry("stock_name", "бёргеры")
-//                        Map.entry("company_name", "бк")
-                ))
-                .build();
-
-        System.out.println(notif);
+    public static Builder newBuilder(NotificationLoader loader) {
+        return new NotificationDTO().new Builder(loader);
     }
 
     public class Builder {
 
-        private String currentEditable = null;
-
-        private final NotificationLoader loader = new InMemoryNotificationLoader();
+        private NotificationLoader loader = new InMemoryNotificationLoader();
 
         public static final String KEY_PREFIX = "%";
         public static final String KEY_SUFFIX = "%";
 
-        private Builder() {
+        private Builder(NotificationLoader loader) {
+            Builder.this.loader = loader;
         }
 
         public Builder getNotification(NotificationLoader.NotificationType type) {
