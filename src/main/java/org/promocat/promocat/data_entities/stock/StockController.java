@@ -22,7 +22,6 @@ import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
-import org.promocat.promocat.utils.NotificationLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -80,20 +79,17 @@ public class StockController {
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock,
                                              @RequestHeader("token") final String token) {
+        CompanyDTO company = companyService.findByToken(token);
         if (stock.getStartTime().toLocalDate().compareTo(now) < 0) {
-            stockService.sendNotification(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyService.findById(stock.getCompanyId()));
             throw new ApiStockTimeException("Cannot create stock with day before today.");
         }
-        CompanyDTO company = companyService.findByToken(token);
         StockDTO companyCurrentStock = company.getCurrentStockId() == 0L ? null : stockService.findById(company.getCurrentStockId());
         if (companyCurrentStock != null
                 && companyCurrentStock.getStatus() != StockStatus.STOCK_IS_OVER_WITH_POSTPAY
                 && companyCurrentStock.getStatus() != StockStatus.BAN) {
-            stockService.sendNotification(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyService.findById(stock.getCompanyId()));
             throw new ApiStockActivationStatusException("Previous stock isn`t ended. Unable to create new one");
         }
         if (company.getCompanyStatus() != CompanyStatus.FULL) {
-            stockService.sendNotification(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyService.findById(stock.getCompanyId()));
             throw new ApiCompanyStatusException("Company account isn`t fully filled");
         }
         stock.setCompanyId(company.getId());
@@ -101,7 +97,6 @@ public class StockController {
         StockDTO res = stockService.create(stock);
         company.setCurrentStockId(res.getId());
         companyService.save(company);
-        stockService.sendNotification(NotificationLoader.NotificationType.ACCEPT_BID, stock, companyService.findById(stock.getCompanyId()));
         return ResponseEntity.ok(res);
     }
 
