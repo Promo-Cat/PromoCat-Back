@@ -4,6 +4,8 @@ package org.promocat.promocat.data_entities.stock;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
+import org.promocat.promocat.data_entities.company.Company;
+import org.promocat.promocat.data_entities.company.CompanyRepository;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.receipt.ReceiptService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
@@ -11,7 +13,9 @@ import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
+import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
+import org.promocat.promocat.mapper.CompanyMapper;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.*;
@@ -32,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -62,6 +67,8 @@ public class StockService {
     private final NotificationBuilderFactory notificationBuilderFactory;
     private final FirebaseNotificationManager firebaseNotificationManager;
     private final TopicGenerator topicGenerator;
+    private final CompanyRepository companyRepository;
+    private final CompanyMapper companyMapper;
 
     @Autowired
     public StockService(final StockMapper mapper,
@@ -76,7 +83,8 @@ public class StockService {
                         final ReceiptService receiptService,
                         final NotificationBuilderFactory notificationBuilderFactory,
                         final FirebaseNotificationManager firebaseNotificationManager,
-                        final TopicGenerator topicGenerator) {
+                        final TopicGenerator topicGenerator,
+                        final CompanyRepository companyRepository, CompanyMapper companyMapper) {
         this.mapper = mapper;
         this.repository = repository;
         this.stockCityService = stockCityService;
@@ -90,6 +98,8 @@ public class StockService {
         this.notificationBuilderFactory = notificationBuilderFactory;
         this.firebaseNotificationManager = firebaseNotificationManager;
         this.topicGenerator = topicGenerator;
+        this.companyRepository = companyRepository;
+        this.companyMapper = companyMapper;
     }
 
     /**
@@ -247,9 +257,35 @@ public class StockService {
      *               {@code BAN} акция забанена.
      * @return представление акции в БД. {@link StockDTO}
      */
-    public StockDTO setActive(final Long id, final StockStatus status) {
+    public StockDTO setActive(final Long id, final StockStatus status, final Long companyId) {
         log.info("Setting stock: {} active: {}", id, status);
         StockDTO stock = findById(id);
+        Optional<Company> companyO = companyRepository.findById(companyId);
+        CompanyDTO companyDTO;
+        if (companyO.isPresent()) {
+            companyDTO = companyMapper.toDto(companyO.get());
+        } else {
+            throw new ApiCompanyNotFoundException(String.format("Company with id %d doesn't exists", companyId));
+        }
+
+        if (status == StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE) {
+            NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                    .getNotification(NotificationLoader.NotificationType.STOCK_STARTED)
+                    .set("stock_name", stock.getName())
+                    .set("duration", stock.getDuration().toString())
+                    .set("start_date", LocalDate.now().toString())
+                    .set("end_date", LocalDate.now().plusDays(stock.getDuration()).toString())
+                    .build();
+
+            firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
+        } else if (status == StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY) {
+            NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                    .getNotification(NotificationLoader.NotificationType.STOCK_STARTED)
+                    .set("stock_name", stock.getName())
+                    .build();
+
+            firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
+        }
         stock.setStatus(status);
         return save(stock);
     }
@@ -284,7 +320,7 @@ public class StockService {
 //                }
 //            }
 //        }
-        return setActive(id, StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
+        return setActive(id, StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY, stock.getCompanyId());
     }
 
     /**

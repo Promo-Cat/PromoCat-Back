@@ -343,7 +343,8 @@ public class StockController {
     @RequestMapping(path = "/admin/company/stock/active/{id}", method = RequestMethod.POST)
     public ResponseEntity<StockDTO> setActiveStock(@PathVariable("id") Long id,
                                                    @RequestParam("activation_status") String activationStatus) {
-        return ResponseEntity.ok(stockService.setActive(id, StockStatus.valueOf(activationStatus.toUpperCase())));
+        Long companyId = stockService.findById(id).getCompanyId();
+        return ResponseEntity.ok(stockService.setActive(id, StockStatus.valueOf(activationStatus.toUpperCase()), companyId));
     }
 
 

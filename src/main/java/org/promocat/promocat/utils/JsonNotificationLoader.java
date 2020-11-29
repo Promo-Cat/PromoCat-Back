@@ -30,6 +30,7 @@ public class JsonNotificationLoader implements NotificationLoader {
     private Map<NotificationType, NotificationDTO> storage = new EnumMap<>(NotificationType.class);
 
     public JsonNotificationLoader() {
+        FirebaseTemplates.getTemplate();
         updateStorage();
     }
 
