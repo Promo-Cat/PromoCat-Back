@@ -372,7 +372,7 @@ public class StockService {
                 .getNotification(type)
                 .set("stock_name", stockDTO.getName())
                 .build();
-        firebaseNotificationManager.sendNotificationToCompany(notification, companyDTO);
+        firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
     }
 
 }

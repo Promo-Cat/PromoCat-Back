@@ -33,7 +33,7 @@ public class FirebaseNotificationManager {
         }
     }
 
-    public String sendNotificationByAccount(NotificationDTO notif, AbstractAccountDTO userDTO) {
+    public String sendNotificationByAccount(NotificationDTO notif, AbstractAccountDTO accountDTO) {
         try {
             return FirebaseMessaging.getInstance().send(
                     Message.builder()
@@ -41,7 +41,7 @@ public class FirebaseNotificationManager {
                                     .setTitle(notif.getTitle())
                                     .setBody(notif.getBody())
                                     .build())
-                            .setToken(userDTO.getGoogleToken())
+                            .setToken(accountDTO.getGoogleToken())
                             .build()
             );
         } catch (FirebaseMessagingException e) {
