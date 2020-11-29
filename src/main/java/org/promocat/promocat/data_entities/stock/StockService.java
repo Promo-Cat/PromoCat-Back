@@ -186,6 +186,7 @@ public class StockService {
     public void updateStockStatus() {
         List<Stock> stocks = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
                 StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
+        log.info("Update {} stocks", stocks.size());
         stocks.forEach(e -> {
             StockDTO stockDTO = mapper.toDto(e);
             stockDTO.setStatus(StockStatus.ACTIVE);
