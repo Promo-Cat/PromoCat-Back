@@ -12,13 +12,12 @@ import org.promocat.promocat.dto.ReceiptDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
-import org.promocat.promocat.utils.CSVGenerator;
-import org.promocat.promocat.utils.FirebaseNotificationManager;
-import org.promocat.promocat.utils.TopicGenerator;
+import org.promocat.promocat.utils.*;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.attributes.IncomeType;
 import org.promocat.promocat.utils.soap.operations.income.PostIncomeRequestV2;
@@ -63,7 +62,7 @@ public class StockService {
     private final CSVGenerator csvGenerator;
     private final SoapClient soapClient;
     private final ReceiptService receiptService;
-//    private final NotificationBuilderFactory notificationBuilderFactory;
+    private final NotificationBuilderFactory notificationBuilderFactory;
     private final FirebaseNotificationManager firebaseNotificationManager;
     private final TopicGenerator topicGenerator;
 
@@ -78,6 +77,7 @@ public class StockService {
                         final CSVGenerator csvGenerator,
                         final SoapClient soapClient,
                         final ReceiptService receiptService,
+                        final NotificationBuilderFactory notificationBuilderFactory,
                         final FirebaseNotificationManager firebaseNotificationManager,
                         final TopicGenerator topicGenerator) {
         this.mapper = mapper;
@@ -90,6 +90,7 @@ public class StockService {
         this.csvGenerator = csvGenerator;
         this.soapClient = soapClient;
         this.receiptService = receiptService;
+        this.notificationBuilderFactory = notificationBuilderFactory;
         this.firebaseNotificationManager = firebaseNotificationManager;
         this.topicGenerator = topicGenerator;
     }
@@ -115,6 +116,12 @@ public class StockService {
         dto.setFare(parametersService.getPanel());
         dto.setPrepayment(parametersService.getParameters().getPrepayment());
         dto.setPostpayment(parametersService.getParameters().getPostpayment());
+
+        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                .getNotification(NotificationLoader.NotificationType.NEW_STOCK)
+                .set("stock_name", dto.getName())
+                .build();
+        firebaseNotificationManager.sendNotificationByTopic(notification, topicGenerator.getNewStockTopicForUser());
         return save(dto);
     }
 
@@ -150,9 +157,7 @@ public class StockService {
                 time, days);
         Set<Stock> stocks = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, StockStatus.ACTIVE);
         return stocks.stream()
-                .peek(e -> {
-                    e.setCities(new HashSet<>(e.getCities()));
-                })
+                .peek(e -> e.setCities(new HashSet<>(e.getCities())))
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -342,8 +347,8 @@ public class StockService {
     /**
      * Получение всех акций с одним статусом.
      *
-     * @param status
-     * @return Список {@ling StockDTO}.
+     * @param status статус акции, по которому идёт фильтрация
+     * @return Список {@link StockDTO}.
      */
     public List<StockDTO> getStockByStatus(StockStatus status) {
         List<Stock> stocks = repository.getByStatusEquals(status);
@@ -363,14 +368,6 @@ public class StockService {
 //            res.addAll(city.getPromoCodes());
 //        }
 //        return res;
-//    }
-
-//    public void sendNotify(NotificationLoader.NotificationType type) {
-//        NotificationDTO notification = notificationBuilderFactory.getBuilder()
-//                .getNotification(NotificationLoader.NotificationType.NEW_STOCK)
-//                .set("stock_name", dto.getName())
-//                .build();
-//        firebaseNotificationManager.sendNotificationByTopic(notification, topicGenerator.getNewStockTopicForUser());
 //    }
 
 }
