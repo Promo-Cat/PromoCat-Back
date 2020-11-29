@@ -3,9 +3,7 @@ package org.promocat.promocat.utils;
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.AbstractAccountDTO;
-import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
-import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.notification.ApiNotificationSendException;
 import org.promocat.promocat.exception.notification.ApiSubscribeTopicException;
 import org.springframework.stereotype.Component;
@@ -45,8 +43,8 @@ public class FirebaseNotificationManager {
                             .build()
             );
         } catch (FirebaseMessagingException e) {
-            log.error("Не получилось отправить сообщение {} юзеру с id {} ", notif, userDTO.getId());
-            throw new ApiNotificationSendException(String.format("Couldn't send notification to user with id: %d", userDTO.getId()));
+            log.error("Не получилось отправить сообщение {} юзеру с id {} ", notif, accountDTO.getId());
+            throw new ApiNotificationSendException(String.format("Couldn't send notification to user with id: %d", accountDTO.getId()));
         }
     }
 
