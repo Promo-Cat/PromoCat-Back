@@ -58,7 +58,7 @@ public class FirebaseTemplates {
             JsonObject json = JsonParser.parseString(response).getAsJsonObject();
 
             Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-            String jsonStr = gson.toJson(json);
+            String jsonStr = gson.toJson(json.getAsJsonObject("parameters"));
 
             System.out.println(jsonStr);
 
