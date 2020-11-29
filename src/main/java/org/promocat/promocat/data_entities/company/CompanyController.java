@@ -13,10 +13,7 @@ import org.promocat.promocat.data_entities.stock_activation.StockActivationServi
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
 import org.promocat.promocat.data_entities.user.UserService;
-import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.MultiPartFileDTO;
-import org.promocat.promocat.dto.StockActivationDTO;
-import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
@@ -478,6 +475,41 @@ public class CompanyController {
         } else {
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", stockId));
         }
+    }
+
+    @ApiOperation(value = "Set company's token",
+            notes = "Set company's token for notification",
+            response = CompanyDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/company/token", method = RequestMethod.POST)
+    public ResponseEntity<CompanyDTO> addToken(@RequestHeader("token") final String token) {
+        CompanyDTO dto = companyService.findByToken(token);
+        if (dto.getGoogleToken() != null) {
+            companyService.unsubscribeCompanyFromDefaultTopics(dto);
+        }
+        dto.setGoogleToken(token);
+        companyService.subscribeCompanyOnDefaultTopics(dto);
+        return ResponseEntity.ok(companyService.save(dto));
+    }
+
+    @ApiOperation(value = "Delete company's token",
+            notes = "Delete company's token for notification",
+            response = CompanyDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/company/token", method = RequestMethod.DELETE)
+    public ResponseEntity<CompanyDTO> deleteToken(@RequestHeader("token") final String token) {
+        CompanyDTO dto = companyService.findByToken(token);
+        if (dto.getGoogleToken() != null) {
+            companyService.unsubscribeCompanyFromDefaultTopics(dto);
+        }
+        dto.setGoogleToken(null);
+        return ResponseEntity.ok(companyService.save(dto));
     }
 
 
