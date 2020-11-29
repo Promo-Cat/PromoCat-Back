@@ -1,10 +1,7 @@
 package org.promocat.promocat.utils;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -56,11 +53,14 @@ public class FirebaseTemplates {
             InputStream inputStream = new GZIPInputStream(httpURLConnection.getInputStream());
             String response = inputstreamToString(inputStream);
 
-            JsonParser jsonParser = new JsonParser();
-            JsonElement jsonElement = jsonParser.parse(response);
+            System.out.println(response);
+
+            JsonObject json = JsonParser.parseString(response).getAsJsonObject();
 
             Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-            String jsonStr = gson.toJson(jsonElement);
+            String jsonStr = gson.toJson(json);
+
+            System.out.println(jsonStr);
 
             File file = new File("templates.json");
             PrintWriter printWriter = new PrintWriter(new FileWriter(file));
