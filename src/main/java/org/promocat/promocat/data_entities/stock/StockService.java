@@ -2,7 +2,6 @@ package org.promocat.promocat.data_entities.stock;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
@@ -18,6 +17,8 @@ import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.CSVGenerator;
+import org.promocat.promocat.utils.FirebaseNotificationManager;
+import org.promocat.promocat.utils.TopicGenerator;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.attributes.IncomeType;
 import org.promocat.promocat.utils.soap.operations.income.PostIncomeRequestV2;
@@ -30,7 +31,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
@@ -63,6 +63,9 @@ public class StockService {
     private final CSVGenerator csvGenerator;
     private final SoapClient soapClient;
     private final ReceiptService receiptService;
+//    private final NotificationBuilderFactory notificationBuilderFactory;
+    private final FirebaseNotificationManager firebaseNotificationManager;
+    private final TopicGenerator topicGenerator;
 
     @Autowired
     public StockService(final StockMapper mapper,
@@ -74,7 +77,9 @@ public class StockService {
                         final UserMapper userMapper,
                         final CSVGenerator csvGenerator,
                         final SoapClient soapClient,
-                        final ReceiptService receiptService) {
+                        final ReceiptService receiptService,
+                        final FirebaseNotificationManager firebaseNotificationManager,
+                        final TopicGenerator topicGenerator) {
         this.mapper = mapper;
         this.repository = repository;
         this.stockCityService = stockCityService;
@@ -85,6 +90,8 @@ public class StockService {
         this.csvGenerator = csvGenerator;
         this.soapClient = soapClient;
         this.receiptService = receiptService;
+        this.firebaseNotificationManager = firebaseNotificationManager;
+        this.topicGenerator = topicGenerator;
     }
 
     /**
@@ -356,6 +363,14 @@ public class StockService {
 //            res.addAll(city.getPromoCodes());
 //        }
 //        return res;
+//    }
+
+//    public void sendNotify(NotificationLoader.NotificationType type) {
+//        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+//                .getNotification(NotificationLoader.NotificationType.NEW_STOCK)
+//                .set("stock_name", dto.getName())
+//                .build();
+//        firebaseNotificationManager.sendNotificationByTopic(notification, topicGenerator.getNewStockTopicForUser());
 //    }
 
 }
