@@ -184,7 +184,7 @@ public class StockService {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void updateStockStatus() {
-        List<Stock> stocks = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
+        List<Stock> stocks = repository.getByStartTimeLessThanEqualAndStatusEquals(LocalDateTime.now(),
                 StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
         log.info("Update {} stocks", stocks.size());
         stocks.forEach(e -> {
