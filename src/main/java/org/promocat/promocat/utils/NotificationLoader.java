@@ -13,8 +13,8 @@ public interface NotificationLoader {
         ACCEPT_PAY,
         STOCK_STARTED,
         COMPANY_STOCK_END,
-        USER_NEW_YEAR,
-        COMPANY_NEW_YEAR,
+        USER_NEW_PUBLICATION,
+        COMPANY_NEW_PUBLICATION,
         BID_ENTRY
     }
 
