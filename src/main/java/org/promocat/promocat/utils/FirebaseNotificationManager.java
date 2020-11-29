@@ -2,6 +2,7 @@ package org.promocat.promocat.utils;
 
 import com.google.firebase.messaging.*;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.dto.AbstractAccountDTO;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -32,7 +33,7 @@ public class FirebaseNotificationManager {
         }
     }
 
-    public String sendNotificationToUser(NotificationDTO notif, UserDTO userDTO) {
+    public String sendNotificationByAccount(NotificationDTO notif, AbstractAccountDTO userDTO) {
         try {
             return FirebaseMessaging.getInstance().send(
                     Message.builder()
@@ -49,24 +50,8 @@ public class FirebaseNotificationManager {
         }
     }
 
-    public String sendNotificationToCompany(NotificationDTO notif, CompanyDTO company) {
-        try {
-            return FirebaseMessaging.getInstance().send(
-                    Message.builder()
-                            .setNotification(Notification.builder()
-                                    .setTitle(notif.getTitle())
-                                    .setBody(notif.getBody())
-                                    .build())
-                            .setToken(company.getGoogleToken())
-                            .build()
-            );
-        } catch (FirebaseMessagingException e) {
-            log.error("Не получилось отправить сообщение {} юзеру с id {} ", notif, company.getId());
-            throw new ApiNotificationSendException(String.format("Couldn't send notification to company with id: %d", company.getId()));
-        }
-    }
 
-    public int subscribeUserOnTopic(UserDTO userDTO, String topic) {
+    public int subscribeAccountOnTopic(AbstractAccountDTO userDTO, String topic) {
         try {
             TopicManagementResponse response = FirebaseMessaging.getInstance().subscribeToTopic(
                     List.of(userDTO.getGoogleToken()),
@@ -80,7 +65,7 @@ public class FirebaseNotificationManager {
 
     }
 
-    public int unsubscribeUserFromTopic(UserDTO userDTO, String topic) {
+    public int unsubscribeAccountFromTopic(AbstractAccountDTO userDTO, String topic) {
         try {
             TopicManagementResponse response = FirebaseMessaging.getInstance().unsubscribeFromTopic(
                     List.of(userDTO.getGoogleToken()),
