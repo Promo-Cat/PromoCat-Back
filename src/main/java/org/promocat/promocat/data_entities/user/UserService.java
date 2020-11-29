@@ -290,11 +290,11 @@ public class UserService {
 
     public void subscribeUserOnTopic(UserDTO user, String topic) {
         log.info("Subscribing user with id {} to topic {}", user.getId(), topic);
-        firebaseNotificationManager.subscribeUserOnTopic(user, topic);
+        firebaseNotificationManager.subscribeAccountOnTopic(user, topic);
     }
 
     public void unsubscribeUserFromTopic(UserDTO user, String topic) {
         log.info("Unsubscribing user with id {} from topic {}", user.getId(), topic);
-        firebaseNotificationManager.unsubscribeUserFromTopic(user, topic);
+        firebaseNotificationManager.unsubscribeAccountFromTopic(user, topic);
     }
 }
