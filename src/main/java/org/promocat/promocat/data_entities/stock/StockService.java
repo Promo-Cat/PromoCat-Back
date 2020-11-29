@@ -8,10 +8,7 @@ import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.receipt.ReceiptService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.UserRepository;
-import org.promocat.promocat.dto.ReceiptDTO;
-import org.promocat.promocat.dto.StockCityDTO;
-import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
@@ -369,5 +366,13 @@ public class StockService {
 //        }
 //        return res;
 //    }
+
+    public void sendNotification(NotificationLoader.NotificationType type, StockDTO stockDTO, CompanyDTO companyDTO) {
+        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                .getNotification(type)
+                .set("stock_name", stockDTO.getName())
+                .build();
+        firebaseNotificationManager.sendNotificationToCompany(notification, companyDTO);
+    }
 
 }
