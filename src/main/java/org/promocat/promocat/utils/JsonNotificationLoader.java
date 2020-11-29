@@ -62,6 +62,9 @@ public class JsonNotificationLoader implements NotificationLoader {
         }
     }
 
+    /**
+     * Update Json file with templates for notification.
+     */
     @Scheduled(cron = "0 0 0-23 * * *")
     public void updateJsonFile() {
         log.info("Update Json file for templates");
