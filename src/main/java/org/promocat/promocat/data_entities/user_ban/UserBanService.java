@@ -8,13 +8,19 @@ import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserBanDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.exception.stock_city.ApiStockCityNotFoundException;
 import org.promocat.promocat.mapper.UserBanMapper;
+import org.promocat.promocat.utils.FirebaseNotificationManager;
+import org.promocat.promocat.utils.NotificationBuilderFactory;
+import org.promocat.promocat.utils.NotificationLoader;
+import org.promocat.promocat.utils.TopicGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,6 +34,9 @@ public class UserBanService {
     private final UserBanMapper userBanMapper;
     private final UserService userService;
     private final MovementService movementService;
+    private final TopicGenerator topicGenerator;
+    private final FirebaseNotificationManager firebaseNotificationManager;
+    private final NotificationBuilderFactory notificationBuilderFactory;
 
     @Autowired
     public UserBanService(final UserBanRepository userBanRepository,
@@ -35,13 +44,16 @@ public class UserBanService {
                           final StockService stockService,
                           final UserBanMapper userBanMapper,
                           final UserService userService,
-                          final MovementService movementService) {
+                          final MovementService movementService, TopicGenerator topicGenerator, FirebaseNotificationManager firebaseNotificationManager, NotificationBuilderFactory notificationBuilderFactory) {
         this.userBanRepository = userBanRepository;
         this.stockCityService = stockCityService;
         this.stockService = stockService;
         this.userBanMapper = userBanMapper;
         this.userService = userService;
         this.movementService = movementService;
+        this.topicGenerator = topicGenerator;
+        this.firebaseNotificationManager = firebaseNotificationManager;
+        this.notificationBuilderFactory = notificationBuilderFactory;
     }
 
     public UserBanDTO save(UserBanDTO userBanDTO) {
@@ -76,7 +88,15 @@ public class UserBanService {
         userDTO = userService.findById(userDTO.getId());
 //        userDTO.setMovements(null);
         userDTO.setStockCityId(null);
-        userService.save(userDTO);
+        userDTO = userService.save(userDTO);
+        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                .getNotification(NotificationLoader.NotificationType.USER_BAN)
+                .set("stock_name", stock.getName())
+                .set("date", stock.getStartTime().plusDays(stock.getDuration()).format(
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                ))
+                .build();
+        firebaseNotificationManager.sendNotificationByAccount(notification, userDTO);
         return save(userBan);
     }
 
