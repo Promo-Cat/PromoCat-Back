@@ -329,7 +329,7 @@ public class StockController {
         return ResponseEntity.ok("{}");
     }
 
-    @ApiOperation(value = "Deactivate stock.",
+    @ApiOperation(value = "Set stock status.",
             notes = "Returning stock with id specified in request",
             response = StockDTO.class)
     @ApiResponses(value = {
