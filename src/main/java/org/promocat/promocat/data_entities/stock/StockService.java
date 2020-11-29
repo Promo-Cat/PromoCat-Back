@@ -2,7 +2,6 @@ package org.promocat.promocat.data_entities.stock;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
@@ -188,11 +186,14 @@ public class StockService {
     public void updateStockStatus() {
         List<Stock> stocks = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
                 StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
+        log.info("Update {} stocks", stocks.size());
         stocks.forEach(e -> {
             StockDTO stockDTO = mapper.toDto(e);
             stockDTO.setStatus(StockStatus.ACTIVE);
+            log.info("Update stock status for {} on Active", stockDTO.getId());
             save(stockDTO);
         });
+        log.info("Update stocks end");
     }
 
 
