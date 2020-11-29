@@ -192,6 +192,7 @@ public class StockService {
             log.info("Update stock status for {} on Active", stockDTO.getId());
             save(stockDTO);
         });
+        log.info("Update stocks end");
     }
 
 
