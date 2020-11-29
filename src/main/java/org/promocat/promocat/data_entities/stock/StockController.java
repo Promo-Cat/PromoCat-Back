@@ -423,7 +423,8 @@ public class StockController {
 
     @RequestMapping(value = "/admin/stocks/get", method = RequestMethod.GET)
     public ResponseEntity<List<StockDTO>> stocks() {
-        List<Stock> stocks = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
+        //int year, int month, int dayOfMonth, int hour, int minute
+        List<Stock> stocks = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.of(2020, 11, 29, 16, 0),
                 StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
 
         return ResponseEntity.ok(stocks.stream().map(x -> {
