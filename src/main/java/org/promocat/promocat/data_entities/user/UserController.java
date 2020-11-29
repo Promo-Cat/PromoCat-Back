@@ -474,17 +474,15 @@ public class UserController {
             @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
-    @RequestMapping(value = "/api/user/token/{id}", method = RequestMethod.POST)
-    public ResponseEntity<String> addToken(@PathVariable("id") final Long id, @RequestParam("token") final String token) {
-        UserDTO dto = userService.findById(id);
+    @RequestMapping(value = "/api/user/token", method = RequestMethod.POST)
+    public ResponseEntity<UserDTO> addToken(@RequestHeader("token") final String token) {
+        UserDTO dto = userService.findByToken(token);
         if (dto.getGoogleToken() != null) {
             userService.unsubscribeUserFromDefaultTopics(dto);
         }
         dto.setGoogleToken(token);
-        userService.save(dto);
         userService.subscribeUserOnDefaultTopics(dto);
-
-        return ResponseEntity.ok("{}");
+        return ResponseEntity.ok(userService.save(dto));
     }
 
     @ApiOperation(value = "Delete user's token",
@@ -494,15 +492,13 @@ public class UserController {
             @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
-    @RequestMapping(value = "/api/user/token/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteToken(@PathVariable("id") final Long id) {
-        UserDTO dto = userService.findById(id);
+    @RequestMapping(value = "/api/user/token", method = RequestMethod.DELETE)
+    public ResponseEntity<UserDTO> deleteToken(@RequestHeader("token") final String token) {
+        UserDTO dto = userService.findByToken(token);
         if (dto.getGoogleToken() != null) {
             userService.unsubscribeUserFromDefaultTopics(dto);
         }
         dto.setGoogleToken(null);
-        userService.save(dto);
-
-        return ResponseEntity.ok("{}");
+        return ResponseEntity.ok(userService.save(dto));
     }
 }
