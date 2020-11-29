@@ -12,4 +12,9 @@ import org.promocat.promocat.utils.NotificationLoader;
 public class JsonTemp {
     public NotificationLoader.NotificationType key;
     public NotificationDTO value;
+
+    public JsonTemp(NotificationLoader.NotificationType key, NotificationDTO value) {
+        this.key = key;
+        this.value = value;
+    }
 }

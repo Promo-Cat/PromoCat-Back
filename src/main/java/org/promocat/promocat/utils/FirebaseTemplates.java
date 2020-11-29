@@ -43,27 +43,47 @@ public class FirebaseTemplates {
      *
      * @throws IOException
      */
-    public static void getTemplate() throws IOException {
-        HttpURLConnection httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT);
-        httpURLConnection.setRequestMethod("GET");
-        httpURLConnection.setRequestProperty("Accept-Encoding", "gzip");
+    public static void getTemplate() {
+        HttpURLConnection httpURLConnection = null;
+        try {
+            httpURLConnection = getCommonConnection(BASE_URL + REMOTE_CONFIG_ENDPOINT);
+            httpURLConnection.setRequestMethod("GET");
+            httpURLConnection.setRequestProperty("Accept-Encoding", "gzip");
+        } catch (IOException e) {
+            log.error("Couldn't connect to Firebase: {}", BASE_URL + REMOTE_CONFIG_ENDPOINT);
+            return;
+        }
 
-        int code = httpURLConnection.getResponseCode();
+        int code = 0;
+        try {
+            code = httpURLConnection.getResponseCode();
+        } catch (IOException e) {
+            log.error("Invalid code: {}", code);
+            return;
+        }
         if (code == 200) {
-            InputStream inputStream = new GZIPInputStream(httpURLConnection.getInputStream());
+            InputStream inputStream = null;
+            try {
+                inputStream = new GZIPInputStream(httpURLConnection.getInputStream());
+            } catch (IOException e) {
+                log.error("Couldn't read stream from Firebase");
+                return;
+            }
             String response = inputstreamToString(inputStream);
-
-            System.out.println(response);
 
             JsonObject json = JsonParser.parseString(response).getAsJsonObject();
 
             Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
             String jsonStr = gson.toJson(json.getAsJsonObject("parameters"));
 
-            System.out.println(jsonStr);
-
             File file = new File("templates.json");
-            PrintWriter printWriter = new PrintWriter(new FileWriter(file));
+            PrintWriter printWriter = null;
+            try {
+                printWriter = new PrintWriter(new FileWriter(file));
+            } catch (IOException e) {
+                log.error("Couldn't open file for writing Json templates");
+                return;
+            }
             printWriter.print(jsonStr);
             printWriter.flush();
             printWriter.close();

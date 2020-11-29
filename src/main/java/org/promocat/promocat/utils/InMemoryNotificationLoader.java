@@ -14,11 +14,6 @@ public class InMemoryNotificationLoader implements NotificationLoader {
                         "Новая акция %stock_name%",
                         "Акция от компании %company_name% была только что создана!"
                 );
-            case NEWS_FEED_POST:
-                return new NotificationDTO(
-                        "Новая запись в ленте",
-                        "Запись: %content%"
-                );
             default:
                 log.warn("Getting notification with unknown type: {}", type);
                 return new NotificationDTO("", "");
