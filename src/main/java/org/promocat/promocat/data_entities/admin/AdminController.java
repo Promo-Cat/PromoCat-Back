@@ -173,7 +173,7 @@ public class AdminController {
     @RequestMapping(value = "/admin/notification/user", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> sendNotificationToUser(@RequestBody final UserDTO user,
                                                           @RequestBody final NotificationDTO notif) {
-        firebaseNotificationManager.sendNotificationToUser(notif, user);
+        firebaseNotificationManager.sendNotificationByAccount(notif, user);
 
         return ResponseEntity.ok("{}");
     }
@@ -186,7 +186,7 @@ public class AdminController {
     @RequestMapping(value = "/admin/notification/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> sendNotificationToCompany(@RequestBody final CompanyDTO company,
                                                          @RequestBody final NotificationDTO notif) {
-        firebaseNotificationManager.sendNotificationToCompany(notif, company);
+        firebaseNotificationManager.sendNotificationByAccount(notif, company);
 
         return ResponseEntity.ok("{}");
     }
