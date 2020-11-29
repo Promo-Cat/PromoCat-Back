@@ -11,11 +11,7 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.stock.csvFile.CSVFileService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
-import org.promocat.promocat.dto.CSVFileDTO;
-import org.promocat.promocat.dto.CompanyDTO;
-import org.promocat.promocat.dto.MultiPartFileDTO;
-import org.promocat.promocat.dto.PosterDTO;
-import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.company.ApiCompanyStatusException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
@@ -23,23 +19,17 @@ import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
 import org.promocat.promocat.exception.stock.ApiStockTimeException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -47,6 +37,7 @@ import javax.websocket.server.PathParam;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -60,6 +51,8 @@ public class StockController {
     private final CompanyService companyService;
     private final PosterService posterService;
     private final MultiPartFileUtils multiPartFileUtils;
+    private final StockRepository repository;
+    private final StockMapper stockMapper;
     private final CSVFileService csvFileService;
     private final LocalDate now = LocalDate.now();
 
@@ -68,12 +61,16 @@ public class StockController {
                            final CompanyService companyService,
                            final PosterService posterService,
                            final MultiPartFileUtils multiPartFileUtils,
-                           final CSVFileService csvFileService) {
+                           final CSVFileService csvFileService,
+                           final StockRepository stockRepository,
+                           final StockMapper stockMapper) {
         this.stockService = stockService;
         this.companyService = companyService;
         this.posterService = posterService;
         this.multiPartFileUtils = multiPartFileUtils;
         this.csvFileService = csvFileService;
+        this.repository = stockRepository;
+        this.stockMapper = stockMapper;
     }
 
     @ApiOperation(value = "Create stock",
@@ -422,5 +419,15 @@ public class StockController {
     @RequestMapping(value = "/admin/stock/status", method = RequestMethod.GET)
     public ResponseEntity<List<StockDTO>> getStockByStatus(@RequestParam("status") StockStatus status) {
         return ResponseEntity.ok(stockService.getStockByStatus(status));
+    }
+
+    @RequestMapping(value = "/admin/stocks/get", method = RequestMethod.GET)
+    public ResponseEntity<List<StockDTO>> stocks() {
+        List<Stock> stocks = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
+                StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
+
+        return ResponseEntity.ok(stocks.stream().map(x -> {
+            return stockMapper.toDto(x);
+        }).collect(Collectors.toList()));
     }
 }
