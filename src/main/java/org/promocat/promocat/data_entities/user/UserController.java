@@ -32,6 +32,7 @@ import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
 import org.promocat.promocat.exception.user.codes.ApiUserStockException;
 import org.promocat.promocat.exception.util.tax.ApiTaxRequestIdException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.TopicGenerator;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
@@ -70,6 +71,7 @@ public class UserController {
     private final SoapClient soapClient;
     private final StockActivationCodeService stockActivationCodeService;
     private final CarService carService;
+    private final TopicGenerator topicGenerator;
 
     @Autowired
     public UserController(final UserService userService,
@@ -80,7 +82,8 @@ public class UserController {
                           final UserBanService userBanService,
                           final SoapClient soapClient,
                           final StockActivationCodeService stockActivationCodeService,
-                          final CarService carService) {
+                          final CarService carService,
+                          final TopicGenerator topicGenerator) {
         this.userService = userService;
         this.stockActivationService = stockActivationService;
         this.movementService = movementService;
@@ -90,6 +93,7 @@ public class UserController {
         this.soapClient = soapClient;
         this.stockActivationCodeService = stockActivationCodeService;
         this.carService = carService;
+        this.topicGenerator = topicGenerator;
     }
 
 //    @ApiOperation(value = "Registering user",
@@ -500,5 +504,48 @@ public class UserController {
         }
         dto.setGoogleToken(null);
         return ResponseEntity.ok(userService.save(dto));
+    }
+
+    @ApiOperation(value = "Update subscribing user from new stock",
+            notes = "Update subscribing user, true - subscribe, false - unsubscribe",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Couldn't unsubscribe user", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/notification/stocks/{flag}", method = RequestMethod.POST)
+    public ResponseEntity<UserDTO> turnNotificationStocks(@RequestHeader("token") final String token,
+                                                             @PathVariable("flag") final Boolean flag) {
+        UserDTO dto = userService.findByToken(token);
+        if (flag) {
+            userService.subscribeUserOnTopic(dto, topicGenerator.getNewStockTopicForUser());
+        } else {
+            userService.unsubscribeUserFromTopic(dto, topicGenerator.getNewStockTopicForUser());
+        }
+        return ResponseEntity.ok(dto);
+    }
+
+
+    @ApiOperation(value = "Update subscribing user from new news",
+            notes = "Update subscribing user, true - subscribe, false - unsubscribe",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Couldn't unsubscribe user", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/user/notification/news/{flag}", method = RequestMethod.POST)
+    public ResponseEntity<UserDTO> turnNotificationNews(@RequestHeader("token") final String token,
+                                                           @PathVariable("flag") final Boolean flag) {
+        UserDTO dto = userService.findByToken(token);
+
+        if (flag) {
+            userService.subscribeUserOnTopic(dto, topicGenerator.getNewsFeedTopicForUser());
+        } else {
+            userService.unsubscribeUserFromTopic(dto, topicGenerator.getNewsFeedTopicForUser());
+        }
+
+        return ResponseEntity.ok(dto);
     }
 }
