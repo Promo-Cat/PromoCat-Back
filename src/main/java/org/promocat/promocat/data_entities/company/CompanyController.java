@@ -17,6 +17,7 @@ import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.util_entities.TokenService;
 import org.promocat.promocat.utils.EntityUpdate;
@@ -597,7 +598,7 @@ public class CompanyController {
             notes = "Update subscribing company, true - subscribe, false - unsubscribe",
             response = CompanyDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
             @ApiResponse(code = 403, message = "Couldn't unsubscribe company", response = ApiException.class)
     })
@@ -614,4 +615,23 @@ public class CompanyController {
 
         return ResponseEntity.ok(dto);
     }
+    @ApiOperation(value = "Update subscribing company from stock status change",
+            notes = "Update subscribing user, true - subscribe, false - unsubscribe",
+            response = CompanyDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Couldn't unsubscribe company", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/company/notification/stocks/{flag}", method = RequestMethod.POST)
+    public ResponseEntity<CompanyDTO> turnNotificationStocks(@RequestHeader("token") final String token,
+                                                          @PathVariable("flag") final Boolean flag) {
+        CompanyDTO dto = companyService.findByToken(token);
+        if (flag == null) {
+            throw new ApiServerErrorException("Flag (boolean) parameter is required, but does`t present");
+        }
+        dto.setNeedStockStatusNotifications(flag);
+        return ResponseEntity.ok(companyService.save(dto));
+    }
+
 }

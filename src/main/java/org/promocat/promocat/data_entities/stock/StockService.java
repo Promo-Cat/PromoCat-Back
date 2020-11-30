@@ -184,9 +184,8 @@ public class StockService {
     }
 
     public void endUpStock(StockDTO stockDTO) {
-        stockDTO.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
+        setActive(stockDTO.getId(), StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY, stockDTO.getCompanyId());
         Path path = Paths.get(PATH, stockDTO.getName() + stockDTO.getId().toString() + ".csv");
-        save(stockDTO);
         if (Objects.isNull(stockDTO.getCities())) {
             return;
         }
@@ -199,14 +198,6 @@ public class StockService {
                     users.add(y);
                     userRepository.save(userMapper.toEntity(y));
                 });
-        NotificationDTO notification = notificationBuilderFactory.getBuilder()
-                .getNotification(NotificationLoader.NotificationType.USER_STOCK_END)
-                .set("stock_name", stockDTO.getName())
-                .build();
-        firebaseNotificationManager.sendNotificationByTopic(
-                notification,
-                topicGenerator.getStockTopicForUser(stockDTO)
-        );
         csvGenerator.generate(path, users);
         File file = path.toFile();
         file.delete();
@@ -278,23 +269,25 @@ public class StockService {
         log.info("Setting stock: {} active: {}", id, status);
         StockDTO stock = findById(id);
         CompanyDTO companyDTO = companyMapper.toDto(companyRepository.getOne(companyId));
-        if (status == StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE) {
-            NotificationDTO notification = notificationBuilderFactory.getBuilder()
-                    .getNotification(NotificationLoader.NotificationType.STOCK_STARTED)
-                    .set("stock_name", stock.getName())
-                    .set("duration", stock.getDuration().toString())
-                    .set("start_date", LocalDate.now().toString())
-                    .set("end_date", LocalDate.now().plusDays(stock.getDuration()).toString())
-                    .build();
-
-            firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
-        } else if (status == StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY) {
-            NotificationDTO notification = notificationBuilderFactory.getBuilder()
-                    .getNotification(NotificationLoader.NotificationType.STOCK_STARTED)
-                    .set("stock_name", stock.getName())
-                    .build();
-
-            firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
+        if (companyDTO.getNeedStockStatusNotifications()) {
+            if (status == StockStatus.ACTIVE) {
+                NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                        .getNotification(NotificationLoader.NotificationType.STOCK_STARTED)
+                        .set("stock_name", stock.getName())
+                        .set("duration", stock.getDuration().toString())
+                        .set("start_date", LocalDate.now().toString())
+                        .set("end_date", LocalDate.now().plusDays(stock.getDuration()).toString())
+                        .build();
+                firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
+            } else if (status == StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY) {
+                sendNotification(NotificationLoader.NotificationType.COMPANY_STOCK_END, stock, companyDTO);
+            } else if (status == StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE) {
+                sendNotification(NotificationLoader.NotificationType.ACCEPT_PAY, stock, companyDTO);
+            } else if (status == StockStatus.POSTER_NOT_CONFIRMED) {
+                sendNotification(NotificationLoader.NotificationType.ACCEPT_BID, stock, companyDTO);
+            } else if (status == StockStatus.BAN) {
+                sendNotification(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyDTO);
+            }
         }
         stock.setStatus(status);
         return save(stock);
