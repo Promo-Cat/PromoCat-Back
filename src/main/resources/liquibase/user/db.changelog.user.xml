@@ -9,4 +9,9 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="30.11.2020-01" author="r.devyatilov">
+        <addColumn tableName="users">
+            <column name="need_stock_status_notifications" type="BOOLEAN" defaultValue="true"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
