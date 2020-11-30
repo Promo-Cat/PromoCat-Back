@@ -20,6 +20,7 @@ import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.util_entities.TokenService;
 import org.promocat.promocat.utils.EntityUpdate;
+import org.promocat.promocat.utils.TopicGenerator;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -48,6 +49,7 @@ public class CompanyController {
     private final AdminService adminService;
     private final PosterService posterService;
     private final TokenService tokenService;
+    private final TopicGenerator topicGenerator;
 
     @Autowired
     public CompanyController(final CompanyService companyService,
@@ -57,7 +59,8 @@ public class CompanyController {
                              final UserService userService,
                              final AdminService adminService,
                              final PosterService posterService,
-                             final TokenService tokenService) {
+                             final TokenService tokenService,
+                             final TopicGenerator topicGenerator) {
         this.companyService = companyService;
         this.stockService = stockService;
         this.stockActivationService = stockActivationService;
@@ -66,6 +69,7 @@ public class CompanyController {
         this.adminService = adminService;
         this.posterService = posterService;
         this.tokenService = tokenService;
+        this.topicGenerator = topicGenerator;
     }
 
 //    @ApiOperation(value = "Register company",
@@ -587,5 +591,27 @@ public class CompanyController {
     public ResponseEntity<Resource> getPosterExamplePreview() {
         MultiPartFileDTO poster = adminService.getPosterPreviewExample();
         return posterService.getResourceResponseEntity(poster);
+    }
+
+    @ApiOperation(value = "Update subscribing company from new news",
+            notes = "Update subscribing company, true - subscribe, false - unsubscribe",
+            response = CompanyDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 403, message = "Couldn't unsubscribe company", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/company/notification/news/{flag}", method = RequestMethod.POST)
+    public ResponseEntity<CompanyDTO> turnNotificationNews(@RequestHeader("token") final String token,
+                                                        @PathVariable("flag") final Boolean flag) {
+        CompanyDTO dto = companyService.findByToken(token);
+
+        if (flag) {
+            companyService.subscribeCompanyOnTopic(dto, topicGenerator.getNewsFeedTopicForCompany());
+        } else {
+            companyService.unsubscribeCompanyFromTopic(dto, topicGenerator.getNewsFeedTopicForCompany());
+        }
+
+        return ResponseEntity.ok(dto);
     }
 }
