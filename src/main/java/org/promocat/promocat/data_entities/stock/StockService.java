@@ -205,12 +205,14 @@ public class StockService {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void updateStockStatus() {
-        List<Stock> stocks = repository.getByStartTimeLessThanAndStatusEquals(LocalDateTime.now(),
+        List<Stock> stocks = repository.getByStartTimeLessThanEqualAndStatusEquals(LocalDateTime.now(),
                 StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE);
+        log.info("Update {} stocks", stocks.size());
         stocks.forEach(e -> {
             StockDTO stockDTO = mapper.toDto(e);
             stockDTO.setStatus(StockStatus.ACTIVE);
             stockDTO = save(stockDTO);
+            log.info("Update stock status for {} on Active", stockDTO.getId());
             NotificationDTO notification = notificationBuilderFactory.getBuilder()
                     .getNotification(NotificationLoader.NotificationType.NEW_STOCK)
                     .set("stock_name", stockDTO.getName())
@@ -220,6 +222,7 @@ public class StockService {
                     topicGenerator.getNewStockTopicForUser()
             );
         });
+        log.info("Update stocks end");
     }
 
 

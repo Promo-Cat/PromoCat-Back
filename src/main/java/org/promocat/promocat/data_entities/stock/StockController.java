@@ -19,6 +19,7 @@ import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
 import org.promocat.promocat.exception.stock.ApiStockTimeException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
@@ -27,6 +28,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,7 +58,9 @@ public class StockController {
                            final CompanyService companyService,
                            final PosterService posterService,
                            final MultiPartFileUtils multiPartFileUtils,
-                           final CSVFileService csvFileService) {
+                           final CSVFileService csvFileService,
+                           final StockRepository stockRepository,
+                           final StockMapper stockMapper) {
         this.stockService = stockService;
         this.companyService = companyService;
         this.posterService = posterService;
@@ -201,17 +205,21 @@ public class StockController {
             @ApiResponse(code = 404, message = "Stock not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
-    @RequestMapping(path = "/api/company/stock/{id}/poster", method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock/{id}/poster",
+            "/admin/company/stock/{id}/poster"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getPoster(@PathVariable("id") Long id,
                                               @RequestHeader("token") String token) {
-        Long companyId = companyService.findByToken(token).getId();
-        if (companyService.isOwner(companyId, id)) {
-            StockDTO stock = stockService.findById(id);
-            PosterDTO poster = posterService.findById(stock.getPosterId());
-            return posterService.getResourceResponseEntity(posterService.getPoster(poster));
-        } else {
-            throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
+        boolean isCompany = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ROLE_COMPANY"));
+        StockDTO stock = stockService.findById(id);
+        PosterDTO poster = posterService.findById(stock.getPosterId());
+        if (isCompany) {
+            Long companyId = companyService.findByToken(token).getId();
+            if (!companyService.isOwner(companyId, id)) {
+                throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
+            }
         }
+        return posterService.getResourceResponseEntity(posterService.getPoster(poster));
     }
 
     @ApiOperation(value = "Get posters preview",
