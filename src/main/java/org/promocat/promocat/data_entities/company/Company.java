@@ -34,6 +34,7 @@ public class Company extends AbstractAccount {
     private Stock currentStock;
     private Boolean verified;
     private CompanyStatus companyStatus;
+    private Boolean needStockStatusNotifications = true;
 
     /**
      * Имя организации.
@@ -94,5 +95,13 @@ public class Company extends AbstractAccount {
     @JoinColumn(name = "current_stock_id", referencedColumnName = "id")
     public Stock getCurrentStock() {
         return currentStock;
+    }
+
+    /**
+     * Флаг, обозначающий необходимость отправки уведомлений о статусе акции.
+     */
+    @Column(name = "need_stock_status_notifications")
+    public Boolean getNeedStockStatusNotifications() {
+        return needStockStatusNotifications;
     }
 }

@@ -40,7 +40,6 @@ public class User extends AbstractAccount {
     private String account;
     private String inn;
     private String taxConnectionId;
-    private Boolean needStockStatusNotifications = true;
 
     public User(City city, Double balance, StockCity stockCity) {
         this.city = city;
@@ -147,14 +146,6 @@ public class User extends AbstractAccount {
     @Column(name = "tax_connection_id", unique = true)
     public String getTaxConnectionId() {
         return taxConnectionId;
-    }
-
-    /**
-     * Флаг, обозначающий необходимость отправки уведомлений о статусе акции.
-     */
-    @Column(name = "need_stock_status_notifications")
-    public Boolean getNeedStockStatusNotifications() {
-        return needStockStatusNotifications;
     }
 
 }
