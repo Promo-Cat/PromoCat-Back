@@ -26,7 +26,7 @@ public class FirebaseNotificationManager {
                             .build()
             );
         } catch (FirebaseMessagingException e) {
-            log.error("Не получилось отправить сообщение {} с topic {} ", notif, topic);
+            log.error("Couldn't send notification: {} for topic: {} ", notif, topic);
             throw new ApiNotificationSendException(String.format("Couldn't send notification for topic: %s", topic));
         }
     }
@@ -43,7 +43,7 @@ public class FirebaseNotificationManager {
                             .build()
             );
         } catch (FirebaseMessagingException e) {
-            log.error("Не получилось отправить сообщение {} юзеру с id {} ", notif, accountDTO.getId());
+            log.error("Couldn't send notification: {} to user with id: {} ", notif, accountDTO.getId());
             throw new ApiNotificationSendException(String.format("Couldn't send notification to user with id: %d", accountDTO.getId()));
         }
     }
@@ -57,7 +57,7 @@ public class FirebaseNotificationManager {
             );
             return response.getSuccessCount();
         } catch (FirebaseMessagingException e) {
-            log.error("Не получилось подписать пользователя с id {} на topic {}", userDTO.getId(), topic);
+            log.error("Couldn't subscribe user with id: {} on topic: {}", userDTO.getId(), topic);
             throw new ApiSubscribeTopicException(String.format("Couldn't subscribe user with id: %d on topic: %s", userDTO.getId(), topic));
         }
 
@@ -71,7 +71,7 @@ public class FirebaseNotificationManager {
             );
             return response.getSuccessCount();
         } catch (FirebaseMessagingException e) {
-            log.error("Не получилось отписать пользователя с id {} от topic {}", userDTO.getId(), topic);
+            log.error("Couldn't unsubscribe user with id: {} on topic: {}", userDTO.getId(), topic);
             throw new ApiSubscribeTopicException(String.format("Couldn't unsubscribe user with id: %d on topic: %s", userDTO.getId(), topic));
         }
     }
