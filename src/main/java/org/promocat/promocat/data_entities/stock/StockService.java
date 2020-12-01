@@ -409,6 +409,13 @@ public class StockService {
 //        return res;
 //    }
 
+    /**
+     * Отправляет оповещение компании {@code companyDTO} оповещение типа {@code type}
+     * Оповещение должно удовлетворять требованию, что в нём есть только один ключ {@code stock_name}
+     * @param type Тип уведомления {@link org.promocat.promocat.utils.NotificationLoader.NotificationType}
+     * @param stockDTO Акция, имя которой будет подставлено в шаблон
+     * @param companyDTO Компания, которой будет отправлено оповещение
+     */
     public void sendNotification(NotificationLoader.NotificationType type, StockDTO stockDTO, CompanyDTO companyDTO) {
         NotificationDTO notification = notificationBuilderFactory.getBuilder()
                 .getNotification(type)
