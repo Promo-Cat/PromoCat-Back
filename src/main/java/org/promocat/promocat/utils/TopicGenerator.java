@@ -3,6 +3,10 @@ package org.promocat.promocat.utils;
 import org.promocat.promocat.dto.StockDTO;
 import org.springframework.stereotype.Component;
 
+/**
+ * Класс, который возвращает темы.
+ * Идея в том, чтобы все геттеры были "чистыми" функциями. И всегда возвращали одно и то же.
+ */
 @Component
 public class TopicGenerator {
 

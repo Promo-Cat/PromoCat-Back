@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.data_entities.user.UserService;
+import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.StockActivationCodeDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -52,6 +53,12 @@ public class StockActivationCodeService {
         this.stockMapper = stockMapper;
     }
 
+    /**
+     * Сохранение {@link StockActivationCodeDTO} в БД.
+     *
+     * @param dto объектное представление кода активации.
+     * @return представление кода активации в БД. {@link StockActivationCode}
+     */
     public StockActivationCodeDTO save(StockActivationCodeDTO dto) {
         return stockActivationCodeMapper.toDto(stockActivationCodeRepository.save(stockActivationCodeMapper.toEntity(dto)));
     }
