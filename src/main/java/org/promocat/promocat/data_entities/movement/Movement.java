@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.promocat.promocat.data_entities.AbstractEntity;
+import org.promocat.promocat.data_entities.abstract_account.AbstractEntity;
 import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.user.User;
 

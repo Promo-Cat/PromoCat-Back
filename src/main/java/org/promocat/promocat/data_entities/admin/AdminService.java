@@ -2,9 +2,10 @@ package org.promocat.promocat.data_entities.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
 import org.promocat.promocat.dto.AdminDTO;
+import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
-import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.admin.ApiAdminAlreadyExistsException;
 import org.promocat.promocat.exception.admin.ApiAdminNotFoundException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
@@ -34,14 +35,13 @@ import static org.promocat.promocat.utils.soap.util.TaxUtils.*;
 
 @Service
 @Slf4j
-public class AdminService {
+public class AdminService extends AbstractAccountService {
 
     private final AdminRepository adminRepository;
     private final AdminMapper adminMapper;
     private final MultiPartFileUtils multiPartFileUtils;
     private final SoapClient soapClient;
     private final TopicGenerator topicGenerator;
-    private final FirebaseNotificationManager firebaseNotificationManager;
 
     @Value("${data.resources.admin.examples}")
     private String PATH;
@@ -53,12 +53,12 @@ public class AdminService {
                         final SoapClient soapClient,
                         final TopicGenerator topicGenerator,
                         final FirebaseNotificationManager firebaseNotificationManager) {
+        super(firebaseNotificationManager);
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
         this.multiPartFileUtils = multiPartFileUtils;
         this.soapClient = soapClient;
         this.topicGenerator = topicGenerator;
-        this.firebaseNotificationManager = firebaseNotificationManager;
     }
 
     /**
@@ -312,27 +312,26 @@ public class AdminService {
         }
     }
 
-    public void subscribeAdminOnDefaultTopics(AdminDTO user) {
-        if (user.getGoogleToken() == null) {
-            throw new ApiServerErrorException("Trying to subscribe user on topics. But user has no google token.");
+    /**
+     * Подписывает админа на "дефолтные темы (topic)"
+     * @param admin Админ, который будет подписан на темы {@link AdminDTO}
+     */
+    public void subscribeAdminOnDefaultTopics(AdminDTO admin) {
+        if (admin.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to subscribe admin on topics. But admin has no google token.");
         }
-        subscribeAdminOnTopic(user, topicGenerator.getNewStockTopicForAdmin());
+        subscribeOnTopic(admin, topicGenerator.getNewStockTopicForAdmin());
     }
 
-    public void unsubscribeAdminFromDefaultTopics(AdminDTO user) {
-        if (user.getGoogleToken() == null) {
-            throw new ApiServerErrorException("Trying to unsubscribe user from topics. But user has no google token.");
+    /**
+     * Отписывает компанию от "дефолтных тем (topic)"
+     * @param admin Админ, который будет отписан от тем {@link CompanyDTO}
+     */
+    public void unsubscribeAdminFromDefaultTopics(AdminDTO admin) {
+        if (admin.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to unsubscribe admin from topics. But admin has no google token.");
         }
-        unsubscribeAdminFromTopic(user, topicGenerator.getNewStockTopicForAdmin());
+        unsubscribeFromTopic(admin, topicGenerator.getNewStockTopicForAdmin());
     }
 
-    public void subscribeAdminOnTopic(AdminDTO user, String topic) {
-        log.info("Subscribing user with id {} to topic {}", user.getId(), topic);
-        firebaseNotificationManager.subscribeAccountOnTopic(user, topic);
-    }
-
-    public void unsubscribeAdminFromTopic(AdminDTO user, String topic) {
-        log.info("Unsubscribing user with id {} from topic {}", user.getId(), topic);
-        firebaseNotificationManager.unsubscribeAccountFromTopic(user, topic);
-    }
 }

@@ -519,9 +519,9 @@ public class UserController {
                                                              @PathVariable("flag") final Boolean flag) {
         UserDTO dto = userService.findByToken(token);
         if (flag) {
-            userService.subscribeUserOnTopic(dto, topicGenerator.getNewStockTopicForUser());
+            userService.subscribeOnTopic(dto, topicGenerator.getNewStockTopicForUser());
         } else {
-            userService.unsubscribeUserFromTopic(dto, topicGenerator.getNewStockTopicForUser());
+            userService.unsubscribeFromTopic(dto, topicGenerator.getNewStockTopicForUser());
         }
         return ResponseEntity.ok(dto);
     }
@@ -541,9 +541,9 @@ public class UserController {
         UserDTO dto = userService.findByToken(token);
 
         if (flag) {
-            userService.subscribeUserOnTopic(dto, topicGenerator.getNewsFeedTopicForUser());
+            userService.subscribeOnTopic(dto, topicGenerator.getNewsFeedTopicForUser());
         } else {
-            userService.unsubscribeUserFromTopic(dto, topicGenerator.getNewsFeedTopicForUser());
+            userService.unsubscribeFromTopic(dto, topicGenerator.getNewsFeedTopicForUser());
         }
 
         return ResponseEntity.ok(dto);

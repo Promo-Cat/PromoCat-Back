@@ -122,7 +122,7 @@ public class StockActivationCodeService {
             entity.setActive(false);
             save(stockActivationCodeMapper.toDto(entity));
             UserDTO userDTO = userMapper.toDto(userRepository.save(user));
-            userService.subscribeUserOnTopic(
+            userService.subscribeOnTopic(
                     userDTO,
                     topicGenerator.getStockTopicForUser(
                             stockMapper.toDto(entity.getStockCity().getStock())

@@ -1,5 +1,6 @@
-package org.promocat.promocat.data_entities;
+package org.promocat.promocat.data_entities.abstract_account;
 
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 

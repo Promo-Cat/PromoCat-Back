@@ -3,7 +3,7 @@ package org.promocat.promocat.data_entities.login_attempt;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
 import org.promocat.promocat.attributes.AccountType;
-import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccount;
 import org.promocat.promocat.data_entities.admin.Admin;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.user.User;

@@ -608,9 +608,9 @@ public class CompanyController {
         CompanyDTO dto = companyService.findByToken(token);
 
         if (flag) {
-            companyService.subscribeCompanyOnTopic(dto, topicGenerator.getNewsFeedTopicForCompany());
+            companyService.subscribeOnTopic(dto, topicGenerator.getNewsFeedTopicForCompany());
         } else {
-            companyService.unsubscribeCompanyFromTopic(dto, topicGenerator.getNewsFeedTopicForCompany());
+            companyService.unsubscribeFromTopic(dto, topicGenerator.getNewsFeedTopicForCompany());
         }
 
         return ResponseEntity.ok(dto);

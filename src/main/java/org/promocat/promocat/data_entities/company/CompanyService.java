@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.company;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.StockDTO;
@@ -24,13 +25,12 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class CompanyService {
+public class CompanyService extends AbstractAccountService {
     private final CompanyMapper companyMapper;
     private final CompanyRepository companyRepository;
     private final StockService stockService;
     private final TokenService tokenService;
     private final TopicGenerator topicGenerator;
-    private final FirebaseNotificationManager firebaseNotificationManager;
 
     @Autowired
     public CompanyService(final CompanyMapper companyMapper,
@@ -39,12 +39,12 @@ public class CompanyService {
                           final TokenService tokenService,
                           final TopicGenerator topicGenerator,
                           final FirebaseNotificationManager firebaseNotificationManager) {
+        super(firebaseNotificationManager);
         this.companyMapper = companyMapper;
         this.companyRepository = companyRepository;
         this.stockService = stockService;
         this.tokenService = tokenService;
         this.topicGenerator = topicGenerator;
-        this.firebaseNotificationManager = firebaseNotificationManager;
     }
 
     /**
@@ -226,27 +226,26 @@ public class CompanyService {
         companyRepository.deleteById(id);
     }
 
+    /**
+     * Подписывает компанию на "дефолтные темы (topic)"
+     * @param company Компания, которая будет подписана на темы {@link CompanyDTO}
+     */
     public void subscribeCompanyOnDefaultTopics(CompanyDTO company) {
         if (company.getGoogleToken() == null) {
             throw new ApiServerErrorException("Trying to subscribe company on topics. But company has no google token.");
         }
-        subscribeCompanyOnTopic(company, topicGenerator.getNewsFeedTopicForCompany());
+        subscribeOnTopic(company, topicGenerator.getNewsFeedTopicForCompany());
     }
 
+    /**
+     * Отписывает компанию от "дефолтных тем (topic)"
+     * @param company Компания, которая будет отписана от тем {@link CompanyDTO}
+     */
     public void unsubscribeCompanyFromDefaultTopics(CompanyDTO company) {
         if (company.getGoogleToken() == null) {
             throw new ApiServerErrorException("Trying to unsubscribe company from topics. But company has no google token.");
         }
-        unsubscribeCompanyFromTopic(company, topicGenerator.getNewsFeedTopicForCompany());
+        unsubscribeFromTopic(company, topicGenerator.getNewsFeedTopicForCompany());
     }
 
-    public void subscribeCompanyOnTopic(CompanyDTO company, String topic) {
-        log.info("Subscribing company with id {} to topic {}", company.getId(), topic);
-        firebaseNotificationManager.subscribeAccountOnTopic(company, topic);
-    }
-
-    public void unsubscribeCompanyFromTopic(CompanyDTO company, String topic) {
-        log.info("Unsubscribing company with id {} from topic {}", company.getId(), topic);
-        firebaseNotificationManager.unsubscribeAccountFromTopic(company, topic);
-    }
 }

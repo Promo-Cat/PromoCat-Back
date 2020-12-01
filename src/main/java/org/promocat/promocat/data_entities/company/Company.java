@@ -7,12 +7,11 @@ import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.promocat.promocat.attributes.CompanyStatus;
-import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccount;
 import org.promocat.promocat.data_entities.stock.Stock;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.Set;
 
