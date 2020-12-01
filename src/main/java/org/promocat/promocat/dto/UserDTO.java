@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.promocat.promocat.attributes.AccountType;
-import org.promocat.promocat.attributes.CarVerifyingStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.constraints.RequiredForFull;
 
@@ -108,6 +107,7 @@ public class UserDTO extends AbstractAccountDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @RequiredForFull
     private String inn;
+
 
     @JsonIgnore
     @RequiredForFull

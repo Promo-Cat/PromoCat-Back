@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
-import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccount;
 import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.user.UserService;

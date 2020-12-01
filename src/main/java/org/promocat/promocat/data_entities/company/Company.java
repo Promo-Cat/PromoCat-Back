@@ -7,12 +7,11 @@ import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.promocat.promocat.attributes.CompanyStatus;
-import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccount;
 import org.promocat.promocat.data_entities.stock.Stock;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.Set;
 
@@ -34,6 +33,7 @@ public class Company extends AbstractAccount {
     private Stock currentStock;
     private Boolean verified;
     private CompanyStatus companyStatus;
+    private Boolean needStockStatusNotifications = true;
 
     /**
      * Имя организации.
@@ -94,5 +94,13 @@ public class Company extends AbstractAccount {
     @JoinColumn(name = "current_stock_id", referencedColumnName = "id")
     public Stock getCurrentStock() {
         return currentStock;
+    }
+
+    /**
+     * Флаг, обозначающий необходимость отправки уведомлений о статусе акции.
+     */
+    @Column(name = "need_stock_status_notifications")
+    public Boolean getNeedStockStatusNotifications() {
+        return needStockStatusNotifications;
     }
 }

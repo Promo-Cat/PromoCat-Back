@@ -1,6 +1,6 @@
 package org.promocat.promocat.data_entities.company;
 
-import org.promocat.promocat.data_entities.AbstractAccountRepository;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccountRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

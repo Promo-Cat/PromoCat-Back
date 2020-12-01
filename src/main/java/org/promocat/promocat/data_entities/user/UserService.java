@@ -4,19 +4,16 @@ package org.promocat.promocat.data_entities.user;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.TaxUserStatus;
 import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
-import org.promocat.promocat.dto.MovementDTO;
-import org.promocat.promocat.dto.StockCityDTO;
-import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.UserMapper;
-import org.promocat.promocat.utils.EntityUpdate;
-import org.promocat.promocat.utils.JwtReader;
-import org.promocat.promocat.utils.PaymentService;
+import org.promocat.promocat.utils.*;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
@@ -37,7 +34,7 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
-public class UserService {
+public class UserService extends AbstractAccountService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -46,6 +43,7 @@ public class UserService {
     private final StockCityService stockCityService;
     private final PaymentService paymentService;
     private final SoapClient soapClient;
+    private final TopicGenerator topicGenerator;
 
     @Autowired
     public UserService(final UserRepository userRepository,
@@ -54,7 +52,10 @@ public class UserService {
                        final MovementService movementService,
                        final StockCityService stockCityService,
                        final PaymentService paymentService,
-                       final SoapClient soapClient) {
+                       final SoapClient soapClient,
+                       final FirebaseNotificationManager firebaseNotificationManager,
+                       final TopicGenerator topicGenerator) {
+        super(firebaseNotificationManager);
         this.userRepository = userRepository;
         this.userMapper = mapper;
         this.stockService = stockService;
@@ -62,6 +63,7 @@ public class UserService {
         this.movementService = movementService;
         this.stockCityService = stockCityService;
         this.paymentService = paymentService;
+        this.topicGenerator = topicGenerator;
     }
 
     /**
@@ -266,4 +268,29 @@ public class UserService {
         log.info("User with inn {} accepted the connection request", user.getInn());
         return TaxUserStatus.COMPLETED;
     }
+
+    /**
+     * Подписывает водителя на "дефолтные темы (topic)"
+     * @param user Водитель, который будет подписан на темы {@link UserDTO}
+     */
+    public void subscribeUserOnDefaultTopics(UserDTO user) {
+        if (user.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to subscribe user on topics. But user has no google token.");
+        }
+        subscribeOnTopic(user, topicGenerator.getNewStockTopicForUser());
+        subscribeOnTopic(user, topicGenerator.getNewsFeedTopicForUser());
+    }
+
+    /**
+     * Отписывает водителя от "дефолтных тем (topic)"
+     * @param user Водитель, который будет отписана от тем {@link UserDTO}
+     */
+    public void unsubscribeUserFromDefaultTopics(UserDTO user) {
+        if (user.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to unsubscribe user from topics. But user has no google token.");
+        }
+        unsubscribeFromTopic(user, topicGenerator.getNewsFeedTopicForUser());
+        unsubscribeFromTopic(user, topicGenerator.getNewStockTopicForUser());
+    }
+
 }

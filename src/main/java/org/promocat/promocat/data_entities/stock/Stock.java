@@ -9,7 +9,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.constraints.StockDurationConstraint;
-import org.promocat.promocat.data_entities.AbstractEntity;
+import org.promocat.promocat.data_entities.abstract_account.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.movement.Movement;
 import org.promocat.promocat.data_entities.parameters.Parameters;
@@ -26,7 +26,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 /**

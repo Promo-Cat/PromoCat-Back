@@ -83,10 +83,10 @@ public class StockController {
     @RequestMapping(path = "/api/company/stock", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> addStock(@Valid @RequestBody StockDTO stock,
                                              @RequestHeader("token") final String token) {
+        CompanyDTO company = companyService.findByToken(token);
         if (stock.getStartTime().toLocalDate().compareTo(now) < 0) {
             throw new ApiStockTimeException("Cannot create stock with day before today.");
         }
-        CompanyDTO company = companyService.findByToken(token);
         StockDTO companyCurrentStock = company.getCurrentStockId() == 0L ? null : stockService.findById(company.getCurrentStockId());
         if (companyCurrentStock != null
                 && companyCurrentStock.getStatus() != StockStatus.STOCK_IS_OVER_WITH_POSTPAY
@@ -337,7 +337,7 @@ public class StockController {
         return ResponseEntity.ok("{}");
     }
 
-    @ApiOperation(value = "Deactivate stock.",
+    @ApiOperation(value = "Set stock status.",
             notes = "Returning stock with id specified in request",
             response = StockDTO.class)
     @ApiResponses(value = {
@@ -351,7 +351,8 @@ public class StockController {
     @RequestMapping(path = "/admin/company/stock/active/{id}", method = RequestMethod.POST)
     public ResponseEntity<StockDTO> setActiveStock(@PathVariable("id") Long id,
                                                    @RequestParam("activation_status") String activationStatus) {
-        return ResponseEntity.ok(stockService.setActive(id, StockStatus.valueOf(activationStatus.toUpperCase())));
+        Long companyId = stockService.findById(id).getCompanyId();
+        return ResponseEntity.ok(stockService.setActive(id, StockStatus.valueOf(activationStatus.toUpperCase()), companyId));
     }
 
 

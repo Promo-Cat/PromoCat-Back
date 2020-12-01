@@ -5,26 +5,26 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
-import org.promocat.promocat.dto.AdminDTO;
-import org.promocat.promocat.dto.MultiPartFileDTO;
+import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.TelephoneDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.exception.notification.ApiTopicAccountTypeException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.FirebaseNotificationManager;
 import org.promocat.promocat.utils.MimeTypes;
 import org.promocat.promocat.utils.MultiPartFileUtils;
+import org.promocat.promocat.utils.TopicGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -38,14 +38,20 @@ public class AdminController {
     private final AdminService adminService;
     private final PosterService posterService;
     private final MultiPartFileUtils multiPartFileUtils;
+    private final FirebaseNotificationManager firebaseNotificationManager;
+    private final TopicGenerator topicGenerator;
 
     @Autowired
     public AdminController(final AdminService adminService,
                            final PosterService posterService,
-                           final MultiPartFileUtils multiPartFileUtils) {
+                           final MultiPartFileUtils multiPartFileUtils,
+                           final FirebaseNotificationManager firebaseNotificationManager,
+                           final TopicGenerator topicGenerator) {
         this.adminService = adminService;
         this.posterService = posterService;
         this.multiPartFileUtils = multiPartFileUtils;
+        this.firebaseNotificationManager = firebaseNotificationManager;
+        this.topicGenerator = topicGenerator;
     }
 
     @ApiOperation(value = "Add new admin.",
@@ -157,5 +163,112 @@ public class AdminController {
     public ResponseEntity<String> registerPartner() {
         adminService.registerPartner();
         return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Send notification to user")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/notification/user", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> sendNotificationToUser(@RequestBody final UserDTO user,
+                                                          @RequestBody final NotificationDTO notif) {
+        firebaseNotificationManager.sendNotificationByAccount(notif, user);
+
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Send notification to company")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/notification/company", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> sendNotificationToCompany(@RequestBody final CompanyDTO company,
+                                                         @RequestBody final NotificationDTO notif) {
+        firebaseNotificationManager.sendNotificationByAccount(notif, company);
+
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Send notification by topic for news")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/notification/topic/news/{type}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> sendNotificationByTopicForNews(@PathVariable("type") final AccountType type,
+                                                                 @RequestBody final NotificationDTO notif) {
+
+        String topic;
+        if (type == AccountType.USER) {
+            topic =  topicGenerator.getNewsFeedTopicForUser();
+        } else if (type == AccountType.COMPANY) {
+            topic = topicGenerator.getNewsFeedTopicForCompany();
+        } else {
+            throw new ApiTopicAccountTypeException(String.format("Incorrect type: %s for notification", type));
+        }
+
+        firebaseNotificationManager.sendNotificationByTopic(notif, topic);
+
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Send notification by topic for stock")
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 500, message = "Server problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/notification/topic/stock/{type}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> sendNotificationByTopicForStock(@PathVariable("type") final AccountType type,
+                                                                  @RequestBody final StockDTO stock,
+                                                                  @RequestBody final NotificationDTO notif) {
+        String topic;
+        if (type == AccountType.USER) {
+            topic =  topicGenerator.getStockTopicForUser(stock);
+        } else if (type == AccountType.COMPANY) {
+            topic = topicGenerator.getStockTopicForCompany(stock);
+        } else {
+            throw new ApiTopicAccountTypeException(String.format("Incorrect type: %s for notification", type));
+        }
+
+        firebaseNotificationManager.sendNotificationByTopic(notif, topic);
+
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Set admin's token",
+            notes = "Set admin's token for notification",
+            response = AdminDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Admin not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/token", method = RequestMethod.POST)
+    public ResponseEntity<AdminDTO> addToken(@RequestHeader("token") final String token) {
+        AdminDTO dto = adminService.findByToken(token);
+        if (dto.getGoogleToken() != null) {
+            adminService.unsubscribeAdminFromDefaultTopics(dto);
+        }
+        dto.setGoogleToken(token);
+        adminService.subscribeAdminOnDefaultTopics(dto);
+        return ResponseEntity.ok(adminService.save(dto));
+    }
+
+    @ApiOperation(value = "Delete admin's token",
+            notes = "Delete admin's token for notification",
+            response = AdminDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Admin not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/token", method = RequestMethod.DELETE)
+    public ResponseEntity<AdminDTO> deleteToken(@RequestHeader("token") final String token) {
+        AdminDTO dto = adminService.findByToken(token);
+        if (dto.getGoogleToken() != null) {
+            adminService.unsubscribeAdminFromDefaultTopics(dto);
+        }
+        dto.setGoogleToken(null);
+        return ResponseEntity.ok(adminService.save(dto));
     }
 }

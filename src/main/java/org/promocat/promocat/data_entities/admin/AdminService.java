@@ -2,14 +2,19 @@ package org.promocat.promocat.data_entities.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
 import org.promocat.promocat.dto.AdminDTO;
+import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.admin.ApiAdminAlreadyExistsException;
 import org.promocat.promocat.exception.admin.ApiAdminNotFoundException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.AdminMapper;
+import org.promocat.promocat.utils.FirebaseNotificationManager;
 import org.promocat.promocat.utils.MultiPartFileUtils;
+import org.promocat.promocat.utils.TopicGenerator;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.application_registration.PostPlatformRegistrationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +36,13 @@ import static org.promocat.promocat.utils.soap.util.TaxUtils.*;
 
 @Service
 @Slf4j
-public class AdminService {
+public class AdminService extends AbstractAccountService {
 
     private final AdminRepository adminRepository;
     private final AdminMapper adminMapper;
     private final MultiPartFileUtils multiPartFileUtils;
     private final SoapClient soapClient;
+    private final TopicGenerator topicGenerator;
 
     @Value("${data.resources.admin.examples}")
     private String PATH;
@@ -45,11 +51,15 @@ public class AdminService {
     public AdminService(final AdminRepository adminRepository,
                         final AdminMapper adminMapper,
                         final MultiPartFileUtils multiPartFileUtils,
-                        final SoapClient soapClient) {
+                        final SoapClient soapClient,
+                        final TopicGenerator topicGenerator,
+                        final FirebaseNotificationManager firebaseNotificationManager) {
+        super(firebaseNotificationManager);
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
         this.multiPartFileUtils = multiPartFileUtils;
         this.soapClient = soapClient;
+        this.topicGenerator = topicGenerator;
     }
 
     /**
@@ -61,6 +71,16 @@ public class AdminService {
     public boolean isAdmin(final String telephone) {
         log.info("Requested do account with telephone {} has permissions", telephone);
         return adminRepository.existsByTelephone(telephone);
+    }
+
+    /**
+     * Сохраняет админа в БД.
+     *
+     * @param adminDTO объектное представление админа, полученное с фронта.
+     * @return Представление админа, сохраненное в БД. {@link AdminDTO}
+     */
+    public AdminDTO save(AdminDTO adminDTO) {
+        return adminMapper.toDto(adminRepository.save(adminMapper.toEntity(adminDTO)));
     }
 
     /**
@@ -106,6 +126,10 @@ public class AdminService {
         record.setTelephone(telephone);
         log.info("New admin added to DB");
         return adminMapper.toDto(adminRepository.save(record));
+    }
+
+    public AdminDTO findByToken(String token) {
+        return adminMapper.toDto(adminRepository.getByToken(token).orElseThrow());
     }
 
     /**
@@ -294,4 +318,27 @@ public class AdminService {
             log.warn("Old {} was not deleted", file.toString());
         }
     }
+
+    /**
+     * Подписывает админа на "дефолтные темы (topic)"
+     * @param admin Админ, который будет подписан на темы {@link AdminDTO}
+     */
+    public void subscribeAdminOnDefaultTopics(AdminDTO admin) {
+        if (admin.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to subscribe admin on topics. But admin has no google token.");
+        }
+        subscribeOnTopic(admin, topicGenerator.getNewStockTopicForAdmin());
+    }
+
+    /**
+     * Отписывает компанию от "дефолтных тем (topic)"
+     * @param admin Админ, который будет отписан от тем {@link CompanyDTO}
+     */
+    public void unsubscribeAdminFromDefaultTopics(AdminDTO admin) {
+        if (admin.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to unsubscribe admin from topics. But admin has no google token.");
+        }
+        unsubscribeFromTopic(admin, topicGenerator.getNewStockTopicForAdmin());
+    }
+
 }

@@ -1,8 +1,8 @@
 package org.promocat.promocat.utils;
 
 import org.promocat.promocat.attributes.AccountType;
-import org.promocat.promocat.data_entities.AbstractAccount;
-import org.promocat.promocat.data_entities.AbstractAccountRepository;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccount;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccountRepository;
 import org.promocat.promocat.data_entities.admin.AdminRepository;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
 import org.promocat.promocat.data_entities.user.UserRepository;

@@ -2,12 +2,16 @@ package org.promocat.promocat.data_entities.company;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.promocat.promocat.util_entities.TokenService;
+import org.promocat.promocat.utils.FirebaseNotificationManager;
+import org.promocat.promocat.utils.TopicGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,21 +25,26 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class CompanyService {
+public class CompanyService extends AbstractAccountService {
     private final CompanyMapper companyMapper;
     private final CompanyRepository companyRepository;
     private final StockService stockService;
     private final TokenService tokenService;
+    private final TopicGenerator topicGenerator;
 
     @Autowired
     public CompanyService(final CompanyMapper companyMapper,
                           final CompanyRepository companyRepository,
                           final StockService stockService,
-                          final TokenService tokenService) {
+                          final TokenService tokenService,
+                          final TopicGenerator topicGenerator,
+                          final FirebaseNotificationManager firebaseNotificationManager) {
+        super(firebaseNotificationManager);
         this.companyMapper = companyMapper;
         this.companyRepository = companyRepository;
         this.stockService = stockService;
         this.tokenService = tokenService;
+        this.topicGenerator = topicGenerator;
     }
 
     /**
@@ -216,4 +225,27 @@ public class CompanyService {
     public void deleteById(Long id) {
         companyRepository.deleteById(id);
     }
+
+    /**
+     * Подписывает компанию на "дефолтные темы (topic)"
+     * @param company Компания, которая будет подписана на темы {@link CompanyDTO}
+     */
+    public void subscribeCompanyOnDefaultTopics(CompanyDTO company) {
+        if (company.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to subscribe company on topics. But company has no google token.");
+        }
+        subscribeOnTopic(company, topicGenerator.getNewsFeedTopicForCompany());
+    }
+
+    /**
+     * Отписывает компанию от "дефолтных тем (topic)"
+     * @param company Компания, которая будет отписана от тем {@link CompanyDTO}
+     */
+    public void unsubscribeCompanyFromDefaultTopics(CompanyDTO company) {
+        if (company.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to unsubscribe company from topics. But company has no google token.");
+        }
+        unsubscribeFromTopic(company, topicGenerator.getNewsFeedTopicForCompany());
+    }
+
 }
