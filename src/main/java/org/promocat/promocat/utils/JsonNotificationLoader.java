@@ -34,6 +34,9 @@ public class JsonNotificationLoader implements NotificationLoader {
         updateStorage();
     }
 
+    /**
+     * Update Enum map from json template file.
+     */
     private void updateStorage() {
         Path fileName = Path.of("templates.json");
         String response;
@@ -73,6 +76,12 @@ public class JsonNotificationLoader implements NotificationLoader {
         updateStorage();
     }
 
+    /**
+     * Get NotificationDTO by type.
+     *
+     * @param type {@link NotificationType}
+     * @return NotificationDTO
+     */
     @Override
     public NotificationDTO getNotification(NotificationType type) {
         return storage.get(type);
