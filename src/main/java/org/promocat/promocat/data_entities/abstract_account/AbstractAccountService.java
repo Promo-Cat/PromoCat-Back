@@ -18,13 +18,25 @@ public class AbstractAccountService {
         this.firebaseNotificationManager = firebaseNotificationManager;
     }
 
-    public void subscribeOnTopic(AbstractAccountDTO user, String topic) {
-        log.info("Subscribing user with id {} to topic {}", user.getId(), topic);
-        firebaseNotificationManager.subscribeAccountOnTopic(user, topic);
+    /**
+     * Подписывает аккаунт {@code account} на тему {@code topic}
+     * @param account Аккаунт, который будет подписан
+     * @param topic Тема, на которую будет подписан аккаунт
+     * @see FirebaseNotificationManager
+     */
+    public void subscribeOnTopic(AbstractAccountDTO account, String topic) {
+        log.info("Subscribing account with id {} to topic {}", account.getId(), topic);
+        firebaseNotificationManager.subscribeAccountOnTopic(account, topic);
     }
 
-    public void unsubscribeFromTopic(AbstractAccountDTO user, String topic) {
-        log.info("Unsubscribing user with id {} from topic {}", user.getId(), topic);
-        firebaseNotificationManager.unsubscribeAccountFromTopic(user, topic);
+    /**
+     * Отписывает аккаунт {@code account} от темы {@code topic}
+     * @param account Аккаунт, который будет отписан
+     * @param topic Тема, от которой будет отписан аккаунт
+     * @see FirebaseNotificationManager
+     */
+    public void unsubscribeFromTopic(AbstractAccountDTO account, String topic) {
+        log.info("Unsubscribing account with id {} from topic {}", account.getId(), topic);
+        firebaseNotificationManager.unsubscribeAccountFromTopic(account, topic);
     }
 }

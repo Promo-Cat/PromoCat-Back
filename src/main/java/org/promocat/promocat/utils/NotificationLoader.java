@@ -2,6 +2,9 @@ package org.promocat.promocat.utils;
 
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 
+/**
+ * Интерфейс, реализация, которога должна вернуть {@link NotificationDTO} по {@link NotificationType}
+ */
 public interface NotificationLoader {
 
     enum NotificationType {
@@ -19,6 +22,11 @@ public interface NotificationLoader {
     }
 
 
+    /**
+     * Возвращает шаблон оповещения.
+     * @param type Тип оповещения {@link NotificationType}
+     * @return Шаблон оповещения
+     */
     NotificationDTO getNotification(NotificationType type);
 
 }

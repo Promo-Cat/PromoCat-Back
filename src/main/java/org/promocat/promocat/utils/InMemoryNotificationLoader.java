@@ -3,6 +3,9 @@ package org.promocat.promocat.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 
+/**
+ * Тестовая реализация {@link NotificationLoader} для демонстрации работы {@link NotificationDTO.Builder}
+ */
 @Slf4j
 public class InMemoryNotificationLoader implements NotificationLoader {
 

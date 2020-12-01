@@ -6,6 +6,7 @@ import org.promocat.promocat.data_entities.abstract_account.AbstractAccountServi
 import org.promocat.promocat.dto.AdminDTO;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.admin.ApiAdminAlreadyExistsException;
 import org.promocat.promocat.exception.admin.ApiAdminNotFoundException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
@@ -72,6 +73,12 @@ public class AdminService extends AbstractAccountService {
         return adminRepository.existsByTelephone(telephone);
     }
 
+    /**
+     * Сохраняет админа в БД.
+     *
+     * @param adminDTO объектное представление админа, полученное с фронта.
+     * @return Представление админа, сохраненное в БД. {@link AdminDTO}
+     */
     public AdminDTO save(AdminDTO adminDTO) {
         return adminMapper.toDto(adminRepository.save(adminMapper.toEntity(adminDTO)));
     }
