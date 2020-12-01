@@ -4,19 +4,21 @@ package org.promocat.promocat.data_entities.stock;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.data_entities.city.CityService;
+import org.promocat.promocat.data_entities.company.Company;
+import org.promocat.promocat.data_entities.company.CompanyRepository;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.receipt.ReceiptService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.UserRepository;
-import org.promocat.promocat.dto.ReceiptDTO;
-import org.promocat.promocat.dto.StockCityDTO;
-import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
+import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
+import org.promocat.promocat.mapper.CompanyMapper;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
-import org.promocat.promocat.utils.CSVGenerator;
+import org.promocat.promocat.utils.*;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.attributes.IncomeType;
 import org.promocat.promocat.utils.soap.operations.income.PostIncomeRequestV2;
@@ -34,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -61,6 +64,11 @@ public class StockService {
     private final CSVGenerator csvGenerator;
     private final SoapClient soapClient;
     private final ReceiptService receiptService;
+    private final NotificationBuilderFactory notificationBuilderFactory;
+    private final FirebaseNotificationManager firebaseNotificationManager;
+    private final TopicGenerator topicGenerator;
+    private final CompanyRepository companyRepository;
+    private final CompanyMapper companyMapper;
 
     @Autowired
     public StockService(final StockMapper mapper,
@@ -72,7 +80,11 @@ public class StockService {
                         final UserMapper userMapper,
                         final CSVGenerator csvGenerator,
                         final SoapClient soapClient,
-                        final ReceiptService receiptService) {
+                        final ReceiptService receiptService,
+                        final NotificationBuilderFactory notificationBuilderFactory,
+                        final FirebaseNotificationManager firebaseNotificationManager,
+                        final TopicGenerator topicGenerator,
+                        final CompanyRepository companyRepository, CompanyMapper companyMapper) {
         this.mapper = mapper;
         this.repository = repository;
         this.stockCityService = stockCityService;
@@ -83,6 +95,11 @@ public class StockService {
         this.csvGenerator = csvGenerator;
         this.soapClient = soapClient;
         this.receiptService = receiptService;
+        this.notificationBuilderFactory = notificationBuilderFactory;
+        this.firebaseNotificationManager = firebaseNotificationManager;
+        this.topicGenerator = topicGenerator;
+        this.companyRepository = companyRepository;
+        this.companyMapper = companyMapper;
     }
 
     /**
@@ -106,6 +123,13 @@ public class StockService {
         dto.setFare(parametersService.getPanel());
         dto.setPrepayment(parametersService.getParameters().getPrepayment());
         dto.setPostpayment(parametersService.getParameters().getPostpayment());
+        Company company = companyRepository.getOne(dto.getId());
+        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                .getNotification(NotificationLoader.NotificationType.BID_ENTRY)
+                .set("stock_name", dto.getName())
+                .set("company_name", company.getOrganizationName())
+                .build();
+        firebaseNotificationManager.sendNotificationByTopic(notification, topicGenerator.getNewStockTopicForAdmin());
         return save(dto);
     }
 
@@ -141,9 +165,7 @@ public class StockService {
                 time, days);
         Set<Stock> stocks = repository.getByStartTimeLessThanAndDurationEqualsAndStatusEquals(time, days, StockStatus.ACTIVE);
         return stocks.stream()
-                .peek(e -> {
-                    e.setCities(new HashSet<>(e.getCities()));
-                })
+                .peek(e -> e.setCities(new HashSet<>(e.getCities())))
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -162,9 +184,8 @@ public class StockService {
     }
 
     public void endUpStock(StockDTO stockDTO) {
-        stockDTO.setStatus(StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
+        setActive(stockDTO.getId(), StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY, stockDTO.getCompanyId());
         Path path = Paths.get(PATH, stockDTO.getName() + stockDTO.getId().toString() + ".csv");
-        save(stockDTO);
         if (Objects.isNull(stockDTO.getCities())) {
             return;
         }
@@ -190,8 +211,16 @@ public class StockService {
         stocks.forEach(e -> {
             StockDTO stockDTO = mapper.toDto(e);
             stockDTO.setStatus(StockStatus.ACTIVE);
+            stockDTO = save(stockDTO);
             log.info("Update stock status for {} on Active", stockDTO.getId());
-            save(stockDTO);
+            NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                    .getNotification(NotificationLoader.NotificationType.NEW_STOCK)
+                    .set("stock_name", stockDTO.getName())
+                    .build();
+            firebaseNotificationManager.sendNotificationByTopic(
+                    notification,
+                    topicGenerator.getNewStockTopicForUser()
+            );
         });
         log.info("Update stocks end");
     }
@@ -239,9 +268,30 @@ public class StockService {
      *               {@code BAN} акция забанена.
      * @return представление акции в БД. {@link StockDTO}
      */
-    public StockDTO setActive(final Long id, final StockStatus status) {
+    public StockDTO setActive(final Long id, final StockStatus status, final Long companyId) {
         log.info("Setting stock: {} active: {}", id, status);
         StockDTO stock = findById(id);
+        CompanyDTO companyDTO = companyMapper.toDto(companyRepository.getOne(companyId));
+        if (companyDTO.getNeedStockStatusNotifications()) {
+            if (status == StockStatus.ACTIVE) {
+                NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                        .getNotification(NotificationLoader.NotificationType.STOCK_STARTED)
+                        .set("stock_name", stock.getName())
+                        .set("duration", stock.getDuration().toString())
+                        .set("start_date", LocalDate.now().toString())
+                        .set("end_date", LocalDate.now().plusDays(stock.getDuration()).toString())
+                        .build();
+                firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
+            } else if (status == StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY) {
+                sendNotification(NotificationLoader.NotificationType.COMPANY_STOCK_END, stock, companyDTO);
+            } else if (status == StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE) {
+                sendNotification(NotificationLoader.NotificationType.ACCEPT_PAY, stock, companyDTO);
+            } else if (status == StockStatus.POSTER_NOT_CONFIRMED) {
+                sendNotification(NotificationLoader.NotificationType.ACCEPT_BID, stock, companyDTO);
+            } else if (status == StockStatus.BAN) {
+                sendNotification(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyDTO);
+            }
+        }
         stock.setStatus(status);
         return save(stock);
     }
@@ -276,7 +326,7 @@ public class StockService {
 //                }
 //            }
 //        }
-        return setActive(id, StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY);
+        return setActive(id, StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY, stock.getCompanyId());
     }
 
     /**
@@ -336,8 +386,8 @@ public class StockService {
     /**
      * Получение всех акций с одним статусом.
      *
-     * @param status
-     * @return Список {@ling StockDTO}.
+     * @param status статус акции, по которому идёт фильтрация
+     * @return Список {@link StockDTO}.
      */
     public List<StockDTO> getStockByStatus(StockStatus status) {
         List<Stock> stocks = repository.getByStatusEquals(status);
@@ -358,5 +408,20 @@ public class StockService {
 //        }
 //        return res;
 //    }
+
+    /**
+     * Отправляет оповещение компании {@code companyDTO} оповещение типа {@code type}
+     * Оповещение должно удовлетворять требованию, что в нём есть только один ключ {@code stock_name}
+     * @param type Тип уведомления {@link org.promocat.promocat.utils.NotificationLoader.NotificationType}
+     * @param stockDTO Акция, имя которой будет подставлено в шаблон
+     * @param companyDTO Компания, которой будет отправлено оповещение
+     */
+    public void sendNotification(NotificationLoader.NotificationType type, StockDTO stockDTO, CompanyDTO companyDTO) {
+        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                .getNotification(type)
+                .set("stock_name", stockDTO.getName())
+                .build();
+        firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
+    }
 
 }

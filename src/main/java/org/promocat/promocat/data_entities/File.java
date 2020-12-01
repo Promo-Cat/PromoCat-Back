@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.promocat.promocat.data_entities.abstract_account.AbstractEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Lob;

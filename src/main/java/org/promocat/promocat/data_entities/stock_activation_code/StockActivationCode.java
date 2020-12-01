@@ -1,13 +1,12 @@
 package org.promocat.promocat.data_entities.stock_activation_code;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.promocat.promocat.data_entities.AbstractEntity;
+import org.promocat.promocat.data_entities.abstract_account.AbstractEntity;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 import org.promocat.promocat.data_entities.user.User;
 

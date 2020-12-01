@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.attributes.UserStatus;
-import org.promocat.promocat.data_entities.AbstractAccount;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.movement.Movement;
@@ -147,4 +147,5 @@ public class User extends AbstractAccount {
     public String getTaxConnectionId() {
         return taxConnectionId;
     }
+
 }

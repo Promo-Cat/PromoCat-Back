@@ -85,6 +85,14 @@ public class CompanyDTO extends AbstractAccountDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private CompanyStatus companyStatus;
 
+    @ApiModelProperty(
+            value = "Is User need notifications about stock status",
+            dataType = "Boolean",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    private Boolean needStockStatusNotifications;
+
+
     public CompanyDTO() {
         this.setAccountType(AccountType.COMPANY);
     }

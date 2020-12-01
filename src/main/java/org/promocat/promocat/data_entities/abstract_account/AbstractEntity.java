@@ -1,4 +1,4 @@
-package org.promocat.promocat.data_entities;
+package org.promocat.promocat.data_entities.abstract_account;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

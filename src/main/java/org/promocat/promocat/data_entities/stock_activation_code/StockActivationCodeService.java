@@ -3,10 +3,16 @@ package org.promocat.promocat.data_entities.stock_activation_code;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.user.UserService;
+import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.StockActivationCodeDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.mapper.StockActivationCodeMapper;
+import org.promocat.promocat.mapper.StockMapper;
+import org.promocat.promocat.mapper.UserMapper;
+import org.promocat.promocat.utils.TopicGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -25,15 +31,34 @@ public class StockActivationCodeService {
     private final StockActivationCodeMapper stockActivationCodeMapper;
     private final StockActivationCodeRepository stockActivationCodeRepository;
     private final UserRepository userRepository;
+    private final TopicGenerator topicGenerator;
+    private final UserMapper userMapper;
+    private final UserService userService;
+    private final StockMapper stockMapper;
 
+    @Autowired
     public StockActivationCodeService(final StockActivationCodeMapper stockActivationCodeMapper,
                                       final StockActivationCodeRepository stockActivationCodeRepository,
-                                      final UserRepository userRepository) {
+                                      final UserRepository userRepository,
+                                      final TopicGenerator topicGenerator,
+                                      final UserMapper userMapper,
+                                      final UserService userService,
+                                      final StockMapper stockMapper) {
         this.stockActivationCodeMapper = stockActivationCodeMapper;
         this.stockActivationCodeRepository = stockActivationCodeRepository;
         this.userRepository = userRepository;
+        this.topicGenerator = topicGenerator;
+        this.userMapper = userMapper;
+        this.userService = userService;
+        this.stockMapper = stockMapper;
     }
 
+    /**
+     * Сохранение {@link StockActivationCodeDTO} в БД.
+     *
+     * @param dto объектное представление кода активации.
+     * @return представление кода активации в БД. {@link StockActivationCode}
+     */
     public StockActivationCodeDTO save(StockActivationCodeDTO dto) {
         return stockActivationCodeMapper.toDto(stockActivationCodeRepository.save(stockActivationCodeMapper.toEntity(dto)));
     }
@@ -103,7 +128,13 @@ public class StockActivationCodeService {
             user.setStockCity(entity.getStockCity());
             entity.setActive(false);
             save(stockActivationCodeMapper.toDto(entity));
-            userRepository.save(user);
+            UserDTO userDTO = userMapper.toDto(userRepository.save(user));
+            userService.subscribeOnTopic(
+                    userDTO,
+                    topicGenerator.getStockTopicForUser(
+                            stockMapper.toDto(entity.getStockCity().getStock())
+                    )
+            );
             return true;
         } else {
             return false;

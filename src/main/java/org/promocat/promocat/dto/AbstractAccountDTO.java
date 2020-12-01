@@ -1,6 +1,7 @@
 package org.promocat.promocat.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,5 +35,12 @@ public class AbstractAccountDTO extends AbstractDTO {
 
     @JsonIgnore
     private String token;
+
+    @ApiModelProperty(
+            value = "Users token for notification",
+            dataType = "String"
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String googleToken;
 
 }

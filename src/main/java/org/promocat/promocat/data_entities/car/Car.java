@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.promocat.promocat.attributes.CarVerifyingStatus;
-import org.promocat.promocat.data_entities.AbstractEntity;
+import org.promocat.promocat.data_entities.abstract_account.AbstractEntity;
 import org.promocat.promocat.data_entities.car.car_photo.CarPhoto;
 import org.promocat.promocat.data_entities.car.sts.Sts;
 import org.promocat.promocat.data_entities.user.User;

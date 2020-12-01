@@ -1,6 +1,6 @@
 package org.promocat.promocat.mapper;
 
-import org.promocat.promocat.data_entities.AbstractEntity;
+import org.promocat.promocat.data_entities.abstract_account.AbstractEntity;
 import org.promocat.promocat.dto.AbstractDTO;
 
 /**
