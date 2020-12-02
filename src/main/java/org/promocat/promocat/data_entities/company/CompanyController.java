@@ -490,12 +490,13 @@ public class CompanyController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/company/token", method = RequestMethod.POST)
-    public ResponseEntity<CompanyDTO> addToken(@RequestHeader("token") final String token) {
+    public ResponseEntity<CompanyDTO> addToken(@RequestHeader("token") final String token,
+                                               @RequestParam("googleToken") final String googleToken) {
         CompanyDTO dto = companyService.findByToken(token);
         if (dto.getGoogleToken() != null) {
             companyService.unsubscribeCompanyFromDefaultTopics(dto);
         }
-        dto.setGoogleToken(token);
+        dto.setGoogleToken(googleToken);
         companyService.subscribeCompanyOnDefaultTopics(dto);
         return ResponseEntity.ok(companyService.save(dto));
     }
