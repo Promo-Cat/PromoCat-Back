@@ -245,12 +245,13 @@ public class AdminController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/admin/token", method = RequestMethod.POST)
-    public ResponseEntity<AdminDTO> addToken(@RequestHeader("token") final String token) {
+    public ResponseEntity<AdminDTO> addToken(@RequestHeader("token") final String token,
+                                             @RequestParam("googleToken") final String googleToken) {
         AdminDTO dto = adminService.findByToken(token);
         if (dto.getGoogleToken() != null) {
             adminService.unsubscribeAdminFromDefaultTopics(dto);
         }
-        dto.setGoogleToken(token);
+        dto.setGoogleToken(googleToken);
         adminService.subscribeAdminOnDefaultTopics(dto);
         return ResponseEntity.ok(adminService.save(dto));
     }
