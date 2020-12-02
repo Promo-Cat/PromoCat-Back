@@ -479,12 +479,13 @@ public class UserController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/token", method = RequestMethod.POST)
-    public ResponseEntity<UserDTO> addToken(@RequestHeader("token") final String token) {
+    public ResponseEntity<UserDTO> addToken(@RequestHeader("token") final String token,
+                                            @RequestParam("googleToken") final String googleToken) {
         UserDTO dto = userService.findByToken(token);
         if (dto.getGoogleToken() != null) {
             userService.unsubscribeUserFromDefaultTopics(dto);
         }
-        dto.setGoogleToken(token);
+        dto.setGoogleToken(googleToken);
         userService.subscribeUserOnDefaultTopics(dto);
         return ResponseEntity.ok(userService.save(dto));
     }
