@@ -123,7 +123,7 @@ public class StockService {
         dto.setFare(parametersService.getPanel());
         dto.setPrepayment(parametersService.getParameters().getPrepayment());
         dto.setPostpayment(parametersService.getParameters().getPostpayment());
-        Company company = companyRepository.getOne(dto.getId());
+        Company company = companyRepository.getOne(dto.getCompanyId());
         NotificationDTO notification = notificationBuilderFactory.getBuilder()
                 .getNotification(NotificationLoader.NotificationType.BID_ENTRY)
                 .set("stock_name", dto.getName())
