@@ -6,6 +6,8 @@ target/
 
 app.log
 
+templates.json
+
 ### STS ###
 .apt_generated
 .classpath
