@@ -11,4 +11,5 @@
     <include file="liquibase/user/db.changelog.user.xml"/>
     <include file="liquibase/company/db.changelog.company.xml"/>
     <include file="liquibase/admin/db.changelog.admin.xml"/>
+    <include file="liquibase/stock/db.changelog.stock.xml"/>
 </databaseChangeLog>
