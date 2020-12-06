@@ -558,19 +558,6 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.findByOrganizationName(organizationName));
     }
 
-    @ApiOperation(value = "Get company by mail",
-            notes = "Returning company, which mail specified in params",
-            response = CompanyDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Company not found", response = ApiException.class),
-            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
-    })
-    @RequestMapping(path = "/admin/company/mail", method = RequestMethod.GET)
-    public ResponseEntity<CompanyDTO> getByMail(@RequestParam("mail") final String mail) {
-        return ResponseEntity.ok(companyService.findByMail(mail));
-    }
-
-
     @ApiOperation(value = "Get poster example", notes = "Returning example of poster (.pdf)", response = Resource.class)
     @ApiResponses(value = {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),

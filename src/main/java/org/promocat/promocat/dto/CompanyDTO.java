@@ -11,7 +11,6 @@ import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.constraints.RequiredForFull;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,16 +46,6 @@ public class CompanyDTO extends AbstractAccountDTO {
             "Работа ведется только с юридическими лицами.")
 //    @NotBlank(message = "ИНН организации не может быть пустым.")
     private String inn;
-
-    @ApiModelProperty(
-            value = "Company Email",
-            dataType = "String",
-            allowableValues = "Standard email format."
-    )
-    @Email
-    @RequiredForFull
-//    @NotBlank(message = "Имя почты не может быть пустым.")
-    private String mail;
 
     @ApiModelProperty(
             value = "Stocks list",

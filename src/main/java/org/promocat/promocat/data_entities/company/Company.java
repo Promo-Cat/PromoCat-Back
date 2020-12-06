@@ -11,7 +11,6 @@ import org.promocat.promocat.data_entities.abstract_account.AbstractAccount;
 import org.promocat.promocat.data_entities.stock.Stock;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.util.Set;
 
@@ -53,16 +52,6 @@ public class Company extends AbstractAccount {
     @Column(name = "inn")
     public String getInn() {
         return inn;
-    }
-
-    /**
-     * Почта руководителя.
-     */
-    @Email
-//    @NotBlank(message = "Имя почты не может быть пустым.")
-    @Column(name = "mail", unique = true)
-    public String getMail() {
-        return mail;
     }
 
     /**

@@ -18,8 +18,6 @@ public interface CompanyRepository extends AbstractAccountRepository<Company> {
 
     Optional<Company> findByOrganizationName(String organizationName);
 
-    Optional<Company> findByMail(String mail);
-
     List<Company> findAllByInn(String inn);
 
     List<Company> findAllByInnAndVerified(String inn, boolean verified);

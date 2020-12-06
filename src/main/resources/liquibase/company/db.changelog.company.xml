@@ -14,4 +14,7 @@
             <column name="need_stock_status_notifications" type="BOOLEAN" defaultValue="true"/>
         </addColumn>
     </changeSet>
+    <changeSet id="06.12.2020-01" author="d.lyskin">
+        <dropColumn tableName="company" columnName="mail"/>
+    </changeSet>
 </databaseChangeLog>

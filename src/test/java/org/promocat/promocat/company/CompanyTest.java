@@ -72,7 +72,6 @@ public class CompanyTest {
         assertEquals(beforeAll.company1DTO.getId(), that.getId());
         assertEquals(beforeAll.company1DTO.getInn(), that.getInn());
         assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
-        assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
     }
 
@@ -101,7 +100,6 @@ public class CompanyTest {
         assertEquals(beforeAll.company1DTO.getId(), that.getId());
         assertEquals(beforeAll.company1DTO.getInn(), that.getInn());
         assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
-        assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
     }
 
@@ -115,24 +113,6 @@ public class CompanyTest {
         this.mockMvc.perform(get("/admin/company/telephone?telephone=+7(456)982-23-29")
                 .header("token", beforeAll.adminToken))
                 .andExpect(status().is4xxClientError());
-    }
-
-    /**
-     * Получение компании по почте.
-     */
-    @Test
-    public void testGetCompanyByMail() throws Exception {
-        MvcResult result = this.mockMvc.perform(get("/admin/company/mail?mail=" + beforeAll.company1DTO.getMail())
-                .header("token", beforeAll.adminToken))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        CompanyDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
-        assertEquals(beforeAll.company1DTO.getId(), that.getId());
-        assertEquals(beforeAll.company1DTO.getInn(), that.getInn());
-        assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
-        assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
-        assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
     }
 
     /**
@@ -160,7 +140,6 @@ public class CompanyTest {
         assertEquals(beforeAll.company1DTO.getId(), that.getId());
         assertEquals(beforeAll.company1DTO.getInn(), that.getInn());
         assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
-        assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
     }
 
@@ -234,7 +213,6 @@ public class CompanyTest {
         assertEquals(beforeAll.company1DTO.getId(), that.getId());
         assertEquals(beforeAll.company1DTO.getInn(), that.getInn());
         assertEquals(beforeAll.company1DTO.getOrganizationName(), that.getOrganizationName());
-        assertEquals(beforeAll.company1DTO.getMail(), that.getMail());
         assertEquals(beforeAll.company1DTO.getTelephone(), that.getTelephone());
     }
 
@@ -249,7 +227,6 @@ public class CompanyTest {
     public void testUpdateCompanyByCompanyToken() throws Exception {
         CompanyDTO company = new CompanyDTO();
         company.setTelephone("+7(456)456-22-22");
-        company.setMail("bnm@mail.ru");
         company.setOrganizationName("test0");
         company.setId(beforeAll.company1DTO.getId());
         company.setAccountType(AccountType.COMPANY);
@@ -268,7 +245,6 @@ public class CompanyTest {
         CompanyDTO that = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CompanyDTO.class);
         assertEquals(that.getId(), beforeAll.company1DTO.getId());
         assertEquals(that.getTelephone(), "+7(456)456-22-22");
-        assertEquals(that.getMail(), "bnm@mail.ru");
         assertEquals(that.getOrganizationName(), "test0");
     }
 
