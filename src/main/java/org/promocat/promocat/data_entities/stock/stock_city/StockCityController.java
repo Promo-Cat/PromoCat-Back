@@ -8,17 +8,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.dto.CityDTO;
 import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.city.ApiCityNotActiveException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Objects;
@@ -58,8 +56,16 @@ public class StockCityController {
     })
     @RequestMapping(value = "/api/company/stock/city", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockCityDTO> save(@Valid @RequestBody StockCityDTO stockCityDTO) {
-        if (cityService.isActiveById(stockCityDTO.getCityId()) &&
-                Objects.nonNull(stockService.findById(stockCityDTO.getStockId()))) {
+        StockDTO stockDTO = stockService.findById(stockCityDTO.getStockId());
+
+        if (cityService.isActiveById(stockCityDTO.getCityId()) && Objects.nonNull(stockDTO)) {
+            CityDTO cityDTO = cityService.findById(stockCityDTO.getCityId());
+
+            if (stockCityService.existsByStockAndCity(stockDTO, cityDTO)) {
+                StockCityDTO actualStockCityDTO = stockCityService.findByStockAndCity(stockDTO, cityDTO);
+                stockCityDTO.setId(actualStockCityDTO.getId());
+            }
+
             return ResponseEntity.ok(stockCityService.save(stockCityDTO));
         } else {
             throw new ApiCityNotActiveException(String.format("City %s is not active", stockCityDTO.getCityId()));

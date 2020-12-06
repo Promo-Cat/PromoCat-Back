@@ -65,6 +65,17 @@ public class StockCityService {
     }
 
     /**
+     * Проверка на существование промежуточной сущности связывающей акцию и город.
+     *
+     * @param stockDTO акция.
+     * @param cityDTO  город.
+     * @return true если существует, false иначе
+     */
+    public Boolean existsByStockAndCity(final StockDTO stockDTO, final CityDTO cityDTO) {
+        return stockCityRepository.existsByStockAndCity(stockMapper.toEntity(stockDTO), cityMapper.toEntity(cityDTO));
+    }
+
+    /**
      * Поиск промежуточной сущности связывающей акцию и город.
      *
      * @param stock акция.

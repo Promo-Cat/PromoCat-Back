@@ -13,4 +13,5 @@ import java.util.Optional;
 @Repository
 public interface StockCityRepository extends JpaRepository<StockCity, Long> {
     Optional<StockCity> findByStockAndCity(Stock stock, City city);
+    Boolean existsByStockAndCity(Stock stock, City city);
 }
