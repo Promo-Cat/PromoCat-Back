@@ -31,6 +31,7 @@ public class FirebaseTemplates {
      * @throws IOException
      */
     private static String getAccessToken() throws IOException {
+        log.info("GOOGLE_APPLICATION_CREDENTIALS={}", System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));
         GoogleCredential googleCredential = GoogleCredential
                 .fromStream(new FileInputStream(System.getenv("GOOGLE_APPLICATION_CREDENTIALS")))
                 .createScoped(Arrays.asList(SCOPES));
