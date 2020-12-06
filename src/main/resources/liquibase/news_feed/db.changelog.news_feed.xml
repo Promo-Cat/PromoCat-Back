@@ -17,4 +17,7 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet id="7.12.2020-01" author="d.lyskin">
+        <modifyDataType tableName="news_feed" columnName="description" newDataType="VARCHAR(3000)"/>
+    </changeSet>
 </databaseChangeLog>
