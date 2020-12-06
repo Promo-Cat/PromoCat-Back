@@ -113,24 +113,6 @@ public class CompanyService extends AbstractAccountService {
     }
 
     /**
-     * Поиск компании по почте.
-     *
-     * @param mail почта компании.
-     * @return представление компании в БД. {@link CompanyDTO}
-     * @throws ApiCompanyNotFoundException если такой компании не существует.
-     */
-    public CompanyDTO findByMail(final String mail) {
-        Optional<Company> company = companyRepository.findByMail(mail);
-        if (company.isPresent()) {
-            log.info("Found company with org mail: {}", mail);
-            return companyMapper.toDto(company.get());
-        } else {
-            log.warn("No company with org mail: {}", mail);
-            throw new ApiCompanyNotFoundException(String.format("No company with such mail: %s in db.", mail));
-        }
-    }
-
-    /**
      * Получить все акции компании.
      *
      * @param dto объектное представление компании.
