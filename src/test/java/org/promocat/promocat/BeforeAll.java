@@ -218,7 +218,6 @@ public class BeforeAll {
         company.setTelephone(telephone);
         company.setInn(INN);
         company.setOrganizationName(name);
-        company.setMail(mail);
         company.setAccountType(AccountType.COMPANY);
         company.setCompanyStatus(CompanyStatus.FULL);
         company = companyRepository.save(company);

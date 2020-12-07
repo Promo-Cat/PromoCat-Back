@@ -27,7 +27,6 @@ public class Company extends AbstractAccount {
 
     private String organizationName;
     private String inn;
-    private String mail;
     private Set<Stock> stocks;
     private Stock currentStock;
     private Boolean verified;
