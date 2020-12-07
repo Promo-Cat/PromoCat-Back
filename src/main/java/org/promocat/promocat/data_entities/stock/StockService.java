@@ -13,7 +13,6 @@ import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
-import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.promocat.promocat.mapper.StockMapper;
@@ -173,7 +172,7 @@ public class StockService {
     /**
      * Удаление акции по её завершению.
      */
-    @Scheduled(cron = "0 59 23 * * *")
+    @Scheduled(cron = "0 50 21 * * *")
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
