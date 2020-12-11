@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -233,7 +234,9 @@ public class UserController {
             throw new ApiStockActivationStatusException("Stock isn`t active now");
         }
         stockActivationService.create(userDTO, stockCityId);
-        return ResponseEntity.ok(stockActivationCodeService.get(userDTO, stockCity));
+        ResponseEntity<StockActivationCodeDTO> response = ResponseEntity.ok(stockActivationCodeService.get(userDTO, stockCity));
+        response.getHeaders().setZonedDateTime("timestemp", ZonedDateTime.now());
+        return response;
     }
 
     @ApiOperation(value = "Add user movement.",
