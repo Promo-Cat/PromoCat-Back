@@ -39,16 +39,9 @@ import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusR
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -234,9 +227,9 @@ public class UserController {
             throw new ApiStockActivationStatusException("Stock isn`t active now");
         }
         stockActivationService.create(userDTO, stockCityId);
-        ResponseEntity<StockActivationCodeDTO> response = ResponseEntity.ok(stockActivationCodeService.get(userDTO, stockCity));
-        response.getHeaders().setZonedDateTime("timestemp", ZonedDateTime.now());
-        return response;
+        StockActivationCodeDTO stockActivationCodeDTO = stockActivationCodeService.get(userDTO, stockCity);
+        stockActivationCodeDTO.setTimestemp(System.currentTimeMillis());
+        return ResponseEntity.ok(stockActivationCodeDTO);
     }
 
     @ApiOperation(value = "Add user movement.",

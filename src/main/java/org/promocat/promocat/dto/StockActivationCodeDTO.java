@@ -35,4 +35,7 @@ public class StockActivationCodeDTO extends AbstractDTO {
     @ApiModelProperty(value = "Time which code is valid", dataType = "LocalDateTime", required = false)
     private LocalDateTime validUntil;
 
+    @ApiModelProperty(value = "Current time", dataType = "Long")
+    private Long timestemp;
+
 }
