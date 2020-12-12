@@ -15,8 +15,8 @@ public class ParametersService {
      * Стандартное значение комисси для инициализации таблицы с параметрами
      */
     // TODO: 05.06.2020 Сделать через инициализатор. @Value подгружается после загрузки контекста.
-    private static final Double DEFAULT_PANEL_VALUE = 1.0;
-    private static final Double DEFAULT_PREPAYMENT_VALUE = 240.0;
+    private static final Double DEFAULT_PANEL_VALUE = 2.4;
+    private static final Double DEFAULT_PREPAYMENT_VALUE = 180.0;
     private static final Double DEFAULT_POSTPAYMENT_VALUE = 3.6;
 
     private final ParametersRepository parametersRepository;
