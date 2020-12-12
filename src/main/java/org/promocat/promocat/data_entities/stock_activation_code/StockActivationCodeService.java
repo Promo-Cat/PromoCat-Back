@@ -147,12 +147,12 @@ public class StockActivationCodeService {
 
     @Scheduled(cron = "0 0/3 * * * *")
     private void deactivateInvalidCodes() {
-        log.info("[Scheduled] Deactivating codes");
+//        log.info("[Scheduled] Deactivating codes");
         int count = stockActivationCodeRepository.saveAll(
                 stockActivationCodeRepository.getAllByValidUntilBefore(LocalDateTime.now()).stream()
                         .peek(x -> x.setActive(false))
                         .collect(Collectors.toList())
         ).size();
-        log.info("Deactivated {} codes", count);
+//        log.info("Deactivated {} codes", count);
     }
 }
