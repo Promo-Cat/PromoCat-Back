@@ -194,7 +194,7 @@ public class UserController {
     })
     @RequestMapping(value = "/api/user/stock/{stockCityId}", method = RequestMethod.POST)
     public ResponseEntity<StockActivationCodeDTO> setUserStockCity(@PathVariable("stockCityId") final Long stockCityId,
-                                                               @RequestHeader("token") final String token) {
+                                                                   @RequestHeader("token") final String token) {
         UserDTO userDTO = userService.findByToken(token);
         if (Objects.isNull(userDTO.getInn())) {
             throw new ApiUserInnException(String.format("User with telephone: %s doesn't have Inn for participate" +
@@ -513,7 +513,7 @@ public class UserController {
     })
     @RequestMapping(value = "/api/user/notification/stocks/{flag}", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> turnNotificationStocks(@RequestHeader("token") final String token,
-                                                             @PathVariable("flag") final Boolean flag) {
+                                                          @PathVariable("flag") final Boolean flag) {
         UserDTO dto = userService.findByToken(token);
         if (flag) {
             userService.subscribeOnTopic(dto, topicGenerator.getNewStockTopicForUser());
