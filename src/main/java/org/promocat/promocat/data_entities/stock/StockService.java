@@ -250,6 +250,7 @@ public class StockService {
         receipt.setReceiptId(response.getReceiptId());
         receipt.setReceiptLink(response.getLink());
         receipt.setDateTime(LocalDateTime.now());
+        receipt.setUserId(user.getId());
 
         receiptService.save(receipt);
     }

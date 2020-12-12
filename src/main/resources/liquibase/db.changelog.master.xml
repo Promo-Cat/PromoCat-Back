@@ -12,4 +12,5 @@
     <include file="liquibase/company/db.changelog.company.xml"/>
     <include file="liquibase/admin/db.changelog.admin.xml"/>
     <include file="liquibase/stock/db.changelog.stock.xml"/>
+    <include file="liquibase/receipt/db.changelog.receipt.xml"/>
 </databaseChangeLog>
