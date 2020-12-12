@@ -183,6 +183,7 @@ public class StockService {
     }
 
     public void endUpStock(StockDTO stockDTO) {
+        log.info("Ending up stock with id {}", stockDTO.getId());
         setActive(stockDTO.getId(), StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY, stockDTO.getCompanyId());
         Path path = Paths.get(PATH, stockDTO.getName() + stockDTO.getId().toString() + ".csv");
         if (Objects.isNull(stockDTO.getCities())) {
