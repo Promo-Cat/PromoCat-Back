@@ -135,6 +135,9 @@ public abstract class SoapRequest {
                 XmlField annotation = declaredField.getAnnotation(XmlField.class);
                 declaredField.setAccessible(true);
                 Object fieldValue = declaredField.get(obj);
+                if (fieldValue == null) {
+                    continue;
+                }
 //                declaredField.setAccessible(false);
                 if (fieldValue instanceof List) {
                     List fieldValueList = (List) fieldValue;
