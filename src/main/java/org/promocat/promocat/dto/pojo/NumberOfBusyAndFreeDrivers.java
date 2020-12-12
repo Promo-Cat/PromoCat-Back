@@ -1,28 +1,33 @@
 package org.promocat.promocat.dto.pojo;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by Danil Lyskin at 20:42 12.12.2020
  */
 
 @ApiModel(
-        value = "Count free and busy users",
-        description = "DTO with count free and busy users"
+        value = "Number of free and busy users",
+        description = "DTO with number of free and busy users"
 )
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class NumberOfBusyAndFreeDrivers {
-    /**
-     * Количество свободных пользователей со статусом Full.
-     */
-    public Long free;
 
-    /**
-     * Количество пользователей, которые в данный момент учавствуют в акциях.
-     */
-    public Long busy;
+    @ApiModelProperty(
+            value = "Number of free users",
+            dataType = "Long"
+    )
+    private Long free;
 
-    public NumberOfBusyAndFreeDrivers(Long free, Long busy) {
-        this.free = free;
-        this.busy = busy;
-    }
+    @ApiModelProperty(
+            value = "Number of busy users",
+            dataType = "Long"
+    )
+    private Long busy;
 }

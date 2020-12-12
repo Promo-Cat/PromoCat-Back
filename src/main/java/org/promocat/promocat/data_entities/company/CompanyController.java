@@ -623,9 +623,9 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.save(dto));
     }
 
-    @ApiOperation(value = "Return free and busy users",
-            notes = "Return count free and busy users",
-            response = CompanyDTO.class)
+    @ApiOperation(value = "Return number of free and busy users",
+            notes = "Return number of free and busy users",
+            response = NumberOfBusyAndFreeDrivers.class)
     @ApiResponses(value = {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
