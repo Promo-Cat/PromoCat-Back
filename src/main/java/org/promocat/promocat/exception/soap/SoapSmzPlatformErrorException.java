@@ -9,7 +9,7 @@ public class SoapSmzPlatformErrorException extends SoapException {
     private SmzPlatformError error;
 
     public SoapSmzPlatformErrorException(SmzPlatformError message) {
-        super(message.getMessage());
+        super(message == null ? "Null message" : message.getMessage());
         this.error = message;
     }
 }
