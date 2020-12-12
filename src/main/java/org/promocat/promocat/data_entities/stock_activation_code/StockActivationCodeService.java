@@ -153,6 +153,8 @@ public class StockActivationCodeService {
                         .peek(x -> x.setActive(false))
                         .collect(Collectors.toList())
         ).size();
-//        log.info("Deactivated {} codes", count);
+        if (count > 0) {
+            log.info("Deactivated {} codes", count);
+        }
     }
 }
