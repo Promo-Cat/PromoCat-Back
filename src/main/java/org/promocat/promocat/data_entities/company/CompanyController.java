@@ -631,4 +631,14 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.save(dto));
     }
 
+    @ApiOperation(value = "Return number of free and busy users",
+            notes = "Return number of free and busy users",
+            response = NumberOfBusyAndFreeDrivers.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/company/user/free_busy", method = RequestMethod.GET)
+    public ResponseEntity<NumberOfBusyAndFreeDrivers> getFreeBusyUsers() {
+        return ResponseEntity.ok(userService.findFreeBusyCount());
+    }
 }

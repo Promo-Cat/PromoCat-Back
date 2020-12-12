@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.user;
 
+import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.abstract_account.AbstractAccountRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,4 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserRepository extends AbstractAccountRepository<User> {
+    Long countByStatusEqualsAndStockCityNull(final UserStatus status);
+    Long countByStockCityNotNull();
 }
