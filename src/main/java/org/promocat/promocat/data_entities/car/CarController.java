@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -140,9 +141,20 @@ public class CarController {
     @ApiOperation(value = "Get car by user",
             notes = "Returning car, which owned by user",
             response = CarDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Car not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 406,
+                    message = "Some DB problems",
+                    response = ApiException.class)
+    })
     @RequestMapping(path = "/api/user/car", method = RequestMethod.GET)
     public ResponseEntity<CarDTO> getCarByUser(@RequestHeader("token") String token) {
         UserDTO user = userService.findByToken(token);
+        if (user.getCarId() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         return ResponseEntity.ok(carService.findById(user.getCarId()));
     }
 
