@@ -45,4 +45,15 @@ public class ReceiptDTO extends AbstractDTO {
     @NotNull(message = "Время создания чека должно быть задано.")
     private LocalDateTime dateTime;
 
+    /**
+     * ID пользователя в бд, на которого выписан чек
+     */
+    @ApiModelProperty(
+            value = "User ID",
+            dataType = "Long",
+            required = true
+    )
+    @NotBlank(message = "Идентификатор пользователя не может быть пустым.")
+    private Long userId;
+
 }
