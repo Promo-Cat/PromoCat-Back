@@ -622,4 +622,9 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.save(dto));
     }
 
+
+    @RequestMapping(value = "/api/company/user/free_busy", method = RequestMethod.GET)
+    public ResponseEntity<Pair<Long>> getFreeBusyUsers() {
+        return ResponseEntity.ok(userService.findFreeBusyCount());
+    }
 }
