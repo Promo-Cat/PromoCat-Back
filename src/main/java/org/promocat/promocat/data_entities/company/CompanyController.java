@@ -603,6 +603,7 @@ public class CompanyController {
 
         return ResponseEntity.ok(dto);
     }
+
     @ApiOperation(value = "Update subscribing company from stock status change",
             notes = "Update subscribing user, true - subscribe, false - unsubscribe",
             response = CompanyDTO.class)
@@ -622,9 +623,14 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.save(dto));
     }
 
-
+    @ApiOperation(value = "Return free and busy users",
+            notes = "Return count free and busy users",
+            response = CompanyDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
     @RequestMapping(value = "/api/company/user/free_busy", method = RequestMethod.GET)
-    public ResponseEntity<Pair<Long>> getFreeBusyUsers() {
+    public ResponseEntity<NumberOfBusyAndFreeDrivers> getFreeBusyUsers() {
         return ResponseEntity.ok(userService.findFreeBusyCount());
     }
 }

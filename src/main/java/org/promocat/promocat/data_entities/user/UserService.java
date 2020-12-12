@@ -9,7 +9,7 @@ import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.*;
-import org.promocat.promocat.dto.pojo.Pair;
+import org.promocat.promocat.dto.pojo.NumberOfBusyAndFreeDrivers;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
@@ -294,9 +294,13 @@ public class UserService extends AbstractAccountService {
         unsubscribeFromTopic(user, topicGenerator.getNewStockTopicForUser());
     }
 
-    public Pair<Long> findFreeBusyCount() {
+    /**
+     * Возвращает количество свободных и занятых пользователей.
+     * @return {@Link NumberOfBusyAndFreeDrivers}
+     */
+    public NumberOfBusyAndFreeDrivers findFreeBusyCount() {
         Long free = userRepository.countByStatusEqualsAndStockCityNull(UserStatus.FULL);
         Long busy = userRepository.countByStockCityNotNull();
-        return new Pair<>(free, busy);
+        return new NumberOfBusyAndFreeDrivers(free, busy);
     }
 }
