@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -169,8 +170,8 @@ public class CompanyController {
     @RequestMapping(path = {"/api/company/stock/{stockId}/promoCodeActivation/summary",
             "/admin/statistic/company/stock/{stockId}/promoCodeActivation/summary"}, method = RequestMethod.GET)
     public ResponseEntity<String> getSummaryPromoCodeActivation(@PathVariable("stockId") Long stockId,
-                                                              @RequestParam(value = "companyId", required = false) Long companyId,
-                                                              @RequestHeader("token") String token) {
+                                                                @RequestParam(value = "companyId", required = false) Long companyId,
+                                                                @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(
@@ -385,11 +386,18 @@ public class CompanyController {
     })
     @RequestMapping(path = {"/api/company/stock/history",
             "/admin/statistic/company/stock/history"}, method = RequestMethod.GET)
-    public ResponseEntity<Set<StockDTO>> getAllStocks(
+    public ResponseEntity<Set<StockWithSummaryDistanceDTO>> getAllStocks(
             @RequestParam(value = "companyId", required = false) Long companyId,
             @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
-        return ResponseEntity.ok(companyService.getAllStocks(companyDTO));
+        return ResponseEntity.ok(
+                companyService.getAllStocks(companyDTO).stream()
+                        .map(x -> new StockWithSummaryDistanceDTO(
+                                x,
+                                movementService.getSummaryMovementsByStock(x.getId()).getDistance()
+                        ))
+                        .collect(Collectors.toSet())
+        );
     }
 
     @ApiOperation(value = "Get total mileage in all cities for all time.",
@@ -592,7 +600,7 @@ public class CompanyController {
     })
     @RequestMapping(value = "/api/company/notification/news/{flag}", method = RequestMethod.POST)
     public ResponseEntity<CompanyDTO> turnNotificationNews(@RequestHeader("token") final String token,
-                                                        @PathVariable("flag") final Boolean flag) {
+                                                           @PathVariable("flag") final Boolean flag) {
         CompanyDTO dto = companyService.findByToken(token);
 
         if (flag) {
@@ -603,6 +611,7 @@ public class CompanyController {
 
         return ResponseEntity.ok(dto);
     }
+
     @ApiOperation(value = "Update subscribing company from stock status change",
             notes = "Update subscribing user, true - subscribe, false - unsubscribe",
             response = CompanyDTO.class)
@@ -613,7 +622,7 @@ public class CompanyController {
     })
     @RequestMapping(value = "/api/company/notification/stocks/{flag}", method = RequestMethod.POST)
     public ResponseEntity<CompanyDTO> turnNotificationStocks(@RequestHeader("token") final String token,
-                                                          @PathVariable("flag") final Boolean flag) {
+                                                             @PathVariable("flag") final Boolean flag) {
         CompanyDTO dto = companyService.findByToken(token);
         if (flag == null) {
             throw new ApiServerErrorException("Flag (boolean) parameter is required, but does`t present");
