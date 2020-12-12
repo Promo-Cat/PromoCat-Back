@@ -28,6 +28,9 @@ public class FirebaseNotificationManager {
         } catch (FirebaseMessagingException e) {
             log.error("Couldn't send notification: {} for topic: {} ", notif, topic);
             throw new ApiNotificationSendException(String.format("Couldn't send notification for topic: %s", topic));
+        } catch (NullPointerException e) {
+            log.error("Some of fields of the notifications is null: {}", notif, e);
+            return null;
         }
     }
 
@@ -45,34 +48,43 @@ public class FirebaseNotificationManager {
         } catch (FirebaseMessagingException e) {
             log.error("Couldn't send notification: {} to user with id: {} ", notif, accountDTO.getId());
             throw new ApiNotificationSendException(String.format("Couldn't send notification to user with id: %d", accountDTO.getId()));
+        } catch (NullPointerException e) {
+            log.error("Some of fields of the notifications is null: {}", notif, e);
+            return null;
         }
     }
 
 
-    public int subscribeAccountOnTopic(AbstractAccountDTO userDTO, String topic) {
+    public int subscribeAccountOnTopic(AbstractAccountDTO accountDTO, String topic) {
         try {
             TopicManagementResponse response = FirebaseMessaging.getInstance().subscribeToTopic(
-                    List.of(userDTO.getGoogleToken()),
+                    List.of(accountDTO.getGoogleToken()),
                     topic
             );
             return response.getSuccessCount();
         } catch (FirebaseMessagingException e) {
-            log.error("Couldn't subscribe user with id: {} on topic: {}", userDTO.getId(), topic);
-            throw new ApiSubscribeTopicException(String.format("Couldn't subscribe user with id: %d on topic: %s", userDTO.getId(), topic));
+            log.error("Couldn't subscribe user with id: {} on topic: {}", accountDTO.getId(), topic);
+            throw new ApiSubscribeTopicException(String.format("Couldn't subscribe user with id: %d on topic: %s", accountDTO.getId(), topic));
+        } catch (NullPointerException e) {
+            log.error("Some of fields of the params (account of topic) is null", e);
+            return 0;
         }
 
     }
 
-    public int unsubscribeAccountFromTopic(AbstractAccountDTO userDTO, String topic) {
+    public int unsubscribeAccountFromTopic(AbstractAccountDTO accountDTO, String topic) {
         try {
             TopicManagementResponse response = FirebaseMessaging.getInstance().unsubscribeFromTopic(
-                    List.of(userDTO.getGoogleToken()),
+                    List.of(accountDTO.getGoogleToken()),
                     topic
             );
             return response.getSuccessCount();
         } catch (FirebaseMessagingException e) {
-            log.error("Couldn't unsubscribe user with id: {} on topic: {}", userDTO.getId(), topic);
-            throw new ApiSubscribeTopicException(String.format("Couldn't unsubscribe user with id: %d on topic: %s", userDTO.getId(), topic));
+            log.error("Couldn't unsubscribe user with id: {} on topic: {}", accountDTO.getId(), topic);
+            throw new ApiSubscribeTopicException(String.format("Couldn't unsubscribe user with id: %d on topic: %s", accountDTO.getId(), topic));
+        } catch (NullPointerException e) {
+            log.error("Some of fields of the params (account of topic) is null", e);
+            return 0;
         }
     }
 
