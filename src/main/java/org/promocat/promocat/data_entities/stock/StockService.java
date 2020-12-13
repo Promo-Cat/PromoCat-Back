@@ -447,6 +447,7 @@ public class StockService {
      */
     @Scheduled(cron = "0 0 10 * * *")
     public void sendNotificationForActiveStock() {
+        log.info("Start send notification for new active stock");
         LocalDateTime timeNow = LocalDateTime.now();
         LocalDateTime time = LocalDateTime.of(timeNow.getYear(), timeNow.getMonth(), timeNow.getDayOfMonth(),
                 0, 0, 0);
@@ -457,6 +458,7 @@ public class StockService {
         NotificationLoader.NotificationType typeForUser = NotificationLoader.NotificationType.NEW_STOCK;
 
         stocks.forEach(stock -> {
+            log.info("Send push for stock with id: {}", stock.getId());
             Optional<Company> optionalCompany = companyRepository.findById(stock.getCompanyId());
             if (optionalCompany.isPresent()) {
                 CompanyDTO company = companyMapper.toDto(optionalCompany.get());
