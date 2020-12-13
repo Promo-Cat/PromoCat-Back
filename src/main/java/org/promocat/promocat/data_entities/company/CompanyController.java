@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.CompanyStatus;
+import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.movement.MovementService;
@@ -392,6 +393,7 @@ public class CompanyController {
         CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
         return ResponseEntity.ok(
                 companyService.getAllStocks(companyDTO).stream()
+                        .filter(x -> x.getStatus().ordinal() > StockStatus.ACTIVE.ordinal())
                         .map(x -> new StockWithSummaryDistanceDTO(
                                 x,
                                 movementService.getSummaryMovementsByStock(x.getId()).getDistance()
