@@ -203,6 +203,7 @@ public class UserService extends AbstractAccountService {
      */
     public double earnMoney(final UserDTO user, final Double distance) {
         Double earnedMoney = paymentService.distanceToMoney(distance);
+        // FIXME: 12.12.2020 Get fare from stock
         log.info("User with id {} earned {} money", user.getId(), earnedMoney);
         user.setBalance(user.getBalance() + earnedMoney);
         user.setTotalEarnings(user.getTotalEarnings() + earnedMoney);
