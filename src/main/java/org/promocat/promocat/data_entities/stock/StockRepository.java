@@ -17,6 +17,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     List<Stock> getByStatusEquals(StockStatus status);
     List<Stock> getByStatusIsNot(StockStatus status);
     List<Stock> getByStartTimeLessThanEqualAndStatusEquals(LocalDateTime time, StockStatus status);
+    List<Stock> getByStartTimeGreaterThanEqualAndStatusEquals(final LocalDateTime time, StockStatus status);
 
     Optional<Stock> findById(Long id);
 
