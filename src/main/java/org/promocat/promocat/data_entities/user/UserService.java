@@ -297,11 +297,20 @@ public class UserService extends AbstractAccountService {
 
     /**
      * Возвращает количество свободных и занятых пользователей.
-     * @return {@Link NumberOfBusyAndFreeDrivers}
+     * @return {@link NumberOfBusyAndFreeDrivers}
      */
     public NumberOfBusyAndFreeDrivers findFreeBusyCount() {
         Long free = userRepository.countByStatusEqualsAndStockCityNull(UserStatus.FULL);
         Long busy = userRepository.countByStockCityNotNull();
         return new NumberOfBusyAndFreeDrivers(free, busy);
+    }
+
+    public void deleteGoogleTokenIfExist(String googleToken) {
+        Optional<User> userOptional = userRepository.findByGoogleToken(googleToken);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setGoogleToken(null);
+            userRepository.save(user);
+        }
     }
 }

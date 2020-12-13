@@ -481,6 +481,7 @@ public class UserController {
         if (dto.getGoogleToken() != null) {
             userService.unsubscribeUserFromDefaultTopics(dto);
         }
+        userService.deleteGoogleTokenIfExist(googleToken);
         dto.setGoogleToken(googleToken);
         userService.subscribeUserOnDefaultTopics(dto);
         return ResponseEntity.ok(userService.save(dto));
