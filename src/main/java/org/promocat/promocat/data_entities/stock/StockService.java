@@ -284,13 +284,13 @@ public class StockService {
                         .build();
                 firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
             } else if (status == StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY) {
-                sendNotification(NotificationLoader.NotificationType.COMPANY_STOCK_END, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.COMPANY_STOCK_END, stock, companyDTO);
             } else if (status == StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE) {
-                sendNotification(NotificationLoader.NotificationType.ACCEPT_PAY, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_PAY, stock, companyDTO);
             } else if (status == StockStatus.POSTER_NOT_CONFIRMED) {
-                sendNotification(NotificationLoader.NotificationType.ACCEPT_BID, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_BID, stock, companyDTO);
             } else if (status == StockStatus.BAN) {
-                sendNotification(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyDTO);
             }
         }
         stock.setStatus(status);
@@ -417,7 +417,7 @@ public class StockService {
      * @param stockDTO Акция, имя которой будет подставлено в шаблон
      * @param companyDTO Компания, которой будет отправлено оповещение
      */
-    public void sendNotification(NotificationLoader.NotificationType type, StockDTO stockDTO, CompanyDTO companyDTO) {
+    public void sendNotificationForCompany(NotificationLoader.NotificationType type, StockDTO stockDTO, CompanyDTO companyDTO) {
         NotificationDTO notification = notificationBuilderFactory.getBuilder()
                 .getNotification(type)
                 .set("stock_name", stockDTO.getName())
@@ -425,4 +425,47 @@ public class StockService {
         firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
     }
 
+    /**
+     * Отправляет оповещение пользователям, оповещение типа {@code type}
+     * Оповещение должно удовлетворять требованию, что в нём есть только один ключ {@code stock_name}
+     * @param type Тип уведомления {@link org.promocat.promocat.utils.NotificationLoader.NotificationType}
+     * @param stockDTO Акция, имя которой будет подставлено в шаблон
+     */
+    public void sendNotificationForUser(NotificationLoader.NotificationType type, StockDTO stockDTO) {
+        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                .getNotification(type)
+                .set("stock_name", stockDTO.getName())
+                .build();
+
+        firebaseNotificationManager.sendNotificationByTopic(notification, topicGenerator.getNewStockTopicForUser());
+    }
+
+    /**
+     * Отправляет оповещения в 10:00 по всем акциям, которые были активированы после 00:00 этого дня.
+     * Отправляет компании, которой принадлежит акция.
+     * Отправляет всем пользователям.
+     */
+    @Scheduled(cron = "0 0 10 * * *")
+    public void sendNotificationForActiveStock() {
+        LocalDateTime timeNow = LocalDateTime.now();
+        LocalDateTime time = LocalDateTime.of(timeNow.getYear(), timeNow.getMonth(), timeNow.getDayOfMonth(),
+                0, 0, 0);
+        List<StockDTO> stocks = repository.getByStartTimeGreaterThanEqualAndStatusEquals(time, StockStatus.ACTIVE).
+                stream().map(mapper::toDto).collect(Collectors.toList());
+
+        NotificationLoader.NotificationType typeForCompany = NotificationLoader.NotificationType.STOCK_STARTED;
+        NotificationLoader.NotificationType typeForUser = NotificationLoader.NotificationType.NEW_STOCK;
+
+        stocks.forEach(stock -> {
+            Optional<Company> optionalCompany = companyRepository.findById(stock.getCompanyId());
+            if (optionalCompany.isPresent()) {
+                CompanyDTO company = companyMapper.toDto(optionalCompany.get());
+                sendNotificationForCompany(typeForCompany, stock, company);
+            } else {
+                log.error("Couldn't find company with id: {}", stock.getCompanyId());
+            }
+
+            sendNotificationForUser(typeForUser, stock);
+        });
+    }
 }
