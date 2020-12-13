@@ -28,7 +28,7 @@ public class FirebaseNotificationManager {
         } catch (FirebaseMessagingException e) {
             log.error("Couldn't send notification: {} for topic: {} ", notif, topic);
             throw new ApiNotificationSendException(String.format("Couldn't send notification for topic: %s", topic));
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             log.error("Some of fields of the notifications is null: {}", notif, e);
             return null;
         }
@@ -48,7 +48,7 @@ public class FirebaseNotificationManager {
         } catch (FirebaseMessagingException e) {
             log.error("Couldn't send notification: {} to user with id: {} ", notif, accountDTO.getId());
             throw new ApiNotificationSendException(String.format("Couldn't send notification to user with id: %d", accountDTO.getId()));
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             log.error("Some of fields of the notifications is null: {}", notif, e);
             return null;
         }
@@ -65,7 +65,7 @@ public class FirebaseNotificationManager {
         } catch (FirebaseMessagingException e) {
             log.error("Couldn't subscribe user with id: {} on topic: {}", accountDTO.getId(), topic);
             throw new ApiSubscribeTopicException(String.format("Couldn't subscribe user with id: %d on topic: %s", accountDTO.getId(), topic));
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             log.error("Some of fields of the params (account of topic) is null", e);
             return 0;
         }
@@ -82,7 +82,7 @@ public class FirebaseNotificationManager {
         } catch (FirebaseMessagingException e) {
             log.error("Couldn't unsubscribe user with id: {} on topic: {}", accountDTO.getId(), topic);
             throw new ApiSubscribeTopicException(String.format("Couldn't unsubscribe user with id: %d on topic: %s", accountDTO.getId(), topic));
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             log.error("Some of fields of the params (account of topic) is null", e);
             return 0;
         }
