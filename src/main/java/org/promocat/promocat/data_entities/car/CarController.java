@@ -10,24 +10,22 @@ import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.car.car_photo.CarPhotoService;
 import org.promocat.promocat.data_entities.car.sts.StsService;
 import org.promocat.promocat.data_entities.user.UserService;
-import org.promocat.promocat.dto.AbstractAccountDTO;
 import org.promocat.promocat.dto.CarDTO;
-import org.promocat.promocat.dto.FileDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
-import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.AccountRepositoryManager;
+import org.promocat.promocat.utils.FirebaseNotificationManager;
+import org.promocat.promocat.utils.NotificationBuilderFactory;
+import org.promocat.promocat.utils.NotificationLoader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -38,8 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -56,18 +52,24 @@ public class CarController {
     private final CarPhotoService carPhotoService;
     private final StsService stsService;
     private final AccountRepositoryManager accountRepositoryManager;
+    private final FirebaseNotificationManager firebaseNotificationManager;
+    private final NotificationBuilderFactory notificationBuilderFactory;
 
     @Autowired
     public CarController(final CarService carService,
                          final UserService userService,
                          final CarPhotoService carPhotoService,
                          final StsService stsService,
-                         final AccountRepositoryManager accountRepositoryManager) {
+                         final AccountRepositoryManager accountRepositoryManager,
+                         final FirebaseNotificationManager firebaseNotificationManager,
+                         final NotificationBuilderFactory notificationBuilderFactory) {
         this.carService = carService;
         this.userService = userService;
         this.carPhotoService = carPhotoService;
         this.stsService = stsService;
         this.accountRepositoryManager = accountRepositoryManager;
+        this.firebaseNotificationManager = firebaseNotificationManager;
+        this.notificationBuilderFactory = notificationBuilderFactory;
     }
 
     @ApiOperation(value = "Add car",
@@ -234,6 +236,14 @@ public class CarController {
     @RequestMapping(path = "/admin/car/{id}/verify/accept", method = RequestMethod.POST)
     public ResponseEntity<CarDTO> verifyCar(@PathVariable("id") Long carId) {
         CarDTO carDTO = carService.findById(carId);
+
+        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                .getNotification(NotificationLoader.NotificationType.CAR_VERIFY)
+                .set("number", carDTO.getNumber())
+                .set("region", carDTO.getRegion())
+                .build();
+        firebaseNotificationManager.sendNotificationByAccount(notification, userService.findById(carDTO.getUserId()));
+
         return ResponseEntity.ok(carService.verifyCar(carDTO));
     }
 
@@ -244,6 +254,14 @@ public class CarController {
     public ResponseEntity<CarDTO> declineCar(@PathVariable("id") Long carId) {
         CarDTO carDTO = carService.findById(carId);
         carDTO.setVerifyingStatus(CarVerifyingStatus.FAILED);
+
+        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                .getNotification(NotificationLoader.NotificationType.CAR_NOT_VERIFY)
+                .set("number", carDTO.getNumber())
+                .set("region", carDTO.getRegion())
+                .build();
+        firebaseNotificationManager.sendNotificationByAccount(notification, userService.findById(carDTO.getUserId()));
+
         return ResponseEntity.ok(carService.save(carDTO));
     }
 
