@@ -18,7 +18,9 @@ public interface NotificationLoader {
         COMPANY_STOCK_END,
         USER_NEW_PUBLICATION,
         COMPANY_NEW_PUBLICATION,
-        BID_ENTRY
+        BID_ENTRY,
+        CAR_VERIFY,
+        CAR_NOT_VERIFY
     }
 
 
