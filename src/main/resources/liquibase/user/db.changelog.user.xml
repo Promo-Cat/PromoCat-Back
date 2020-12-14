@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
     <changeSet id="11.11.2020-01" author="d.lyskin">
         <addColumn tableName="users">
-            <column name= "google_token" type="VARCHAR(255)">
+            <column name="google_token" type="VARCHAR(255)">
                 <constraints unique="true"/>
             </column>
         </addColumn>
@@ -17,4 +17,18 @@
     <changeSet id="30.11.2020-02" author="r.devyatilov">
         <dropColumn tableName="users" columnName="need_stock_status_notifications"/>
     </changeSet>
+    <changeSet id="13.12.2020-01" author="r.devyatilov">
+        <addColumn tableName="users">
+            <column name="giveaway_personal_number" type="BIGINT">
+                <constraints unique="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="13.12.2020-02" author="r.devyatilov">
+        <createSequence sequenceName="giveaway_number_seq"
+                        maxValue="99999999"
+                        startValue="1"
+                        incrementBy="1" />
+    </changeSet>
+
 </databaseChangeLog>
