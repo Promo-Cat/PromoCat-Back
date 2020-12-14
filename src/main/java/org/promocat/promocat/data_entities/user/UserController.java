@@ -555,6 +555,9 @@ public class UserController {
     }
 
 
+    @ApiOperation(value = "Get giveaway data.",
+            notes = "Returns goals and personal number of user in giveaway",
+            response = GiveawayDTO.class)
     @RequestMapping(value = "/api/user/giveaway", method = RequestMethod.GET)
     public ResponseEntity<GiveawayDTO> getGiveawayInformation(@RequestHeader("token") String token) {
         UserDTO user = userService.findByToken(token);
@@ -570,6 +573,9 @@ public class UserController {
         return ResponseEntity.ok(giveawayDTO);
     }
 
+    @ApiOperation(value = "Photo of ferrari",
+            notes = "Returns photo of ferrari for giveaway",
+            response = Resource.class)
     @RequestMapping(value = "/api/user/giveaway/photo", method = RequestMethod.GET)
     public ResponseEntity<Resource> getGiveawayImage() {
         log.debug("! {}", new FileSystemResource("").getFile().getAbsolutePath());
