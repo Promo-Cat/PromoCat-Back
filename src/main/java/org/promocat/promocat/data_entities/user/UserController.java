@@ -18,10 +18,7 @@ import org.promocat.promocat.data_entities.stock_activation.StockActivationServi
 import org.promocat.promocat.data_entities.stock_activation_code.StockActivationCodeService;
 import org.promocat.promocat.data_entities.user_ban.UserBanService;
 import org.promocat.promocat.dto.*;
-import org.promocat.promocat.dto.pojo.DistanceDTO;
-import org.promocat.promocat.dto.pojo.SimpleStockDTO;
-import org.promocat.promocat.dto.pojo.StockWithStockCityDTO;
-import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
+import org.promocat.promocat.dto.pojo.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.car.ApiCarNotFoundException;
 import org.promocat.promocat.exception.stock.ApiStockActivationStatusException;
@@ -30,6 +27,7 @@ import org.promocat.promocat.exception.user.codes.ApiUserAccountException;
 import org.promocat.promocat.exception.user.codes.ApiUserInnException;
 import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
 import org.promocat.promocat.exception.user.codes.ApiUserStockException;
+import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.util.tax.ApiTaxRequestIdException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.TopicGenerator;
@@ -37,11 +35,20 @@ import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -545,5 +552,38 @@ public class UserController {
         }
 
         return ResponseEntity.ok(dto);
+    }
+
+
+    @RequestMapping(value = "/api/user/giveaway", method = RequestMethod.GET)
+    public ResponseEntity<GiveawayDTO> getGiveawayInformation(@RequestHeader("token") String token) {
+        UserDTO user = userService.findByToken(token);
+        GiveawayDTO giveawayDTO = new GiveawayDTO();
+        giveawayDTO.setPersonalProgress(stockActivationService.getCountByEndedStocksAndUserId(user.getId()));
+        giveawayDTO.setGlobalProgress(stockActivationService.getCountByEndedStock());
+        String personalNumber = user.getGiveawayPersonalNumber();
+        if (user.getGiveawayPersonalNumber() == null && giveawayDTO.getPersonalProgress() >= 10) {
+            personalNumber = userService.getGiveawayPersonalNumberByUser(user);
+        }
+        giveawayDTO.setPersonalCode(personalNumber);
+
+        return ResponseEntity.ok(giveawayDTO);
+    }
+
+    @RequestMapping(value = "/api/user/giveaway/photo", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getGiveawayImage() {
+        log.debug("! {}", new FileSystemResource("").getFile().getAbsolutePath());
+        File file = new File("src/main/resources/static/img/ferrari.png");
+        try {
+            byte[] fileInBytes = FileCopyUtils.copyToByteArray(file);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"ferrari.png\"")
+                    .body(new ByteArrayResource(fileInBytes));
+        } catch (IOException e) {
+            log.error("IOException ", e);
+            throw new ApiServerErrorException("Failed to copy file to array");
+        }
     }
 }

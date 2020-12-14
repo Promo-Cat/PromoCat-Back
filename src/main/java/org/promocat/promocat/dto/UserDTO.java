@@ -113,6 +113,13 @@ public class UserDTO extends AbstractAccountDTO {
     @RequiredForFull
     private String taxConnectionId;
 
+    @ApiModelProperty(
+            value = "Users personal number in ferrary giveaway",
+            dataType = "String",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    private String giveawayPersonalNumber;
+
     public UserDTO() {
         this.setAccountType(AccountType.USER);
     }
