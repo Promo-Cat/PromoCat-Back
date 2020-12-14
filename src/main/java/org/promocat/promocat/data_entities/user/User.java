@@ -39,7 +39,9 @@ public class User extends AbstractAccount {
     private UserStatus status;
     private String account;
     private String inn;
+
     private String taxConnectionId;
+    private Long giveawayPersonalNumber;
 
     public User(City city, Double balance, StockCity stockCity) {
         this.city = city;
@@ -147,5 +149,11 @@ public class User extends AbstractAccount {
     public String getTaxConnectionId() {
         return taxConnectionId;
     }
+
+    @Column(name = "giveaway_personal_number", unique = true)
+    public Long getGiveawayPersonalNumber() {
+        return giveawayPersonalNumber;
+    }
+
 
 }

@@ -43,6 +43,7 @@ public class UserMapper extends AbstractMapper<User, UserDTO> {
                     m.skip(UserDTO::setCityId);
                     m.skip(UserDTO::setStockCityId);
                     m.skip(UserDTO::setCarId);
+//                    m.skip(UserDTO::setGiveawayPersonalNumber);
                 }).setPostConverter(toDtoConverter());
         mapper.createTypeMap(UserDTO.class, User.class)
                 .addMappings(m -> {
@@ -64,11 +65,20 @@ public class UserMapper extends AbstractMapper<User, UserDTO> {
         return Objects.isNull(source) || Objects.isNull(source.getCar()) ? null : source.getCar().getId();
     }
 
+    private String getGiveawayNumber(User source) {
+        StringBuilder number = new StringBuilder(String.valueOf(source.getGiveawayPersonalNumber()));
+        while (number.length() < 8) {
+            number.insert(0, '0');
+        }
+        return number.toString();
+    }
+
     @Override
     void mapSpecificFields(User source, UserDTO destination) {
         destination.setCityId(getCityId(source));
         destination.setStockCityId(getStockCityId(source));
         destination.setCarId(getCarId(source));
+//        destination.setGiveawayPersonalNumber(getGiveawayNumber(source));
     }
 
     @Override

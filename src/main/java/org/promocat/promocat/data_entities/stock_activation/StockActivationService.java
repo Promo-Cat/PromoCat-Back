@@ -112,4 +112,12 @@ public class StockActivationService {
                 .map(x -> new PromoCodeActivationStatisticDTO(x.getCityId(), (long)x.getUsers().size()))
                 .collect(Collectors.toList());
     }
+
+    public Long getCountByEndedStock() {
+        return stockActivationRepository.countAllEnded();
+    }
+
+    public Long getCountByEndedStocksAndUserId(Long userId) {
+        return stockActivationRepository.countAllEndedByUser(userId);
+    }
 }
