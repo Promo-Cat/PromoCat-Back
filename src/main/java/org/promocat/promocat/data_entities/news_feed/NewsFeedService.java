@@ -76,6 +76,16 @@ public class NewsFeedService {
     }
 
     /**
+     * Обновление новости в БД.
+     *
+     * @param dto объектное представление новости.
+     * @return представление новости в БД. {@link NewsFeedDTO}
+     */
+    public NewsFeedDTO update(final NewsFeedDTO dto) {
+        return newsFeedMapper.toDto(newsFeedRepository.save(newsFeedMapper.toEntity(dto)));
+    }
+
+    /**
      * Поиск новости по {@code id}.
      *
      * @param id новости.
