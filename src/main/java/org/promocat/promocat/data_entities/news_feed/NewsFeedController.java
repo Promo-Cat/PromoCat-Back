@@ -58,7 +58,7 @@ public class NewsFeedController {
     public ResponseEntity<NewsFeedDTO> updateNews(@Valid @RequestBody NewsFeedDTO newsFeed) {
         NewsFeedDTO actualNewsFeed = newsFeedService.findById(newsFeed.getId());
         EntityUpdate.copyNonNullProperties(newsFeed, actualNewsFeed);
-        return ResponseEntity.ok(newsFeedService.save(actualNewsFeed));
+        return ResponseEntity.ok(newsFeedService.update(actualNewsFeed));
     }
 
     @ApiOperation(value = "Delete news by id")
