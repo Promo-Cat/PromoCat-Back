@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.stock_activation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.user_ban.UserBanService;
 import org.promocat.promocat.dto.StockActivationDTO;
@@ -14,9 +15,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class StockActivationService {
 
     private final StockActivationRepository stockActivationRepository;
@@ -114,7 +117,8 @@ public class StockActivationService {
     }
 
     public Long getCountByEndedStock() {
-        return stockActivationRepository.countAllEnded();
+        Long aLong = stockActivationRepository.countAllUsersWhoEndedStocksMoreThan(10L);
+        return Objects.requireNonNullElse(aLong, 0L);
     }
 
     public Long getCountByEndedStocksAndUserId(Long userId) {
