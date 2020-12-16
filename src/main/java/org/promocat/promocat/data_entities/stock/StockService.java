@@ -213,14 +213,6 @@ public class StockService {
             stockDTO.setStatus(StockStatus.ACTIVE);
             stockDTO = save(stockDTO);
             log.info("Update stock status for {} on Active", stockDTO.getId());
-            NotificationDTO notification = notificationBuilderFactory.getBuilder()
-                    .getNotification(NotificationLoader.NotificationType.NEW_STOCK)
-                    .set("stock_name", stockDTO.getName())
-                    .build();
-            firebaseNotificationManager.sendNotificationByTopic(
-                    notification,
-                    topicGenerator.getNewStockTopicForUser()
-            );
         });
         log.info("Update stocks end");
     }
