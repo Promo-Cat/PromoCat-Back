@@ -13,4 +13,6 @@ public interface AbstractAccountRepository<T extends AbstractAccount> extends Jp
 
     Optional<T> getByToken(String token);
 
+    Optional<T> getByGoogleToken(String googleToken);
+
 }

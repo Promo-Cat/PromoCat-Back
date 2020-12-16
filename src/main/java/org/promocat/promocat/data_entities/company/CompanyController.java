@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
@@ -506,6 +507,7 @@ public class CompanyController {
         if (dto.getGoogleToken() != null) {
             companyService.unsubscribeCompanyFromDefaultTopics(dto);
         }
+        companyService.deleteGoogleTokenIfExist(googleToken, AccountType.COMPANY);
         dto.setGoogleToken(googleToken);
         companyService.subscribeCompanyOnDefaultTopics(dto);
         return ResponseEntity.ok(companyService.save(dto));

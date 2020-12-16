@@ -5,10 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.promocat.promocat.attributes.CarVerifyingStatus;
-import org.promocat.promocat.attributes.StockStatus;
-import org.promocat.promocat.attributes.TaxUserStatus;
-import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.attributes.*;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.car.CarService;
 import org.promocat.promocat.data_entities.movement.MovementService;
@@ -488,7 +485,7 @@ public class UserController {
         if (dto.getGoogleToken() != null) {
             userService.unsubscribeUserFromDefaultTopics(dto);
         }
-        userService.deleteGoogleTokenIfExist(googleToken);
+        userService.deleteGoogleTokenIfExist(googleToken, AccountType.USER);
         dto.setGoogleToken(googleToken);
         userService.subscribeUserOnDefaultTopics(dto);
         return ResponseEntity.ok(userService.save(dto));

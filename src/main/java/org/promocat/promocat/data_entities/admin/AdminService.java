@@ -6,12 +6,12 @@ import org.promocat.promocat.data_entities.abstract_account.AbstractAccountServi
 import org.promocat.promocat.dto.AdminDTO;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.MultiPartFileDTO;
-import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.admin.ApiAdminAlreadyExistsException;
 import org.promocat.promocat.exception.admin.ApiAdminNotFoundException;
 import org.promocat.promocat.exception.util.ApiFileFormatException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.AdminMapper;
+import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.FirebaseNotificationManager;
 import org.promocat.promocat.utils.MultiPartFileUtils;
 import org.promocat.promocat.utils.TopicGenerator;
@@ -53,8 +53,9 @@ public class AdminService extends AbstractAccountService {
                         final MultiPartFileUtils multiPartFileUtils,
                         final SoapClient soapClient,
                         final TopicGenerator topicGenerator,
-                        final FirebaseNotificationManager firebaseNotificationManager) {
-        super(firebaseNotificationManager);
+                        final FirebaseNotificationManager firebaseNotificationManager,
+                        final AccountRepositoryManager accountRepositoryManager) {
+        super(firebaseNotificationManager, accountRepositoryManager);
         this.adminRepository = adminRepository;
         this.adminMapper = adminMapper;
         this.multiPartFileUtils = multiPartFileUtils;

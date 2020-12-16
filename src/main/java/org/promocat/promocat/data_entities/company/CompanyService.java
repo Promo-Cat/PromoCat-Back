@@ -10,6 +10,7 @@ import org.promocat.promocat.exception.company.ApiCompanyNotFoundException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.promocat.promocat.util_entities.TokenService;
+import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.FirebaseNotificationManager;
 import org.promocat.promocat.utils.TopicGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,9 @@ public class CompanyService extends AbstractAccountService {
                           final StockService stockService,
                           final TokenService tokenService,
                           final TopicGenerator topicGenerator,
-                          final FirebaseNotificationManager firebaseNotificationManager) {
-        super(firebaseNotificationManager);
+                          final FirebaseNotificationManager firebaseNotificationManager,
+                          final AccountRepositoryManager accountRepositoryManager) {
+        super(firebaseNotificationManager, accountRepositoryManager);
         this.companyMapper = companyMapper;
         this.companyRepository = companyRepository;
         this.stockService = stockService;
