@@ -35,7 +35,9 @@ public interface StockActivationRepository extends JpaRepository<StockActivation
     @Query(
             "select count(p) " +
                     "from StockActivation p " +
-                    "where p.stockCity.stock.status>3"
+                    "where p.stockCity.stock.status>3 " +
+                    "group by p.user " +
+                    "having count(p.stockCity.stock) >= ?1 "
     )
-    Long countAllEnded();
+    Long countAllUsersWhoEndedStocksMoreThan(Long endedStocks);
 }
