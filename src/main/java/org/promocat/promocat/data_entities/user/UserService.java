@@ -55,8 +55,9 @@ public class UserService extends AbstractAccountService {
                        final PaymentService paymentService,
                        final SoapClient soapClient,
                        final FirebaseNotificationManager firebaseNotificationManager,
-                       final TopicGenerator topicGenerator) {
-        super(firebaseNotificationManager);
+                       final TopicGenerator topicGenerator,
+                       final AccountRepositoryManager accountRepositoryManager) {
+        super(firebaseNotificationManager, accountRepositoryManager);
         this.userRepository = userRepository;
         this.userMapper = mapper;
         this.stockService = stockService;
@@ -305,14 +306,7 @@ public class UserService extends AbstractAccountService {
         return new NumberOfBusyAndFreeDrivers(free, busy);
     }
 
-    public void deleteGoogleTokenIfExist(String googleToken) {
-        Optional<User> userOptional = userRepository.findByGoogleToken(googleToken);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setGoogleToken(null);
-            userRepository.save(user);
-        }
-    }
+
 
     public String getGiveawayPersonalNumberByUser(UserDTO userDTO) {
         if (userDTO.getGiveawayPersonalNumber() != null) {

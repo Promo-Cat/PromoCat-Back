@@ -251,6 +251,7 @@ public class AdminController {
         if (dto.getGoogleToken() != null) {
             adminService.unsubscribeAdminFromDefaultTopics(dto);
         }
+        adminService.deleteGoogleTokenIfExist(googleToken, AccountType.ADMIN);
         dto.setGoogleToken(googleToken);
         adminService.subscribeAdminOnDefaultTopics(dto);
         return ResponseEntity.ok(adminService.save(dto));
