@@ -279,7 +279,7 @@ public class StockService {
                 sendNotificationForCompany(NotificationLoader.NotificationType.COMPANY_STOCK_END, stock, companyDTO);
             } else if (status == StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE) {
                 sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_PAY, stock, companyDTO);
-            } else if (status == StockStatus.POSTER_NOT_CONFIRMED) {
+            } else if (status == StockStatus.POSTER_CONFIRMED_WITHOUT_PREPAY) {
                 sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_BID, stock, companyDTO);
             } else if (status == StockStatus.BAN) {
                 sendNotificationForCompany(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyDTO);
