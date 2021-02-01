@@ -21,6 +21,8 @@ import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusR
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
+import org.promocat.promocat.utils.soap.operations.np_profile.GetTaxpayerStatusRequest;
+import org.promocat.promocat.utils.soap.operations.np_profile.GetTaxpayerStatusResponse;
 import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsRequest;
 import org.promocat.promocat.utils.soap.util.TaxUtils;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
@@ -245,6 +247,10 @@ public class UserService extends AbstractAccountService {
     public GetBindPartnerStatusResponse getTaxStatus(final UserDTO user) {
         return ((GetBindPartnerStatusResponse)
                 soapClient.send(new GetBindPartnerStatusRequest(user.getTaxConnectionId())));
+    }
+
+    public GetTaxpayerStatusResponse getTaxpayer(final UserDTO user) {
+        return ((GetTaxpayerStatusResponse) soapClient.send(new GetTaxpayerStatusRequest(user.getInn())));
     }
 
     public TaxUserStatus isUserBinded(final UserDTO user) {

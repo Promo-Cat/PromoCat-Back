@@ -28,6 +28,30 @@ import java.util.Set;
 public class UserDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
+            value = "Users first name",
+            dataType = "String",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String firstName;
+
+    @ApiModelProperty(
+            value = "Users second name",
+            dataType = "String",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String secondName;
+
+    @ApiModelProperty(
+            value = "Users patronymic",
+            dataType = "String",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String patronymic;
+
+    @ApiModelProperty(
             value = "Users city",
             dataType = "String"
     )

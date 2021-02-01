@@ -39,6 +39,9 @@ public class User extends AbstractAccount {
     private UserStatus status;
     private String account;
     private String inn;
+    private String firstName;
+    private String secondName;
+    private String patronymic;
 
     private String taxConnectionId;
     private Long giveawayPersonalNumber;
@@ -48,6 +51,30 @@ public class User extends AbstractAccount {
         this.balance = balance;
         this.stockCity = stockCity;
         this.setAccountType(AccountType.USER);
+    }
+
+    /**
+     * Имя пользователя.
+     */
+    @Column(name = "first_name")
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * Фамилия пользователя.
+     */
+    @Column(name = "second_name")
+    public String getSecondName() {
+        return secondName;
+    }
+
+    /**
+     * Отчество пользователя.
+     */
+    @Column(name = "patronymic")
+    public String getPatronymic() {
+        return patronymic;
     }
 
     /**

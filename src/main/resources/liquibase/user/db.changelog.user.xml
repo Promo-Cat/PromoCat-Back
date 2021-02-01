@@ -30,5 +30,12 @@
                         startValue="1"
                         incrementBy="1" />
     </changeSet>
+    <changeSet id="01.02.2021-01" author="d.lyskin">
+        <addColumn tableName="users">
+            <column name="first_name" type="VARCHAR(20)"/>
+            <column name="second_name" type="VARCHAR(30)"/>
+            <column name="patronymic" type="VARCHAR(30)"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

@@ -31,6 +31,7 @@ import org.promocat.promocat.utils.TopicGenerator;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
+import org.promocat.promocat.utils.soap.operations.np_profile.GetTaxpayerStatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
@@ -44,8 +45,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -396,6 +395,10 @@ public class UserController {
         GetBindPartnerStatusResponse result = userService.getTaxStatus(user);
         if (COMPLETED.equals(result.getResult())) {
             user.setInn(result.getInn());
+            GetTaxpayerStatusResponse taxpayerResult = userService.getTaxpayer(user);
+            user.setFirstName(taxpayerResult.getFirstName());
+            user.setSecondName(taxpayerResult.getSecondName());
+            user.setPatronymic(taxpayerResult.getPatronymic());
             userService.update(user, user);
             return ResponseEntity.ok("{}");
         } else {
