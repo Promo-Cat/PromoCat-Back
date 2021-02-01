@@ -33,11 +33,11 @@ public interface StockActivationRepository extends JpaRepository<StockActivation
     Long countAllEndedByUser(Long userId);
 
     @Query(
-            "select count(p) " +
+            "select count(DISTINCT p.user) " +
                     "from StockActivation p " +
                     "where p.stockCity.stock.status>3 " +
                     "group by p.user " +
-                    "having count(p.stockCity.stock) >= ?1 "
+                    "having count(p.stockCity) >= ?1 "
     )
     Long countAllUsersWhoEndedStocksMoreThan(Long endedStocks);
 }
