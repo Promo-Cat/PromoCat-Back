@@ -4,11 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Not;
 import org.promocat.promocat.utils.InMemoryNotificationLoader;
 import org.promocat.promocat.utils.NotificationLoader;
-import org.promocat.promocat.utils.TopicGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -77,6 +74,26 @@ public class NotificationDTO {
          */
         public Builder set(Map<String, String> entries) {
             entries.forEach(this::set);
+            return Builder.this;
+        }
+
+        /**
+         * Устанавливает заголовок уведомления.
+         * @param title заголовок уведомления.
+         * @return экземпляр этого-же {@link Builder}
+         */
+        public Builder setTitle(String title) {
+            NotificationDTO.this.title = title;
+            return Builder.this;
+        }
+
+        /**
+         * Устанавливает тело уведомления.
+         * @param body тело уведомления.
+         * @return экземпляр этого-же {@link Builder}
+         */
+        public Builder setBody(String body) {
+            NotificationDTO.this.body = body;
             return Builder.this;
         }
 
