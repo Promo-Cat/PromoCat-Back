@@ -5,6 +5,7 @@ import org.promocat.promocat.data_entities.abstract_account.AbstractAccountRepos
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,6 +17,9 @@ public interface UserRepository extends AbstractAccountRepository<User> {
     Long countByStockCityNotNull();
 
     Optional<User> findByGoogleToken(String googleToken);
+    Optional<User> findByInn(String inn);
+
+    List<User> getAllByInnNotNull();
 
     @Query(value="SELECT nextval('giveaway_number_seq')", nativeQuery = true)
     Long getGiveawayNumber();
