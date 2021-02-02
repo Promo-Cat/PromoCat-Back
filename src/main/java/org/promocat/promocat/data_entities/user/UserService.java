@@ -367,7 +367,7 @@ public class UserService extends AbstractAccountService {
                     UserDTO user = userMapper.toDto(op.get());
                     x.getNotifs().forEach(y -> {
                         log.info("Saving notification for user with id {}", user.getId());
-                        NotifNPDDTO notifNPDDTO = new NotifNPDDTO(Long.valueOf(y.getId()), user.getId(),
+                        NotifNPDDTO notifNPDDTO = new NotifNPDDTO(y.getId(), user.getId(),
                                                                     y.getTitle(), y.getMessage(), false);
                         notifNPDService.save(notifNPDDTO);
                     });

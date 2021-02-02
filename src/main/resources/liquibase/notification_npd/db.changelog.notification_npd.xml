@@ -22,4 +22,7 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="users" validate="true"/>
     </changeSet>
+    <changeSet id="02.02.2021-03" author="d.lyskin">
+        <modifyDataType tableName="notifs_npd" columnName="notif_id" newDataType="VARCHAR(1024)"/>
+    </changeSet>
 </databaseChangeLog>

@@ -25,11 +25,11 @@ public class NotifNPDDTO extends AbstractDTO {
 
     @ApiModelProperty(
             value = "Notifications ID",
-            dataType = "Long",
+            dataType = "String",
             required = true
     )
     @NotNull(message = "ID не может быть пустым.")
-    private Long notifId;
+    private String notifId;
 
     @ApiModelProperty(
             value = "Users id",

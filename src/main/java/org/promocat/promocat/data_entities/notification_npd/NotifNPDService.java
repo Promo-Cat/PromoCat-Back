@@ -85,7 +85,7 @@ public class NotifNPDService {
         if (op.isPresent()) {
             UserDTO user = userMapper.toDto(op.get());
             PostNotificationsRequest post = new PostNotificationsRequest(String.valueOf(user.getInn()),
-                                                String.valueOf(dto.getNotifId()));
+                                                dto.getNotifId());
 
             PostNotificationsAckRequest postNotificationsAckRequest = new PostNotificationsAckRequest();
             postNotificationsAckRequest.setNotificationList(List.of(post));
