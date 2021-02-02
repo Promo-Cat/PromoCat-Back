@@ -24,14 +24,14 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class NotifNPD extends AbstractEntity {
 
-    private Long notifId;
+    private String notifId;
     private User user;
     private String title;
     private String body;
     private Boolean isOpen;
 
     @Column(name = "notif_id")
-    public Long getNotifId() {
+    public String getNotifId() {
         return notifId;
     }
 
