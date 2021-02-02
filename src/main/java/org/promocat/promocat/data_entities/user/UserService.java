@@ -347,6 +347,7 @@ public class UserService extends AbstractAccountService {
      */
     @Scheduled(cron = "0 */2 * * * *")
     private void saveNotifFromNPD() {
+        log.info("Start save notification from npd");
         List<UserDTO> users = userRepository.getAllByInnNotNull().stream().map(userMapper::toDto).collect(Collectors.toList());
         for (int i = 0; i < users.size() / MAX_COUNT_FOR_NPD + (users.size() % MAX_COUNT_FOR_NPD > 0 ? 1 : 0); i++) {
 
@@ -363,7 +364,7 @@ public class UserService extends AbstractAccountService {
                 if (op.isPresent()) {
                     UserDTO user = userMapper.toDto(op.get());
                     x.getNotifs().forEach(y -> {
-
+                        log.info("Saving notification for user with id {}", user.getId());
                         NotifNPDDTO notifNPDDTO = new NotifNPDDTO(Long.valueOf(y.getId()), user.getId(),
                                                                     y.getTitle(), y.getMessage(), false);
                         notifNPDService.save(notifNPDDTO);
