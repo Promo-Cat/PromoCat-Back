@@ -29,4 +29,7 @@
         <modifyDataType tableName="notifs_npd" columnName="title" newDataType="VARCHAR(1024)"/>
         <modifyDataType tableName="notifs_npd" columnName="body" newDataType="VARCHAR(1024)"/>
     </changeSet>
+    <changeSet id="02.02.2021-05" author="d.lyskin">
+        <addUniqueConstraint tableName="notifs_npd" columnNames="notif_id"/>
+    </changeSet>
 </databaseChangeLog>

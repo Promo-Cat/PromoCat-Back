@@ -30,7 +30,7 @@ public class NotifNPD extends AbstractEntity {
     private String body;
     private Boolean isOpen;
 
-    @Column(name = "notif_id")
+    @Column(name = "notif_id", unique = true)
     public String getNotifId() {
         return notifId;
     }
