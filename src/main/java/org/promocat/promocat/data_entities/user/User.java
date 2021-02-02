@@ -10,6 +10,7 @@ import org.promocat.promocat.data_entities.abstract_account.AbstractAccount;
 import org.promocat.promocat.data_entities.car.Car;
 import org.promocat.promocat.data_entities.city.City;
 import org.promocat.promocat.data_entities.movement.Movement;
+import org.promocat.promocat.data_entities.notification_npd.NotifNPD;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
 import javax.persistence.*;
@@ -33,6 +34,7 @@ public class User extends AbstractAccount {
     private Double balance = 0.0;
     private Car car;
     private Set<Movement> movements = new HashSet<>();
+    private Set<NotifNPD> notifs = new HashSet<>();
     private StockCity stockCity;
     private Double totalDistance = 0.0;
     private Double totalEarnings = 0.0;
@@ -110,6 +112,14 @@ public class User extends AbstractAccount {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public Set<Movement> getMovements() {
         return movements;
+    }
+
+    /**
+     * Уведомления от НПД.
+     */
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    public Set<NotifNPD> getNotifs() {
+        return notifs;
     }
 
     /**

@@ -36,6 +36,7 @@ public class SpringFoxConfig {
     public static final String USER_BAN = "User ban";
     public static final String PARAMETERS = "Parameters";
     public static final String NEWS_FEED = "News feed";
+    public static final String NOTIFNPD = "Notification npd";
 
     @Bean
     public Docket api() {
@@ -51,6 +52,7 @@ public class SpringFoxConfig {
                 .tags(new Tag(STOCK_CITY, "Stock and city controller"))
                 .tags(new Tag(MOVEMENT, "Movement controller"))
                 .tags(new Tag(NEWS_FEED, "News feed controller"))
+                .tags(new Tag(NOTIFNPD, "Notification npd controller"))
                 .apiInfo(apiDetails())
                 .useDefaultResponseMessages(false);
     }

@@ -6,13 +6,10 @@ import org.promocat.promocat.attributes.TaxUserStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
 import org.promocat.promocat.data_entities.movement.MovementService;
+import org.promocat.promocat.data_entities.notification_npd.NotifNPDService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
-import org.promocat.promocat.dto.MovementDTO;
-import org.promocat.promocat.dto.StockCityDTO;
-import org.promocat.promocat.dto.StockDTO;
-import org.promocat.promocat.dto.UserDTO;
-import org.promocat.promocat.dto.pojo.NotificationDTO;
+import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.NumberOfBusyAndFreeDrivers;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
@@ -27,11 +24,9 @@ import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPh
 import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
 import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsRequest;
 import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsResponse;
-import org.promocat.promocat.utils.soap.operations.notifications.PostNotificationsAckRequest;
 import org.promocat.promocat.utils.soap.operations.np_profile.GetTaxpayerStatusRequest;
 import org.promocat.promocat.utils.soap.operations.np_profile.GetTaxpayerStatusResponse;
 import org.promocat.promocat.utils.soap.operations.pojo.NotificationsRequest;
-import org.promocat.promocat.utils.soap.operations.pojo.PostNotificationsRequest;
 import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsRequest;
 import org.promocat.promocat.utils.soap.util.TaxUtils;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
@@ -39,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,7 +53,7 @@ public class UserService extends AbstractAccountService {
     private final PaymentService paymentService;
     private final SoapClient soapClient;
     private final TopicGenerator topicGenerator;
-    private final NotificationBuilderFactory notificationBuilderFactory;
+    private final NotifNPDService notifNPDService;
     private final int MAX_COUNT_FOR_NPD = 999;
 
     @Autowired
@@ -73,7 +67,7 @@ public class UserService extends AbstractAccountService {
                        final FirebaseNotificationManager firebaseNotificationManager,
                        final TopicGenerator topicGenerator,
                        final AccountRepositoryManager accountRepositoryManager,
-                       final NotificationBuilderFactory notificationBuilderFactory) {
+                       final NotifNPDService notifNPDService) {
         super(firebaseNotificationManager, accountRepositoryManager);
         this.userRepository = userRepository;
         this.userMapper = mapper;
@@ -83,7 +77,7 @@ public class UserService extends AbstractAccountService {
         this.stockCityService = stockCityService;
         this.paymentService = paymentService;
         this.topicGenerator = topicGenerator;
-        this.notificationBuilderFactory = notificationBuilderFactory;
+        this.notifNPDService = notifNPDService;
     }
 
     /**
@@ -352,11 +346,9 @@ public class UserService extends AbstractAccountService {
      * Рассылка уведомлений от налоговой.
      */
     @Scheduled(cron = "0 */2 * * * *")
-    private void sendNotifFromNPD() {
+    private void saveNotifFromNPD() {
         List<UserDTO> users = userRepository.getAllByInnNotNull().stream().map(userMapper::toDto).collect(Collectors.toList());
         for (int i = 0; i < users.size() / MAX_COUNT_FOR_NPD + (users.size() % MAX_COUNT_FOR_NPD > 0 ? 1 : 0); i++) {
-            PostNotificationsAckRequest postNotificationsAckRequest = new PostNotificationsAckRequest();
-            List<PostNotificationsRequest> postList = new ArrayList<>();
 
             List<UserDTO> tmpUsers = users.subList(i * MAX_COUNT_FOR_NPD, (i + 1) * MAX_COUNT_FOR_NPD);
             GetNotificationsRequest request = new GetNotificationsRequest();
@@ -371,18 +363,13 @@ public class UserService extends AbstractAccountService {
                 if (op.isPresent()) {
                     UserDTO user = userMapper.toDto(op.get());
                     x.getNotifs().forEach(y -> {
-                        NotificationDTO notification = notificationBuilderFactory.getBuilder()
-                                .setTitle(y.getTitle())
-                                .setBody(y.getMessage())
-                                .build();
-                        firebaseNotificationManager.sendNotificationByAccount(notification, user);
-                        postList.add(new PostNotificationsRequest(x.getInn(), y.getId()));
+
+                        NotifNPDDTO notifNPDDTO = new NotifNPDDTO(Long.valueOf(y.getId()), user.getId(),
+                                                                    y.getTitle(), y.getMessage(), false);
+                        notifNPDService.save(notifNPDDTO);
                     });
                 }
             });
-
-            postNotificationsAckRequest.setNotificationList(postList);
-            soapClient.send(postNotificationsAckRequest);
         }
     }
 }
