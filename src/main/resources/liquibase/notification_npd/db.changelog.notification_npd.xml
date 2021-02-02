@@ -25,4 +25,8 @@
     <changeSet id="02.02.2021-03" author="d.lyskin">
         <modifyDataType tableName="notifs_npd" columnName="notif_id" newDataType="VARCHAR(1024)"/>
     </changeSet>
+    <changeSet id="02.02.2021-04" author="d.lyskin">
+        <modifyDataType tableName="notifs_npd" columnName="title" newDataType="VARCHAR(1024)"/>
+        <modifyDataType tableName="notifs_npd" columnName="body" newDataType="VARCHAR(1024)"/>
+    </changeSet>
 </databaseChangeLog>
