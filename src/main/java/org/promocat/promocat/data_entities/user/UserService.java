@@ -353,7 +353,7 @@ public class UserService extends AbstractAccountService {
         List<UserDTO> users = userRepository.getAllByInnNotNull().stream().map(userMapper::toDto).collect(Collectors.toList());
         for (int i = 0; i < users.size() / MAX_COUNT_FOR_NPD + (users.size() % MAX_COUNT_FOR_NPD > 0 ? 1 : 0); i++) {
 
-            List<UserDTO> tmpUsers = users.subList(i * MAX_COUNT_FOR_NPD, (i + 1) * MAX_COUNT_FOR_NPD);
+            List<UserDTO> tmpUsers = users.subList(i * MAX_COUNT_FOR_NPD, Math.min((i + 1) * MAX_COUNT_FOR_NPD, users.size()));
             GetNotificationsRequest request = new GetNotificationsRequest();
             request.setNotificationsRequest(tmpUsers.stream()
                     .map(x -> new NotificationsRequest(x.getInn(), false, false))
