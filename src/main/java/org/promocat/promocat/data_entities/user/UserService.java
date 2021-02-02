@@ -33,6 +33,7 @@ import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -345,8 +346,9 @@ public class UserService extends AbstractAccountService {
     /**
      * Рассылка уведомлений от налоговой.
      */
+    @Transactional
     @Scheduled(cron = "0 */2 * * * *")
-    private void saveNotifFromNPD() {
+    public void saveNotifFromNPD() {
         log.info("Start save notification from npd");
         List<UserDTO> users = userRepository.getAllByInnNotNull().stream().map(userMapper::toDto).collect(Collectors.toList());
         for (int i = 0; i < users.size() / MAX_COUNT_FOR_NPD + (users.size() % MAX_COUNT_FOR_NPD > 0 ? 1 : 0); i++) {
