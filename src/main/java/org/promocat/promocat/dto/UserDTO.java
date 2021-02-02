@@ -90,6 +90,14 @@ public class UserDTO extends AbstractAccountDTO {
     private Set<MovementDTO> movements = new HashSet<>();
 
     @ApiModelProperty(
+            value = "Users notifications",
+            dataType = "List of notifications entities",
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Set<NotifNPDDTO> notifs = new HashSet<>();
+
+    @ApiModelProperty(
             value = "Users total distance",
             dataType = "Double",
             accessMode = ApiModelProperty.AccessMode.READ_ONLY
