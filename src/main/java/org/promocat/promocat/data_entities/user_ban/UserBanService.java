@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -111,7 +110,7 @@ public class UserBanService {
      * @return {@code true} - если юзер забанен в данной акции, {@code false} - иначе
      */
     public boolean isBanned(UserDTO userDTO, StockDTO stockDTO) {
-        return userBanRepository.getAllByUserIdAndStockId(userDTO.getId(), stockDTO.getId()).isPresent();
+        return userBanRepository.getByUserIdAndStockId(userDTO.getId(), stockDTO.getId()).isPresent();
     }
 
     public Optional<StockDTO> getLastBannedStockForUser(UserDTO userDTO) {
