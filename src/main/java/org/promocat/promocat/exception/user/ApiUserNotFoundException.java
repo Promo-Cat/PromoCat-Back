@@ -7,4 +7,7 @@ public class ApiUserNotFoundException extends RuntimeException {
     public ApiUserNotFoundException(final String message) {
         super(message);
     }
+    public ApiUserNotFoundException() {
+        super("User doesn't found");
+    }
 }
