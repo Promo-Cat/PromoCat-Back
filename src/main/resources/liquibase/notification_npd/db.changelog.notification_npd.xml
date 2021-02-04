@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="02.02.2021-01" author="d.lyskin">
+        <createTable tableName="notifs_npd">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="notifs_npd_pkey"/>
+            </column>
+            <column name="notif_id" type="BIGINT"/>
+            <column name="user_id" type="BIGINT"/>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="body" type="VARCHAR(255)"/>
+            <column name="is_open" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="d.lyskin" id="02.02.2021-02">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="notifs_npd"
+                                 constraintName="notifications_npd_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="users" validate="true"/>
+    </changeSet>
+    <changeSet id="02.02.2021-03" author="d.lyskin">
+        <modifyDataType tableName="notifs_npd" columnName="notif_id" newDataType="VARCHAR(1024)"/>
+    </changeSet>
+    <changeSet id="02.02.2021-04" author="d.lyskin">
+        <modifyDataType tableName="notifs_npd" columnName="title" newDataType="VARCHAR(1024)"/>
+        <modifyDataType tableName="notifs_npd" columnName="body" newDataType="VARCHAR(1024)"/>
+    </changeSet>
+    <changeSet id="02.02.2021-05" author="d.lyskin">
+        <addUniqueConstraint tableName="notifs_npd" columnNames="notif_id"/>
+    </changeSet>
+</databaseChangeLog>
