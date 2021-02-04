@@ -331,13 +331,15 @@ public class UserService extends AbstractAccountService {
 
 
     public String getGiveawayPersonalNumberByUser(UserDTO userDTO) {
+        String number;
         if (userDTO.getGiveawayPersonalNumber() != null) {
-            return userDTO.getGiveawayPersonalNumber();
+            number = formatGiveawayPersonalNumber(userDTO.getGiveawayPersonalNumber());
+        } else {
+            number = formatGiveawayPersonalNumber(String.valueOf(userRepository.getGiveawayNumber()));
+            userDTO.setGiveawayPersonalNumber(number);
+            userDTO = save(userDTO);
         }
-        String number = formatGiveawayPersonalNumber(String.valueOf(userRepository.getGiveawayNumber()));
-        userDTO.setGiveawayPersonalNumber(number);
-        userDTO = save(userDTO);
-        return userDTO.getGiveawayPersonalNumber();
+        return number;
     }
 
     private String formatGiveawayPersonalNumber(String code) {
