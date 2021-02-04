@@ -38,10 +38,10 @@ public class StockWithStockCityDTO {
 
     public StockWithStockCityDTO(StockDTO stock, StockCityDTO stockCity) {
         this.stockId = stock.getId();
-        this.amountOfPosters = stockCity.getNumberOfPromoCodes();
 //        this.previewId = stock.getPosterId();
         this.stockName = stock.getName();
         this.stockCityId = stockCity == null ? null : stockCity.getId();
+        this.amountOfPosters = stockCity == null ? null : stockCity.getNumberOfPromoCodes();
         this.startTime = stock.getStartTime();
         this.duration = stock.getDuration();
     }
