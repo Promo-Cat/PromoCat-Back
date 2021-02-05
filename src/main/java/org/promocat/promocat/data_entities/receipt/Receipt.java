@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
+import org.promocat.promocat.attributes.ReceiptCancelReason;
 import org.promocat.promocat.data_entities.abstract_account.AbstractEntity;
 import org.promocat.promocat.data_entities.user.User;
 
@@ -23,6 +24,7 @@ public class Receipt extends AbstractEntity {
     private String receiptLink;
     private LocalDateTime dateTime;
     private User user;
+    private ReceiptCancelReason cancelReason;
 
     @Column(name = "receipt_id")
     public String getReceiptId() {
@@ -44,5 +46,10 @@ public class Receipt extends AbstractEntity {
     @JoinColumn(name = "user_id")
     public User getUser() {
         return user;
+    }
+
+    @Column(name = "cancel_reason")
+    public ReceiptCancelReason getCancelReason() {
+        return cancelReason;
     }
 }
