@@ -54,7 +54,10 @@ public class NotifNPDService {
      */
     public NotifNPDDTO save(final NotifNPDDTO dto) {
         log.info("Saving notif with id: {}", dto.getNotifId());
-        return notifNPDMapper.toDto(notifNPDRepository.save(notifNPDMapper.toEntity(dto)));
+        if (!notifNPDRepository.existsByNotifId(dto.getNotifId())) {
+            return notifNPDMapper.toDto(notifNPDRepository.save(notifNPDMapper.toEntity(dto)));
+        }
+        return dto;
     }
 
     /**
