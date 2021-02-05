@@ -14,4 +14,10 @@
         <addForeignKeyConstraint baseTableName="receipt" baseColumnNames="user_id" constraintName="receipt_user__fk" referencedTableName="users"
                                  referencedColumnNames="id"/>
     </changeSet>
+
+    <changeSet id="05.02.2020-01" author="r.devyatilov">
+        <addColumn tableName="receipt">
+            <column name="cancel_reason" type="int" defaultValue="null"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
