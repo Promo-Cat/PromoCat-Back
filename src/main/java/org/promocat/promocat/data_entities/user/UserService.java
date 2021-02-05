@@ -55,7 +55,7 @@ public class UserService extends AbstractAccountService {
     private final SoapClient soapClient;
     private final TopicGenerator topicGenerator;
     private final NotifNPDService notifNPDService;
-    private final int MAX_COUNT_FOR_NPD = 999;
+    private final int MAX_COUNT_FOR_NPD = 50;
 
     @Autowired
     public UserService(final UserRepository userRepository,
