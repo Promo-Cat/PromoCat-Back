@@ -1,6 +1,8 @@
 package org.promocat.promocat.data_entities.receipt;
 
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.ReceiptDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@Api(tags = {SpringFoxConfig.RECEIPT})
 public class ReceiptService {
 
     private final ReceiptRepository receiptRepository;
