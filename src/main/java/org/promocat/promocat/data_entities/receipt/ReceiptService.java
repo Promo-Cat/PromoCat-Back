@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@Api(tags = {SpringFoxConfig.RECEIPT})
 public class ReceiptService {
 
     private final ReceiptRepository receiptRepository;
