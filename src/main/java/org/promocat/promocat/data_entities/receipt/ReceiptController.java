@@ -41,7 +41,7 @@ public class ReceiptController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
             @ApiResponse(code = 404, message = "User not found", response = ApiException.class)
     })
-    @RequestMapping(method = RequestMethod.GET, value = "/api/user/receipt")
+    @RequestMapping(method = RequestMethod.GET, value = "/admin/receipt")
     public ResponseEntity<List<ReceiptDTO>> getAllReceiptsByTelephone(
             @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}",
                     message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
@@ -50,14 +50,14 @@ public class ReceiptController {
         return ResponseEntity.ok(receiptService.getAllByUserTelephone(telephone));
     }
 
-    @ApiOperation(value = "Add car",
-            notes = "Adds stock for company with id specified in request.",
-            response = CarDTO.class,
+    @ApiOperation(value = "Cancel Receipt",
+            notes = "Cancels receipt by given NPD's id",
+            response = String.class,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
-    @RequestMapping(method = RequestMethod.POST, value = "/api/user/receipt")
+    @RequestMapping(method = RequestMethod.POST, value = "/admin/receipt")
     public ResponseEntity<String> cancelReceipt(@RequestBody ReceiptCancelDTO receiptCancelDTO,
                                                 @RequestHeader("token") String token) {
         UserDTO user = userService.findByToken(token);
