@@ -1,8 +1,10 @@
 package org.promocat.promocat.data_entities.receipt;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.CarDTO;
 import org.promocat.promocat.dto.ReceiptDTO;
@@ -18,6 +20,7 @@ import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @RestController
+@Api(tags = {SpringFoxConfig.RECEIPT})
 public class ReceiptController {
 
     private final ReceiptService receiptService;
