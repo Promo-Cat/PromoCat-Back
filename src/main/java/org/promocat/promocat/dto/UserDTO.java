@@ -90,10 +90,9 @@ public class UserDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
             value = "Users notifications",
-            dataType = "List of notifications entities",
-            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+            dataType = "List of notifications entities"
     )
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnore
     private Set<NotifNPDDTO> notifs = new HashSet<>();
 
     @ApiModelProperty(
