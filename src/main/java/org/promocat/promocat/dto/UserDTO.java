@@ -83,10 +83,8 @@ public class UserDTO extends AbstractAccountDTO {
 
     @ApiModelProperty(
             value = "Users movement",
-            dataType = "List of Movement entities",
-            accessMode = ApiModelProperty.AccessMode.READ_ONLY
+            dataType = "List of Movement entities"
     )
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonIgnore
     private Set<MovementDTO> movements = new HashSet<>();
 
