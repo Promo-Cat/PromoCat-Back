@@ -1,11 +1,13 @@
 package org.promocat.promocat.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.promocat.promocat.attributes.ReceiptCancelReason;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -55,5 +57,15 @@ public class ReceiptDTO extends AbstractDTO {
     )
     @NotBlank(message = "Идентификатор пользователя не может быть пустым.")
     private Long userId;
+
+    /**
+     * Причина отмены чека (null -> не отменён)
+     */
+    @ApiModelProperty(
+            value = "Receipt cancel reason",
+            dataType = "ReceiptCancelReason (ENUM)"
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private ReceiptCancelReason cancelReason;
 
 }
