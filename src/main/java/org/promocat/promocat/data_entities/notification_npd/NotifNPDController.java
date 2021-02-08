@@ -6,14 +6,15 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.dto.NotifNPDDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by Danil Lyskin at 10:43 02.02.2021
@@ -25,11 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotifNPDController {
 
     private final NotifNPDService notifNPDService;
+    private final UserService userService;
 
     @Autowired
-    public NotifNPDController(final NotifNPDService notifNPDService) {
+    public NotifNPDController(final NotifNPDService notifNPDService, final UserService userService) {
 
         this.notifNPDService = notifNPDService;
+        this.userService = userService;
     }
 
     @ApiOperation(value = "Set flag open for notification",
@@ -47,5 +50,18 @@ public class NotifNPDController {
         notifNPDService.sendOpenNotif(dto);
 
         return ResponseEntity.ok(notifNPDService.save(dto));
+    }
+
+    @ApiOperation(value = "Get all notifications from npd for user",
+            notes = "Returning notifications",
+            response = NotifNPDDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Notif or user not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/notifNPD/open/notif/", method = RequestMethod.POST)
+    public ResponseEntity<List<NotifNPDDTO>> openNotif(@RequestHeader("token") final String token) {
+        UserDTO user = userService.findByToken(token);
+        return ResponseEntity.ok(notifNPDService.findAllByUserId(user.getId()));
     }
 }

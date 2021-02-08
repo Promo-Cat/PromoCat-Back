@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by Danil Lyskin at 10:47 02.02.2021
@@ -63,7 +64,7 @@ public class NotifNPDService {
     /**
      * Находит уведомление в БД по id.
      *
-     * @param id id уведомления
+     * @param id id уведомления.
      * @return объект класса NotifNPDDTO, содержащий все необходимые данные об уведомление.
      * @throws ApiUserNotFoundException если не найдено уведомление с таким id.
      */
@@ -96,5 +97,15 @@ public class NotifNPDService {
         } else {
             throw new ApiUserNotFoundException(String.format("User with id %d not found", dto.getUserId()));
         }
+    }
+
+    /**
+     * Находит уведомления в БД по id пользователя.
+     *
+     * @param id id пользователя.
+     * @return лист объектов класса NotifNPDDTO, содержащий все необходимые данные об уведомлениях.
+     */
+    public List<NotifNPDDTO> findAllByUserId(final Long id) {
+        return notifNPDRepository.findAllByUserId(id).stream().map(notifNPDMapper::toDto).collect(Collectors.toList());
     }
 }
