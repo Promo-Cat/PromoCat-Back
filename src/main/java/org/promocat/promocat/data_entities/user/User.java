@@ -1,7 +1,5 @@
 package org.promocat.promocat.data_entities.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -112,8 +110,6 @@ public class User extends AbstractAccount {
      * Передвижения пользователя участвующего в акции.
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    @JsonIgnore
-    @JsonProperty(value = "movements")
     public Set<Movement> getMovements() {
         return movements;
     }
