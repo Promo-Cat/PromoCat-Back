@@ -20,7 +20,8 @@ public interface NotificationLoader {
         COMPANY_NEW_PUBLICATION,
         BID_ENTRY,
         CAR_VERIFY,
-        CAR_NOT_VERIFY
+        CAR_NOT_VERIFY,
+        PROBLEM_WITH_NPD
     }
 
 

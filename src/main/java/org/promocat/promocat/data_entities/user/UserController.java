@@ -27,6 +27,9 @@ import org.promocat.promocat.exception.user.codes.ApiUserStockException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.util.tax.ApiTaxRequestIdException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.FirebaseNotificationManager;
+import org.promocat.promocat.utils.NotificationBuilderFactory;
+import org.promocat.promocat.utils.NotificationLoader;
 import org.promocat.promocat.utils.TopicGenerator;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
@@ -67,6 +70,8 @@ public class UserController {
     private final UserBanService userBanService;
     private final SoapClient soapClient;
     private final StockActivationCodeService stockActivationCodeService;
+    private final FirebaseNotificationManager firebaseNotificationManager;
+    private final NotificationBuilderFactory notificationBuilderFactory;
     private final CarService carService;
     private final TopicGenerator topicGenerator;
 
@@ -79,6 +84,8 @@ public class UserController {
                           final UserBanService userBanService,
                           final SoapClient soapClient,
                           final StockActivationCodeService stockActivationCodeService,
+                          final FirebaseNotificationManager firebaseNotificationManager,
+                          final NotificationBuilderFactory notificationBuilderFactory,
                           final CarService carService,
                           final TopicGenerator topicGenerator) {
         this.userService = userService;
@@ -89,6 +96,8 @@ public class UserController {
         this.userBanService = userBanService;
         this.soapClient = soapClient;
         this.stockActivationCodeService = stockActivationCodeService;
+        this.firebaseNotificationManager = firebaseNotificationManager;
+        this.notificationBuilderFactory = notificationBuilderFactory;
         this.carService = carService;
         this.topicGenerator = topicGenerator;
     }
@@ -399,6 +408,15 @@ public class UserController {
             user.setFirstName(taxpayerResult.getFirstName());
             user.setSecondName(taxpayerResult.getSecondName());
             user.setPatronymic(taxpayerResult.getPatronymic());
+            if (!user.getTelephone().equals(taxpayerResult.getPhone())) {
+                NotificationDTO notif = notificationBuilderFactory.getBuilder()
+                        .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
+                        .build();
+                firebaseNotificationManager.sendNotificationByAccount(notif, user);
+                user.setInn(null);
+                user.setStatus(UserStatus.JUST_REGISTERED);
+                userBanService.ban(user);
+            }
             userService.update(user, user);
             return ResponseEntity.ok("{}");
         } else {
