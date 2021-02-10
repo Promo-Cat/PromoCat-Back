@@ -269,7 +269,7 @@ public class UserService extends AbstractAccountService {
     }
 
     private UserDTO findByInn(String inn) {
-        return userMapper.toDto(userRepository.findByInn(inn).orElse(null);
+        return userMapper.toDto(userRepository.findByInn(inn).orElse(null));
     }
 
 
