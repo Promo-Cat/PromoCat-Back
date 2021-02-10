@@ -408,7 +408,15 @@ public class UserController {
             user.setFirstName(taxpayerResult.getFirstName());
             user.setSecondName(taxpayerResult.getSecondName());
             user.setPatronymic(taxpayerResult.getPatronymic());
-            if (!user.getTelephone().equals(taxpayerResult.getPhone())) {
+
+            StringBuilder phone = new StringBuilder();
+            for (int i = 0; i < user.getTelephone().length(); i++) {
+                if (Character.isDigit(user.getTelephone().charAt(i))) {
+                    phone.append(user.getTelephone().charAt(i));
+                }
+            }
+
+            if (!phone.toString().equals(taxpayerResult.getPhone())) {
                 NotificationDTO notif = notificationBuilderFactory.getBuilder()
                         .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_PHONE)
                         .build();
