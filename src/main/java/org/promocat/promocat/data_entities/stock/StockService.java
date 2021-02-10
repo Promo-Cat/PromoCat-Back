@@ -3,6 +3,7 @@ package org.promocat.promocat.data_entities.stock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.StockStatus;
+import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
@@ -13,6 +14,7 @@ import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
+import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.promocat.promocat.mapper.StockMapper;
@@ -20,6 +22,10 @@ import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.*;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.attributes.IncomeType;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
+import org.promocat.promocat.utils.soap.operations.binding.GetNewlyUnboundTaxpayersRequest;
+import org.promocat.promocat.utils.soap.operations.binding.GetNewlyUnboundTaxpayersResponse;
 import org.promocat.promocat.utils.soap.operations.income.PostIncomeRequestV2;
 import org.promocat.promocat.utils.soap.operations.income.PostIncomeResponseV2;
 import org.promocat.promocat.utils.soap.operations.pojo.IncomeService;
@@ -225,7 +231,6 @@ public class StockService {
      * @param user Пользователь, которому была произведена выплата.
      */
     private void registerTaxes(UserDTO user) {
-
         PostIncomeRequestV2 op = new PostIncomeRequestV2();
         op.setInn(user.getInn());
         op.setCustomerOrganization(TaxUtils.PROMOCAT_NAME);
@@ -237,7 +242,17 @@ public class StockService {
         op.setRequestTime(now.minusHours(3));
         op.setCustomerInn(TaxUtils.PROMOCAT_INN);
 
-        PostIncomeResponseV2 response = (PostIncomeResponseV2) soapClient.send(op);
+        PostIncomeResponseV2 response;
+        try {
+            response = (PostIncomeResponseV2) soapClient.send(op);
+        } catch (SoapSmzPlatformErrorException e) {
+            if ("TAXPAYER_UNBOUND".equals(e.getError().getCode())) {
+                // TODO: 10.02.2021 NOTIFICATION
+                banUserInStockAndResetStatus(user);
+                return;
+            }
+            throw e;
+        }
 
         ReceiptDTO receipt = new ReceiptDTO();
         receipt.setReceiptId(response.getReceiptId());
@@ -246,6 +261,13 @@ public class StockService {
         receipt.setUserId(user.getId());
 
         receiptService.save(receipt);
+    }
+
+    public void banUserInStockAndResetStatus(UserDTO user) {
+        // TODO: 10.02.2021 BAN
+        user.setInn(null);
+        user.setStatus(UserStatus.JUST_REGISTERED);
+        userRepository.save(userMapper.toEntity(user));
     }
 
     /**
