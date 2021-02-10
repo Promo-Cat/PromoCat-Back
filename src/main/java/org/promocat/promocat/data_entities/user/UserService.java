@@ -253,6 +253,10 @@ public class UserService extends AbstractAccountService {
                 // TODO: 10.02.2021 NOTIFICATION
 
                 UserDTO user = findByInn(x.getInn());
+                if (user == null) {
+                    log.error("User with inn {} doesn't found", x.getInn());
+                    return;
+                }
                 stockService.banUserInStockAndResetStatus(user);
             });
             log.info("Unbounded users checker schedule successfully ended");
@@ -265,10 +269,7 @@ public class UserService extends AbstractAccountService {
     }
 
     private UserDTO findByInn(String inn) {
-        return userMapper.toDto(userRepository.findByInn(inn).orElseThrow(() -> {
-            log.error("User doesn't found");
-           return new ApiUserNotFoundException("User with inn " + inn + " doesn't found");
-        }));
+        return userMapper.toDto(userRepository.findByInn(inn).orElse(null);
     }
 
 
