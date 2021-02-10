@@ -410,7 +410,7 @@ public class UserController {
             user.setPatronymic(taxpayerResult.getPatronymic());
             if (!user.getTelephone().equals(taxpayerResult.getPhone())) {
                 NotificationDTO notif = notificationBuilderFactory.getBuilder()
-                        .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
+                        .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_PHONE)
                         .build();
                 firebaseNotificationManager.sendNotificationByAccount(notif, user);
                 user.setInn(null);

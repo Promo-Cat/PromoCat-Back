@@ -21,7 +21,8 @@ public interface NotificationLoader {
         BID_ENTRY,
         CAR_VERIFY,
         CAR_NOT_VERIFY,
-        PROBLEM_WITH_NPD
+        PROBLEM_WITH_NPD,
+        PROBLEM_WITH_PHONE
     }
 
 
