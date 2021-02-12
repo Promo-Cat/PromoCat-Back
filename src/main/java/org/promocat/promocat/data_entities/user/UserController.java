@@ -463,43 +463,6 @@ public class UserController {
         }
     }
 
-    // ------ Admin methods ------
-    @ApiOperation(value = "Get user by id",
-            notes = "Returning user, whose id specified in params",
-            response = UserDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
-            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
-    })
-    @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.GET)
-    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(userService.findById(id));
-    }
-
-    @ApiOperation(value = "Delete user by id",
-            notes = "Deleting user, whose id specified in params")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
-            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
-    })
-    @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteUserById(@PathVariable("id") Long id) {
-        userService.deleteById(id);
-        return ResponseEntity.ok("{}");
-    }
-
-    @ApiOperation(value = "Get user by telephone",
-            notes = "Returning user, whose telephone specified in params",
-            response = UserDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
-            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
-    })
-    @RequestMapping(value = "/admin/user/telephone", method = RequestMethod.GET)
-    public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {
-        return ResponseEntity.ok(userService.findByTelephone(telephone));
-    }
-
     @ApiOperation(value = "Set user's token",
             notes = "Set user's token for notification",
             response = UserDTO.class)
@@ -568,7 +531,7 @@ public class UserController {
     })
     @RequestMapping(value = "/api/user/notification/news/{flag}", method = RequestMethod.POST)
     public ResponseEntity<UserDTO> turnNotificationNews(@RequestHeader("token") final String token,
-                                                           @PathVariable("flag") final Boolean flag) {
+                                                        @PathVariable("flag") final Boolean flag) {
         UserDTO dto = userService.findByToken(token);
 
         if (flag) {
@@ -617,5 +580,51 @@ public class UserController {
             log.error("IOException ", e);
             throw new ApiServerErrorException("Failed to copy file to array");
         }
+    }
+
+    // ------ Admin methods ------
+    @ApiOperation(value = "Get user by id",
+            notes = "Returning user, whose id specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.GET)
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @ApiOperation(value = "Delete user by id",
+            notes = "Deleting user, whose id specified in params")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/user/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteUserById(@PathVariable("id") Long id) {
+        userService.deleteById(id);
+        return ResponseEntity.ok("{}");
+    }
+
+    @ApiOperation(value = "Get user by telephone",
+            notes = "Returning user, whose telephone specified in params",
+            response = UserDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/admin/user/telephone", method = RequestMethod.GET)
+    public ResponseEntity<UserDTO> getUserByTelephone(@RequestParam("telephone") String telephone) {
+        return ResponseEntity.ok(userService.findByTelephone(telephone));
+    }
+
+    @ApiOperation(value = "Checks for unbound users from us in NPD",
+            notes = "Checks for unbounded users and ban's them",
+            response = String.class)
+    @RequestMapping(value = "/admin/unboundUsers", method = RequestMethod.GET)
+    public ResponseEntity<String> checkNewlyUnboundUsersDirectly() {
+        userService.checkNPDUnboundUsers();
+        return ResponseEntity.ok("{}");
     }
 }
