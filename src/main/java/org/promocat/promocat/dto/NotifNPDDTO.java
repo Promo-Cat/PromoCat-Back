@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 
 /**
  * Created by Danil Lyskin at 10:28 02.02.2021
@@ -22,6 +23,13 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotifNPDDTO extends AbstractDTO {
+
+    @ApiModelProperty(
+            value = "Notifications create time",
+            dataType = "ZoneDateTime",
+            required = true
+    )
+    private ZonedDateTime time;
 
     @ApiModelProperty(
             value = "Notifications ID",

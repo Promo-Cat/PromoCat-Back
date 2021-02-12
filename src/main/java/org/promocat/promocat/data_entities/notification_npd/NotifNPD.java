@@ -11,6 +11,7 @@ import org.promocat.promocat.data_entities.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 
 /**
  * Created by Danil Lyskin at 10:18 02.06.2021
@@ -24,11 +25,17 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class NotifNPD extends AbstractEntity {
 
+    private ZonedDateTime time;
     private String notifId;
     private User user;
     private String title;
     private String body;
     private Boolean isOpen;
+
+    @Column(name = "time")
+    public ZonedDateTime getTime() {
+        return time;
+    }
 
     @Column(name = "notif_id", unique = true)
     public String getNotifId() {
