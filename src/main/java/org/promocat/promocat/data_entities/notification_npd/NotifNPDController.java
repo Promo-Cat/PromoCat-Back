@@ -64,4 +64,19 @@ public class NotifNPDController {
         UserDTO user = userService.findByToken(token);
         return ResponseEntity.ok(notifNPDService.findAllByUserId(user.getId()));
     }
+
+    @ApiOperation(value = "Download all notifications from npd for user",
+            notes = "Download and updates all notifications from npd for user ",
+            response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
+            @ApiResponse(code = 400, message = "User isn't NP", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(value = "/api/notifNPD/download/notifs", method = RequestMethod.POST)
+    public ResponseEntity<String> downloadNotifs(@RequestHeader("token") final String token) {
+        UserDTO user = userService.findByToken(token);
+        notifNPDService.download(user);
+        return ResponseEntity.ok("{}");
+    }
 }
