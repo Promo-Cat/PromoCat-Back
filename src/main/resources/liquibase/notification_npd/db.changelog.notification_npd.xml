@@ -32,4 +32,9 @@
     <changeSet id="02.02.2021-05" author="d.lyskin">
         <addUniqueConstraint tableName="notifs_npd" columnNames="notif_id"/>
     </changeSet>
+    <changeSet id="12.02.2021-01" author="d.lyskin">
+        <addColumn tableName="notifs_npd">
+            <column name="time" type="TIMESTAMP WITH TIMEZONE"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
