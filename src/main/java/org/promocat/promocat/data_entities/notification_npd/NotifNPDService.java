@@ -7,10 +7,16 @@ import org.promocat.promocat.dto.NotifNPDDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.exception.notification_npd.ApiNotifNotFoundException;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
+import org.promocat.promocat.exception.util.tax.ApiTaxUserStatusException;
 import org.promocat.promocat.mapper.NotifNPDMapper;
 import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.soap.SoapClient;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
+import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
+import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsRequest;
+import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsResponse;
 import org.promocat.promocat.utils.soap.operations.notifications.PostNotificationsAckRequest;
+import org.promocat.promocat.utils.soap.operations.pojo.NotificationsRequest;
 import org.promocat.promocat.utils.soap.operations.pojo.PostNotificationsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -107,5 +113,29 @@ public class NotifNPDService {
      */
     public List<NotifNPDDTO> findAllByUserId(final Long id) {
         return notifNPDRepository.findAllByUserId(id).stream().map(notifNPDMapper::toDto).collect(Collectors.toList());
+    }
+
+    /**
+     * Загружает уведомления для пользователя.
+     * @param user объектное представление пользователя.
+     */
+    public void download(final UserDTO user) {
+        GetBindPartnerStatusRequest checkRequest = new GetBindPartnerStatusRequest(user.getTaxConnectionId());
+        GetBindPartnerStatusResponse checkResult = (GetBindPartnerStatusResponse) soapClient.send(checkRequest);
+
+        if (checkResult.getResult().equals("COMPLETED")) {
+            GetNotificationsRequest request = new GetNotificationsRequest();
+            request.setNotificationsRequest(List.of(new NotificationsRequest(user.getInn(), false, false)));
+            GetNotificationsResponse result = (GetNotificationsResponse) soapClient.send(request);
+            result.getNotificationsResponse().forEach(x -> {
+                x.getNotifs().forEach(y -> {
+                    NotifNPDDTO notifNPDDTO = new NotifNPDDTO(y.getCreatedAt(), y.getId(), user.getId(),
+                            y.getTitle(), y.getMessage(), false);
+                    save(notifNPDDTO);
+                });
+            });
+        } else {
+            throw new ApiTaxUserStatusException("User isn't NP");
+        }
     }
 }
