@@ -8,6 +8,7 @@ import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.PromoCodeActivationStatisticDTO;
 import org.promocat.promocat.dto.pojo.SimpleStockDTO;
+import org.promocat.promocat.mapper.CityMapper;
 import org.promocat.promocat.mapper.StockActivationMapper;
 import org.promocat.promocat.mapper.StockMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +28,21 @@ public class StockActivationService {
     private final UserBanService userBanService;
     private final StockService stockService;
     private final StockMapper stockMapper;
+    private final CityMapper cityMapper;
 
     @Autowired
     public StockActivationService(final StockActivationRepository stockActivationRepository,
                                   final StockActivationMapper stockActivationMapper,
                                   final UserBanService userBanService,
                                   final StockService stockService,
-                                  final StockMapper stockMapper) {
+                                  final StockMapper stockMapper,
+                                  final CityMapper cityMapper) {
         this.stockActivationRepository = stockActivationRepository;
         this.stockActivationMapper = stockActivationMapper;
         this.userBanService = userBanService;
         this.stockService = stockService;
         this.stockMapper = stockMapper;
+        this.cityMapper = cityMapper;
     }
 
     /**
@@ -62,19 +66,22 @@ public class StockActivationService {
      * @return Список акций пользователя. {@link StockDTO}
      */
     public List<SimpleStockDTO> getStocksByUser(final UserDTO userDTO) {
-        return stockActivationRepository.getAllByUserId(userDTO.getId())
+        List<StockActivation> stockActivations = stockActivationRepository.getAllByUserId(userDTO.getId());
+
+        return stockActivations
                 .stream()
                 .filter(x -> !x.getStockCity().getId().equals(userDTO.getStockCityId()))
-                .map(x -> stockMapper.toDto(x.getStockCity().getStock()))
                 .map(x -> {
+                    StockDTO stockDTO = stockMapper.toDto(x.getStockCity().getStock());
                     SimpleStockDTO d = new SimpleStockDTO();
-                    d.setStatus(x.getStatus());
-                    d.setId(x.getId());
-                    d.setStartTime(x.getStartTime());
-                    d.setDuration(x.getDuration());
-                    d.setFare(x.getFare());
-                    d.setName(x.getName());
-                    d.setBanned(userBanService.isBanned(userDTO, x));
+                    d.setStatus(stockDTO.getStatus());
+                    d.setId(stockDTO.getId());
+                    d.setStartTime(stockDTO.getStartTime());
+                    d.setDuration(stockDTO.getDuration());
+                    d.setFare(stockDTO.getFare());
+                    d.setName(stockDTO.getName());
+                    d.setBanned(userBanService.isBanned(userDTO, stockDTO));
+                    d.setCity(cityMapper.toDto(x.getStockCity().getCity()));
                     return d;
                 })
                 .collect(Collectors.toList());

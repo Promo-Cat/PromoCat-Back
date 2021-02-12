@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.constraints.StockDurationConstraint;
 import org.promocat.promocat.dto.AbstractDTO;
+import org.promocat.promocat.dto.CityDTO;
+import org.promocat.promocat.dto.StockCityDTO;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -46,4 +48,7 @@ public class SimpleStockDTO extends AbstractDTO {
 
     @ApiModelProperty(value = "Is user banned in stock", dataType = "boolean")
     private Boolean banned = true;
+
+    @ApiModelProperty(value = "City where user has a part in stock", dataType = "boolean")
+    private CityDTO city;
 }

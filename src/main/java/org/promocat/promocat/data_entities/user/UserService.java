@@ -12,16 +12,14 @@ import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.NumberOfBusyAndFreeDrivers;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
+import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.*;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
-import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
-import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
-import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
-import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
+import org.promocat.promocat.utils.soap.operations.binding.*;
 import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsRequest;
 import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsResponse;
 import org.promocat.promocat.utils.soap.operations.np_profile.GetTaxpayerStatusRequest;
@@ -35,6 +33,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -234,6 +233,43 @@ public class UserService extends AbstractAccountService {
 
     public boolean existsByTelephone(final String telephone) {
         return userRepository.getByTelephone(telephone).isPresent();
+    }
+
+
+    /**
+     * Узнаёт у НПД кто отписался. Всех баним в акции, сбрасываем инн и статус, а также отправляем уведомление.
+     */
+    @Scheduled(cron = "0 0 11 * * *")
+    public void checkNPDUnboundUsers() {
+        log.info("Started unbound from NPD users checker.");
+        GetNewlyUnboundTaxpayersRequest request = new GetNewlyUnboundTaxpayersRequest();
+        request.setFrom(ZonedDateTime.now().minusDays(1));
+        request.setTo(ZonedDateTime.now());
+
+        try {
+            GetNewlyUnboundTaxpayersResponse response = (GetNewlyUnboundTaxpayersResponse) soapClient.send(request);
+            log.info("{} users unbounded from us in NPD", response.getTaxpayers().size());
+            response.getTaxpayers().forEach(x -> {
+                // TODO: 10.02.2021 NOTIFICATION
+
+                UserDTO user = findByInn(x.getInn());
+                if (user == null) {
+                    log.error("User with inn {} doesn't found", x.getInn());
+                    return;
+                }
+                stockService.banUserInStockAndResetStatus(user);
+            });
+            log.info("Unbounded users checker schedule successfully ended");
+        } catch (SoapSmzPlatformErrorException e) {
+            log.error("NPD sent error for GetNewlyUnboundTaxpayersRequest:\nMessage: {}\nCode: {}",
+                    e.getError().getMessage(),
+                    e.getError().getCode());
+        }
+
+    }
+
+    private UserDTO findByInn(String inn) {
+        return userMapper.toDto(userRepository.findByInn(inn).orElse(null));
     }
 
 
