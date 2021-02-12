@@ -9,7 +9,10 @@ import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.notification_npd.NotifNPDService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.MovementDTO;
+import org.promocat.promocat.dto.StockCityDTO;
+import org.promocat.promocat.dto.StockDTO;
+import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.NumberOfBusyAndFreeDrivers;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
@@ -20,23 +23,18 @@ import org.promocat.promocat.utils.*;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.*;
-import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsRequest;
-import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsResponse;
 import org.promocat.promocat.utils.soap.operations.np_profile.GetTaxpayerStatusRequest;
 import org.promocat.promocat.utils.soap.operations.np_profile.GetTaxpayerStatusResponse;
-import org.promocat.promocat.utils.soap.operations.pojo.NotificationsRequest;
 import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsRequest;
 import org.promocat.promocat.utils.soap.util.TaxUtils;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -379,37 +377,5 @@ public class UserService extends AbstractAccountService {
             res.insert(0, '0');
         }
         return res.toString();
-    }
-
-    /**
-     * Рассылка уведомлений от налоговой.
-     */
-    @Transactional
-    @Scheduled(cron = "0 */2 * * * *")
-    public void saveNotifFromNPD() {
-        log.info("Start save notification from npd");
-        List<UserDTO> users = userRepository.getAllByInnNotNull().stream().map(userMapper::toDto).collect(Collectors.toList());
-        for (int i = 0; i < users.size() / MAX_COUNT_FOR_NPD + (users.size() % MAX_COUNT_FOR_NPD > 0 ? 1 : 0); i++) {
-
-            List<UserDTO> tmpUsers = users.subList(i * MAX_COUNT_FOR_NPD, Math.min((i + 1) * MAX_COUNT_FOR_NPD, users.size()));
-            GetNotificationsRequest request = new GetNotificationsRequest();
-            request.setNotificationsRequest(tmpUsers.stream()
-                    .map(x -> new NotificationsRequest(x.getInn(), false, false))
-                    .collect(Collectors.toList()));
-
-            GetNotificationsResponse result = (GetNotificationsResponse) soapClient.send(request);
-            result.getNotificationsResponse().forEach(x -> {
-
-                Optional<User> op = userRepository.findByInn(x.getInn());
-                if (op.isPresent()) {
-                    UserDTO user = userMapper.toDto(op.get());
-                    x.getNotifs().forEach(y -> {
-                        NotifNPDDTO notifNPDDTO = new NotifNPDDTO(y.getId(), user.getId(),
-                                                                    y.getTitle(), y.getMessage(), false);
-                        notifNPDService.save(notifNPDDTO);
-                    });
-                }
-            });
-        }
     }
 }

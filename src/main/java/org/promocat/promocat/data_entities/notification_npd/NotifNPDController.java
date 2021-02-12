@@ -56,12 +56,14 @@ public class NotifNPDController {
             notes = "Returning notifications",
             response = NotifNPDDTO.class)
     @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "User isn't NP", response = ApiException.class),
             @ApiResponse(code = 404, message = "Notif or user not found", response = ApiException.class),
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/notifNPD/get/notifs", method = RequestMethod.GET)
     public ResponseEntity<List<NotifNPDDTO>> openNotif(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
+        notifNPDService.download(user);
         return ResponseEntity.ok(notifNPDService.findAllByUserId(user.getId()));
     }
 }
