@@ -19,7 +19,7 @@ public interface UserRepository extends AbstractAccountRepository<User> {
     Optional<User> findByGoogleToken(String googleToken);
     Optional<User> findByInn(String inn);
 
-    List<User> getAllByInnNotNull();
+    List<User> getAllByInnNotNullAndTaxConnectionIdNotNull();
 
     @Query(value="SELECT nextval('giveaway_number_seq')", nativeQuery = true)
     Long getGiveawayNumber();

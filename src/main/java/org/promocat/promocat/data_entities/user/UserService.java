@@ -388,7 +388,7 @@ public class UserService extends AbstractAccountService {
     @Scheduled(cron = "0 */2 * * * *")
     public void saveNotifFromNPD() {
         log.info("Start save notification from npd");
-        List<UserDTO> users = userRepository.getAllByInnNotNull().stream().map(userMapper::toDto).collect(Collectors.toList());
+        List<UserDTO> users = userRepository.getAllByInnNotNullAndTaxConnectionIdNotNull().stream().map(userMapper::toDto).collect(Collectors.toList());
         for (int i = 0; i < users.size() / MAX_COUNT_FOR_NPD + (users.size() % MAX_COUNT_FOR_NPD > 0 ? 1 : 0); i++) {
 
             List<UserDTO> tmpUsers = users.subList(i * MAX_COUNT_FOR_NPD, Math.min((i + 1) * MAX_COUNT_FOR_NPD, users.size()));
