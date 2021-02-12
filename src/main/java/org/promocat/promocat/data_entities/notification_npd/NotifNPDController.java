@@ -56,6 +56,7 @@ public class NotifNPDController {
             notes = "Returning notifications",
             response = NotifNPDDTO.class)
     @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "User isn't NP", response = ApiException.class),
             @ApiResponse(code = 404, message = "Notif or user not found", response = ApiException.class),
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
