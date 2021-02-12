@@ -13,6 +13,7 @@ import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.NumberOfBusyAndFreeDrivers;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
@@ -52,6 +53,8 @@ public class UserService extends AbstractAccountService {
     private final SoapClient soapClient;
     private final TopicGenerator topicGenerator;
     private final NotifNPDService notifNPDService;
+    private final NotificationBuilderFactory notificationBuilderFactory;
+
     private final int MAX_COUNT_FOR_NPD = 999;
 
     @Autowired
@@ -65,7 +68,8 @@ public class UserService extends AbstractAccountService {
                        final FirebaseNotificationManager firebaseNotificationManager,
                        final TopicGenerator topicGenerator,
                        final AccountRepositoryManager accountRepositoryManager,
-                       final NotifNPDService notifNPDService) {
+                       final NotifNPDService notifNPDService,
+                       final NotificationBuilderFactory notificationBuilderFactory) {
         super(firebaseNotificationManager, accountRepositoryManager);
         this.userRepository = userRepository;
         this.userMapper = mapper;
@@ -76,6 +80,7 @@ public class UserService extends AbstractAccountService {
         this.paymentService = paymentService;
         this.topicGenerator = topicGenerator;
         this.notifNPDService = notifNPDService;
+        this.notificationBuilderFactory = notificationBuilderFactory;
     }
 
     /**
@@ -248,13 +253,15 @@ public class UserService extends AbstractAccountService {
             GetNewlyUnboundTaxpayersResponse response = (GetNewlyUnboundTaxpayersResponse) soapClient.send(request);
             log.info("{} users unbounded from us in NPD", response.getTaxpayers().size());
             response.getTaxpayers().forEach(x -> {
-                // TODO: 10.02.2021 NOTIFICATION
-
                 UserDTO user = findByInn(x.getInn());
                 if (user == null) {
                     log.error("User with inn {} doesn't found", x.getInn());
                     return;
                 }
+                NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
+                        .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
+                        .build();
+                firebaseNotificationManager.sendNotificationByAccount(notificationDTO, user);
                 stockService.banUserInStockAndResetStatus(user);
             });
             log.info("Unbounded users checker schedule successfully ended");
