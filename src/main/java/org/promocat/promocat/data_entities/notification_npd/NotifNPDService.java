@@ -61,7 +61,7 @@ public class NotifNPDService {
      */
     public NotifNPDDTO save(final NotifNPDDTO dto) {
         if (dto.getNotifId() != null && notifNPDRepository.existsByNotifId(dto.getNotifId())) {
-            Optional<NotifNPD> op = notifNPDRepository.findByNotifId(dto.getId());
+            Optional<NotifNPD> op = notifNPDRepository.findByNotifId(dto.getNotifId());
             if (op.isPresent()) {
                 NotifNPD notif = op.get();
                 notif.setIsOpen(dto.getIsOpen());
