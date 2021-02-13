@@ -61,7 +61,7 @@ public class NotifNPDController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
     })
     @RequestMapping(value = "/api/notifNPD/get/notifs", method = RequestMethod.GET)
-    public ResponseEntity<List<NotifNPDDTO>> openNotif(@RequestHeader("token") final String token) {
+    public ResponseEntity<List<NotifNPDDTO>> getNotif(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
         notifNPDService.download(user);
         return ResponseEntity.ok(notifNPDService.findAllByUserId(user.getId()));
