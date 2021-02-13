@@ -8,6 +8,6 @@ import java.util.List;
  * Created by Danil Lyskin at 10:59 02.02.2021
  */
 public interface NotifNPDRepository extends JpaRepository<NotifNPD, Long> {
-    Boolean existsByNotifIdAndIsOpen(String id, Boolean flag);
+    Boolean existsByNotifId(String id);
     List<NotifNPD> findAllByUserId(Long id);
 }
