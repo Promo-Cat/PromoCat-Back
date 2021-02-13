@@ -2,7 +2,6 @@ package org.promocat.promocat.exception.util.tax;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.exception.ApiException;
-import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -40,6 +39,18 @@ public class ApiTaxExceptionHandler {
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
         log.error("Tax user status error: " + e.getMessage());
+        return new ResponseEntity<>(apiException, badRequest);
+    }
+
+    @ExceptionHandler(value = {ApiTaxRequestPhoneAndUserPhoneException.class})
+    public ResponseEntity<Object> handleTaxRequestPhoneAndUserPhoneError(ApiTaxRequestPhoneAndUserPhoneException e) {
+        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        ApiException apiException = new ApiException(
+                e.getMessage(),
+                badRequest,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        log.error("Tax request phoen and user phone are incorrect: " + e.getMessage());
         return new ResponseEntity<>(apiException, badRequest);
     }
 }
