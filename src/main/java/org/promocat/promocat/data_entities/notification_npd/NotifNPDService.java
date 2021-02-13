@@ -127,6 +127,7 @@ public class NotifNPDService {
             GetNotificationsRequest request = new GetNotificationsRequest();
             request.setNotificationsRequest(List.of(new NotificationsRequest(user.getInn(), false, false)));
             GetNotificationsResponse result = (GetNotificationsResponse) soapClient.send(request);
+            log.info("Download notifs for user: {}", user.getId());
             result.getNotificationsResponse().forEach(x -> {
                 x.getNotifs().forEach(y -> {
                     NotifNPDDTO notifNPDDTO = new NotifNPDDTO(y.getCreatedAt(), y.getId(), user.getId(),
