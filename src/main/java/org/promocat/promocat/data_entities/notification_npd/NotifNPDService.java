@@ -60,7 +60,7 @@ public class NotifNPDService {
      * @return Представление уведомления, сохраненное в БД. {@link NotifNPDDTO}
      */
     public NotifNPDDTO save(final NotifNPDDTO dto) {
-        if (!notifNPDRepository.existsByNotifId(dto.getNotifId())) {
+        if (!notifNPDRepository.existsByNotifIdAndIsOpen(dto.getNotifId(), true)) {
             log.info("Saving notif with id: {}", dto.getNotifId());
             return notifNPDMapper.toDto(notifNPDRepository.save(notifNPDMapper.toEntity(dto)));
         }
