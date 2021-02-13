@@ -47,6 +47,8 @@ public class NotifNPDController {
         NotifNPDDTO dto = notifNPDService.findById(id);
         dto.setIsOpen(true);
 
+        log.info("Open notif id: {} with notif id: {}", dto.getId(), dto.getNotifId());
+
         notifNPDService.sendOpenNotif(dto);
 
         return ResponseEntity.ok(notifNPDService.save(dto));
