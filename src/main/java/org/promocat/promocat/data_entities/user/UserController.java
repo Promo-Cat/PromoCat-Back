@@ -26,10 +26,10 @@ import org.promocat.promocat.exception.user.codes.ApiUserStatusException;
 import org.promocat.promocat.exception.user.codes.ApiUserStockException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.util.tax.ApiTaxRequestIdException;
+import org.promocat.promocat.exception.util.tax.ApiTaxRequestPhoneAndUserPhoneException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.utils.FirebaseNotificationManager;
 import org.promocat.promocat.utils.NotificationBuilderFactory;
-import org.promocat.promocat.utils.NotificationLoader;
 import org.promocat.promocat.utils.TopicGenerator;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
@@ -417,15 +417,14 @@ public class UserController {
             }
 
             if (!phone.toString().equals(taxpayerResult.getPhone())) {
-                NotificationDTO notif = notificationBuilderFactory.getBuilder()
-                        .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_PHONE)
-                        .build();
-                firebaseNotificationManager.sendNotificationByAccount(notif, user);
                 user.setInn(null);
                 user.setStatus(UserStatus.JUST_REGISTERED);
                 userBanService.ban(user);
+                userService.update(user, user);
+                throw new ApiTaxRequestPhoneAndUserPhoneException("Phone in npd and in db aren't equal");
+            } else {
+                userService.update(user, user);
             }
-            userService.update(user, user);
             return ResponseEntity.ok("{}");
         } else {
             throw new ApiTaxRequestIdException(String.format("Request status is: %s. COMPLETED required",
