@@ -44,6 +44,6 @@ public class GetNewlyUnboundTaxpayersRequest extends AbstractOperation {
 
     @Override
     public Class<? extends AbstractOperation> getResponseClass() {
-        return null;
+        return GetNewlyUnboundTaxpayersResponse.class;
     }
 }

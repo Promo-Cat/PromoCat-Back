@@ -11,6 +11,7 @@ import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.receipt.ReceiptService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.user_ban.UserBanService;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
@@ -22,10 +23,6 @@ import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.*;
 import org.promocat.promocat.utils.soap.SoapClient;
 import org.promocat.promocat.utils.soap.attributes.IncomeType;
-import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
-import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
-import org.promocat.promocat.utils.soap.operations.binding.GetNewlyUnboundTaxpayersRequest;
-import org.promocat.promocat.utils.soap.operations.binding.GetNewlyUnboundTaxpayersResponse;
 import org.promocat.promocat.utils.soap.operations.income.PostIncomeRequestV2;
 import org.promocat.promocat.utils.soap.operations.income.PostIncomeResponseV2;
 import org.promocat.promocat.utils.soap.operations.pojo.IncomeService;
@@ -33,6 +30,7 @@ import org.promocat.promocat.utils.soap.util.TaxUtils;
 import org.promocat.promocat.validators.StockDurationConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -74,6 +72,7 @@ public class StockService {
     private final TopicGenerator topicGenerator;
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
+    private final ApplicationContext applicationContext;
 
     @Autowired
     public StockService(final StockMapper mapper,
@@ -89,7 +88,9 @@ public class StockService {
                         final NotificationBuilderFactory notificationBuilderFactory,
                         final FirebaseNotificationManager firebaseNotificationManager,
                         final TopicGenerator topicGenerator,
-                        final CompanyRepository companyRepository, CompanyMapper companyMapper) {
+                        final CompanyRepository companyRepository,
+                        final CompanyMapper companyMapper,
+                        final ApplicationContext applicationContext) {
         this.mapper = mapper;
         this.repository = repository;
         this.stockCityService = stockCityService;
@@ -105,6 +106,7 @@ public class StockService {
         this.topicGenerator = topicGenerator;
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -247,7 +249,10 @@ public class StockService {
             response = (PostIncomeResponseV2) soapClient.send(op);
         } catch (SoapSmzPlatformErrorException e) {
             if ("TAXPAYER_UNBOUND".equals(e.getError().getCode())) {
-                // TODO: 10.02.2021 NOTIFICATION
+                NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
+                        .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
+                        .build();
+                firebaseNotificationManager.sendNotificationByAccount(notificationDTO, user);
                 banUserInStockAndResetStatus(user);
                 return;
             }
@@ -264,9 +269,10 @@ public class StockService {
     }
 
     public void banUserInStockAndResetStatus(UserDTO user) {
-        // TODO: 10.02.2021 BAN
+        applicationContext.getBean(UserBanService.class).ban(user);
         user.setInn(null);
         user.setStatus(UserStatus.JUST_REGISTERED);
+        user.setTaxConnectionId(null);
         userRepository.save(userMapper.toEntity(user));
     }
 

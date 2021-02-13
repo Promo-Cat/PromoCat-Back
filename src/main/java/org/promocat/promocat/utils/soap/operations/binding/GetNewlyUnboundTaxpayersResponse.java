@@ -31,7 +31,7 @@ public class GetNewlyUnboundTaxpayersResponse extends AbstractOperation {
      * Есть ли ещё НП НПД на следующих страницах
      */
     @XmlField("HasMore")
-    private boolean hasMore;
+    private Boolean hasMore;
 
     @Override
     public Class<? extends AbstractOperation> getResponseClass() {

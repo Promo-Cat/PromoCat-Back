@@ -11,13 +11,11 @@ import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
 import org.promocat.promocat.utils.soap.attributes.NotificationStatus;
 import org.promocat.promocat.utils.soap.operations.AbstractOperation;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
-import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusRequest;
-import org.promocat.promocat.utils.soap.operations.binding.GetBindPartnerStatusResponse;
-import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
-import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
+import org.promocat.promocat.utils.soap.operations.binding.*;
 import org.promocat.promocat.utils.soap.operations.SendMessageResponse;
 import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsRequest;
 import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsResponse;
+import org.promocat.promocat.utils.soap.operations.np_profile.GetTaxpayerStatusRequest;
 import org.promocat.promocat.utils.soap.operations.pojo.NotificationsRequest;
 import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsRequest;
 import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsResponse;
@@ -37,8 +35,7 @@ import javax.xml.soap.SOAPMessage;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -152,6 +149,7 @@ public class SoapClient {
     @SneakyThrows
     public Object send(AbstractOperation operation) {
         SoapRequest request = new SoapSendMessageRequest(operation, getToken());
+        System.out.println(request);
         Optional<SOAPMessage> responseOptional = request.send(API_URL);
         if (responseOptional.isPresent()) {
             String messageId = getMessageId(responseOptional.get());
@@ -215,7 +213,7 @@ public class SoapClient {
      */
     public Object soapXmlToPOJO(Element xml, Class<?> pojoClass, boolean inner) throws SOAPException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         if (!inner && xml.getElementsByTagName(pojoClass.getSimpleName()).getLength() == 0) {
-            log.error("Response doesn`t apply presented POJO class");
+            log.error("Response doesn`t apply presented POJO class. Expected: {}", pojoClass.getSimpleName());
             try {
                 return soapXmlToPOJO(xml, SmzPlatformError.class, false);
             } catch (SoapException e) {
@@ -242,7 +240,9 @@ public class SoapClient {
                     }
                     if (fieldIsList) {
                         ((List) value).add(temp);
-                    } else {
+                    } else if (field.getType() == Boolean.class) {
+                        value = Boolean.parseBoolean((String) temp);
+                    } else  {
                         value = temp;
                     }
                 }
@@ -254,7 +254,7 @@ public class SoapClient {
     }
 
     // tests
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 //        PostBindPartnerWithPhoneRequest op = new PostBindPartnerWithPhoneRequest(
 //                "79062587099",
 //                List.of("INCOME_REGISTRATION")
@@ -271,22 +271,18 @@ public class SoapClient {
 //
 //        log.info("Result: {}", statusResponse.getResult());
 //        log.info("Inn: {}", statusResponse.getInn());
-        GetGrantedPermissionsRequest op = new GetGrantedPermissionsRequest(
-                "471204164572"
-        );
-        GetGrantedPermissionsResponse response = (GetGrantedPermissionsResponse) client.send(op);
+        System.setProperty("java.net.useSystemProxies", "true");
+        System.setProperty("https.proxyHost", "127.0.0.1");
+        System.setProperty("https.proxyPort", "8080");
 
-        response.getGrantedPermissionsList().forEach(System.out::println);
-
-        GetNotificationsRequest op2 = new GetNotificationsRequest();
-        NotificationsRequest r = new NotificationsRequest();
-        r.setInn("");
-        r.setGetAcknowleged(true);
-        r.setGetArchived(true);
-        op2.setNotificationsRequest(List.of(r));
-        SmzPlatformError resp = (SmzPlatformError) client.send(op2);
-
-        resp.getArgs();
+        //        GetTaxpayerStatusRequest req1 = new GetTaxpayerStatusRequest();
+//        req1.setInn("471204164572");
+//        client.send(req1);
+        GetNewlyUnboundTaxpayersRequest request = new GetNewlyUnboundTaxpayersRequest();
+        request.setFrom(ZonedDateTime.now().minusDays(1));
+        request.setTo(ZonedDateTime.now());
+        GetNewlyUnboundTaxpayersResponse response = (GetNewlyUnboundTaxpayersResponse) client.send(request);
+        System.out.println();
     }
 
 }
