@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface NotifNPDRepository extends JpaRepository<NotifNPD, Long> {
     Boolean existsByNotifId(String id);
     List<NotifNPD> findAllByUserId(Long id);
-    Optional<NotifNPD> findByNotifId(Long id);
+    Optional<NotifNPD> findByNotifId(String id);
 }
