@@ -397,7 +397,7 @@ public class UserController {
             response = String.class)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Wrond status", response = ApiException.class),
-            @ApiResponse(code = 400, message = "Phones is not equal", response = ApiException.class)
+            @ApiResponse(code = 403, message = "Phones is not equal", response = ApiException.class)
     })
     @RequestMapping(value = "/api/user/tax/accept", method = RequestMethod.POST)
     public ResponseEntity<String> acceptMyTaxRegistration(@RequestHeader("token") final String token) {
