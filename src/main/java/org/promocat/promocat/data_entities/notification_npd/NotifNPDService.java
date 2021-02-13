@@ -60,8 +60,8 @@ public class NotifNPDService {
      * @return Представление уведомления, сохраненное в БД. {@link NotifNPDDTO}
      */
     public NotifNPDDTO save(final NotifNPDDTO dto) {
-        if (notifNPDRepository.existsByNotifId(dto.getNotifId())) {
-            Optional<NotifNPD> op = notifNPDRepository.findById(dto.getId());
+        if (dto.getNotifId() != null && notifNPDRepository.existsByNotifId(dto.getNotifId())) {
+            Optional<NotifNPD> op = notifNPDRepository.findByNotifId(dto.getId());
             if (op.isPresent()) {
                 NotifNPD notif = op.get();
                 notif.setIsOpen(dto.getIsOpen());
