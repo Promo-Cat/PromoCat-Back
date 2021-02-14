@@ -88,14 +88,7 @@ public class UserBanService {
 //        userDTO.setMovements(null);
         userDTO.setStockCityId(null);
         userDTO = userService.save(userDTO);
-        NotificationDTO notification = notificationBuilderFactory.getBuilder()
-                .getNotification(NotificationLoader.NotificationType.USER_BAN)
-                .set("stock_name", stock.getName())
-                .set("date", stock.getStartTime().plusDays(stock.getDuration()).format(
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                ))
-                .build();
-        firebaseNotificationManager.sendNotificationByAccount(notification, userDTO);
+
         return save(userBan);
     }
 
