@@ -418,7 +418,6 @@ public class UserController {
             }
 
             if (!phone.toString().equals(taxpayerResult.getPhone())) {
-                user.setInn(null);
                 user.setStatus(UserStatus.JUST_REGISTERED);
                 userBanService.ban(user);
                 userService.update(user, user);
