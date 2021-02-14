@@ -44,13 +44,13 @@ public class ApiTaxExceptionHandler {
 
     @ExceptionHandler(value = {ApiTaxRequestPhoneAndUserPhoneException.class})
     public ResponseEntity<Object> handleTaxRequestPhoneAndUserPhoneError(ApiTaxRequestPhoneAndUserPhoneException e) {
-        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        final HttpStatus forbidden = HttpStatus.FORBIDDEN;
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                badRequest,
+                forbidden,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
         log.error("Tax request phoen and user phone are incorrect: " + e.getMessage());
-        return new ResponseEntity<>(apiException, badRequest);
+        return new ResponseEntity<>(apiException, forbidden);
     }
 }
