@@ -19,6 +19,7 @@ import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
+import org.promocat.promocat.exception.util.tax.ApiTaxRequestPhoneAndUserPhoneException;
 import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.*;
 import org.promocat.promocat.utils.soap.SoapClient;
@@ -36,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -286,6 +288,12 @@ public class UserService extends AbstractAccountService {
      * @param user пользователь, который хочет подключиться к Мой налог.
      */
     public void registerMyTax(final UserDTO user) {
+        if (!Objects.isNull(user.getInn())) {
+            GetTaxpayerStatusResponse result = getTaxpayer(user);
+            if (!CheckPhone.isEqual(user.getTelephone(), result.getPhone())) {
+                throw new ApiTaxRequestPhoneAndUserPhoneException("Phone in npd and in db aren't equal");
+            }
+        }
         PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse)
                 soapClient.send(new PostBindPartnerWithPhoneRequest(
                         TaxUtils.reformatPhone(user.getTelephone()), TaxUtils.PERMISSIONS));
