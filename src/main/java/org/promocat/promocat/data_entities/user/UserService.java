@@ -33,6 +33,7 @@ import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -245,6 +246,7 @@ public class UserService extends AbstractAccountService {
      * Узнаёт у НПД кто отписался. Всех баним в акции, сбрасываем инн и статус, а также отправляем уведомление.
      */
     @Scheduled(cron = "0 0 11 * * *")
+    @Transactional
     public void checkNPDUnboundUsers() {
         log.info("Started unbound from NPD users checker.");
         GetNewlyUnboundTaxpayersRequest request = new GetNewlyUnboundTaxpayersRequest();

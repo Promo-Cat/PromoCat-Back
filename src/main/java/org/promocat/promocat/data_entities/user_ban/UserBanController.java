@@ -6,14 +6,24 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.stock.StockService;
+import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.UserService;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserBanDTO;
+import org.promocat.promocat.dto.UserDTO;
+import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.exception.ApiException;
+import org.promocat.promocat.utils.FirebaseNotificationManager;
+import org.promocat.promocat.utils.NotificationBuilderFactory;
+import org.promocat.promocat.utils.NotificationLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @RestController
@@ -22,11 +32,20 @@ public class UserBanController {
 
     private final UserBanService userBanService;
     private final UserService userService;
+    private final FirebaseNotificationManager firebaseNotificationManager;
+    private final NotificationBuilderFactory notificationBuilderFactory;
+    private final StockCityService stockCityService;
+    private final StockService stockService;
+
 
     public UserBanController(final UserBanService userBanService,
-                             final UserService userService) {
+                             final UserService userService, FirebaseNotificationManager firebaseNotificationManager, NotificationBuilderFactory notificationBuilderFactory, StockCityService stockCityService, StockService stockService) {
         this.userBanService = userBanService;
         this.userService = userService;
+        this.firebaseNotificationManager = firebaseNotificationManager;
+        this.notificationBuilderFactory = notificationBuilderFactory;
+        this.stockCityService = stockCityService;
+        this.stockService = stockService;
     }
 
 
@@ -39,6 +58,17 @@ public class UserBanController {
     })
     @RequestMapping(path = "/admin/ban/user/{userId}", method = RequestMethod.POST)
     public ResponseEntity<UserBanDTO> banUser(@PathVariable("userId") final Long id) {
-        return ResponseEntity.ok(userBanService.ban(userService.findById(id)));
+        UserDTO userDTO = userService.findById(id);
+        UserBanDTO userBanDTO = userBanService.ban(userDTO);
+        StockDTO stock = stockService.findById(stockCityService.findById(userDTO.getStockCityId()).getStockId());
+        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                .getNotification(NotificationLoader.NotificationType.USER_BAN)
+                .set("stock_name", stock.getName())
+                .set("date", stock.getStartTime().plusDays(stock.getDuration()).format(
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                ))
+                .build();
+        firebaseNotificationManager.sendNotificationByAccount(notification, userDTO);
+        return ResponseEntity.ok(userBanDTO);
     }
 }

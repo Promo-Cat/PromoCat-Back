@@ -10,11 +10,11 @@ public enum ReceiptCancelReason {
     /**
      * Чек сформирован ошибочно.
      */
-    GENERATED_INCORRECTLY("Чек сформирован ошибочно."),
+    GENERATED_INCORRECTLY("REGISTRATION_MISTAKE"),
     /**
      * Возврат средств.
      */
-    REFUND("Возврат средств.");
+    REFUND("REFUND");
 
     @Getter
     String ruString;
