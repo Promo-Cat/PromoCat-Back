@@ -120,7 +120,22 @@ public class NotifNPDService {
      * @return лист объектов класса NotifNPDDTO, содержащий все необходимые данные об уведомлениях.
      */
     public List<NotifNPDDTO> findAllByUserId(final Long id) {
-        return notifNPDRepository.findAllByUserId(id).stream().map(notifNPDMapper::toDto).collect(Collectors.toList());
+        return notifNPDRepository.findAllByUserId(id).stream()
+                .map(notifNPDMapper::toDto)
+                .sorted((x, y) -> {
+                    if (x.getIsOpen() != y.getIsOpen() && !x.getIsOpen()) {
+                        return -1;
+                    } else if (x.getIsOpen() != y.getIsOpen() && !y.getIsOpen()) {
+                        return 1;
+                    } else if (x.getIsOpen() == y.getIsOpen()) {
+                        if (x.getTime().isBefore(y.getTime())) {
+                            return -1;
+                        } else if (x.getTime().isAfter(y.getTime())) {
+                            return 1;
+                        }
+                    }
+                    return 0;
+                }).collect(Collectors.toList());
     }
 
     /**
