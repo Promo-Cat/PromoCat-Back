@@ -124,9 +124,9 @@ public class NotifNPDService {
                 .map(notifNPDMapper::toDto)
                 .sorted((x, y) -> {
                     if (x.getIsOpen() != y.getIsOpen() && !x.getIsOpen()) {
-                        return -1;
-                    } else if (x.getIsOpen() != y.getIsOpen() && !y.getIsOpen()) {
                         return 1;
+                    } else if (x.getIsOpen() != y.getIsOpen() && !y.getIsOpen()) {
+                        return -1;
                     } else if (x.getIsOpen() == y.getIsOpen()) {
                         if (x.getTime().isBefore(y.getTime())) {
                             return -1;
