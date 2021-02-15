@@ -5,7 +5,7 @@ target/
 !**/src/test/**
 
 app.log
-
+*.log
 templates.json
 
 ### STS ###
