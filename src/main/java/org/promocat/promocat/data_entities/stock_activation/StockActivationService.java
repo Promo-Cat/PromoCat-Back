@@ -2,8 +2,10 @@ package org.promocat.promocat.data_entities.stock_activation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
+import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.user_ban.UserBanService;
+import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockActivationDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -33,6 +35,7 @@ public class StockActivationService {
     private final CityMapper cityMapper;
     private final AbstractAccountService abstractAccountService;
     private final TopicGenerator topicGenerator;
+    private final MovementService movementService;
 
     @Autowired
     public StockActivationService(final StockActivationRepository stockActivationRepository,
@@ -42,7 +45,8 @@ public class StockActivationService {
                                   final StockMapper stockMapper,
                                   final CityMapper cityMapper,
                                   final AbstractAccountService abstractAccountService,
-                                  final TopicGenerator topicGenerator) {
+                                  final TopicGenerator topicGenerator,
+                                  final MovementService movementService) {
         this.stockActivationRepository = stockActivationRepository;
         this.stockActivationMapper = stockActivationMapper;
         this.userBanService = userBanService;
@@ -51,6 +55,7 @@ public class StockActivationService {
         this.cityMapper = cityMapper;
         this.abstractAccountService = abstractAccountService;
         this.topicGenerator = topicGenerator;
+        this.movementService = movementService;
     }
 
     /**
@@ -91,6 +96,12 @@ public class StockActivationService {
                     d.setName(stockDTO.getName());
                     d.setBanned(userBanService.isBanned(userDTO, stockDTO));
                     d.setCity(cityMapper.toDto(x.getStockCity().getCity()));
+                    List<MovementDTO> movements = movementService.findByUserAndStock(userDTO, stockDTO);
+                    Double distance = 0.0;
+                    for (MovementDTO movement : movements) {
+                        distance += movement.getDistance();
+                    }
+                    d.setDistance(distance);
                     return d;
                 })
                 .collect(Collectors.toList());
