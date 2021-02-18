@@ -44,11 +44,10 @@ public class ReceiptService {
 
     public List<ReceiptDTO> getAllByUserTelephone(String telephone) {
         return receiptRepository
-                .getAllByUserAndCancelReason(
+                .getAllByUser(
                         userRepository
                                 .getByTelephone(telephone)
-                                .orElseThrow(ApiUserNotFoundException::new),
-                        null
+                                .orElseThrow(ApiUserNotFoundException::new)
                 ).stream()
                 .map(receiptMapper::toDto)
                 .collect(Collectors.toList());
