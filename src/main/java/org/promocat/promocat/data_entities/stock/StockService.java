@@ -4,6 +4,7 @@ package org.promocat.promocat.data_entities.stock;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.attributes.UserStatus;
+import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
@@ -73,6 +74,7 @@ public class StockService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
     private final ApplicationContext applicationContext;
+    private final AbstractAccountService abstractAccountService;
 
     @Autowired
     public StockService(final StockMapper mapper,
@@ -90,7 +92,8 @@ public class StockService {
                         final TopicGenerator topicGenerator,
                         final CompanyRepository companyRepository,
                         final CompanyMapper companyMapper,
-                        final ApplicationContext applicationContext) {
+                        final ApplicationContext applicationContext,
+                        final AbstractAccountService abstractAccountService) {
         this.mapper = mapper;
         this.repository = repository;
         this.stockCityService = stockCityService;
@@ -107,6 +110,7 @@ public class StockService {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
         this.applicationContext = applicationContext;
+        this.abstractAccountService = abstractAccountService;
     }
 
     /**
@@ -209,6 +213,8 @@ public class StockService {
         csvGenerator.generate(path, users);
         File file = path.toFile();
         file.delete();
+
+        users.forEach(user -> abstractAccountService.subscribeOnTopic(user, topicGenerator.getNewStockTopicForUser()));
     }
 
     @Scheduled(cron = "0 5 0 * * *")

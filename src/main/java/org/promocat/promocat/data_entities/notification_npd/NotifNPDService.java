@@ -120,7 +120,8 @@ public class NotifNPDService {
      * @return лист объектов класса NotifNPDDTO, содержащий все необходимые данные об уведомлениях.
      */
     public List<NotifNPDDTO> findAllByUserId(final Long id) {
-        return notifNPDRepository.findAllByUserId(id).stream().map(notifNPDMapper::toDto).collect(Collectors.toList());
+        return notifNPDRepository.findAllByUserId(id).stream()
+                .map(notifNPDMapper::toDto).collect(Collectors.toList());
     }
 
     /**

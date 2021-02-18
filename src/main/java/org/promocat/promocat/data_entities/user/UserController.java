@@ -28,6 +28,7 @@ import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.util.tax.ApiTaxRequestIdException;
 import org.promocat.promocat.exception.util.tax.ApiTaxRequestPhoneAndUserPhoneException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
+import org.promocat.promocat.utils.CheckPhone;
 import org.promocat.promocat.utils.FirebaseNotificationManager;
 import org.promocat.promocat.utils.NotificationBuilderFactory;
 import org.promocat.promocat.utils.TopicGenerator;
@@ -386,6 +387,9 @@ public class UserController {
 
     @ApiOperation(value = "Register user in \"Moi nalog\".", notes = "Register user in \"Moi nalog\".",
             response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 403, message = "Phones is not equal", response = ApiException.class)
+    })
     @RequestMapping(value = "/api/user/tax/registration", method = RequestMethod.POST)
     public ResponseEntity<String> registerMyTax(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
@@ -410,14 +414,7 @@ public class UserController {
             user.setSecondName(taxpayerResult.getSecondName());
             user.setPatronymic(taxpayerResult.getPatronymic());
 
-            StringBuilder phone = new StringBuilder();
-            for (int i = 0; i < user.getTelephone().length(); i++) {
-                if (Character.isDigit(user.getTelephone().charAt(i))) {
-                    phone.append(user.getTelephone().charAt(i));
-                }
-            }
-
-            if (!phone.toString().equals(taxpayerResult.getPhone())) {
+            if (!CheckPhone.isEqual(user.getTelephone(), taxpayerResult.getPhone())) {
                 user.setStatus(UserStatus.JUST_REGISTERED);
                 userBanService.ban(user);
                 userService.update(user, user);
