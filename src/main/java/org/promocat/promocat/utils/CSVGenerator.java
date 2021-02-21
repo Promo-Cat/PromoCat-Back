@@ -35,7 +35,7 @@ public class CSVGenerator {
 
             String[] records = result.toString().split("\n");
             for (String record : records) {
-                writer.writeNext(record.split(","));
+                writer.writeNext(record.split(";"));
             }
             writer.close();
             File file = new File(path.toString());
