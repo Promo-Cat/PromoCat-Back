@@ -241,7 +241,7 @@ public class UserController {
         }
         StockActivationCodeDTO stockActivationCodeDTO = stockActivationCodeService.get(userDTO, stockCity);
         stockActivationCodeDTO.setTimestemp(System.currentTimeMillis());
-        return ResponseEntity.ok(stockActivationCodeDTO);
+        return ResponseEntity.ok(stockActivationCodeService.save(stockActivationCodeDTO));
     }
 
     @ApiOperation(value = "Add user movement.",
