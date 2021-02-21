@@ -271,10 +271,9 @@ public class StockController {
             @ApiResponse(code = 404, message = "File not found", response = ApiException.class),
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
-    @RequestMapping(path = "/admin/stock/csvFile/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Resource> getCSVFile(@PathVariable("id") final Long id,
-                                               @PathParam("name") final String name) {
-        StockDTO stockDTO = stockService.findById(id);
+    @RequestMapping(path = "/admin/stock/csvFile", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getCSVFile(@PathParam("name") final String name) {
+        StockDTO stockDTO = stockService.findById(Long.valueOf(7));
         stockService.endUpStock(stockDTO);
         return csvFileService.getFile(name);
     }
