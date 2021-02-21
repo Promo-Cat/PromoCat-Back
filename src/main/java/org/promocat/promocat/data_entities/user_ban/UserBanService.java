@@ -107,7 +107,7 @@ public class UserBanService {
      * @return {@code true} - если юзер забанен в данной акции, {@code false} - иначе
      */
     public boolean isBanned(UserDTO userDTO, StockDTO stockDTO) {
-        return userBanRepository.getByUserIdAndStockId(userDTO.getId(), stockDTO.getId()).isPresent();
+        return !userBanRepository.getByUserIdAndStockId(userDTO.getId(), stockDTO.getId()).isEmpty();
     }
 
     public Optional<StockDTO> getLastBannedStockForUser(UserDTO userDTO) {

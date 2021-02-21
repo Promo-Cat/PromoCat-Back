@@ -117,12 +117,12 @@ public class StockActivationCodeService {
      * @param code код
      * @return {@code true} - если код валидный и {@code false} иначе
      */
-    public boolean checkCode(String code) {
+    public Optional<StockActivationCodeDTO> checkCode(String code) {
         Optional<StockActivationCode> entityOptional = stockActivationCodeRepository.findByCode(code);
         if (entityOptional.isPresent()) {
             StockActivationCode entity = entityOptional.get();
             if (!entity.getActive()) {
-                return false;
+                return Optional.empty();
             }
             User user = entity.getUser();
             user.setStockCity(entity.getStockCity());
@@ -135,9 +135,9 @@ public class StockActivationCodeService {
                             stockMapper.toDto(entity.getStockCity().getStock())
                     )
             );
-            return true;
+            return Optional.of(stockActivationCodeMapper.toDto(entity));
         } else {
-            return false;
+            return Optional.empty();
         }
     }
 

@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 
-    List<Receipt> getAllByUserAndCancelReason(User user, ReceiptCancelReason reason);
+    List<Receipt> getAllByUser(User user);
     Optional<Receipt> getByReceiptId(String receiptId);
 
 }
