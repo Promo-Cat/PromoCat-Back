@@ -5,7 +5,6 @@ import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.MovementDTO;
-import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.DistanceDTO;
@@ -39,7 +38,13 @@ public class MovementService {
 
     @Autowired
     public MovementService(final MovementRepository movementRepository,
-                           final PromoCodeService promoCodeService, final MovementMapper movementMapper, final UserMapper userMapper, final StockMapper stockMapper, final StockCityService stockCityService, final StockService stockService, PaymentService paymentService) {
+                           final PromoCodeService promoCodeService,
+                           final MovementMapper movementMapper,
+                           final UserMapper userMapper,
+                           final StockMapper stockMapper,
+                           final StockCityService stockCityService,
+                           final StockService stockService,
+                           final PaymentService paymentService) {
         this.movementRepository = movementRepository;
         this.promoCodeService = promoCodeService;
         this.movementMapper = movementMapper;
