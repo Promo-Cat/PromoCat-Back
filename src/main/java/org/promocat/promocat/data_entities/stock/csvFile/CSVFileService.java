@@ -112,6 +112,7 @@ public class CSVFileService {
             CSVFileDTO csvFileDTO = csvFileMapper.toDto(op.get());
             Blob blob = csvFileDTO.getFile();
             try {
+                log.info(blob.length() + " " + name + "\n");
                 byte[] bytes = blob.getBytes(0, (int) blob.length());
                 log.info("here\n");
                 return ResponseEntity.ok()
