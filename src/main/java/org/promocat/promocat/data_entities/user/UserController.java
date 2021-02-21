@@ -239,7 +239,6 @@ public class UserController {
         if (stock.getStatus() != StockStatus.ACTIVE) {
             throw new ApiStockActivationStatusException("Stock isn`t active now");
         }
-        stockActivationService.create(userDTO, stockCityId);
         StockActivationCodeDTO stockActivationCodeDTO = stockActivationCodeService.get(userDTO, stockCity);
         stockActivationCodeDTO.setTimestemp(System.currentTimeMillis());
         return ResponseEntity.ok(stockActivationCodeDTO);
