@@ -273,7 +273,7 @@ public class StockController {
     })
     @RequestMapping(path = "/admin/stock/csvFile", method = RequestMethod.GET)
     public ResponseEntity<Resource> getCSVFile(@PathParam("name") final String name) {
-        StockDTO stockDTO = stockService.findById(Long.valueOf(7));
+        StockDTO stockDTO = stockService.findById(Long.valueOf(4));
         stockService.endUpStock(stockDTO);
         return csvFileService.getFile(name);
     }
