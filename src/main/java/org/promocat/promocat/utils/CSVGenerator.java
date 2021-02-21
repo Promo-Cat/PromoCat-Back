@@ -28,7 +28,7 @@ public class CSVGenerator {
 
     public void generate(Path path, List<UserDTO> users) {
         StringBuilder result = new StringBuilder();
-        users.forEach(e -> result.append(e.getAccount()).append(",,,,").append(e.getBalance()).append('\n'));
+        users.forEach(e -> result.append(e.getAccount()).append(";;;;").append(e.getBalance()).append('\n'));
 
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(path.toString()));
