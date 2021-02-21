@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface UserBanRepository extends JpaRepository<UserBan, Long> {
 
-    Optional<UserBan> getByUserIdAndStockId(Long userId, Long stockId);
+    List<UserBan> getByUserIdAndStockId(Long userId, Long stockId);
 
     List<UserBan> getAllByUserId(Long userId);
 
