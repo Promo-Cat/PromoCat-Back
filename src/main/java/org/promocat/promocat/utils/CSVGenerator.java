@@ -30,7 +30,7 @@ public class CSVGenerator {
         StringBuilder result = new StringBuilder();
         users.forEach(e -> result.append(e.getAccount()).append(";;;;").append(String.format("%.2f", e.getBalance())).append('\n'));
 
-        log.info(result.toString());
+        log.info(users.size() + " " + result.toString());
 
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(path.toString()));
