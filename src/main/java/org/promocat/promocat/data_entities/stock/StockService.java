@@ -184,7 +184,7 @@ public class StockService {
     /**
      * Удаление акции по её завершению.
      */
-    @Scheduled(cron = "0 59 23 * * *")
+    @Scheduled(cron = "0 25 0 * * *")
     public void checkAlive() {
         for (Long day : StockDurationConstraintValidator.getAllowedDuration()) {
             log.info("Clear stock with end time after: {}", day);
