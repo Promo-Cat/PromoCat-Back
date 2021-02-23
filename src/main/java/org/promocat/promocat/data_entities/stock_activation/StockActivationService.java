@@ -99,7 +99,6 @@ public class StockActivationService {
                     List<MovementDTO> movements = movementService.findByUserAndStock(userDTO, stockDTO);
                     Double distance = 0.0;
                     for (MovementDTO movement : movements) {
-                        log.info("{} {}", stockDTO.getName(), movement.getDistance());
                         distance += movement.getDistance();
                     }
                     d.setDistance(distance);
