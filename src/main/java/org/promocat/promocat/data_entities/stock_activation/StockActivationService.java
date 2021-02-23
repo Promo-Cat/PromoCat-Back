@@ -97,7 +97,7 @@ public class StockActivationService {
                     d.setBanned(userBanService.isBanned(userDTO, stockDTO));
                     d.setCity(cityMapper.toDto(x.getStockCity().getCity()));
                     List<MovementDTO> movements = movementService.findByUserAndStock(userDTO, stockDTO);
-                    log.info("{} {}", movements.size(), userDTO.getId());
+                    log.info("{} {} {}", movements.size(), userDTO.getId(), stockDTO.getName());
                     Double distance = 0.0;
                     for (MovementDTO movement : movements) {
                         distance += movement.getDistance();
