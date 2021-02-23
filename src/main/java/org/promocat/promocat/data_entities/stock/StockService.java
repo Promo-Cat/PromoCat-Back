@@ -500,6 +500,11 @@ public class StockService {
     public void testCSV() {
         List<UserDTO> users = userRepository.getAllByAccountNotNull().stream().map(userMapper::toDto).collect(Collectors.toList());
 
-        csvGenerator.generate(Paths.get(PATH, "CSVTest.csv"), users);
+        Path path = Paths.get(PATH, "CSVTest.csv");
+
+        csvGenerator.generate(path, users);
+
+        File file = path.toFile();
+        file.delete();
     }
 }
