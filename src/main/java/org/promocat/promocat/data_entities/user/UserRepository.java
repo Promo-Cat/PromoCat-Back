@@ -23,4 +23,6 @@ public interface UserRepository extends AbstractAccountRepository<User> {
 
     @Query(value="SELECT nextval('giveaway_number_seq')", nativeQuery = true)
     Long getGiveawayNumber();
+
+    List<User> getAllByAccountNotNull();
 }

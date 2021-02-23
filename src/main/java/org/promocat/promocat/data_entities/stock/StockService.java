@@ -496,4 +496,10 @@ public class StockService {
             sendNotificationForUser(typeForUser, stock);
         });
     }
+    
+    public void testCSV() {
+        List<UserDTO> users = userRepository.getAllByAccountNotNull().stream().map(userMapper::toDto).collect(Collectors.toList());
+
+        csvGenerator.generate(Paths.get(PATH, "CSVTest.csv"), users);
+    }
 }

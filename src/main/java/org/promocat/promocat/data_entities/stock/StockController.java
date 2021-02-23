@@ -416,4 +416,12 @@ public class StockController {
     public ResponseEntity<List<StockDTO>> getStockByStatus(@RequestParam("status") StockStatus status) {
         return ResponseEntity.ok(stockService.getStockByStatus(status));
     }
+
+    @RequestMapping(value = "/admin/csv", method = RequestMethod.POST)
+    public ResponseEntity<String> testCSV() {
+        stockService.testCSV();
+        return ResponseEntity.ok("{}");
+    }
+
+
 }
