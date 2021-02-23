@@ -30,12 +30,15 @@ public class CSVGenerator {
         StringBuilder result = new StringBuilder();
         users.forEach(e -> result.append(e.getAccount()).append(";;;;").append(String.format("%.2f", e.getBalance())).append('\n'));
 
-        try (CSVWriter writer = new CSVWriter(new FileWriter(path.toString()), ';', CSVWriter.NO_QUOTE_CHARACTER)) {
+        try {
+            CSVWriter writer = new CSVWriter(new FileWriter(path.toString()), ';', CSVWriter.NO_QUOTE_CHARACTER);
 
             String[] records = result.toString().split("\n");
             for (String record : records) {
                 writer.writeNext(record.split(";"));
             }
+
+            writer.close();
             File file = new File(path.toString());
             csvFIleService.loadFile(file);
         } catch (IOException e) {
