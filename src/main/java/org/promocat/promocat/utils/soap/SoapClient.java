@@ -212,7 +212,7 @@ public class SoapClient {
      * @return new object with values from {@code SOAPMessage}
      */
     public Object soapXmlToPOJO(Element xml, Class<?> pojoClass, boolean inner) throws SOAPException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        if (!inner && xml.getElementsByTagName(pojoClass.getSimpleName()).getLength() == 0) {
+        if (!inner && xml.getElementsByTagName("ns2:" + pojoClass.getSimpleName()).getLength() == 0) {
             log.error("Response doesn`t apply presented POJO class. Expected: {}", pojoClass.getSimpleName());
             try {
                 return soapXmlToPOJO(xml, SmzPlatformError.class, false);
@@ -226,7 +226,7 @@ public class SoapClient {
                 field.setAccessible(true);
                 boolean fieldIsList = field.getType() == List.class;
                 XmlField annotation = field.getAnnotation(XmlField.class);
-                NodeList fieldValueInResponseNode = xml.getElementsByTagName(annotation.value());
+                NodeList fieldValueInResponseNode = xml.getElementsByTagName("ns2:" + annotation.value());
                 Object value = fieldIsList ? new ArrayList<>() : null;
                 for (int i = 0; i < fieldValueInResponseNode.getLength(); i++) {
                     Object temp = field.isAnnotationPresent(XmlInnerObject.class) ?
