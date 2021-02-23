@@ -113,6 +113,7 @@ public class CSVFileService {
             Blob blob = csvFileDTO.getFile();
             try {
                 byte[] bytes = blob.getBytes(1, (int) blob.length());
+                log.info("{}", bytes.length);
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType("text/csv"))
                         .header(HttpHeaders.CONTENT_DISPOSITION,
