@@ -33,7 +33,7 @@ public class CSVGenerator {
         log.info(result.toString() + "\n");
 
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter(path.toString()));
+            CSVWriter writer = new CSVWriter(new FileWriter(path.toString()), ';');
 
             String[] records = result.toString().split("\n");
             for (String record : records) {
