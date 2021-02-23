@@ -12,6 +12,7 @@ import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.receipt.ReceiptService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.user.UserRepository;
+import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.data_entities.user_ban.UserBanService;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
@@ -211,6 +212,12 @@ public class StockService {
                     userRepository.save(userMapper.toEntity(y));
                 });
         csvGenerator.generate(path, users);
+
+        users.forEach(user -> {
+            user.setBalance(0.0);
+            applicationContext.getBean(UserService.class).save(user);
+        });
+
         File file = path.toFile();
         file.delete();
 

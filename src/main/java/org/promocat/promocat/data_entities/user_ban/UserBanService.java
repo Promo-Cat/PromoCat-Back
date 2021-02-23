@@ -91,6 +91,7 @@ public class UserBanService {
         userDTO = userService.findById(userDTO.getId());
 //        userDTO.setMovements(null);
         userDTO.setStockCityId(null);
+        userDTO.setBalance(0.0);
         userService.save(userDTO);
         abstractAccountService.subscribeOnTopic(userDTO, topicGenerator.getNewStockTopicForUser());
         return save(userBan);
