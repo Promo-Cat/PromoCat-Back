@@ -182,4 +182,19 @@ public class MovementService {
                                                  final Long stockId) {
         movementRepository.deleteAllByUserIdAndStockId(userId, stockId);
     }
+
+    public Double getSummaryDistanceForStockAndUser(UserDTO user, StockDTO stock) {
+        List<MovementDTO> movements = (movementRepository.findByUserAndStock(userMapper.toEntity(user), stockMapper.toEntity(stock)))
+                .stream()
+                .map(movementMapper::toDto)
+                .collect(Collectors.toList());
+
+        Double distance = 0.0;
+
+        for (MovementDTO movement : movements) {
+            distance += movement.getDistance();
+        }
+
+        return distance;
+    }
 }

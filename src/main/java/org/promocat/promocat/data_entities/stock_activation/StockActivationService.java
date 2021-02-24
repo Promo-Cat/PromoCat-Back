@@ -5,7 +5,6 @@ import org.promocat.promocat.data_entities.abstract_account.AbstractAccountServi
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.user_ban.UserBanService;
-import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockActivationDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -96,12 +95,7 @@ public class StockActivationService {
                     d.setName(stockDTO.getName());
                     d.setBanned(userBanService.isBanned(userDTO, stockDTO));
                     d.setCity(cityMapper.toDto(x.getStockCity().getCity()));
-                    List<MovementDTO> movements = movementService.findByUserAndStock(userDTO, stockDTO);
-                    Double distance = 0.0;
-                    for (MovementDTO movement : movements) {
-                        distance += movement.getDistance();
-                    }
-                    d.setDistance(distance);
+                    d.setDistance(movementService.getSummaryDistanceForStockAndUser(userDTO, stockDTO));
                     return d;
                 })
                 .collect(Collectors.toList());

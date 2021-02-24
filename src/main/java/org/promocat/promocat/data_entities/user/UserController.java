@@ -308,6 +308,8 @@ public class UserController {
         resultPojo.setStartTime(stockDTO.getStartTime());
         resultPojo.setId(stockDTO.getId());
         resultPojo.setStatus(stockDTO.getStatus());
+        resultPojo.setDistance(movementService.getSummaryDistanceForStockAndUser(userDTO, stockDTO));
+
         return ResponseEntity.ok(resultPojo);
     }
 
