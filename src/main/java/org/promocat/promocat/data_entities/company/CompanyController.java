@@ -393,11 +393,12 @@ public class CompanyController {
             @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
 
-        log.info("{}", companyDTO);
-
         return ResponseEntity.ok(
                 companyService.getAllStocks(companyDTO).stream()
-                        .filter(x -> x.getStatus().ordinal() > StockStatus.ACTIVE.ordinal())
+                        .filter(x -> {
+                            log.info("{}", x);
+                            return x.getStatus().ordinal() > StockStatus.ACTIVE.ordinal();
+                        })
                         .map(x -> new StockWithSummaryDistanceDTO(
                                 x,
                                 movementService.getSummaryMovementsByStock(x.getId()).getDistance()
