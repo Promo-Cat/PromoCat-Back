@@ -395,14 +395,15 @@ public class CompanyController {
 
         return ResponseEntity.ok(
                 companyService.getAllStocks(companyDTO).stream()
-                        .filter(x -> {
-                            log.info("{}", x);
-                            return x.getStatus().ordinal() > StockStatus.ACTIVE.ordinal();
+                        .filter(x -> x.getStatus().ordinal() > StockStatus.ACTIVE.ordinal())
+                        .map(x -> {
+                            DistanceDTO distance = movementService.getSummaryMovementsByStock(x.getId());
+                            log.info("{}", distance);
+                            return new StockWithSummaryDistanceDTO(
+                                    x,
+                                    distance.getDistance()
+                            );
                         })
-                        .map(x -> new StockWithSummaryDistanceDTO(
-                                x,
-                                movementService.getSummaryMovementsByStock(x.getId()).getDistance()
-                        ))
                         .collect(Collectors.toSet())
         );
     }
