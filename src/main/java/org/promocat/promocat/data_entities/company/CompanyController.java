@@ -392,6 +392,9 @@ public class CompanyController {
             @RequestParam(value = "companyId", required = false) Long companyId,
             @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
+
+        log.info("{}", companyDTO);
+
         return ResponseEntity.ok(
                 companyService.getAllStocks(companyDTO).stream()
                         .filter(x -> x.getStatus().ordinal() > StockStatus.ACTIVE.ordinal())
