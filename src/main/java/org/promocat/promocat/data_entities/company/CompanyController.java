@@ -398,11 +398,8 @@ public class CompanyController {
                         .filter(x -> x.getStatus().ordinal() > StockStatus.ACTIVE.ordinal())
                         .map(x -> {
                             DistanceDTO distance = movementService.getSummaryMovementsByStock(x.getId());
-                            log.info("{}", distance);
                             return new StockWithSummaryDistanceDTO(
-                                    x,
-                                    distance.getDistance()
-                            );
+                                x, (distance == null ? 0 : distance.getDistance()));
                         })
                         .collect(Collectors.toSet())
         );
