@@ -206,7 +206,7 @@ public class StockService {
         stockDTO.getCities().stream()
                 .flatMap(x -> x.getUsers().stream())
                 .forEach(y -> {
-                    registerTaxes(y);
+//                    registerTaxes(y);
                     y.setStockCityId(null);
                     users.add(y);
                     userRepository.save(userMapper.toEntity(y));
