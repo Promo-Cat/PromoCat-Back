@@ -241,6 +241,7 @@ public class UserController {
         }
         StockActivationCodeDTO stockActivationCodeDTO = stockActivationCodeService.get(userDTO, stockCity);
         stockActivationCodeDTO.setTimestemp(System.currentTimeMillis());
+        userService.unsubscribeUserFromNewStockTopic(userDTO);
         return ResponseEntity.ok(stockActivationCodeService.save(stockActivationCodeDTO));
     }
 

@@ -357,6 +357,17 @@ public class UserService extends AbstractAccountService {
     }
 
     /**
+     * Отписывает водителя от получения уведомления о новой акции.
+     * @param user Водитель, который будет отписана от тем {@link UserDTO}
+     */
+    public void unsubscribeUserFromNewStockTopic(UserDTO user) {
+        if (user.getGoogleToken() == null) {
+            throw new ApiServerErrorException("Trying to unsubscribe user from topics. But user has no google token.");
+        }
+        unsubscribeFromTopic(user, topicGenerator.getNewStockTopicForUser());
+    }
+
+    /**
      * Возвращает количество свободных и занятых пользователей.
      * @return {@link NumberOfBusyAndFreeDrivers}
      */
