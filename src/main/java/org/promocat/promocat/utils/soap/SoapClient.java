@@ -220,7 +220,7 @@ public class SoapClient {
                 field.setAccessible(true);
                 boolean fieldIsList = field.getType() == List.class;
                 XmlField annotation = field.getAnnotation(XmlField.class);
-                NodeList fieldValueInResponseNode = xml.getElementsByTagName("ns2:" + annotation.value());
+                NodeList fieldValueInResponseNode = xml.getElementsByTagName(annotation.value());
                 Object value = fieldIsList ? new ArrayList<>() : null;
                 for (int i = 0; i < fieldValueInResponseNode.getLength(); i++) {
                     Object temp = field.isAnnotationPresent(XmlInnerObject.class) ?
