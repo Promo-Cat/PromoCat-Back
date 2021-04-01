@@ -7,18 +7,11 @@ import org.promocat.promocat.constraints.XmlInnerObject;
 import org.promocat.promocat.exception.soap.SoapException;
 import org.promocat.promocat.exception.soap.SoapResponseClassException;
 import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
-import org.promocat.promocat.utils.soap.attributes.ConnectionPermissions;
-import org.promocat.promocat.utils.soap.attributes.NotificationStatus;
 import org.promocat.promocat.utils.soap.operations.AbstractOperation;
-import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
-import org.promocat.promocat.utils.soap.operations.binding.*;
 import org.promocat.promocat.utils.soap.operations.SendMessageResponse;
-import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsRequest;
-import org.promocat.promocat.utils.soap.operations.notifications.GetNotificationsResponse;
-import org.promocat.promocat.utils.soap.operations.np_profile.GetTaxpayerStatusRequest;
-import org.promocat.promocat.utils.soap.operations.pojo.NotificationsRequest;
-import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsRequest;
-import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsResponse;
+import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
+import org.promocat.promocat.utils.soap.operations.binding.GetNewlyUnboundTaxpayersRequest;
+import org.promocat.promocat.utils.soap.operations.binding.GetNewlyUnboundTaxpayersResponse;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -29,13 +22,13 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +151,7 @@ public class SoapClient {
             SoapRequest getRequest = new SoapGetMessageRequest(new SendMessageResponse(messageId), getToken());
             responseOptional = getRequest.send(API_URL);
             if (responseOptional.isPresent()) {
+                log.info("{}", responseOptional.get().getSOAPBody());
                 try {
                     Object res = soapXmlToPOJO(responseOptional.get().getSOAPBody(), operation.getResponseClass(), false);
                     if (res instanceof SmzPlatformError) {
