@@ -151,7 +151,6 @@ public class SoapClient {
             SoapRequest getRequest = new SoapGetMessageRequest(new SendMessageResponse(messageId), getToken());
             responseOptional = getRequest.send(API_URL);
             if (responseOptional.isPresent()) {
-                log.info("{}", responseOptional.get().getSOAPBody());
                 try {
                     Object res = soapXmlToPOJO(responseOptional.get().getSOAPBody(), operation.getResponseClass(), false);
                     if (res instanceof SmzPlatformError) {
@@ -206,7 +205,7 @@ public class SoapClient {
      * @return new object with values from {@code SOAPMessage}
      */
     public Object soapXmlToPOJO(Element xml, Class<?> pojoClass, boolean inner) throws SOAPException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        if (!inner && xml.getElementsByTagName("ns2:" + pojoClass.getSimpleName()).getLength() == 0) {
+        if (!inner && xml.getElementsByTagName(pojoClass.getSimpleName()).getLength() == 0) {
             log.error("Response doesn`t apply presented POJO class. Expected: {}", pojoClass.getSimpleName());
             try {
                 return soapXmlToPOJO(xml, SmzPlatformError.class, false);
