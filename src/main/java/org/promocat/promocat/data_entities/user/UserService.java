@@ -13,7 +13,6 @@ import org.promocat.promocat.dto.MovementDTO;
 import org.promocat.promocat.dto.StockCityDTO;
 import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.UserDTO;
-import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.NumberOfBusyAndFreeDrivers;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
@@ -260,10 +259,10 @@ public class UserService extends AbstractAccountService {
                     log.error("User with inn {} doesn't found", x.getInn());
                     return;
                 }
-                NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
-                        .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
-                        .build();
-                firebaseNotificationManager.sendNotificationByAccount(notificationDTO, user);
+//                NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
+//                        .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
+//                        .build();
+//                firebaseNotificationManager.sendNotificationByAccount(notificationDTO, user);
                 stockService.banUserInStockAndResetStatus(user);
             });
             log.info("Unbounded users checker schedule successfully ended");
