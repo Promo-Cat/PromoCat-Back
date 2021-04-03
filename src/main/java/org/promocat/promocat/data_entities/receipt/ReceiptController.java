@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.user.UserService;
-import org.promocat.promocat.dto.CarDTO;
 import org.promocat.promocat.dto.ReceiptDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.ReceiptCancelDTO;
@@ -41,7 +40,7 @@ public class ReceiptController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
             @ApiResponse(code = 404, message = "User not found", response = ApiException.class)
     })
-    @RequestMapping(method = RequestMethod.GET, value = "/admin/receipt")
+    @RequestMapping(method = RequestMethod.GET, path = {"/admin/receipt", "/api/receipt"})
     public ResponseEntity<List<ReceiptDTO>> getAllReceiptsByTelephone(
             @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}",
                     message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
