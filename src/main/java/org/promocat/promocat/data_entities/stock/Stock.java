@@ -27,6 +27,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -51,7 +52,7 @@ public class Stock extends AbstractEntity {
     private Double prepayment;
     private Double postpayment;
     private Poster poster;
-    private Set<Receipt> receipts;
+    private Set<Receipt> receipts = new HashSet<>();
 
     /**
      * Значение комиссии для конкретной акции.

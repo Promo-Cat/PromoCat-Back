@@ -13,6 +13,7 @@ import org.promocat.promocat.constraints.StockDurationConstraint;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import static io.swagger.annotations.ApiModelProperty.AccessMode;
@@ -51,7 +52,7 @@ public class StockDTO extends AbstractDTO {
             accessMode = AccessMode.READ_ONLY
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Set<ReceiptDTO> receipts;
+    private Set<ReceiptDTO> receipts = new HashSet<>();
 
     @ApiModelProperty(value = "Start time of stock", dataType = "Local date time")
     private LocalDateTime startTime;
