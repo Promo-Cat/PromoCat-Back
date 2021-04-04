@@ -211,7 +211,7 @@ public class StockService {
                     y.setStockCityId(null);
                     users.add(y);
                     userRepository.save(userMapper.toEntity(y));
-                    applicationContext.getBean(UserService.class).subscribeUserOnDefaultTopics(y);
+//                    applicationContext.getBean(UserService.class).subscribeUserOnDefaultTopics(y);
                 });
         csvGenerator.generate(path, users);
 
