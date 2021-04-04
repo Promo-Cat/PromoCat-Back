@@ -20,4 +20,10 @@
             <column name="cancel_reason" type="int" defaultValue="null"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="04.04.2021-01" author="d.lyskin">
+        <addColumn tableName="receipt">
+            <column name="stock_id" type="int" defaultValue="null"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
