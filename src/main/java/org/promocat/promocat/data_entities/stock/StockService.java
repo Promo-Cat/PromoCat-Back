@@ -203,10 +203,11 @@ public class StockService {
             return;
         }
         List<UserDTO> users = new ArrayList<>();
+
         stockDTO.getCities().stream()
                 .flatMap(x -> x.getUsers().stream())
                 .forEach(y -> {
-                    registerTaxes(y);
+                    registerTaxes(y, stockDTO);
                     y.setStockCityId(null);
                     users.add(y);
                     userRepository.save(userMapper.toEntity(y));
@@ -246,7 +247,7 @@ public class StockService {
      *
      * @param user Пользователь, которому была произведена выплата.
      */
-    private void registerTaxes(UserDTO user) {
+    private void registerTaxes(UserDTO user, StockDTO stock) {
         PostIncomeRequestV2 op = new PostIncomeRequestV2();
         op.setInn(user.getInn());
         op.setCustomerOrganization(TaxUtils.PROMOCAT_NAME);
@@ -278,6 +279,8 @@ public class StockService {
         receipt.setReceiptLink(response.getLink());
         receipt.setDateTime(LocalDateTime.now());
         receipt.setUserId(user.getId());
+        receipt.setStockId(stock.getId());
+
 
         receiptService.save(receipt);
     }
