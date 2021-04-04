@@ -40,13 +40,29 @@ public class ReceiptController {
             @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
             @ApiResponse(code = 404, message = "User not found", response = ApiException.class)
     })
-    @RequestMapping(method = RequestMethod.GET, path = {"/admin/receipt", "/api/receipt"})
+    @RequestMapping(method = RequestMethod.GET, value = "/admin/receipt")
     public ResponseEntity<List<ReceiptDTO>> getAllReceiptsByTelephone(
             @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}",
                     message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
             @RequestParam("telephone") String telephone
     ) {
         return ResponseEntity.ok(receiptService.getAllByUserTelephone(telephone));
+    }
+
+    @ApiOperation(value = "Get receipt by token and id",
+            notes = "Returns receipt by user token and stock id",
+            response = ReceiptDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Validation error", response = ApiValidationException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class),
+            @ApiResponse(code = 404, message = "Receipt not found", response = ApiException.class)
+    })
+    @RequestMapping(method = RequestMethod.GET, value = "/api/receipt/{id}")
+    public ResponseEntity<ReceiptDTO> getReceiptByStockAndToken(@PathVariable("id") final Long id,
+                                                                @RequestHeader("token") final String token) {
+        UserDTO user = userService.findByToken(token);
+        return ResponseEntity.ok(receiptService.getByUserIdAndStockId(user.getId(), id));
     }
 
     @ApiOperation(value = "Cancel Receipt",

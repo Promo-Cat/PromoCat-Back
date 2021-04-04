@@ -1,6 +1,5 @@
 package org.promocat.promocat.data_entities.receipt;
 
-import org.promocat.promocat.attributes.ReceiptCancelReason;
 import org.promocat.promocat.data_entities.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,5 +12,5 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
 
     List<Receipt> getAllByUser(User user);
     Optional<Receipt> getByReceiptId(String receiptId);
-
+    Optional<Receipt> getByUserIdAndStockId(Long userId, Long stockId);
 }

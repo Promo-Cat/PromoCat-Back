@@ -8,17 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.collection.internal.PersistentSet;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.constraints.StockDurationConstraint;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
-import static io.swagger.annotations.ApiModelProperty.*;
+import static io.swagger.annotations.ApiModelProperty.AccessMode;
 /**
  * Created by Danil Lyskin at 19:54 12.05.2020
  */
@@ -49,6 +46,12 @@ public class StockDTO extends AbstractDTO {
     )
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<StockCityDTO> cities;
+
+    @ApiModelProperty(value = "Receipts for this stock", dataType = "List of Receipt entities",
+            accessMode = AccessMode.READ_ONLY
+    )
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Set<ReceiptDTO> receipts;
 
     @ApiModelProperty(value = "Start time of stock", dataType = "Local date time")
     private LocalDateTime startTime;

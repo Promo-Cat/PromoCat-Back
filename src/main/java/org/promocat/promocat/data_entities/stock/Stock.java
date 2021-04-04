@@ -13,6 +13,7 @@ import org.promocat.promocat.data_entities.abstract_account.AbstractEntity;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.movement.Movement;
 import org.promocat.promocat.data_entities.parameters.Parameters;
+import org.promocat.promocat.data_entities.receipt.Receipt;
 import org.promocat.promocat.data_entities.stock.poster.Poster;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCity;
 
@@ -50,6 +51,7 @@ public class Stock extends AbstractEntity {
     private Double prepayment;
     private Double postpayment;
     private Poster poster;
+    private Set<Receipt> receipts;
 
     /**
      * Значение комиссии для конкретной акции.
@@ -142,6 +144,16 @@ public class Stock extends AbstractEntity {
     @JoinColumn(name = "poster_id")
     public Poster getPoster() {
         return poster;
+    }
+
+    /**
+     * Чеки акции.
+     * @return
+     */
+    @Cascade({CascadeType.ALL})
+    @OneToMany(mappedBy = "stock", fetch = FetchType.LAZY)
+    public Set<Receipt> getReceipts() {
+        return receipts;
     }
 
 }

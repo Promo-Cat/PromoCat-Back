@@ -1,8 +1,6 @@
 package org.promocat.promocat.data_entities.receipt;
 
-import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.dto.ReceiptDTO;
 import org.promocat.promocat.dto.UserDTO;
@@ -11,12 +9,12 @@ import org.promocat.promocat.exception.receipt.ApiReceiptNotFoundException;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
 import org.promocat.promocat.mapper.ReceiptMapper;
 import org.promocat.promocat.utils.soap.SoapClient;
-import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.income.PostCancelReceiptRequestV2;
 import org.promocat.promocat.utils.soap.operations.income.PostCancelReceiptResponseV2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +49,16 @@ public class ReceiptService {
                 ).stream()
                 .map(receiptMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public ReceiptDTO getByUserIdAndStockId(final Long userId, final Long stockId) {
+        Optional<Receipt> op = receiptRepository.getByUserIdAndStockId(userId, stockId);
+
+        if (op.isPresent()) {
+            return receiptMapper.toDto(op.get());
+        }
+
+        throw new ApiReceiptNotFoundException(String.format("Receipt with user id: %d and stock id: %d not found", userId, stockId));
     }
 
     public void cancelReceipt(ReceiptCancelDTO receiptCancelDTO,

@@ -59,6 +59,17 @@ public class ReceiptDTO extends AbstractDTO {
     private Long userId;
 
     /**
+     * ID акции в бд, на которую выписан чек
+     */
+    @ApiModelProperty(
+            value = "Stock ID",
+            dataType = "Long",
+            required = true
+    )
+    @NotBlank(message = "Идентификатор акции не может быть пустым.")
+    private Long stockId;
+
+    /**
      * Причина отмены чека (null -> не отменён)
      */
     @ApiModelProperty(

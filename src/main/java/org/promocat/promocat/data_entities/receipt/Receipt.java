@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.promocat.promocat.attributes.ReceiptCancelReason;
 import org.promocat.promocat.data_entities.abstract_account.AbstractEntity;
+import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.user.User;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ public class Receipt extends AbstractEntity {
     private String receiptLink;
     private LocalDateTime dateTime;
     private User user;
+    private Stock stock;
     private ReceiptCancelReason cancelReason;
 
     @Column(name = "receipt_id")
@@ -46,6 +48,13 @@ public class Receipt extends AbstractEntity {
     @JoinColumn(name = "user_id")
     public User getUser() {
         return user;
+    }
+
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stock_id")
+    public Stock getStock() {
+        return stock;
     }
 
     @Column(name = "cancel_reason")
