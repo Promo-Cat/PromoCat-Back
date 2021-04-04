@@ -66,7 +66,6 @@ public class ReceiptDTO extends AbstractDTO {
             dataType = "Long",
             required = true
     )
-    @NotBlank(message = "Идентификатор акции не может быть пустым.")
     private Long stockId;
 
     /**
