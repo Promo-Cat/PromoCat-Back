@@ -264,7 +264,9 @@ public class UserService extends AbstractAccountService {
                         .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
                         .build();
                 firebaseNotificationManager.sendNotificationByAccount(notificationDTO, user);
-                stockService.banUserInStockAndResetStatus(user);
+                if (user.getStockCityId() != null) {
+                    stockService.banUserInStockAndResetStatus(user);
+                }
             });
             log.info("Unbounded users checker schedule successfully ended");
         } catch (SoapSmzPlatformErrorException e) {
