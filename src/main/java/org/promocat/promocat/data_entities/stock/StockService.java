@@ -211,7 +211,7 @@ public class StockService {
                     y.setStockCityId(null);
                     users.add(y);
                     userRepository.save(userMapper.toEntity(y));
-//                    applicationContext.getBean(UserService.class).subscribeUserOnDefaultTopics(y);
+                    applicationContext.getBean(UserService.class).subscribeUserOnDefaultTopics(y);
                 });
         csvGenerator.generate(path, users);
 
@@ -223,7 +223,7 @@ public class StockService {
         File file = path.toFile();
         file.delete();
 
-//        users.forEach(user -> abstractAccountService.subscribeOnTopic(user, topicGenerator.getNewStockTopicForUser()));
+        users.forEach(user -> abstractAccountService.subscribeOnTopic(user, topicGenerator.getNewStockTopicForUser()));
     }
 
     @Scheduled(cron = "0 5 0 * * *")
@@ -319,15 +319,15 @@ public class StockService {
                         .set("start_date", LocalDate.now().toString())
                         .set("end_date", LocalDate.now().plusDays(stock.getDuration()).toString())
                         .build();
-//                firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
+                firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
             } else if (status == StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY) {
                 sendNotificationForCompany(NotificationLoader.NotificationType.COMPANY_STOCK_END, stock, companyDTO);
             } else if (status == StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE) {
-//                sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_PAY, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_PAY, stock, companyDTO);
             } else if (status == StockStatus.POSTER_CONFIRMED_WITHOUT_PREPAY) {
-//                sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_BID, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_BID, stock, companyDTO);
             } else if (status == StockStatus.BAN) {
-//                sendNotificationForCompany(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyDTO);
             }
         }
         stock.setStatus(status);

@@ -482,7 +482,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "Delete user's token",
-            notes = "Delete user's token for notification",
+            notes = "Delete user's token for notifica/**/tion",
             response = UserDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "User not found", response = ApiException.class),
