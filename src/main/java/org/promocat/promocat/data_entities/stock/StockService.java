@@ -287,7 +287,7 @@ public class StockService {
 
     public void banUserInStockAndResetStatus(UserDTO user) {
         applicationContext.getBean(UserBanService.class).ban(user);
-        user.setInn(null);
+//        user.setInn(null);
         user.setStatus(UserStatus.JUST_REGISTERED);
         user.setTaxConnectionId(null);
         userRepository.save(userMapper.toEntity(user));
