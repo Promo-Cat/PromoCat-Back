@@ -290,8 +290,6 @@ public class StockService {
         user.setInn(null);
         user.setStatus(UserStatus.JUST_REGISTERED);
         user.setTaxConnectionId(null);
-        user.setFirstName(null);
-        user.setPatronymic(null);
         userRepository.save(userMapper.toEntity(user));
     }
 
