@@ -315,7 +315,7 @@ public class UserService extends AbstractAccountService {
         Object respObj = soapClient.send(op);
         if (respObj instanceof SmzPlatformError) {
             String errorCode = ((SmzPlatformError) respObj).getCode();
-//            user.setInn(null);
+            user.setInn(null);
             user.setStatus(UserStatus.JUST_REGISTERED);
             switch (errorCode) {
                 case "TAXPAYER_UNBOUND":
