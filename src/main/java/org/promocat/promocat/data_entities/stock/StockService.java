@@ -264,10 +264,10 @@ public class StockService {
             response = (PostIncomeResponseV2) soapClient.send(op);
         } catch (SoapSmzPlatformErrorException e) {
             if ("TAXPAYER_UNBOUND".equals(e.getError().getCode())) {
-//                NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
-//                        .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
-//                        .build();
-//                firebaseNotificationManager.sendNotificationByAccount(notificationDTO, user);
+                NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
+                        .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
+                        .build();
+                firebaseNotificationManager.sendNotificationByAccount(notificationDTO, user);
                 banUserInStockAndResetStatus(user);
                 return;
             }
