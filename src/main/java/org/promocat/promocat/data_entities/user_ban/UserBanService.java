@@ -117,6 +117,6 @@ public class UserBanService {
     }
 
     public void deleteFromBan(Long userId, Long stockId) {
-        userBanRepository.deleteByUserIdAndStockId(userId, stockId);
+        userBanRepository.deleteAllByUserIdAndStockId(userId, stockId);
     }
 }
