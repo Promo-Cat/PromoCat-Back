@@ -46,7 +46,7 @@ public class SimpleStockDTO extends AbstractDTO {
     private Long duration = 14L;
 
     @ApiModelProperty(value = "Is user banned in stock", dataType = "boolean")
-    private Boolean banned = true;
+    private Boolean banned = false;
 
     @ApiModelProperty(value = "City where user has a part in stock", dataType = "boolean")
     private CityDTO city;
