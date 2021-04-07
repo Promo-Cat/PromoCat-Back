@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.movement;
 
+import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.data_entities.promo_code.PromoCodeService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class MovementService {
 
@@ -76,6 +78,7 @@ public class MovementService {
     public MovementDTO create(final DistanceDTO distance, final Double earnedMoney, final UserDTO user) {
         MovementDTO movementDTO = new MovementDTO();
         movementDTO.setUserId(user.getId());
+        log.info("Set movement stock {}", stockCityService.findById(user.getStockCityId()).getStockId());
         movementDTO.setStockId(stockCityService.findById(user.getStockCityId()).getStockId());
         movementDTO.setDate(distance.getDate());
         movementDTO.setDistance(distance.getDistance());
