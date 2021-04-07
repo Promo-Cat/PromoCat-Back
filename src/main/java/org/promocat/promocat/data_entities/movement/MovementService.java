@@ -108,7 +108,7 @@ public class MovementService {
      * @return Передвижение. {@link MovementDTO}
      */
     public MovementDTO findByUserAndDate(final UserDTO user, final LocalDate date) {
-        Optional<Movement> movement = movementRepository.findByUserAndDate(userMapper.toEntity(user), date);
+        Optional<Movement> movement = movementRepository.findByUserAndDateAndStockId(userMapper.toEntity(user), date, stockCityService.findById(user.getStockCityId()).getStockId());
         return movement.map(movementMapper::toDto).orElse(null);
     }
 

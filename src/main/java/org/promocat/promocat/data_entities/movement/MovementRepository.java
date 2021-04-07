@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface MovementRepository extends JpaRepository<Movement, Long> {
     List<Movement> findByUserAndStock(User user, Stock stock);
 
-    Optional<Movement> findByUserAndDate(User user, LocalDate date);
+    Optional<Movement> findByUserAndDateAndStockId(User user, LocalDate date, Long stockId);
 
     void deleteAllByUserIdAndStockId(Long userId, Long stockId);
 
