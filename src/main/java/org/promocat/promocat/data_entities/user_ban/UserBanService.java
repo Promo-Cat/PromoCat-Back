@@ -90,7 +90,7 @@ public class UserBanService {
         // Получаем актуального юзера, так как у него изменились movements
         userDTO = userService.findById(userDTO.getId());
 //        userDTO.setMovements(null);
-        userDTO.setStockCityId(null);
+//        userDTO.setStockCityId(null);
         userDTO.setBalance(0.0);
         userService.save(userDTO);
         abstractAccountService.subscribeOnTopic(userDTO, topicGenerator.getNewStockTopicForUser());
@@ -114,5 +114,9 @@ public class UserBanService {
     public Optional<StockDTO> getLastBannedStockForUser(UserDTO userDTO) {
         List<UserBan> bans = userBanRepository.getAllByUserIdOrderByBanDateTime(userDTO.getId());
         return bans.size() == 0 ? Optional.empty() : Optional.of(stockService.findById(bans.get(0).getStock().getId()));
+    }
+
+    public void deleteFromBan(Long userId, Long stockId) {
+        userBanRepository.deleteByUserIdAndStockId(userId, stockId);
     }
 }

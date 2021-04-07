@@ -415,6 +415,7 @@ public class UserController {
             user.setFirstName(taxpayerResult.getFirstName());
             user.setSecondName(taxpayerResult.getSecondName());
             user.setPatronymic(taxpayerResult.getPatronymic());
+            userBanService.deleteFromBan(user.getId(), stockCityService.findById(user.getStockCityId()).getStockId());
 
             if (!CheckPhone.isEqual(user.getTelephone(), taxpayerResult.getPhone())) {
                 user.setStatus(UserStatus.JUST_REGISTERED);
