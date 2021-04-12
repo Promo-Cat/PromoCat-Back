@@ -74,7 +74,7 @@ public class CityController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/admin/city/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = {"/admin/city/{id}", "/api/city/{id}"}, method = RequestMethod.GET)
     public ResponseEntity<CityDTO> getCityById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(cityService.findById(id));
     }
