@@ -55,7 +55,7 @@ public final class TaxUtils {
     /**
      * Описание услуги.
      */
-    public static final String TAX_SERVICE_DESCRIPTION = "Продвижение товаров и услуг";
+    public static final String TAX_SERVICE_DESCRIPTION = "Размещение рекламного постера на автомобиле";
 
     /**
      * Ссылка на сайт PromoCat.
