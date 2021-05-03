@@ -64,6 +64,7 @@ public class TokenController {
     public ResponseEntity<TokenDTO> getToken(
             @RequestParam("authorizationKey") String authorizationKey,
             @RequestParam("code") String code) {
+        log.info("Code: {}", code);
         LoginAttemptDTO loginAttempt = new LoginAttemptDTO(authorizationKey, code);
         Optional<? extends AbstractAccount> accountRecord = loginAttemptService.checkLoginAttemptCode(loginAttempt);
         if (accountRecord.isPresent()) {
