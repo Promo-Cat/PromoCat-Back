@@ -36,6 +36,9 @@ public class StockWithStockCityDTO {
     @StockDurationConstraint
     private Long duration = 14L;
 
+    @ApiModelProperty(value = "Fare for driver", dataType = "Double")
+    private Double fare;
+
     public StockWithStockCityDTO(StockDTO stock, StockCityDTO stockCity) {
         this.stockId = stock.getId();
 //        this.previewId = stock.getPosterId();

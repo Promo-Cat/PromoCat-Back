@@ -9,6 +9,7 @@ import org.promocat.promocat.attributes.*;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.car.CarService;
 import org.promocat.promocat.data_entities.movement.MovementService;
+import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
 import org.promocat.promocat.data_entities.stock_activation.StockActivationService;
@@ -75,6 +76,7 @@ public class UserController {
     private final NotificationBuilderFactory notificationBuilderFactory;
     private final CarService carService;
     private final TopicGenerator topicGenerator;
+    private final ParametersService parametersService;
 
     @Autowired
     public UserController(final UserService userService,
@@ -88,7 +90,8 @@ public class UserController {
                           final FirebaseNotificationManager firebaseNotificationManager,
                           final NotificationBuilderFactory notificationBuilderFactory,
                           final CarService carService,
-                          final TopicGenerator topicGenerator) {
+                          final TopicGenerator topicGenerator,
+                          final ParametersService parametersService) {
         this.userService = userService;
         this.stockActivationService = stockActivationService;
         this.movementService = movementService;
@@ -101,6 +104,7 @@ public class UserController {
         this.notificationBuilderFactory = notificationBuilderFactory;
         this.carService = carService;
         this.topicGenerator = topicGenerator;
+        this.parametersService = parametersService;
     }
 
 //    @ApiOperation(value = "Registering user",
@@ -379,6 +383,7 @@ public class UserController {
                                             d.getStockId()
                                     )
                             );
+                            d.setFare(parametersService.getParameters().getFare());
                             return d;
                         }
                 )
