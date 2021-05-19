@@ -122,7 +122,7 @@ public class SpringFoxConfig {
                 new springfox.documentation.service.Contact("Maxim", "https://promocatcompany.com",
                         "devru@promocatcompany.com"),
                 "API License",
-                "https://api.promocatcompany.com",
+                "https://promocatcompany.com",
                 Collections.emptyList()
         );
     }
