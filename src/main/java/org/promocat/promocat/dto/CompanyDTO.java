@@ -44,7 +44,6 @@ public class CompanyDTO extends AbstractAccountDTO {
     )
     @Pattern(regexp = "\\d{10}", message = "ИНН задан неверно, должен состоять из 10 цифр. " +
             "Работа ведется только с юридическими лицами.")
-    @RequiredForFull
 //    @NotBlank(message = "ИНН организации не может быть пустым.")
     private String inn;
 
