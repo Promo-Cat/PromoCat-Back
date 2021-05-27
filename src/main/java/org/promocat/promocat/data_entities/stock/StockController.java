@@ -175,6 +175,7 @@ public class StockController {
                                              @RequestParam("poster") MultipartFile file,
                                              @RequestHeader("token") String token) {
 
+        log.info("Start add poster for id: {} ", id);
         Long companyId = companyService.findByToken(token).getId();
         if (companyService.isOwner(companyId, id)) {
             StockDTO stock = stockService.findById(id);
