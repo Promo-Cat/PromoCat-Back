@@ -193,6 +193,7 @@ public class StockController {
                 throw new ApiFileFormatException(String.format(".pdf required %s provided", file.getContentType()));
             }
         } else {
+            log.error("The stock: {} is not owned by this company.", id);
             throw new ApiForbiddenException(String.format("The stock: %d is not owned by this company.", id));
         }
     }
