@@ -185,9 +185,11 @@ public class StockController {
                     stockService.save(stock);
                     return ResponseEntity.ok("{}");
                 } else {
+                    log.error("File too large. Max size 5MB");
                     throw new ApiFileFormatException("File too large. Max size 5MB");
                 }
             } else {
+                log.error(".pdf required {} provided", file.getContentType());
                 throw new ApiFileFormatException(String.format(".pdf required %s provided", file.getContentType()));
             }
         } else {
