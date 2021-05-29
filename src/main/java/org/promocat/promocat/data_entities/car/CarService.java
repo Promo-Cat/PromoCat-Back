@@ -132,7 +132,7 @@ public class CarService {
 
     public List<CarDTO> getAllNotVerifiedCars() {
         return carRepository
-                .findAllByVerifyingStatus(CarVerifyingStatus.PROCESSING)
+                .findAllByVerifyingStatus(CarVerifyingStatus.FAILED)
                 .stream()
                 .map(carMapper::toDto)
                 .collect(Collectors.toList());
