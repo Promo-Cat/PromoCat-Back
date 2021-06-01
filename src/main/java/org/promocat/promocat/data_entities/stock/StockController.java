@@ -210,7 +210,8 @@ public class StockController {
             @ApiResponse(code = 500, message = "Some server error", response = ApiException.class),
     })
     @RequestMapping(path = {"/api/company/stock/{id}/poster",
-            "/admin/company/stock/{id}/poster"}, method = RequestMethod.GET)
+            "/admin/company/stock/{id}/poster",
+            "/api/user/stock/{id}/poster"}, method = RequestMethod.GET)
     public ResponseEntity<Resource> getPoster(@PathVariable("id") Long id,
                                               @RequestHeader("token") String token) {
         boolean isCompany = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
