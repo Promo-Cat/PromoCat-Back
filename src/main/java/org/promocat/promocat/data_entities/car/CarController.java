@@ -171,6 +171,7 @@ public class CarController {
         UserDTO userDTO = userService.findByToken(token);
         if (userDTO.getCarId().equals(carDTO.getId())) {
             carDTO.setStsId(stsService.upload(file, carDTO.getId()));
+            carDTO.setPhotoId((long) 1);
             return ResponseEntity.ok(carService.save(carDTO));
         } else {
             throw new ApiForbiddenException("This is not your car");
