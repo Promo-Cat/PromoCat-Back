@@ -167,7 +167,6 @@ public class CarController {
     public ResponseEntity<CarDTO> uploadSts(@RequestHeader("token") String token,
                                             @PathVariable("id") Long carId,
                                             @RequestParam("poster") MultipartFile file) {
-        log.error("File size: {} ", file.getSize());
         CarDTO carDTO = carService.findById(carId);
         UserDTO userDTO = userService.findByToken(token);
         if (userDTO.getCarId().equals(carDTO.getId())) {
