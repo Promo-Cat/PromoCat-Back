@@ -538,12 +538,9 @@ public class StockService {
             result.setDistance(result.getDistance() + distance.getDistance());
         });
 
-//        applicationContext.getBean(MovementService.class)
-//                .getMovementsByStockForEveryCityForEachDay(currentStock.getId())
-//                .forEach(distance -> {
-//                    result.setDistance(result.getDistance() + distance.getDistance());
-//                });
-
+        if (result.getDistance() == null){
+            result.setDistance(Double.valueOf(0));
+        }
         return result;
     }
 }
