@@ -510,7 +510,7 @@ public class StockService {
     }
 
     public AverageDistance7days getDistanceForPrepay() {
-        List<StockDTO> stocks = repository.getAllByDuration(7L).stream().map(mapper::toDto).collect(Collectors.toList());
+        List<StockDTO> stocks = repository.getAllByDurationAndStatus(7L, StockStatus.STOCK_IS_OVER_WITH_POSTPAY).stream().map(mapper::toDto).collect(Collectors.toList());
 
         AverageDistance7days result = new AverageDistance7days();
 
