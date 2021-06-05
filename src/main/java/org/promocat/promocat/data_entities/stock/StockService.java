@@ -8,7 +8,6 @@ import org.promocat.promocat.data_entities.abstract_account.AbstractAccountServi
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
-import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.receipt.ReceiptService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
@@ -515,6 +514,8 @@ public class StockService {
 
         AverageDistance7days result = new AverageDistance7days();
 
+        log.info("Getting stocks with duration: {} ", stocks.size());
+
         if (stocks.isEmpty()) {
             result.setDistance(Double.valueOf(383));
             return result;
@@ -531,11 +532,17 @@ public class StockService {
 
         StockDTO currentStock = stocks.get(stocks.size() - 1);
 
-        applicationContext.getBean(MovementService.class)
-                .getMovementsByStockForEveryCityForEachDay(currentStock.getId())
-                .forEach(distance -> {
-                    result.setDistance(result.getDistance() + distance.getDistance());
-                });
+        log.info("Start getting movements from stock: {} ", currentStock.getId());
+
+        currentStock.getMovements().forEach(distance -> {
+            result.setDistance(result.getDistance() + distance.getDistance());
+        });
+
+//        applicationContext.getBean(MovementService.class)
+//                .getMovementsByStockForEveryCityForEachDay(currentStock.getId())
+//                .forEach(distance -> {
+//                    result.setDistance(result.getDistance() + distance.getDistance());
+//                });
 
         return result;
     }
