@@ -8,6 +8,7 @@ import org.promocat.promocat.data_entities.abstract_account.AbstractAccountServi
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
+import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.receipt.ReceiptService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
@@ -15,6 +16,7 @@ import org.promocat.promocat.data_entities.user.UserRepository;
 import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.data_entities.user_ban.UserBanService;
 import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.pojo.AverageDistance7days;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
@@ -506,5 +508,35 @@ public class StockService {
 
             sendNotificationForUser(typeForUser, stock);
         });
+    }
+
+    public AverageDistance7days getDistanceForPrepay() {
+        List<StockDTO> stocks = repository.getAllByDuration(7L).stream().map(mapper::toDto).collect(Collectors.toList());
+
+        AverageDistance7days result = new AverageDistance7days();
+
+        if (stocks.isEmpty()) {
+            result.setDistance(Double.valueOf(383));
+            return result;
+        }
+
+        stocks.sort((a, b) -> {
+            if (a.getStartTime().isBefore(b.getStartTime())) {
+                return -1;
+            } else if (a.getStartTime().equals(b.getStartTime())) {
+                return a.getId().compareTo(b.getId());
+            }
+            return 1;
+        });
+
+        StockDTO currentStock = stocks.get(stocks.size() - 1);
+
+        applicationContext.getBean(MovementService.class)
+                .getMovementsByStockForEveryCityForEachDay(currentStock.getId())
+                .forEach(distance -> {
+                    result.setDistance(result.getDistance() + distance.getDistance());
+                });
+
+        return result;
     }
 }

@@ -21,4 +21,5 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     Optional<Stock> findById(Long id);
 
+    List<Stock> getAllByDuration(final Long duration);
 }
