@@ -1,5 +1,6 @@
 package org.promocat.promocat.data_entities.user_ban;
 
+import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.stock.StockService;
@@ -86,6 +87,7 @@ public class UserBanService {
             movementService.deleteAllMovementsForUserInStock(userDTO.getId(), stock.getId());
             userDTO.setMovements(new HashSet<>());
             userDTO.setStockCityId(null);
+            userDTO.setStatus(UserStatus.BAN_CAMERA);
         }
 //        movementService.deleteAllMovementsForUserInStock(userDTO.getId(), stock.getId());
         UserBanDTO userBan = new UserBanDTO();
