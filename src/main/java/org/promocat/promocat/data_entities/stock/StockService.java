@@ -17,6 +17,7 @@ import org.promocat.promocat.data_entities.user.UserService;
 import org.promocat.promocat.data_entities.user_ban.UserBanService;
 import org.promocat.promocat.dto.*;
 import org.promocat.promocat.dto.pojo.AverageDistance7days;
+import org.promocat.promocat.dto.pojo.DistanceDTO;
 import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
@@ -535,7 +536,8 @@ public class StockService {
 
         log.info("Start getting movements from stock: {} ", currentStock.getId());
 
-        result.setDistance(applicationContext.getBean(MovementService.class).getSummaryMovementsByStock(currentStock.getId()).getDistance());
+        DistanceDTO distanceDTO = applicationContext.getBean(MovementService.class).getSummaryMovementsByStock(currentStock.getId());
+        result.setDistance(distanceDTO == null ? 383 : distanceDTO.getDistance());
 
         if (result.getDistance() == null || result.getDistance() == 0){
             result.setDistance(Double.valueOf(383));
