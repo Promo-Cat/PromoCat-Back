@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -83,6 +84,8 @@ public class UserBanService {
         // TODO разобраться, как лучше удалять (удаляется внутри одной транзакции, и у юзера всё ломается)
         if (flag) {
             movementService.deleteAllMovementsForUserInStock(userDTO.getId(), stock.getId());
+            userDTO.setMovements(new HashSet<>());
+            userDTO.setStockCityId(null);
         }
 //        movementService.deleteAllMovementsForUserInStock(userDTO.getId(), stock.getId());
         UserBanDTO userBan = new UserBanDTO();

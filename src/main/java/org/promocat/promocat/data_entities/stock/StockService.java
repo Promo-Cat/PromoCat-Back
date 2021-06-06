@@ -537,7 +537,7 @@ public class StockService {
 
         result.setDistance(applicationContext.getBean(MovementService.class).getSummaryMovementsByStock(currentStock.getId()).getDistance());
 
-        if (result.getDistance() == null){
+        if (result.getDistance() == null || result.getDistance() == 0){
             result.setDistance(Double.valueOf(383));
         }
         return result;
