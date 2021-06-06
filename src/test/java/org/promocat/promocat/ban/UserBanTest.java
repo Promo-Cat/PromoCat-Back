@@ -109,6 +109,6 @@ public class UserBanTest {
     @Test(expected = ApiStockCityNotFoundException.class)
     public void testBanUserWithoutStock() {
         beforeAll.user1DTO.setStockCityId(null);
-        userBanService.ban(beforeAll.user1DTO);
+        userBanService.ban(beforeAll.user1DTO, false);
     }
 }

@@ -73,7 +73,7 @@ public class UserBanService {
      * @param userDTO Юзер, который будет забанен
      * @return Объектное представление бана в бд
      */
-    public UserBanDTO ban(UserDTO userDTO) {
+    public UserBanDTO ban(UserDTO userDTO, boolean flag) {
         StockCityDTO stockCity = stockCityService.findById(userDTO.getStockCityId());
         if (Objects.isNull(stockCity)) {
             throw new ApiStockCityNotFoundException(String.format("Stock for user with telephone: %s not found. " +
@@ -81,6 +81,9 @@ public class UserBanService {
         }
         StockDTO stock = stockService.findById(stockCity.getStockId());
         // TODO разобраться, как лучше удалять (удаляется внутри одной транзакции, и у юзера всё ломается)
+        if (flag) {
+            movementService.deleteAllMovementsForUserInStock(userDTO.getId(), stock.getId());
+        }
 //        movementService.deleteAllMovementsForUserInStock(userDTO.getId(), stock.getId());
         UserBanDTO userBan = new UserBanDTO();
         userBan.setStockId(stock.getId());

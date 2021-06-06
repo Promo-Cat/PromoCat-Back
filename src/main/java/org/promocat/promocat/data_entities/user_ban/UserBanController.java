@@ -59,7 +59,7 @@ public class UserBanController {
     @RequestMapping(path = "/admin/ban/user/{userId}", method = RequestMethod.POST)
     public ResponseEntity<UserBanDTO> banUser(@PathVariable("userId") final Long id) {
         UserDTO userDTO = userService.findById(id);
-        UserBanDTO userBanDTO = userBanService.ban(userDTO);
+        UserBanDTO userBanDTO = userBanService.ban(userDTO, false);
         StockDTO stock = stockService.findById(stockCityService.findById(userDTO.getStockCityId()).getStockId());
         NotificationDTO notification = notificationBuilderFactory.getBuilder()
                 .getNotification(NotificationLoader.NotificationType.USER_BAN)
@@ -68,6 +68,30 @@ public class UserBanController {
                         DateTimeFormatter.ofPattern("yyyy-MM-dd")
                 ))
                 .build();
+        firebaseNotificationManager.sendNotificationByAccount(notification, userDTO);
+        return ResponseEntity.ok(userBanDTO);
+    }
+
+    @ApiOperation(value = "Ban user by camera.",
+            notes = "Bans user with id required.",
+            response = UserBanDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "No such user in db", response = ApiException.class),
+            @ApiResponse(code = 406, message = "Some DB problems", response = ApiException.class)
+    })
+    @RequestMapping(path = "/admin/ban/user/camera/{userId}", method = RequestMethod.POST)
+    public ResponseEntity<UserBanDTO> banUserCamera(@PathVariable("userId") final Long id) {
+        UserDTO userDTO = userService.findById(id);
+        UserBanDTO userBanDTO = userBanService.ban(userDTO, true);
+        StockDTO stock = stockService.findById(stockCityService.findById(userDTO.getStockCityId()).getStockId());
+        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                .getNotification(NotificationLoader.NotificationType.USER_BAN)
+                .set("stock_name", stock.getName())
+                .set("date", stock.getStartTime().plusDays(stock.getDuration()).format(
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                ))
+                .build();
+
         firebaseNotificationManager.sendNotificationByAccount(notification, userDTO);
         return ResponseEntity.ok(userBanDTO);
     }

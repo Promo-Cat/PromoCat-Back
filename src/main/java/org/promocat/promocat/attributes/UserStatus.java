@@ -1,5 +1,5 @@
 package org.promocat.promocat.attributes;
 
 public enum UserStatus {
-    FULL, JUST_REGISTERED, BANNED
+    FULL, JUST_REGISTERED, BANNED, BAN_CAMERA
 }

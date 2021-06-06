@@ -8,6 +8,7 @@ import org.promocat.promocat.data_entities.abstract_account.AbstractAccountServi
 import org.promocat.promocat.data_entities.city.CityService;
 import org.promocat.promocat.data_entities.company.Company;
 import org.promocat.promocat.data_entities.company.CompanyRepository;
+import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.parameters.ParametersService;
 import org.promocat.promocat.data_entities.receipt.ReceiptService;
 import org.promocat.promocat.data_entities.stock.stock_city.StockCityService;
@@ -287,7 +288,7 @@ public class StockService {
     }
 
     public void banUserInStockAndResetStatus(UserDTO user) {
-        applicationContext.getBean(UserBanService.class).ban(user);
+        applicationContext.getBean(UserBanService.class).ban(user, false);
         user.setInn(null);
         user.setStatus(UserStatus.JUST_REGISTERED);
         user.setTaxConnectionId(null);
@@ -534,12 +535,10 @@ public class StockService {
 
         log.info("Start getting movements from stock: {} ", currentStock.getId());
 
-        currentStock.getMovements().forEach(distance -> {
-            result.setDistance(result.getDistance() + distance.getDistance());
-        });
+        result.setDistance(applicationContext.getBean(MovementService.class).getSummaryMovementsByStock(currentStock.getId()).getDistance());
 
         if (result.getDistance() == null){
-            result.setDistance(Double.valueOf(0));
+            result.setDistance(Double.valueOf(383));
         }
         return result;
     }

@@ -424,7 +424,7 @@ public class UserController {
 
             if (!CheckPhone.isEqual(user.getTelephone(), taxpayerResult.getPhone())) {
                 user.setStatus(UserStatus.JUST_REGISTERED);
-                userBanService.ban(user);
+                userBanService.ban(user, false);
                 userService.update(user, user);
                 throw new ApiTaxRequestPhoneAndUserPhoneException("Phone in npd and in db aren't equal");
             } else {
@@ -631,4 +631,6 @@ public class UserController {
         userService.checkNPDUnboundUsers();
         return ResponseEntity.ok("{}");
     }
+
+
 }
