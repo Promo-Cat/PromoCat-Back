@@ -85,7 +85,7 @@ public class StockCityController {
                     message = "Some DB problems",
                     response = ApiException.class)
     })
-    @RequestMapping(value = "/api/company/stock_city/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = {"/api/company/stock_city/{id}", "/api/user/stock_city/{id}"}, method = RequestMethod.GET)
     public ResponseEntity<StockCityDTO> findById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(stockCityService.findById(id));
     }
