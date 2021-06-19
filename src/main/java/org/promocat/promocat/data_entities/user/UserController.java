@@ -445,6 +445,9 @@ public class UserController {
     @RequestMapping(value = "/api/user/tax/status", method = RequestMethod.GET)
     public ResponseEntity<String> checkUserBindStatus(@RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
+        if (user.getInn() == null) {
+            throw new ApiTaxRequestIdException("User unbinded");
+        }
         TaxUserStatus status = userService.isUserBinded(user);
         if (status == TaxUserStatus.COMPLETED) {
             return ResponseEntity.ok("{}");
