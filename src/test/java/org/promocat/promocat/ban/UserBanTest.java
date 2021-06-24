@@ -97,14 +97,6 @@ public class UserBanTest {
         assertTrue(userBanService.isBanned(beforeAll.user1DTO));
     }
 
-    @Test
-    public void testIsBannedInStock() throws Exception {
-        this.mockMvc.perform(post("/admin/ban/user/" + beforeAll.user1DTO.getId())
-                .header("token", beforeAll.adminToken))
-                .andExpect(status().isOk());
-
-        assertTrue(userBanService.isBanned(beforeAll.user1DTO, beforeAll.stock1DTO));
-    }
 
     @Test(expected = ApiStockCityNotFoundException.class)
     public void testBanUserWithoutStock() {

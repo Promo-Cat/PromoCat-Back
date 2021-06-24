@@ -3,6 +3,7 @@ package org.promocat.promocat.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.promocat.promocat.attributes.UserStatus;
 
 import java.time.LocalDateTime;
 
@@ -45,6 +46,11 @@ public class UserBanDTO extends AbstractDTO {
     )
     private LocalDateTime banDateTime = LocalDateTime.now();
 
-
+    @ApiModelProperty(
+            value = "User status in ban",
+            dataType = "Long",
+            required = true
+    )
+    private UserStatus status;
 
 }

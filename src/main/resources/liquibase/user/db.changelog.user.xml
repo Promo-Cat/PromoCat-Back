@@ -38,4 +38,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="24.06.2021-01" author="d.lyskin">
+    <addColumn tableName="user_ban">
+        <column name="status" type="INTEGER"/>
+    </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -237,7 +237,8 @@ public class UserController {
         }
         StockCityDTO stockCity = stockCityService.findById(stockCityId);
         StockDTO stock = stockService.findById(stockCity.getStockId());
-        if (userBanService.isBanned(userDTO, stock)) {
+        if (userBanService.isBanned(userDTO, stock) == UserStatus.BANNED ||
+                userBanService.isBanned(userDTO, stock) == UserStatus.BAN_CAMERA) {
             throw new ApiUserStockException(String.format("User with number %s is banned in that stock", userDTO.getTelephone()));
         }
         if (stock.getStatus() != StockStatus.ACTIVE) {
@@ -298,14 +299,16 @@ public class UserController {
             stockDTO = userBanService
                     .getLastBannedStockForUser(userDTO)
                     .orElseThrow(() -> new ApiStockCityNotFoundException("There is no active stock for user"));
-            resultPojo.setBanned(true);
+            UserStatus status = userBanService.isBanned(userDTO, stockDTO);
+            resultPojo.setBanned(status);
         } else {
             stockDTO = stockService.findById(
                     stockCityService.findById(
                             userDTO.getStockCityId()
                     ).getStockId()
             );
-            resultPojo.setBanned(false);
+            UserStatus status = userBanService.isBanned(userDTO, stockDTO);
+            resultPojo.setBanned(status);
         }
         resultPojo.setDuration(stockDTO.getDuration());
         resultPojo.setFare(stockDTO.getFare());

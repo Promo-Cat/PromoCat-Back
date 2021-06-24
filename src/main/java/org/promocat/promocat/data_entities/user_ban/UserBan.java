@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
+import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.abstract_account.AbstractEntity;
 import org.promocat.promocat.data_entities.stock.Stock;
 import org.promocat.promocat.data_entities.user.User;
@@ -23,6 +24,7 @@ public class UserBan extends AbstractEntity {
     private User user;
     private Stock stock;
     private Double bannedEarnings;
+    private UserStatus status;
     public LocalDateTime banDateTime;
 
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
@@ -49,4 +51,8 @@ public class UserBan extends AbstractEntity {
         return banDateTime;
     }
 
+    @Column(name = "status")
+    public UserStatus getStatus() {
+        return status;
+    }
 }

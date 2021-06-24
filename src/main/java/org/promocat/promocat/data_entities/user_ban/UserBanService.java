@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserBanService {
@@ -115,8 +116,19 @@ public class UserBanService {
      * @param stockDTO Проверка проходит в отношении данной акции
      * @return {@code true} - если юзер забанен в данной акции, {@code false} - иначе
      */
-    public boolean isBanned(UserDTO userDTO, StockDTO stockDTO) {
-        return !userBanRepository.getByUserIdAndStockId(userDTO.getId(), stockDTO.getId()).isEmpty();
+    public UserStatus isBanned(UserDTO userDTO, StockDTO stockDTO) {
+        for (UserBanDTO user: userBanRepository.getByUserIdAndStockId(userDTO.getId(), stockDTO.getId()).stream()
+                .map(userBanMapper::toDto)
+                .collect(Collectors.toList())) {
+            if (user.getStatus() == UserStatus.BANNED) {
+                return UserStatus.BANNED;
+            }
+            if (user.getStatus() == UserStatus.BAN_CAMERA) {
+                return UserStatus.BAN_CAMERA;
+            }
+        }
+
+        return UserStatus.FULL;
     }
 
     public Optional<StockDTO> getLastBannedStockForUser(UserDTO userDTO) {
