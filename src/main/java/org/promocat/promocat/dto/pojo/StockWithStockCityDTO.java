@@ -44,7 +44,7 @@ public class StockWithStockCityDTO {
 //        this.previewId = stock.getPosterId();
         this.stockName = stock.getName();
         this.stockCityId = stockCity == null ? null : stockCity.getId();
-        this.amountOfPosters = stockCity == null ? null : stockCity.getNumberOfPromoCodes();
+        this.amountOfPosters = stockCity == null ? 0 : stockCity.getNumberOfPromoCodes();
         this.startTime = stock.getStartTime();
         this.duration = stock.getDuration();
     }
