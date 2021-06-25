@@ -380,12 +380,14 @@ public class UserController {
                                     .filter(x -> x.getCityId().equals(user.getCityId()))
                                     .findFirst().orElse(null)
                             );
-                            d.setAmountOfPosters(
-                                    d.getAmountOfPosters() - stockActivationService.getCountByCityAndStock(
-                                            stockCityService.findById(d.getStockCityId()).getCityId(),
-                                            d.getStockId()
-                                    )
-                            );
+                            if (d.getStockCityId() != null) {
+                                d.setAmountOfPosters(
+                                        d.getAmountOfPosters() - stockActivationService.getCountByCityAndStock(
+                                                stockCityService.findById(d.getStockCityId()).getCityId(),
+                                                d.getStockId()
+                                        )
+                                );
+                            }
                             d.setFare(parametersService.getParameters().getFare());
                             return d;
                         }
