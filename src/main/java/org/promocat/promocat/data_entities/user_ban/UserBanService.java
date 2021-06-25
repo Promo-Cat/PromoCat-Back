@@ -137,8 +137,6 @@ public class UserBanService {
     }
 
     public void deleteFromBan(Long userId, Long stockId) {
-        try {
-            userBanRepository.deleteAllByUserIdAndStockId(userId, stockId);
-        } catch (ApiStockCityNotFoundException ignored) {}
+        userBanRepository.deleteAllByUserIdAndStockId(userId, stockId);
     }
 }
