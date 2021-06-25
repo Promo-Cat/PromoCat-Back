@@ -32,6 +32,7 @@ public class Company extends AbstractAccount {
     private Boolean verified;
     private CompanyStatus companyStatus;
     private Boolean needStockStatusNotifications = true;
+    private Double prepay;
 
     /**
      * Имя организации.
@@ -90,5 +91,13 @@ public class Company extends AbstractAccount {
     @Column(name = "need_stock_status_notifications")
     public Boolean getNeedStockStatusNotifications() {
         return needStockStatusNotifications;
+    }
+
+    /**
+     * Предоплата.
+     */
+    @Column(name = "prepay")
+    public Double getPrepay() {
+        return prepay;
     }
 }

@@ -17,4 +17,9 @@
     <changeSet id="06.12.2020-01" author="d.lyskin">
         <dropColumn tableName="company" columnName="mail"/>
     </changeSet>
+    <changeSet id="25.06.2021-01" author="d.lyskin">
+        <addColumn tableName="company">
+            <column name="prepay" type="FLOAT8"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
