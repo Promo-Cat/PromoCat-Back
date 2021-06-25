@@ -423,7 +423,7 @@ public class UserController {
             user.setFirstName(taxpayerResult.getFirstName());
             user.setSecondName(taxpayerResult.getSecondName());
             user.setPatronymic(taxpayerResult.getPatronymic());
-            if (user.getStockCityId() != null) {
+            if (user.getStockCityId() != null && user.getStatus() == UserStatus.BANNED) {
                 userBanService.deleteFromBan(user.getId(), stockCityService.findById(user.getStockCityId()).getStockId());
             }
 
