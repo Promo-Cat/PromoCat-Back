@@ -116,6 +116,7 @@ public class CompanyController {
 
         log.info(company.getOrganizationName());
         actualCompany.setOrganizationName(company.getOrganizationName());
+        actualCompany.setPrepay(company.getPrepay());
         EntityUpdate.copyNonNullProperties(company, actualCompany);
         return ResponseEntity.ok(companyService.save(actualCompany));
     }
