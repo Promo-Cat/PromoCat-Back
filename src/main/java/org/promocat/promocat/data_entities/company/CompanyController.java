@@ -113,6 +113,8 @@ public class CompanyController {
                 RequiredForFullConstraintValidator.check(company)) {
             company.setCompanyStatus(CompanyStatus.FULL);
         }
+
+        log.info(company);
         EntityUpdate.copyNonNullProperties(company, actualCompany);
         return ResponseEntity.ok(companyService.save(actualCompany));
     }
