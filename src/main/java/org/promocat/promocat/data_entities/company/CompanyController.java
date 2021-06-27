@@ -114,7 +114,7 @@ public class CompanyController {
             company.setCompanyStatus(CompanyStatus.FULL);
         }
 
-        log.info(company);
+        log.info(company.getOrganizationName());
         EntityUpdate.copyNonNullProperties(company, actualCompany);
         return ResponseEntity.ok(companyService.save(actualCompany));
     }
