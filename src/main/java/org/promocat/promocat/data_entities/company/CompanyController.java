@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
-import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.admin.AdminService;
@@ -25,9 +24,7 @@ import org.promocat.promocat.exception.security.ApiForbiddenException;
 import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.exception.validation.ApiValidationException;
 import org.promocat.promocat.util_entities.TokenService;
-import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.TopicGenerator;
-import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -111,16 +108,8 @@ public class CompanyController {
     public ResponseEntity<CompanyDTO> updateCompany(@Valid @RequestBody CompanyDTO company,
                                                     @RequestHeader("token") String token) {
         CompanyDTO actualCompany = companyService.findByToken(token);
+        return ResponseEntity.ok(companyService.update(actualCompany, company));
 
-        if (actualCompany.getCompanyStatus() == CompanyStatus.JUST_REGISTERED &&
-                RequiredForFullConstraintValidator.check(company)) {
-            company.setCompanyStatus(CompanyStatus.FULL);
-        }
-
-        log.info(company.getOrganizationName());
-        company.setTelephone(actualCompany.getTelephone());
-        EntityUpdate.copyNonNullProperties(company, actualCompany);
-        return ResponseEntity.ok(companyService.save(actualCompany));
     }
 
     @ApiOperation(value = "Get company, who authorized with token from request header",

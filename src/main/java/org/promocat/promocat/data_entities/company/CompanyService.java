@@ -2,6 +2,7 @@ package org.promocat.promocat.data_entities.company;
 
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
+import org.promocat.promocat.attributes.CompanyStatus;
 import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.dto.CompanyDTO;
@@ -11,8 +12,10 @@ import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.promocat.promocat.util_entities.TokenService;
 import org.promocat.promocat.utils.AccountRepositoryManager;
+import org.promocat.promocat.utils.EntityUpdate;
 import org.promocat.promocat.utils.FirebaseNotificationManager;
 import org.promocat.promocat.utils.TopicGenerator;
+import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +61,23 @@ public class CompanyService extends AbstractAccountService {
     public CompanyDTO save(final CompanyDTO dto) {
         log.info("Trying to save company with telephone: {}", dto.getTelephone());
         return companyMapper.toDto(companyRepository.save(companyMapper.toEntity(dto)));
+    }
+
+    /**
+     * Обновление компании.
+     *
+     * @param oldCompany старые данные.
+     * @param newCompany новые данные.
+     * @return обновленный компании.
+     */
+    public CompanyDTO update(final CompanyDTO oldCompany, final CompanyDTO newCompany) {
+        newCompany.setTelephone(oldCompany.getTelephone());
+        EntityUpdate.copyNonNullProperties(newCompany, oldCompany);
+        if (oldCompany.getCompanyStatus() == CompanyStatus.JUST_REGISTERED &&
+                RequiredForFullConstraintValidator.check(oldCompany)) {
+            oldCompany.setCompanyStatus(CompanyStatus.FULL);
+        }
+        return save(oldCompany);
     }
 
     /**
