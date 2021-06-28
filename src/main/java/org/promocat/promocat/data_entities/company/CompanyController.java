@@ -11,11 +11,14 @@ import org.promocat.promocat.attributes.StockStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.movement.MovementService;
-import org.promocat.promocat.data_entities.stock_activation.StockActivationService;
 import org.promocat.promocat.data_entities.stock.StockService;
 import org.promocat.promocat.data_entities.stock.poster.PosterService;
+import org.promocat.promocat.data_entities.stock_activation.StockActivationService;
 import org.promocat.promocat.data_entities.user.UserService;
-import org.promocat.promocat.dto.*;
+import org.promocat.promocat.dto.CompanyDTO;
+import org.promocat.promocat.dto.MultiPartFileDTO;
+import org.promocat.promocat.dto.StockActivationDTO;
+import org.promocat.promocat.dto.StockDTO;
 import org.promocat.promocat.dto.pojo.*;
 import org.promocat.promocat.exception.ApiException;
 import org.promocat.promocat.exception.security.ApiForbiddenException;
@@ -115,9 +118,8 @@ public class CompanyController {
         }
 
         log.info(company.getOrganizationName());
-        actualCompany.setOrganizationName(company.getOrganizationName());
-        actualCompany.setPrepay(company.getPrepay());
-//        EntityUpdate.copyNonNullProperties(company, actualCompany);
+        company.setTelephone(actualCompany.getTelephone());
+        EntityUpdate.copyNonNullProperties(company, actualCompany);
         return ResponseEntity.ok(companyService.save(actualCompany));
     }
 
