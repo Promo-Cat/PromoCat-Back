@@ -109,7 +109,6 @@ public class CompanyController {
                                                     @RequestHeader("token") String token) {
         CompanyDTO actualCompany = companyService.findByToken(token);
         return ResponseEntity.ok(companyService.update(actualCompany, company));
-
     }
 
     @ApiOperation(value = "Get company, who authorized with token from request header",
@@ -416,6 +415,7 @@ public class CompanyController {
                                                                   @RequestParam(value = "companyId", required = false) Long companyId,
                                                                   @RequestHeader("token") String token) {
         CompanyDTO companyDTO = companyService.getCompanyForStatistics(token, companyId);
+        log.info("HERE");
         if (companyService.isOwner(companyDTO.getId(), stockId)) {
             return ResponseEntity.ok(movementService.getSummaryMovementsByStock(stockId));
         } else {
