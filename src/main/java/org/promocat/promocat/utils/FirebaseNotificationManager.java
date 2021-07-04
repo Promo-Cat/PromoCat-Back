@@ -23,6 +23,11 @@ public class FirebaseNotificationManager {
                                     .setBody(notif.getBody())
                                     .build())
                             .setTopic(topic)
+                            .setApnsConfig(ApnsConfig.builder()
+                                    .setAps(Aps.builder()
+                                            .setSound("default")
+                                            .build())
+                                    .build())
                             .build()
             );
         } catch (FirebaseMessagingException e) {
@@ -43,6 +48,11 @@ public class FirebaseNotificationManager {
                                     .setBody(notif.getBody())
                                     .build())
                             .setToken(accountDTO.getGoogleToken())
+                            .setApnsConfig(ApnsConfig.builder()
+                                    .setAps(Aps.builder()
+                                            .setSound("default")
+                                            .build())
+                                    .build())
                             .build()
             );
         } catch (FirebaseMessagingException e) {
