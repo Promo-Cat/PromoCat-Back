@@ -205,20 +205,28 @@ public class StockService {
         if (Objects.isNull(stockDTO.getCities())) {
             return;
         }
-        List<UserDTO> users = new ArrayList<>();
+        List<UserDTO> unbannedUsers = new ArrayList<>();
+        List<UserDTO> allUsersFromStock = new ArrayList<>();
 
         stockDTO.getCities().stream()
                 .flatMap(x -> x.getUsers().stream())
                 .forEach(y -> {
-                    registerTaxes(y, stockDTO);
-                    y.setStockCityId(null);
-                    users.add(y);
+                    if (y.getStatus() != UserStatus.BANNED && y.getStatus() != UserStatus.BAN_CAMERA) {
+                        registerTaxes(y, stockDTO);
+                        y.setStockCityId(null);
+                        unbannedUsers.add(y);
+                    } else {
+                        y.setStatus(UserStatus.FULL);
+                    }
+
+                    allUsersFromStock.add(y);
+
                     userRepository.save(userMapper.toEntity(y));
                     applicationContext.getBean(UserService.class).subscribeUserOnDefaultTopics(y);
                 });
-        csvGenerator.generate(path, users);
+        csvGenerator.generate(path, unbannedUsers);
 
-        users.forEach(user -> {
+        allUsersFromStock.forEach(user -> {
             user.setBalance(0.0);
             applicationContext.getBean(UserService.class).save(user);
         });
@@ -226,7 +234,7 @@ public class StockService {
         File file = path.toFile();
         file.delete();
 
-        users.forEach(user -> abstractAccountService.subscribeOnTopic(user, topicGenerator.getNewStockTopicForUser()));
+        unbannedUsers.forEach(user -> abstractAccountService.subscribeOnTopic(user, topicGenerator.getNewStockTopicForUser()));
     }
 
     @Scheduled(cron = "0 5 0 * * *")

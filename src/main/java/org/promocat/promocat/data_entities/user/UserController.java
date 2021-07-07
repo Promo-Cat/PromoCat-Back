@@ -264,6 +264,9 @@ public class UserController {
     public ResponseEntity<MovementDTO> moveUser(@RequestBody final DistanceDTO distanceDTO,
                                                 @RequestHeader("token") final String token) {
         UserDTO user = userService.findByToken(token);
+        if (user.getStatus() == UserStatus.BAN_CAMERA) {
+            throw new ApiUserStatusException(String.format("User with telephone: %s cannot move in BAN_CAMERA", user.getTelephone()));
+        }
         if (Objects.isNull(user.getStockCityId())) {
             throw new ApiStockCityNotFoundException(String.format("User with telephone: %s doesn't have stock", user.getTelephone()));
         }

@@ -84,12 +84,7 @@ public class UserBanService {
         }
         StockDTO stock = stockService.findById(stockCity.getStockId());
         // TODO разобраться, как лучше удалять (удаляется внутри одной транзакции, и у юзера всё ломается)
-        if (flag) {
-            movementService.deleteAllMovementsForUserInStock(userDTO.getId(), stock.getId());
-            userDTO.setMovements(new HashSet<>());
-            userDTO.setStockCityId(null);
-            userDTO.setStatus(UserStatus.BAN_CAMERA);
-        }
+
 //        movementService.deleteAllMovementsForUserInStock(userDTO.getId(), stock.getId());
         UserBanDTO userBan = new UserBanDTO();
         userBan.setStockId(stock.getId());
@@ -100,7 +95,16 @@ public class UserBanService {
         userDTO = userService.findById(userDTO.getId());
 //        userDTO.setMovements(null);
 //        userDTO.setStockCityId(null);
-        userDTO.setBalance(0.0);
+        if (flag) {
+            movementService.deleteAllMovementsForUserInStock(userDTO.getId(), stock.getId());
+            userDTO.setMovements(new HashSet<>());
+            userDTO.setStatus(UserStatus.BAN_CAMERA);
+            userDTO.setBalance(0.0);
+        } else {
+            if (userDTO.getStatus() != UserStatus.BAN_CAMERA) {
+                userDTO.setStatus(UserStatus.BANNED);
+            }
+        }
         userService.save(userDTO);
         abstractAccountService.subscribeOnTopic(userDTO, topicGenerator.getNewStockTopicForUser());
         return save(userBan);
