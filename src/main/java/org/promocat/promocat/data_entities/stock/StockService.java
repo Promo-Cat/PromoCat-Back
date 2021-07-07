@@ -217,6 +217,7 @@ public class StockService {
                         unbannedUsers.add(y);
                     } else {
                         y.setStatus(UserStatus.FULL);
+                        applicationContext.getBean(UserBanService.class).deleteFromBan(y.getId(), stockDTO.getId());
                     }
 
                     allUsersFromStock.add(y);
