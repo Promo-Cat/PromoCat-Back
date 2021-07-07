@@ -298,11 +298,13 @@ public class StockService {
     }
 
     public void banUserInStockAndResetStatus(UserDTO user) {
-        applicationContext.getBean(UserBanService.class).ban(user, false);
-        user.setInn(null);
-        user.setStatus(UserStatus.JUST_REGISTERED);
-        user.setTaxConnectionId(null);
-        userRepository.save(userMapper.toEntity(user));
+        if (user.getStatus() != UserStatus.BAN_CAMERA) {
+            applicationContext.getBean(UserBanService.class).ban(user, false);
+            user.setInn(null);
+            user.setStatus(UserStatus.BANNED);
+            user.setTaxConnectionId(null);
+            userRepository.save(userMapper.toEntity(user));
+        }
     }
 
     /**
