@@ -221,10 +221,6 @@ public class UserController {
             throw new ApiUserAccountException(String.format("User with telephone: %s doesn't have account for" +
                     " participate in the Stock", userDTO.getTelephone()));
         }
-        if (Objects.nonNull(userDTO.getStockCityId())) {
-            throw new ApiUserStockException(String.format("User with telephone: %s already participate" +
-                    " in the stock", userDTO.getTelephone()));
-        }
         if (userDTO.getStatus() != UserStatus.FULL) {
             throw new ApiUserStatusException(String.format("Status of user with telephone: %s doesn't allow" +
                     " to participate in the Stock", userDTO.getTelephone()));
