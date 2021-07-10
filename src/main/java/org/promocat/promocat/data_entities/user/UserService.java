@@ -18,7 +18,6 @@ import org.promocat.promocat.dto.pojo.NumberOfBusyAndFreeDrivers;
 import org.promocat.promocat.dto.pojo.UserStockEarningStatisticDTO;
 import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
 import org.promocat.promocat.exception.user.ApiUserNotFoundException;
-import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.UserMapper;
 import org.promocat.promocat.utils.*;
 import org.promocat.promocat.utils.soap.SoapClient;
@@ -339,9 +338,6 @@ public class UserService extends AbstractAccountService {
      * @param user Водитель, который будет подписан на темы {@link UserDTO}
      */
     public void subscribeUserOnDefaultTopics(UserDTO user) {
-        if (user.getGoogleToken() == null) {
-            throw new ApiServerErrorException("Trying to subscribe user on topics. But user has no google token.");
-        }
         subscribeOnTopic(user, topicGenerator.getNewStockTopicForUser());
         subscribeOnTopic(user, topicGenerator.getNewsFeedTopicForUser());
     }
@@ -351,9 +347,6 @@ public class UserService extends AbstractAccountService {
      * @param user Водитель, который будет отписана от тем {@link UserDTO}
      */
     public void unsubscribeUserFromDefaultTopics(UserDTO user) {
-        if (user.getGoogleToken() == null) {
-            throw new ApiServerErrorException("Trying to unsubscribe user from topics. But user has no google token.");
-        }
         unsubscribeFromTopic(user, topicGenerator.getNewsFeedTopicForUser());
         unsubscribeFromTopic(user, topicGenerator.getNewStockTopicForUser());
     }
@@ -363,9 +356,6 @@ public class UserService extends AbstractAccountService {
      * @param user Водитель, который будет отписана от тем {@link UserDTO}
      */
     public void unsubscribeUserFromNewStockTopic(UserDTO user) {
-        if (user.getGoogleToken() == null) {
-            throw new ApiServerErrorException("Trying to unsubscribe user from topics. But user has no google token.");
-        }
         unsubscribeFromTopic(user, topicGenerator.getNewStockTopicForUser());
     }
 

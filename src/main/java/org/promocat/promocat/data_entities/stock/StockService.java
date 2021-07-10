@@ -224,10 +224,8 @@ public class StockService {
                     allUsersFromStock.add(y);
 
                     userRepository.save(userMapper.toEntity(y));
-                    try {
-                        applicationContext.getBean(UserService.class).subscribeUserOnDefaultTopics(y);
-                    } catch (ApiServerErrorException ignore) {}
-                });
+                    applicationContext.getBean(UserService.class).subscribeUserOnDefaultTopics(y);
+                })
         csvGenerator.generate(path, unbannedUsers);
 
         allUsersFromStock.forEach(user -> {
