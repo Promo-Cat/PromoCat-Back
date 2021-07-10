@@ -22,7 +22,6 @@ import org.promocat.promocat.dto.pojo.NotificationDTO;
 import org.promocat.promocat.dto.pojo.PromoCodesInCityDTO;
 import org.promocat.promocat.exception.soap.SoapSmzPlatformErrorException;
 import org.promocat.promocat.exception.stock.ApiStockNotFoundException;
-import org.promocat.promocat.exception.util.ApiServerErrorException;
 import org.promocat.promocat.mapper.CompanyMapper;
 import org.promocat.promocat.mapper.StockMapper;
 import org.promocat.promocat.mapper.UserMapper;
@@ -225,7 +224,7 @@ public class StockService {
 
                     userRepository.save(userMapper.toEntity(y));
                     applicationContext.getBean(UserService.class).subscribeUserOnDefaultTopics(y);
-                })
+                });
         csvGenerator.generate(path, unbannedUsers);
 
         allUsersFromStock.forEach(user -> {
