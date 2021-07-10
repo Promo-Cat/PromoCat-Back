@@ -83,7 +83,6 @@ public class StockActivationService {
 
         return stockActivations
                 .stream()
-                .filter(x -> !x.getStockCity().getId().equals(userDTO.getStockCityId()))
                 .map(x -> {
                     StockDTO stockDTO = stockMapper.toDto(x.getStockCity().getStock());
                     SimpleStockDTO d = new SimpleStockDTO();
