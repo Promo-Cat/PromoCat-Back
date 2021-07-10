@@ -237,8 +237,7 @@ public class UserController {
         }
         StockCityDTO stockCity = stockCityService.findById(stockCityId);
         StockDTO stock = stockService.findById(stockCity.getStockId());
-        if (userBanService.isBanned(userDTO, stock) == UserStatus.BANNED ||
-                userBanService.isBanned(userDTO, stock) == UserStatus.BAN_CAMERA) {
+        if (userDTO.getStatus() == UserStatus.BANNED || userDTO.getStatus() == UserStatus.BAN_CAMERA) {
             throw new ApiUserStockException(String.format("User with number %s is banned in that stock", userDTO.getTelephone()));
         }
         if (stock.getStatus() != StockStatus.ACTIVE) {
