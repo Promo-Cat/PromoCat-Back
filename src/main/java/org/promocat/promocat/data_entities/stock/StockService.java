@@ -237,7 +237,7 @@ public class StockService {
         File file = path.toFile();
         file.delete();
 
-        unbannedUsers.forEach(user -> abstractAccountService.subscribeOnTopic(user, topicGenerator.getNewStockTopicForUser()));
+//        unbannedUsers.forEach(user -> abstractAccountService.subscribeOnTopic(user, topicGenerator.getNewStockTopicForUser()));
     }
 
     @Scheduled(cron = "0 5 0 * * *")
