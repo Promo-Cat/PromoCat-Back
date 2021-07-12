@@ -89,4 +89,8 @@ public class StockCityService {
                 .orElseThrow(() -> new ApiStockCityNotFoundException(
                         String.format("No such stockCity with stock: %d, city: %s", stock.getId(), city.getCity()))));
     }
+
+    public Boolean existsById(final Long id) {
+        return stockCityRepository.existsById(id);
+    }
 }
