@@ -17,4 +17,6 @@ public interface UserBanRepository extends JpaRepository<UserBan, Long> {
 
     @Transactional
     void deleteAllByUserIdAndStockId(Long userId, Long stockId);
+
+    Boolean existsByUserIdAndStockId(Long userId, Long stockId);
 }
