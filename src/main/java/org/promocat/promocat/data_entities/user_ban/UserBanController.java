@@ -84,15 +84,15 @@ public class UserBanController {
         UserDTO userDTO = userService.findById(id);
         UserBanDTO userBanDTO = userBanService.ban(userDTO, true);
         StockDTO stock = stockService.findById(stockCityService.findById(userDTO.getStockCityId()).getStockId());
-        NotificationDTO notification = notificationBuilderFactory.getBuilder()
-                .getNotification(NotificationLoader.NotificationType.USER_BAN)
-                .set("stock_name", stock.getName())
-                .set("date", stock.getStartTime().plusDays(stock.getDuration()).format(
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                ))
-                .build();
-
-        firebaseNotificationManager.sendNotificationByAccount(notification, userDTO);
+//        NotificationDTO notification = notificationBuilderFactory.getBuilder()
+//                .getNotification(NotificationLoader.NotificationType.USER_BAN)
+//                .set("stock_name", stock.getName())
+//                .set("date", stock.getStartTime().plusDays(stock.getDuration()).format(
+//                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+//                ))
+//                .build();
+//
+//        firebaseNotificationManager.sendNotificationByAccount(notification, userDTO);
         return ResponseEntity.ok(userBanDTO);
     }
 }
