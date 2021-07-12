@@ -424,7 +424,6 @@ public class UserController {
             user.setSecondName(taxpayerResult.getSecondName());
             user.setPatronymic(taxpayerResult.getPatronymic());
             if (user.getStockCityId() != null && user.getStatus() == UserStatus.BANNED) {
-                log.info("###############" +  user.getStockCityId());
                 if (stockCityService.existsById(user.getStockCityId())) {
                     userBanService.deleteFromBan(user.getId(), stockCityService.findById(user.getStockCityId()).getStockId());
                 }
@@ -432,7 +431,9 @@ public class UserController {
 
             if (!CheckPhone.isEqual(user.getTelephone(), taxpayerResult.getPhone())) {
                 user.setStatus(UserStatus.JUST_REGISTERED);
-                userBanService.ban(user, false);
+                if (user.getStockCityId() != null) {
+                    userBanService.ban(user, false);
+                }
                 userService.update(user, user);
                 throw new ApiTaxRequestPhoneAndUserPhoneException("Phone in npd and in db aren't equal");
             } else {
