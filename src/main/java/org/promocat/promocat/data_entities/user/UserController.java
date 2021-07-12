@@ -424,6 +424,7 @@ public class UserController {
             user.setSecondName(taxpayerResult.getSecondName());
             user.setPatronymic(taxpayerResult.getPatronymic());
             if (user.getStockCityId() != null && user.getStatus() == UserStatus.BANNED) {
+                log.info("delete from ban");
                 userBanService.deleteFromBan(user.getId(), stockCityService.findById(user.getStockCityId()).getStockId());
             }
 
