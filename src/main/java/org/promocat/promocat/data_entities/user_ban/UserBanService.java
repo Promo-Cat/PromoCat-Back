@@ -100,9 +100,11 @@ public class UserBanService {
             userDTO.setMovements(new HashSet<>());
             userDTO.setStatus(UserStatus.BAN_CAMERA);
             userDTO.setBalance(0.0);
+            userBan.setStatus(UserStatus.BAN_CAMERA);
         } else {
             if (userDTO.getStatus() != UserStatus.BAN_CAMERA) {
                 userDTO.setStatus(UserStatus.BANNED);
+                userBan.setStatus(UserStatus.BANNED);
             }
         }
         userService.save(userDTO);
