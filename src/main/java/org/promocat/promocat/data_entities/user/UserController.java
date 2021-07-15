@@ -265,6 +265,12 @@ public class UserController {
         if (Objects.isNull(user.getStockCityId())) {
             throw new ApiStockCityNotFoundException(String.format("User with telephone: %s doesn't have stock", user.getTelephone()));
         }
+        StockDTO stockDTO = stockService.findById(stockCityService.findById(user.getStockCityId()).getStockId());
+
+        if (stockDTO.getStatus() != StockStatus.ACTIVE) {
+            throw new ApiStockActivationStatusException("Stock is not active");
+        }
+
         if (user.getCarId() == null) {
             throw new ApiCarNotFoundException(String.format("User with telephone: %s doesn't have car for move", user.getTelephone()));
         }
