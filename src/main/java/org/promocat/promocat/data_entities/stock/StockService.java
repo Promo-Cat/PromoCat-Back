@@ -218,6 +218,7 @@ public class StockService {
                         y.setStatus(UserStatus.FULL);
                         applicationContext.getBean(MovementService.class)
                                 .deleteAllMovementsForUserInStock(y.getId(), stockDTO.getId());
+                        y.setMovements(new HashSet<>());
 //                        applicationContext.getBean(UserBanService.class).deleteFromBan(y.getId(), stockDTO.getId());
                     }
 
