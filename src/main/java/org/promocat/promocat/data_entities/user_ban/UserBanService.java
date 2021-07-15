@@ -108,7 +108,7 @@ public class UserBanService {
             }
         }
         userService.save(userDTO);
-        abstractAccountService.subscribeOnTopic(userDTO, topicGenerator.getNewStockTopicForUser());
+//        abstractAccountService.subscribeOnTopic(userDTO, topicGenerator.getNewStockTopicForUser());
         return save(userBan);
     }
 
