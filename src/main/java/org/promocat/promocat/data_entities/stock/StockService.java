@@ -261,6 +261,9 @@ public class StockService {
      * @param user Пользователь, которому была произведена выплата.
      */
     private void registerTaxes(UserDTO user, StockDTO stock) {
+        if (user.getBalance() < 1e-7) {
+            return;
+        }
         PostIncomeRequestV2 op = new PostIncomeRequestV2();
         op.setInn(user.getInn());
         op.setCustomerOrganization(TaxUtils.PROMOCAT_NAME);
