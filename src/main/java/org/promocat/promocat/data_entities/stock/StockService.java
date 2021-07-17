@@ -212,7 +212,7 @@ public class StockService {
                 .flatMap(x -> x.getUsers().stream())
                 .forEach(y -> {
                     if (y.getStatus() != UserStatus.BANNED && y.getStatus() != UserStatus.BAN_CAMERA) {
-                        registerTaxes(y, stockDTO);
+//                        registerTaxes(y, stockDTO);
                         y.setStockCityId(null);
                         unbannedUsers.add(y);
                     } else {
