@@ -40,6 +40,9 @@ public class FirebaseNotificationManager {
     }
 
     public String sendNotificationByAccount(NotificationDTO notif, AbstractAccountDTO accountDTO) {
+        if (accountDTO.getGoogleToken() == null) {
+            return null;
+        }
         try {
             return FirebaseMessaging.getInstance().send(
                     Message.builder()
@@ -66,6 +69,9 @@ public class FirebaseNotificationManager {
 
 
     public int subscribeAccountOnTopic(AbstractAccountDTO accountDTO, String topic) {
+        if (accountDTO.getGoogleToken() == null) {
+            return 0;
+        }
         try {
             TopicManagementResponse response = FirebaseMessaging.getInstance().subscribeToTopic(
                     List.of(accountDTO.getGoogleToken()),
@@ -83,6 +89,9 @@ public class FirebaseNotificationManager {
     }
 
     public int unsubscribeAccountFromTopic(AbstractAccountDTO accountDTO, String topic) {
+        if (accountDTO.getGoogleToken() == null) {
+            return 0;
+        }
         try {
             TopicManagementResponse response = FirebaseMessaging.getInstance().unsubscribeFromTopic(
                     List.of(accountDTO.getGoogleToken()),

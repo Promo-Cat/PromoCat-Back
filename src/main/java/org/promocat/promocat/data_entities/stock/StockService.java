@@ -44,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -225,7 +226,7 @@ public class StockService {
                     allUsersFromStock.add(y);
 
                     userRepository.save(userMapper.toEntity(y));
-//                    applicationContext.getBean(UserService.class).subscribeUserOnDefaultTopics(y);
+                    applicationContext.getBean(UserService.class).subscribeUserOnDefaultTopics(y);
                 });
         csvGenerator.generate(path, unbannedUsers);
 
@@ -331,22 +332,22 @@ public class StockService {
         CompanyDTO companyDTO = companyMapper.toDto(companyRepository.getOne(companyId));
         if (companyDTO.getNeedStockStatusNotifications()) {
             if (status == StockStatus.ACTIVE) {
-//                NotificationDTO notification = notificationBuilderFactory.getBuilder()
-//                        .getNotification(NotificationLoader.NotificationType.STOCK_STARTED)
-//                        .set("stock_name", stock.getName())
-//                        .set("duration", stock.getDuration().toString())
-//                        .set("start_date", LocalDate.now().toString())
-//                        .set("end_date", LocalDate.now().plusDays(stock.getDuration()).toString())
-//                        .build();
-//                firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
+                NotificationDTO notification = notificationBuilderFactory.getBuilder()
+                        .getNotification(NotificationLoader.NotificationType.STOCK_STARTED)
+                        .set("stock_name", stock.getName())
+                        .set("duration", stock.getDuration().toString())
+                        .set("start_date", LocalDate.now().toString())
+                        .set("end_date", LocalDate.now().plusDays(stock.getDuration()).toString())
+                        .build();
+                firebaseNotificationManager.sendNotificationByAccount(notification, companyDTO);
             } else if (status == StockStatus.STOCK_IS_OVER_WITHOUT_POSTPAY) {
-//                sendNotificationForCompany(NotificationLoader.NotificationType.COMPANY_STOCK_END, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.COMPANY_STOCK_END, stock, companyDTO);
             } else if (status == StockStatus.POSTER_CONFIRMED_WITH_PREPAY_NOT_ACTIVE) {
-//                sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_PAY, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_PAY, stock, companyDTO);
             } else if (status == StockStatus.POSTER_CONFIRMED_WITHOUT_PREPAY) {
-//                sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_BID, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.ACCEPT_BID, stock, companyDTO);
             } else if (status == StockStatus.BAN) {
-//                sendNotificationForCompany(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyDTO);
+                sendNotificationForCompany(NotificationLoader.NotificationType.NOT_ACCEPT_BID, stock, companyDTO);
             }
         }
         stock.setStatus(status);
