@@ -68,7 +68,7 @@ public class SoapClient {
      */
     private String getNewToken() throws IOException {
         log.info("Getting new token");
-        URL url = new URL("https://himself-ktr-api.nalog.ru:8090/open-api/AuthService");
+        URL url = new URL("https://apinpd.nalog.ru:4430/open-api/AuthService");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setDoOutput(true);
         con.setRequestMethod("POST");
