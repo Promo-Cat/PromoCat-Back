@@ -103,6 +103,7 @@ public class SoapClient {
 
             NodeList token = document.getElementsByTagName("ns2:Token");
             NodeList expireTime = document.getElementsByTagName("ns2:ExpireTime");
+            log.info(token.toString());
             if (token.getLength() == 0) {
                 log.error("Token doesn`t present");
             }
