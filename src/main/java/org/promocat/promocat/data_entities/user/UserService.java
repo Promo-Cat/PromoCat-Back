@@ -289,6 +289,7 @@ public class UserService extends AbstractAccountService {
         PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse)
                 soapClient.send(new PostBindPartnerWithPhoneRequest(
                         TaxUtils.reformatPhone(user.getTelephone()), TaxUtils.PERMISSIONS));
+        log.info("User registrations in npd with phone: {}", user.getTelephone());
         user.setTaxConnectionId(response.getId());
         update(user, user);
     }

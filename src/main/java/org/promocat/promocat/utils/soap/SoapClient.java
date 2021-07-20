@@ -11,7 +11,8 @@ import org.promocat.promocat.utils.soap.operations.AbstractOperation;
 import org.promocat.promocat.utils.soap.operations.SendMessageResponse;
 import org.promocat.promocat.utils.soap.operations.SmzPlatformError;
 import org.promocat.promocat.utils.soap.operations.binding.GetNewlyUnboundTaxpayersRequest;
-import org.promocat.promocat.utils.soap.operations.binding.GetNewlyUnboundTaxpayersResponse;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneRequest;
+import org.promocat.promocat.utils.soap.operations.binding.PostBindPartnerWithPhoneResponse;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,7 +50,7 @@ public class SoapClient {
     /**
      * {@code URL} на который будут отправляться все запросы
      */
-    private static final String API_URL = " https://apinpd.nalog.ru:4430/ais3/smz/SmzIntegrationService";
+    private static final String API_URL = "https://apinpd.nalog.ru:4430/ais3/smz/SmzIntegrationService";
 
     /**
      * Последний полученный временный токен
@@ -250,12 +251,16 @@ public class SoapClient {
 
     // tests
     public static void main(String[] args) throws Exception {
-//        PostBindPartnerWithPhoneRequest op = new PostBindPartnerWithPhoneRequest(
-//                "79062587099",
-//                List.of("INCOME_REGISTRATION")
-//        );
+        System.setProperty("java.net.useSystemProxies", "true");
+        System.setProperty("https.proxyHost", "127.0.0.1");
+        System.setProperty("https.proxyPort", "8080");
+
+        PostBindPartnerWithPhoneRequest op = new PostBindPartnerWithPhoneRequest(
+                "79062587099",
+                List.of("INCOME_REGISTRATION")
+        );
         SoapClient client = new SoapClient();
-//        PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse) client.send(op);
+        PostBindPartnerWithPhoneResponse response = (PostBindPartnerWithPhoneResponse) client.send(op);
 //        log.info("Post bind hue mae id {}", response.getId());
 
 //        GetBindPartnerStatusRequest getStatusOp = new GetBindPartnerStatusRequest(
@@ -266,9 +271,7 @@ public class SoapClient {
 //
 //        log.info("Result: {}", statusResponse.getResult());
 //        log.info("Inn: {}", statusResponse.getInn());
-        System.setProperty("java.net.useSystemProxies", "true");
-        System.setProperty("https.proxyHost", "127.0.0.1");
-        System.setProperty("https.proxyPort", "8080");
+
 
         //        GetTaxpayerStatusRequest req1 = new GetTaxpayerStatusRequest();
 //        req1.setInn("471204164572");
@@ -276,7 +279,7 @@ public class SoapClient {
         GetNewlyUnboundTaxpayersRequest request = new GetNewlyUnboundTaxpayersRequest();
         request.setFrom(ZonedDateTime.now().minusDays(1));
         request.setTo(ZonedDateTime.now());
-        GetNewlyUnboundTaxpayersResponse response = (GetNewlyUnboundTaxpayersResponse) client.send(request);
+//        GetNewlyUnboundTaxpayersResponse response = (GetNewlyUnboundTaxpayersResponse) client.send(request);
         System.out.println();
     }
 
