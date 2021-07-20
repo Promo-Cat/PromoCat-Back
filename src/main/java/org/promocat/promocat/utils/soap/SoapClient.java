@@ -44,11 +44,12 @@ public class SoapClient {
     /**
      * Просто строка SOAP запроса на получение временного токена.
      */
-    private static final String TOKEN_REQUEST = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"urn://x-artefacts-gnivc-ru/inplat/servin/OpenApiMessageConsumerService/types/1.0\"><soapenv:Header/><soapenv:Body><ns:GetMessageRequest><ns:Message><ns1:AuthRequest xmlns:ns1=\"urn://x-artefacts-gnivc-ru/ais3/kkt/AuthService/types/1.0\"><ns1:AuthAppInfo><ns1:MasterToken>dPymKnYFZufero6MW3wcpF8p7lgrQefCOGxTlhgwdvYo08RXzKGQqPyrzl7k0tuHgfMFtWNbgC1FpioqtnHMyQkYATlFEycH5pIb54vQNj7eBXlQyCey4Axgvf2tZNRZ</ns1:MasterToken></ns1:AuthAppInfo></ns1:AuthRequest></ns:Message></ns:GetMessageRequest></soapenv:Body></soapenv:Envelope>";
+    private static final String TOKEN_REQUEST = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"urn://x-artefacts-gnivc-ru/inplat/servin/OpenApiMessageConsumerService/types/1.0\"><soapenv:Header/><soapenv:Body><ns:GetMessageRequest><ns:Message><ns1:AuthRequest xmlns:ns1=\"urn://x-artefacts-gnivc-ru/ais3/kkt/AuthService/types/1.0\"><ns1:AuthAppInfo><ns1:MasterToken>i3NdQSThrpQDFyepaXafzysvRw4PCdhKztpyNVa9lCDTw7fd3dPkL6P2GwiyTuQie6A6rxxoraVaIwANRO9bc7771UmE8EmoiEeCoJbplfBABjSpKtF6hlioVW9ttHM1" +
+            "</ns1:MasterToken></ns1:AuthAppInfo></ns1:AuthRequest></ns:Message></ns:GetMessageRequest></soapenv:Body></soapenv:Envelope>";
     /**
      * {@code URL} на который будут отправляться все запросы
      */
-    private static final String API_URL = "https://himself-ktr-api.nalog.ru:8090/ais3/smz/SmzIntegrationService";
+    private static final String API_URL = " https://apinpd.nalog.ru:4430/ais3/smz/SmzIntegrationService";
 
     /**
      * Последний полученный временный токен
