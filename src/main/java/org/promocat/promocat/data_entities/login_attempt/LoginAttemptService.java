@@ -46,8 +46,8 @@ public class LoginAttemptService {
     private final AccountRepositoryManager accountRepositoryManager;
     @Value("${auth.doCall}")
     private boolean doCall;
-    @Value("${auth.testCode}")
-    private String testCode;
+//    @Value("${auth.testCode}")
+//    private String testCode;
 
     @Autowired
     public LoginAttemptService(final LoginAttemptRepository loginAttemptRepository,
