@@ -25,4 +25,6 @@ public interface UserRepository extends AbstractAccountRepository<User> {
     Long getGiveawayNumber();
 
     List<User> getAllByAccountNotNull();
+
+    List<User> getAllByStatusAAndStockCityNull(final UserStatus status);
 }

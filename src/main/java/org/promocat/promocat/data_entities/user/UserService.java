@@ -2,9 +2,11 @@ package org.promocat.promocat.data_entities.user;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
+import org.promocat.promocat.attributes.CarVerifyingStatus;
 import org.promocat.promocat.attributes.TaxUserStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
+import org.promocat.promocat.data_entities.car.CarService;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.notification_npd.NotifNPDService;
 import org.promocat.promocat.data_entities.stock.StockService;
@@ -29,6 +31,7 @@ import org.promocat.promocat.utils.soap.operations.rights.GetGrantedPermissionsR
 import org.promocat.promocat.utils.soap.util.TaxUtils;
 import org.promocat.promocat.validators.RequiredForFullConstraintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -56,6 +60,7 @@ public class UserService extends AbstractAccountService {
     private final TopicGenerator topicGenerator;
     private final NotifNPDService notifNPDService;
     private final NotificationBuilderFactory notificationBuilderFactory;
+    private final ApplicationContext applicationContext;
 
     private final int MAX_COUNT_FOR_NPD = 999;
 
@@ -71,7 +76,8 @@ public class UserService extends AbstractAccountService {
                        final TopicGenerator topicGenerator,
                        final AccountRepositoryManager accountRepositoryManager,
                        final NotifNPDService notifNPDService,
-                       final NotificationBuilderFactory notificationBuilderFactory) {
+                       final NotificationBuilderFactory notificationBuilderFactory,
+                       final ApplicationContext applicationContext) {
         super(firebaseNotificationManager, accountRepositoryManager);
         this.userRepository = userRepository;
         this.userMapper = mapper;
@@ -83,6 +89,7 @@ public class UserService extends AbstractAccountService {
         this.topicGenerator = topicGenerator;
         this.notifNPDService = notifNPDService;
         this.notificationBuilderFactory = notificationBuilderFactory;
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -375,7 +382,20 @@ public class UserService extends AbstractAccountService {
      * @return {@link NumberOfBusyAndFreeDrivers}
      */
     public NumberOfBusyAndFreeDrivers findFreeBusyCount() {
-        Long free = userRepository.countByStatusEqualsAndStockCityNull(UserStatus.FULL);
+        List<UserDTO> users = userRepository.getAllByStatusAAndStockCityNull(UserStatus.FULL)
+                .stream().map(userMapper::toDto)
+                .collect(Collectors.toList());
+
+        Long free = 0L;
+
+        for (UserDTO user: users) {
+            if (user.getCarId() != null) {
+                if (applicationContext.getBean(CarService.class).findById(user.getCarId()).getVerifyingStatus() == CarVerifyingStatus.VERIFIED) {
+                    free += 1;
+                }
+            }
+        }
+
         Long busy = userRepository.countByStockCityNotNull();
         return new NumberOfBusyAndFreeDrivers(free, busy);
     }
