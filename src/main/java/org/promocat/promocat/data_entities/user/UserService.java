@@ -382,7 +382,7 @@ public class UserService extends AbstractAccountService {
      * @return {@link NumberOfBusyAndFreeDrivers}
      */
     public NumberOfBusyAndFreeDrivers findFreeBusyCount() {
-        List<UserDTO> users = userRepository.getAllByStatusAAndStockCityNull(UserStatus.FULL)
+        List<UserDTO> users = userRepository.getAllByStatusAndStockCityNull(UserStatus.FULL)
                 .stream().map(userMapper::toDto)
                 .collect(Collectors.toList());
 

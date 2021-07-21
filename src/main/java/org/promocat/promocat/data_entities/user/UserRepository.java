@@ -26,5 +26,5 @@ public interface UserRepository extends AbstractAccountRepository<User> {
 
     List<User> getAllByAccountNotNull();
 
-    List<User> getAllByStatusAAndStockCityNull(final UserStatus status);
+    List<User> getAllByStatusAndStockCityNull(final UserStatus status);
 }
