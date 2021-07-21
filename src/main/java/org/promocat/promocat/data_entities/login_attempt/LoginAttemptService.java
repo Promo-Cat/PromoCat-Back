@@ -76,16 +76,16 @@ public class LoginAttemptService {
         LoginAttempt res = new LoginAttempt(accountType);
 
         res.setTelephone(account.getTelephone());
-        if (doCall) {
-            Optional<String> code = doCallAndGetCode(account.getTelephone());
-            if (code.isEmpty()) {
-                log.error("SMSC problems, code is empty");
-                throw new SMSCException("Something wrong with smsc");
-            }
-            res.setPhoneCode(code.get().substring(2));
-        } else {
-            res.setPhoneCode(testCode); // тестовый код
+//        if (doCall) {
+        Optional<String> code = doCallAndGetCode(account.getTelephone());
+        if (code.isEmpty()) {
+            log.error("SMSC problems, code is empty");
+            throw new SMSCException("Something wrong with smsc");
         }
+        res.setPhoneCode(code.get().substring(2));
+//        } else {
+//            res.setPhoneCode(testCode); // тестовый код
+//        }
         res.setAuthorizationKey(RandomString.make(AUTHORIZATION_KEY_LENGTH));
         return loginAttemptRepository.save(res);
     }
