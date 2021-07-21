@@ -212,9 +212,10 @@ public class StockService {
                 .flatMap(x -> x.getUsers().stream())
                 .forEach(y -> {
                     if (y.getStatus() != UserStatus.BANNED && y.getStatus() != UserStatus.BAN_CAMERA) {
-                        registerTaxes(y, stockDTO);
+                        if (registerTaxes(y, stockDTO)) {
+                            unbannedUsers.add(y);
+                        }
                         y.setStockCityId(null);
-                        unbannedUsers.add(y);
                     } else {
                         y.setStatus(UserStatus.FULL);
                         applicationContext.getBean(MovementService.class)
@@ -262,9 +263,9 @@ public class StockService {
      *
      * @param user Пользователь, которому была произведена выплата.
      */
-    private void registerTaxes(UserDTO user, StockDTO stock) {
+    private Boolean registerTaxes(UserDTO user, StockDTO stock) {
         if (user.getBalance() < 1e-7) {
-            return;
+            return false;
         }
         PostIncomeRequestV2 op = new PostIncomeRequestV2();
         op.setInn(user.getInn());
@@ -287,7 +288,7 @@ public class StockService {
                         .build();
                 firebaseNotificationManager.sendNotificationByAccount(notificationDTO, user);
                 banUserInStockAndResetStatus(user);
-                return;
+                return false;
             }
             throw e;
         }
@@ -301,6 +302,7 @@ public class StockService {
 
 
         receiptService.save(receipt);
+        return true;
     }
 
     public void banUserInStockAndResetStatus(UserDTO user) {
