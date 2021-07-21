@@ -34,8 +34,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -253,14 +255,20 @@ public class UserService extends AbstractAccountService {
         try {
             GetNewlyUnboundTaxpayersResponse response = (GetNewlyUnboundTaxpayersResponse) soapClient.send(request);
             log.info("{} users unbounded from us in NPD", response.getTaxpayers().size());
+            Set<String> inns = new HashSet<>();
             response.getTaxpayers().forEach(x -> {
-                UserDTO user = findByInn(x.getInn());
+                inns.add(x.getInn());
+            });
+
+            inns.forEach(x -> {
+                UserDTO user = findByInn(x);
                 if (user == null) {
-                    log.error("User with inn {} doesn't found", x.getInn());
+                    log.error("User with inn {} doesn't found", x);
                     return;
                 }
-                log.info("Unbound Time: {} for user with id: {}", x.getUnboundTime().toString(), user.getId());
-                log.info("Registration Time: {} for user with id: {}", x.getRegistrationTime().toString(), user.getId());
+                if (isUserBinded(user) == TaxUserStatus.COMPLETED) {
+                    return;
+                }
                 NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
                         .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
                         .build();
