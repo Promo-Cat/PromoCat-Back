@@ -259,6 +259,8 @@ public class UserService extends AbstractAccountService {
                     log.error("User with inn {} doesn't found", x.getInn());
                     return;
                 }
+                log.info("Unbound Time: {} for user with id: {}", x.getUnboundTime().toString(), user.getId());
+                log.info("Registration Time: {} for user with id: {}", x.getRegistrationTime().toString(), user.getId());
                 NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
                         .getNotification(NotificationLoader.NotificationType.PROBLEM_WITH_NPD)
                         .build();
