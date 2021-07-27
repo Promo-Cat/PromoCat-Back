@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.CarVerifyingStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
+import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.car.car_photo.CarPhotoService;
 import org.promocat.promocat.data_entities.car.sts.StsService;
 import org.promocat.promocat.data_entities.user.UserService;
@@ -54,6 +55,7 @@ public class CarController {
     private final AccountRepositoryManager accountRepositoryManager;
     private final FirebaseNotificationManager firebaseNotificationManager;
     private final NotificationBuilderFactory notificationBuilderFactory;
+    private final AdminService adminService;
 
     @Autowired
     public CarController(final CarService carService,
@@ -62,7 +64,8 @@ public class CarController {
                          final StsService stsService,
                          final AccountRepositoryManager accountRepositoryManager,
                          final FirebaseNotificationManager firebaseNotificationManager,
-                         final NotificationBuilderFactory notificationBuilderFactory) {
+                         final NotificationBuilderFactory notificationBuilderFactory,
+                         final AdminService adminService) {
         this.carService = carService;
         this.userService = userService;
         this.carPhotoService = carPhotoService;
@@ -70,6 +73,7 @@ public class CarController {
         this.accountRepositoryManager = accountRepositoryManager;
         this.firebaseNotificationManager = firebaseNotificationManager;
         this.notificationBuilderFactory = notificationBuilderFactory;
+        this.adminService = adminService;
     }
 
     @ApiOperation(value = "Add car",
@@ -95,7 +99,9 @@ public class CarController {
                 .set("number", car.getNumber())
                 .set("region", car.getRegion())
                 .build();
-        firebaseNotificationManager.sendNotificationByAccount(notificationDTO, user);
+        adminService.getAll().forEach(admin -> {
+            firebaseNotificationManager.sendNotificationByAccount(notificationDTO, admin);
+        });
 
         return ResponseEntity.ok(car);
     }
