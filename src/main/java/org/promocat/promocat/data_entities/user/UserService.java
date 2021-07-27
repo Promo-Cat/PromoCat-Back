@@ -2,11 +2,9 @@ package org.promocat.promocat.data_entities.user;
 // Created by Roman Devyatilov (Fr1m3n) in 20:25 05.05.2020
 
 import lombok.extern.slf4j.Slf4j;
-import org.promocat.promocat.attributes.CarVerifyingStatus;
 import org.promocat.promocat.attributes.TaxUserStatus;
 import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.data_entities.abstract_account.AbstractAccountService;
-import org.promocat.promocat.data_entities.car.CarService;
 import org.promocat.promocat.data_entities.movement.MovementService;
 import org.promocat.promocat.data_entities.notification_npd.NotifNPDService;
 import org.promocat.promocat.data_entities.stock.StockService;
@@ -41,7 +39,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Grankin Maxim (maximgran@gmail.com) at 09:05 14.05.2020
@@ -382,19 +379,8 @@ public class UserService extends AbstractAccountService {
      * @return {@link NumberOfBusyAndFreeDrivers}
      */
     public NumberOfBusyAndFreeDrivers findFreeBusyCount() {
-        List<UserDTO> users = userRepository.getAllByStatusAndStockCityNull(UserStatus.FULL)
-                .stream().map(userMapper::toDto)
-                .collect(Collectors.toList());
 
-        Long free = 0L;
-
-        for (UserDTO user: users) {
-            if (user.getCarId() != null) {
-                if (applicationContext.getBean(CarService.class).findById(user.getCarId()).getVerifyingStatus() == CarVerifyingStatus.VERIFIED) {
-                    free += 1;
-                }
-            }
-        }
+        Long free = userRepository.count();
 
         Long busy = userRepository.countByStockCityNotNull();
         return new NumberOfBusyAndFreeDrivers(free, busy);

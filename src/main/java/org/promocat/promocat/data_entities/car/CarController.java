@@ -89,6 +89,9 @@ public class CarController {
         car = carService.save(car);
         user.setCarId(car.getId());
         userService.save(user);
+
+//        notificationBuilderFactory.getBuilder().getNotification(NotificationLoader.NotificationType.)
+
         return ResponseEntity.ok(car);
     }
 
