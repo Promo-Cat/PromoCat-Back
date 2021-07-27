@@ -22,7 +22,8 @@ public interface NotificationLoader {
         CAR_VERIFY,
         CAR_NOT_VERIFY,
         PROBLEM_WITH_NPD,
-        PROBLEM_WITH_PHONE
+        PROBLEM_WITH_PHONE,
+        REG_CAR
     }
 
 

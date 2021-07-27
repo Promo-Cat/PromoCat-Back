@@ -90,7 +90,12 @@ public class CarController {
         user.setCarId(car.getId());
         userService.save(user);
 
-//        notificationBuilderFactory.getBuilder().getNotification(NotificationLoader.NotificationType.)
+        NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
+                .getNotification(NotificationLoader.NotificationType.REG_CAR)
+                .set("number", car.getNumber())
+                .set("region", car.getRegion())
+                .build();
+        firebaseNotificationManager.sendNotificationByAccount(notificationDTO, user);
 
         return ResponseEntity.ok(car);
     }
