@@ -94,15 +94,6 @@ public class CarController {
         user.setCarId(car.getId());
         userService.save(user);
 
-        NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
-                .getNotification(NotificationLoader.NotificationType.REG_CAR)
-                .set("number", car.getNumber())
-                .set("region", car.getRegion())
-                .build();
-        adminService.getAll().forEach(admin -> {
-            firebaseNotificationManager.sendNotificationByAccount(notificationDTO, admin);
-        });
-
         return ResponseEntity.ok(car);
     }
 
@@ -186,6 +177,16 @@ public class CarController {
         if (userDTO.getCarId().equals(carDTO.getId())) {
             carDTO.setStsId(stsService.upload(file, carDTO.getId()));
             carDTO.setPhotoId((long) 1);
+
+            NotificationDTO notificationDTO = notificationBuilderFactory.getBuilder()
+                    .getNotification(NotificationLoader.NotificationType.REG_CAR)
+                    .set("number", carDTO.getNumber())
+                    .set("region", carDTO.getRegion())
+                    .build();
+            adminService.getAll().forEach(admin -> {
+                firebaseNotificationManager.sendNotificationByAccount(notificationDTO, admin);
+            });
+
             return ResponseEntity.ok(carService.save(carDTO));
         } else {
             throw new ApiForbiddenException("This is not your car");
