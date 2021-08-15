@@ -175,8 +175,7 @@ public class LoginAttemptService {
                 urlParams.append("&");
             }
         });
-        ResponseEntity<SMSCResponseSMSDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + urlParams.toString() + telephone,
-                SMSCResponseSMSDTO.class);
+        restTemplate.postForEntity(SMSC_URL + urlParams.toString() + telephone, null, String.class);
 
         log.info("Sent");
         return Optional.of(code);
