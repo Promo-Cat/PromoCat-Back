@@ -121,7 +121,7 @@ public class LoginAttemptService {
             log.error("SMSC problems, code is empty");
             throw new SMSCException("Something wrong with smsc");
         }
-        res.setPhoneCode(code.get().substring(2));
+        res.setPhoneCode(code.get());
         res.setAuthorizationKey(RandomString.make(AUTHORIZATION_KEY_LENGTH));
         return loginAttemptRepository.save(res);
     }
