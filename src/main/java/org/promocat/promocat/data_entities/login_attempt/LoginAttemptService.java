@@ -166,7 +166,7 @@ public class LoginAttemptService {
         StringBuilder urlParams = new StringBuilder();
         SMSC_URI_PARAMETERS_SMS.forEach(el -> {
             if (el.getKey().equals("mes")) {
-                urlParams.append(el.getKey()).append("=").append(code);
+                urlParams.append(el.getKey()).append("=").append("Ваш код: ").append(code);
             } else {
                 urlParams.append(el.getKey()).append("=").append(el.getValue());
             }
