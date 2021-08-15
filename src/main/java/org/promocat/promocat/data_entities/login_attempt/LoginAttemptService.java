@@ -46,7 +46,7 @@ public class LoginAttemptService {
     private final List<Map.Entry<String, String>> SMSC_URI_PARAMETERS_SMS = List.of(
             Map.entry("login", "promocatcompany"),
             Map.entry("psw", "promocattest123"),
-            Map.entry("mes", ""),
+            Map.entry("mes", "code"),
             Map.entry("fmt", "3"),
             Map.entry("phones", "")
     );
