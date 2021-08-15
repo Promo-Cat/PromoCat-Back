@@ -160,6 +160,8 @@ public class LoginAttemptService {
     private Optional<String> doSMSAndGetCode(String telephone) {
         String code = Generator.generate("%%%%");
 
+        log.info("Started send sms with code to user");
+
         RestTemplate restTemplate = new RestTemplate();
         StringBuilder urlParams = new StringBuilder();
         SMSC_URI_PARAMETERS_SMS.forEach(el -> {
@@ -174,6 +176,8 @@ public class LoginAttemptService {
         });
         ResponseEntity<SMSCResponseDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + urlParams.toString() + telephone,
                 SMSCResponseDTO.class);
+
+        log.info("Sent");
         return Optional.of(code);
     }
 
