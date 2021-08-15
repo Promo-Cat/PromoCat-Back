@@ -12,6 +12,7 @@ import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.SMSCResponseDTO;
 import org.promocat.promocat.exception.smsc.SMSCException;
 import org.promocat.promocat.utils.AccountRepositoryManager;
+import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,7 @@ public class LoginAttemptService {
     private final List<Map.Entry<String, String>> SMSC_URI_PARAMETERS_SMS = List.of(
             Map.entry("login", "promocatcompany"),
             Map.entry("psw", "promocattest123"),
-            Map.entry("mes", "code"),
+            Map.entry("mes", ""),
             Map.entry("fmt", "3"),
             Map.entry("phones", "")
     );
@@ -157,10 +158,16 @@ public class LoginAttemptService {
      * @return Код, если запрос к SMSC успешен, иначе Optional.empty()
      */
     private Optional<String> doSMSAndGetCode(String telephone) {
+        String code = Generator.generate("%%%%");
+
         RestTemplate restTemplate = new RestTemplate();
         StringBuilder urlParams = new StringBuilder();
         SMSC_URI_PARAMETERS_SMS.forEach(el -> {
-            urlParams.append(el.getKey()).append("=").append(el.getValue());
+            if (el.getKey().equals("mes")) {
+                urlParams.append(el.getKey()).append("=").append(code);
+            } else {
+                urlParams.append(el.getKey()).append("=").append(el.getValue());
+            }
             if (!el.getValue().isEmpty()) {
                 urlParams.append("&");
             }
@@ -168,8 +175,8 @@ public class LoginAttemptService {
         ResponseEntity<SMSCResponseDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + urlParams.toString() + telephone,
                 SMSCResponseDTO.class);
         SMSCResponseDTO responseDTO = smscResponse.getBody();
-        if (Objects.requireNonNull(responseDTO).getCode() != null) {
-            return Optional.of(smscResponse.getBody().getCode());
+        if (Objects.requireNonNull(responseDTO).getCnt() != null) {
+            return Optional.of(code);
         } else {
             return Optional.empty();
         }
