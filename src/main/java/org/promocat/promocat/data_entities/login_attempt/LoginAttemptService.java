@@ -10,7 +10,6 @@ import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.SMSCResponseDTO;
-import org.promocat.promocat.dto.pojo.SMSCResponseSMSDTO;
 import org.promocat.promocat.exception.smsc.SMSCException;
 import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.Generator;
@@ -175,7 +174,9 @@ public class LoginAttemptService {
                 urlParams.append("&");
             }
         });
-        restTemplate.postForEntity(SMSC_URL + urlParams.toString() + telephone, null, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(SMSC_URL + urlParams.toString() + telephone, null, String.class);
+
+        log.info(response.getBody());
 
         log.info("Sent");
         return Optional.of(code);
