@@ -174,12 +174,7 @@ public class LoginAttemptService {
         });
         ResponseEntity<SMSCResponseDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + urlParams.toString() + telephone,
                 SMSCResponseDTO.class);
-        SMSCResponseDTO responseDTO = smscResponse.getBody();
-        if (Objects.requireNonNull(responseDTO).getCnt() != null) {
-            return Optional.of(code);
-        } else {
-            return Optional.empty();
-        }
+        return Optional.of(code);
     }
 
     /**
