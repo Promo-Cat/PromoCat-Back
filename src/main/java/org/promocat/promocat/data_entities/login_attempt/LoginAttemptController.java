@@ -7,12 +7,12 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.promocat.promocat.attributes.AccountType;
 import org.promocat.promocat.attributes.CompanyStatus;
+import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.config.SpringFoxConfig;
 import org.promocat.promocat.data_entities.abstract_account.AbstractAccount;
 import org.promocat.promocat.data_entities.admin.AdminService;
 import org.promocat.promocat.data_entities.company.CompanyService;
 import org.promocat.promocat.data_entities.user.UserService;
-import org.promocat.promocat.attributes.UserStatus;
 import org.promocat.promocat.dto.CompanyDTO;
 import org.promocat.promocat.dto.UserDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
@@ -60,7 +60,7 @@ public class LoginAttemptController {
         this.accountRepositoryManager = accountRepositoryManager;
     }
 
-    @ApiOperation(value = "Login user",
+    @ApiOperation(value = "Login user by call",
             notes = "Logining user with telephone specified in request, returning authorization key. " +
                     "Telephone format +X(XXX)XXX-XX-XX",
             response = AuthorizationKeyDTO.class,
@@ -80,7 +80,7 @@ public class LoginAttemptController {
                     response = ApiException.class)
     })
     @RequestMapping(value = "/user/login", method = RequestMethod.GET)
-    public ResponseEntity<AuthorizationKeyDTO> loginUser(@Valid @RequestParam("telephone") String telephone) {
+    public ResponseEntity<AuthorizationKeyDTO> loginUserByCall(@Valid @RequestParam("telephone") String telephone) {
         if (!userService.existsByTelephone(telephone)) {
             log.info("User with telephone {} doesn`t found in DB. Creating new one.", telephone);
             UserDTO userDTO = new UserDTO();
@@ -88,10 +88,41 @@ public class LoginAttemptController {
             userDTO.setStatus(UserStatus.JUST_REGISTERED);
             userService.save(userDTO);
         }
-        return login(AccountType.USER, telephone);
+        return login(AccountType.USER, telephone, false);
     }
 
-    @ApiOperation(value = "Login company",
+    @ApiOperation(value = "Login user by sms",
+            notes = "Logining user with telephone specified in request, returning authorization key. " +
+                    "Telephone format +X(XXX)XXX-XX-XX",
+            response = AuthorizationKeyDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "User not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 400,
+                    message = "Validation error",
+                    response = ApiValidationException.class),
+            @ApiResponse(code = 500,
+                    message = "SMSC error",
+                    response = ApiException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/user/login/sms", method = RequestMethod.GET)
+    public ResponseEntity<AuthorizationKeyDTO> loginUserBySMS(@Valid @RequestParam("telephone") String telephone) {
+        if (!userService.existsByTelephone(telephone)) {
+            log.info("User with telephone {} doesn`t found in DB. Creating new one.", telephone);
+            UserDTO userDTO = new UserDTO();
+            userDTO.setTelephone(telephone);
+            userDTO.setStatus(UserStatus.JUST_REGISTERED);
+            userService.save(userDTO);
+        }
+        return login(AccountType.USER, telephone, true);
+    }
+
+    @ApiOperation(value = "Login company by call",
             notes = "Logining company with telephone specified in request, returning authorization key. " +
                     "Telephone format +X(XXX)XXX-XX-XX",
             response = AuthorizationKeyDTO.class,
@@ -112,7 +143,7 @@ public class LoginAttemptController {
                     response = ApiException.class)
     })
     @RequestMapping(value = "/company/login", method = RequestMethod.GET)
-    public ResponseEntity<AuthorizationKeyDTO> loginCompany(@Valid @RequestParam("telephone") String telephone) {
+    public ResponseEntity<AuthorizationKeyDTO> loginCompanyByCall(@Valid @RequestParam("telephone") String telephone) {
         if (!companyService.existsByTelephone(telephone)) {
             log.info("Company with telephone {} doesn`t found in DB. Creating new one.", telephone);
             CompanyDTO company = new CompanyDTO();
@@ -120,7 +151,39 @@ public class LoginAttemptController {
             company.setCompanyStatus(CompanyStatus.JUST_REGISTERED);
             companyService.save(company);
         }
-        return login(AccountType.COMPANY, telephone);
+        return login(AccountType.COMPANY, telephone, false);
+    }
+
+    @ApiOperation(value = "Login company by sms",
+            notes = "Logining company with telephone specified in request, returning authorization key. " +
+                    "Telephone format +X(XXX)XXX-XX-XX",
+            response = AuthorizationKeyDTO.class,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 404,
+                    message = "Company not found",
+                    response = ApiException.class),
+            @ApiResponse(code = 400,
+                    message = "Validation error",
+                    response = ApiValidationException.class),
+            @ApiResponse(
+                    message = "SMSC error",
+                    code = 500,
+                    response = ApiException.class),
+            @ApiResponse(code = 415,
+                    message = "Not acceptable media type",
+                    response = ApiException.class)
+    })
+    @RequestMapping(value = "/company/login/sms", method = RequestMethod.GET)
+    public ResponseEntity<AuthorizationKeyDTO> loginCompanyBySMS(@Valid @RequestParam("telephone") String telephone) {
+        if (!companyService.existsByTelephone(telephone)) {
+            log.info("Company with telephone {} doesn`t found in DB. Creating new one.", telephone);
+            CompanyDTO company = new CompanyDTO();
+            company.setTelephone(telephone);
+            company.setCompanyStatus(CompanyStatus.JUST_REGISTERED);
+            companyService.save(company);
+        }
+        return login(AccountType.COMPANY, telephone, true);
     }
 
     @ApiOperation(value = "Login Admin",
@@ -149,14 +212,14 @@ public class LoginAttemptController {
             log.warn("User with telephone: {} is not admin", telephone);
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return login(AccountType.ADMIN, telephone);
+        return login(AccountType.ADMIN, telephone, false);
     }
 
-    private ResponseEntity<AuthorizationKeyDTO> login(AccountType accountType, String telephone) {
+    private ResponseEntity<AuthorizationKeyDTO> login(AccountType accountType, String telephone, Boolean flag) {
         loginAttemptService.deleteIfExists(accountType, telephone);
         Optional<? extends AbstractAccount> account = accountRepositoryManager.getRepository(accountType).getByTelephone(telephone);
         if (account.isPresent()) {
-            return ResponseEntity.ok(loginAttemptService.login(account.get()));
+            return ResponseEntity.ok(loginAttemptService.login(account.get(), flag));
         } else {
             throw new ApiLoginAttemptNotFoundException(
                     accountType.getType() + " with phone number " + telephone + " does not exists"

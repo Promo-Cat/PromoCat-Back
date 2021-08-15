@@ -33,11 +33,19 @@ public class LoginAttemptService {
     public static final int AUTHORIZATION_KEY_LENGTH = 16;
     private static final String SMSC_URL = "https://smsc.ru/sys/send.php?";
     // TODO протестить
-    private final List<Map.Entry<String, String>> SMSC_URI_PARAMETERS = List.of(
+    private final List<Map.Entry<String, String>> SMSC_URI_PARAMETERS_CALL = List.of(
             Map.entry("login", "promocatcompany"),
             Map.entry("psw", "promocattest123"),
             Map.entry("mes", "code"),
             Map.entry("call", "1"),
+            Map.entry("fmt", "3"),
+            Map.entry("phones", "")
+    );
+
+    private final List<Map.Entry<String, String>> SMSC_URI_PARAMETERS_SMS = List.of(
+            Map.entry("login", "promocatcompany"),
+            Map.entry("psw", "promocattest123"),
+            Map.entry("mes", "code"),
             Map.entry("fmt", "3"),
             Map.entry("phones", "")
     );
@@ -56,13 +64,7 @@ public class LoginAttemptService {
         this.accountRepositoryManager = accountRepositoryManager;
     }
 
-    /**
-     * Создаёт запись в бд о попытке авторизации
-     *
-     * @param account экзепляр объекта аккаунта, который авторизуется
-     * @return Экземпляр объекта попытки входа, сохранённого в бд
-     */
-    public LoginAttempt create(AbstractAccount account) {
+    private AccountType create(AbstractAccount account) {
         AccountType accountType = null;
         if (account instanceof User) {
             accountType = AccountType.USER;
@@ -73,6 +75,18 @@ public class LoginAttemptService {
         } else {
             log.error("User account type undefined. Users telephone: {}", account.getTelephone());
         }
+
+        return accountType;
+    }
+
+    /**
+     * Создаёт запись в бд о попытке авторизации
+     *
+     * @param account экзепляр объекта аккаунта, который авторизуется
+     * @return Экземпляр объекта попытки входа, сохранённого в бд
+     */
+    public LoginAttempt createByCall(AbstractAccount account) {
+        AccountType accountType = create(account);
         LoginAttempt res = new LoginAttempt(accountType);
 
         res.setTelephone(account.getTelephone());
@@ -91,6 +105,27 @@ public class LoginAttemptService {
     }
 
     /**
+     * Создаёт запись в бд о попытке авторизации
+     *
+     * @param account экзепляр объекта аккаунта, который авторизуется
+     * @return Экземпляр объекта попытки входа, сохранённого в бд
+     */
+    public LoginAttempt createBySMS(AbstractAccount account) {
+        AccountType accountType = create(account);
+        LoginAttempt res = new LoginAttempt(accountType);
+
+        res.setTelephone(account.getTelephone());
+        Optional<String> code = doSMSAndGetCode(account.getTelephone());
+        if (code.isEmpty()) {
+            log.error("SMSC problems, code is empty");
+            throw new SMSCException("Something wrong with smsc");
+        }
+        res.setPhoneCode(code.get().substring(2));
+        res.setAuthorizationKey(RandomString.make(AUTHORIZATION_KEY_LENGTH));
+        return loginAttemptRepository.save(res);
+    }
+
+    /**
      * Выполняет запрос к SMSC API на звонок и возвращает код, который мы ожидаем от юзера.
      *
      * @param telephone телефон, по которому будет произведён звонок
@@ -99,7 +134,32 @@ public class LoginAttemptService {
     private Optional<String> doCallAndGetCode(String telephone) {
         RestTemplate restTemplate = new RestTemplate();
         StringBuilder urlParams = new StringBuilder();
-        SMSC_URI_PARAMETERS.forEach(el -> {
+        SMSC_URI_PARAMETERS_CALL.forEach(el -> {
+            urlParams.append(el.getKey()).append("=").append(el.getValue());
+            if (!el.getValue().isEmpty()) {
+                urlParams.append("&");
+            }
+        });
+        ResponseEntity<SMSCResponseDTO> smscResponse = restTemplate.getForEntity(SMSC_URL + urlParams.toString() + telephone,
+                SMSCResponseDTO.class);
+        SMSCResponseDTO responseDTO = smscResponse.getBody();
+        if (Objects.requireNonNull(responseDTO).getCode() != null) {
+            return Optional.of(smscResponse.getBody().getCode());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Выполняет запрос к SMSC API на отправку СМС и возвращает код, который мы ожидаем от юзера.
+     *
+     * @param telephone телефон, по которому будет произведена отправка СМС
+     * @return Код, если запрос к SMSC успешен, иначе Optional.empty()
+     */
+    private Optional<String> doSMSAndGetCode(String telephone) {
+        RestTemplate restTemplate = new RestTemplate();
+        StringBuilder urlParams = new StringBuilder();
+        SMSC_URI_PARAMETERS_SMS.forEach(el -> {
             urlParams.append(el.getKey()).append("=").append(el.getValue());
             if (!el.getValue().isEmpty()) {
                 urlParams.append("&");
@@ -122,8 +182,14 @@ public class LoginAttemptService {
      * @param account Аккаунт, который производит авторизацию
      * @return ДТО authorization key (ради JSON)
      */
-    public AuthorizationKeyDTO login(AbstractAccount account) {
-        LoginAttempt loginAttemptRecord = create(account);
+    public AuthorizationKeyDTO login(AbstractAccount account, Boolean flag) {
+        LoginAttempt loginAttemptRecord;
+        if (!flag) {
+            loginAttemptRecord = createByCall(account);
+        } else {
+            loginAttemptRecord = createBySMS(account);
+        }
+
         log.info("Account with telephone: {} logged in", account.getTelephone());
         return new AuthorizationKeyDTO(loginAttemptRecord.getAuthorizationKey());
     }

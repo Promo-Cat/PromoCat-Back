@@ -185,7 +185,7 @@ public class BeforeAll {
      */
     public String getToken(AccountType accountType, String telephone) {
         Optional<? extends AbstractAccount> account = accountRepositoryManager.getRepository(accountType).getByTelephone(telephone);
-        AuthorizationKeyDTO key = loginAttemptService.login(account.get());
+        AuthorizationKeyDTO key = loginAttemptService.login(account.get(), true);
 
         LoginAttemptDTO loginAttempt = new LoginAttemptDTO(key.getAuthorizationKey(), "1337");
         Optional<? extends AbstractAccount> accountRecord = loginAttemptService.checkLoginAttemptCode(loginAttempt);
