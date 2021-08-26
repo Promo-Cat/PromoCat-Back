@@ -40,7 +40,7 @@ public abstract class AbstractAccount extends AbstractEntity {
      * Телефон прикрепленный к аккаунту.
      */
     @NotBlank(message = "Телефон не может быть пустым")
-    @Pattern(regexp = "\\+7\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}",
+    @Pattern(regexp = "\\+\\d\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}",
             message = "Телефон должен соответствовать шаблону +X(XXX)XXX-XX-XX")
     @Column(name = "telephone", unique = true)
     public String getTelephone() {
