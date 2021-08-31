@@ -82,6 +82,7 @@ public class TokenController {
         }
     }
 
+
     @ApiOperation(value = "Check token validity",
             notes = "Check token validity, if token is valid returns {}. Token have to be in HEADER.",
             response = String.class)
