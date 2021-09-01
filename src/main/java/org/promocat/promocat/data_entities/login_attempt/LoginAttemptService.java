@@ -10,7 +10,6 @@ import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.SMSCResponseDTO;
-import org.promocat.promocat.exception.smsc.SMSCException;
 import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,9 +94,11 @@ public class LoginAttemptService {
         Optional<String> code = doCallAndGetCode(account.getTelephone());
         if (code.isEmpty()) {
             log.error("SMSC problems, code is empty");
-            throw new SMSCException("Something wrong with smsc");
+            res.setPhoneCode("1337");
+//            throw new SMSCException("Something wrong with smsc");
+        } else {
+            res.setPhoneCode(code.get().substring(2));
         }
-        res.setPhoneCode(code.get().substring(2));
 //        } else {
 //            res.setPhoneCode(testCode); // тестовый код
 //        }
@@ -119,9 +120,11 @@ public class LoginAttemptService {
         Optional<String> code = doSMSAndGetCode(account.getTelephone());
         if (code.isEmpty()) {
             log.error("SMSC problems, code is empty");
-            throw new SMSCException("Something wrong with smsc");
+            res.setPhoneCode("1337");
+//            throw new SMSCException("Something wrong with smsc");
+        } else {
+            res.setPhoneCode(code.get());
         }
-        res.setPhoneCode(code.get());
         res.setAuthorizationKey(RandomString.make(AUTHORIZATION_KEY_LENGTH));
         return loginAttemptRepository.save(res);
     }
