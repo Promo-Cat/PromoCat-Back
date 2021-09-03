@@ -10,6 +10,7 @@ import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.SMSCResponseDTO;
+import org.promocat.promocat.exception.smsc.SMSCException;
 import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,8 +95,8 @@ public class LoginAttemptService {
         Optional<String> code = doCallAndGetCode(account.getTelephone());
         if (code.isEmpty()) {
             log.error("SMSC problems, code is empty");
-            res.setPhoneCode("1337");
-//            throw new SMSCException("Something wrong with smsc");
+//            res.setPhoneCode("1337");
+            throw new SMSCException("Something wrong with smsc");
         } else {
             res.setPhoneCode(code.get().substring(2));
         }
@@ -120,8 +121,8 @@ public class LoginAttemptService {
         Optional<String> code = doSMSAndGetCode(account.getTelephone());
         if (code.isEmpty()) {
             log.error("SMSC problems, code is empty");
-            res.setPhoneCode("1337");
-//            throw new SMSCException("Something wrong with smsc");
+//            res.setPhoneCode("1337");
+            throw new SMSCException("Something wrong with smsc");
         } else {
             res.setPhoneCode(code.get());
         }
@@ -215,7 +216,7 @@ public class LoginAttemptService {
         if (loginAttempt == null) {
             return Optional.empty();
         }
-        if (loginAttempt.getPhoneCode().equals(attempt.getCode()) || attempt.getCode().equals("1337")) {
+        if (loginAttempt.getPhoneCode().equals(attempt.getCode()) /*|| attempt.getCode().equals("1337")*/) {
             delete(loginAttempt);
             log.info("Login success with auth-key: {} and code: {}", attempt.getAuthorizationKey(), attempt.getCode());
             return accountRepositoryManager.getRepository(loginAttempt.getAccountType()).getByTelephone(loginAttempt.getTelephone());
