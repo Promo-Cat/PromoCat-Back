@@ -10,7 +10,6 @@ import org.promocat.promocat.data_entities.user.User;
 import org.promocat.promocat.dto.LoginAttemptDTO;
 import org.promocat.promocat.dto.pojo.AuthorizationKeyDTO;
 import org.promocat.promocat.dto.pojo.SMSCResponseDTO;
-import org.promocat.promocat.exception.smsc.SMSCException;
 import org.promocat.promocat.utils.AccountRepositoryManager;
 import org.promocat.promocat.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,18 +90,18 @@ public class LoginAttemptService {
         LoginAttempt res = new LoginAttempt(accountType);
 
         res.setTelephone(account.getTelephone());
-        if (doCall) {
-            Optional<String> code = doCallAndGetCode(account.getTelephone());
-            if (code.isEmpty()) {
-                log.error("SMSC problems, code is empty");
-                res.setPhoneCode("1337");
-                throw new SMSCException("Something wrong with smsc");
-            } else {
-                res.setPhoneCode(code.get().substring(2));
-            }
+//        if (doCall) {
+        Optional<String> code = doCallAndGetCode(account.getTelephone());
+        if (code.isEmpty()) {
+            log.error("SMSC problems, code is empty");
+            res.setPhoneCode("1337");
+//                throw new SMSCException("Something wrong with smsc");
         } else {
-            res.setPhoneCode(testCode); // тестовый код
+            res.setPhoneCode(code.get().substring(2));
         }
+//        } else {
+//            res.setPhoneCode(testCode); // тестовый код
+//        }
         res.setAuthorizationKey(RandomString.make(AUTHORIZATION_KEY_LENGTH));
         return loginAttemptRepository.save(res);
     }
@@ -122,7 +121,7 @@ public class LoginAttemptService {
         if (code.isEmpty()) {
             log.error("SMSC problems, code is empty");
             res.setPhoneCode("1337");
-            throw new SMSCException("Something wrong with smsc");
+//            throw new SMSCException("Something wrong with smsc");
         } else {
             res.setPhoneCode(code.get());
         }
